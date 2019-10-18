@@ -23,6 +23,10 @@
 			{
 				"command": "vscode.didact.tutorialStep",
 				"title": "Trigger a command"
+			},
+			{
+				"command": "vscode.didact.openTutorial",
+				"title": "Open Didact Tutorial"
 			}
 		]
 	},
@@ -39,12 +43,13 @@
 		"@types/node": "^10.12.21",
 		"@types/vscode": "^1.39.0",
 		"glob": "^7.1.4",
+		"markdown-it": "^10.0.0",
 		"mocha": "^6.1.4",
 		"typescript": "^3.3.1",
 		"tslint": "^5.12.1",
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
-		"markdown-it": "^10.0.0"
+		"@types/markdown-it": "^0.0.9"
 	}
 }

@@ -11,13 +11,7 @@ export function createSampleProject() : JSON {
 					"name":"resources",
 					"folders": [
 					   {
-						  "name":"text",
-						  "files": [
-							  {
-								  "name":"simple.groovy",
-								  "content":"from('timer:groovy?period=1s')\n\t.routeId('groovy')\n\t.setBody()\n\t.simple('Hello Camel K from ${routeId}')\n\t.to('log:info?showAll=false')\n"
-							  }
-						  ]
+						  "name":"text"
 					   },
 					   {
 						  "name":"images"
@@ -25,8 +19,14 @@ export function createSampleProject() : JSON {
 					]
 				},
 				{
-					"name":"src"
-				}
+					"name":"src",
+					"files": [
+						{
+							"name":"simple.groovy",
+							"content":"from('timer:groovy?period=1s')\n\t.routeId('groovy')\n\t.setBody()\n\t.simple('Hello Camel K from ${routeId}')\n\t.to('log:info?showAll=false')\n"
+						}
+					]
+		  		}
 			]
 		   }
 		]
