@@ -17,8 +17,12 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "vscode.didact.scaffoldProject",
+				"title": "Scaffold Tutorial Project"
+			},
+			{
+				"command": "vscode.didact.tutorialStep",
+				"title": "Trigger a command"
 			}
 		]
 	},
@@ -39,5 +43,8 @@
 		"typescript": "^3.3.1",
 		"tslint": "^5.12.1",
 		"vscode-test": "^1.2.0"
+	},
+	"dependencies": {
+		"markdown-it": "^10.0.0"
 	}
 }
