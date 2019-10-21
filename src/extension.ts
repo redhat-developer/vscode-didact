@@ -167,9 +167,29 @@ class DidactWebviewPanel {
 					case 'alert':
 						return;
 					case 'link':
-						let commandId = message.text.replace('didact:', '');						
-						console.log(`Incoming link to invoke command: ${commandId}`);
-						await vscode.commands.executeCommand(commandId);
+						if (message.text) {
+							let commands = message.text.split(':');
+							let commandId = undefined;
+							let filepath = undefined;
+							if (commands.length > 1) {
+								commandId = commands[1];
+							}
+							if (commands.length > 2) {
+								filepath = commands[2];
+							}
+							if (commandId && filepath) {
+								if (vscode.workspace.workspaceFolders === undefined) { 
+									return; 
+								}
+								var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
+								let rootPath = workspace.uri.fsPath;
+								let fullpath = path.join(rootPath, filepath);
+								let uri : vscode.Uri = vscode.Uri.file(fullpath);
+								await vscode.commands.executeCommand(commandId, uri);
+							} else if (commandId) {
+								await vscode.commands.executeCommand(commandId);
+							}
+						}
 						return;
 					case 'didact':
 						vscode.window.showInformationMessage("Message minder says " + JSON.stringify(message));
@@ -214,6 +234,12 @@ class DidactWebviewPanel {
 		// And the uri we use to load this script in the webview
 		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
+		// attempted to load some CSS, but it's not getting picked up
+		const cssPathOnDisk = vscode.Uri.file(
+			path.join(this._extensionPath, 'media', 'webview.css')
+		);
+		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
+
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
@@ -225,7 +251,8 @@ class DidactWebviewPanel {
 			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Didact Tutorial</title>
-		</head>
+			<link rel="stylesheet" href="${cssUri}">
+			</head>
 		<body>` + mdHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
