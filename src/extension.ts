@@ -6,7 +6,6 @@ import * as MarkdownIt from 'markdown-it';
 import * as path from 'path';
 
 export const SCAFFOLD_PROJECT_COMMAND = 'vscode.didact.scaffoldProject';
-export const TRIGGER_COMMAND_COMMAND = 'vscode.didact.tutorialStep';
 export const OPEN_TUTORIAL_COMMAND = 'vscode.didact.openTutorial';
 
 let _extensionPath : string = '';
@@ -15,36 +14,22 @@ export function activate(context: vscode.ExtensionContext) {
 
 	_extensionPath = context.extensionPath;
 
-	let scaffoldProject = vscode.commands.registerCommand(SCAFFOLD_PROJECT_COMMAND, async () => {
+	let scaffoldProject = vscode.commands.registerCommand(SCAFFOLD_PROJECT_COMMAND, async (jsonpath:vscode.Uri) => {
 		if (vscode.workspace.workspaceFolders) {
-			var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
-			let rootPath = workspace.uri.fsPath;
-			if (rootPath !== undefined) { 
-				let testJson : any = utils.createSampleProject();
-				await utils.createFoldersFromJSON(testJson).then( () => {
-					let newFolder = `${rootPath}/root`;
-					let exists = fs.existsSync(newFolder);
-					console.log(`Testing to see if ${newFolder} exists: ${exists}`);
-				}).catch( (error) => {
-					console.log(`Error found while scaffolding didact project: ${error}`);
-				});
+			let testJson : any;
+			if (jsonpath) {
+				var mdStr = fs.readFileSync(jsonpath.fsPath, 'utf8');
+				testJson = JSON.parse(mdStr);
+			} else {
+				testJson = utils.createSampleProject();
 			}
+			await utils.createFoldersFromJSON(testJson)
+			.catch( (error) => {
+				console.log(`Error found while scaffolding didact project: ${error}`);
+			});
 		}
 	});
 	context.subscriptions.push(scaffoldProject);
-
-	let tutorialStep = vscode.commands.registerCommand(TRIGGER_COMMAND_COMMAND, async () => {
-		if (vscode.workspace.workspaceFolders) {
-			var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
-			let rootPath = workspace.uri.fsPath;
-			if (rootPath !== undefined) { 
-				let newPath = `${rootPath}/root/src/simple.groovy`;
-				let uri = Uri.file(newPath);
-				await vscode.commands.executeCommand('vscode.openFolder', uri);
-			}
-		}
-	});
-	context.subscriptions.push(tutorialStep);
 
 	let openTutorial = vscode.commands.registerCommand(OPEN_TUTORIAL_COMMAND, () => {
 		DidactWebviewPanel.createOrShow(context.extensionPath);
@@ -58,7 +43,7 @@ function getWebviewContent() {
 	let md = new MarkdownIt();
 	// Get path to resource on disk
 	const filepath = vscode.Uri.file(
-		path.join(_extensionPath, 'src', 'tutorial2.md')
+		path.join(_extensionPath, 'example', 'tutorial2.md')
 	);
 	var mdStr = fs.readFileSync(filepath.fsPath, 'utf8');
 	var result = md.render(mdStr);
@@ -168,26 +153,71 @@ class DidactWebviewPanel {
 						return;
 					case 'link':
 						if (message.text) {
-							let commands = message.text.split(':');
-							let commandId = undefined;
-							let filepath = undefined;
-							if (commands.length > 1) {
-								commandId = commands[1];
-							}
-							if (commands.length > 2) {
-								filepath = commands[2];
-							}
-							if (commandId && filepath) {
+							let commands : string[] = message.text.split(':');
+							let commandId: string | undefined = undefined;
+							let projectFilePath: string | undefined = undefined;
+							let srcFilePath: string | undefined = undefined;
+							
+							commands.forEach((value, index) => {
+								switch(value.toLowerCase()) {
+									case `commandid`: {
+										commandId = commands[index + 1] as string;
+										break;
+									}
+									case `projectfilepath`: {
+										projectFilePath = commands[index+1] as string;
+										break;
+									}
+									case `srcfilepath`: {
+										srcFilePath = commands[index+1] as string;
+										break;
+									}
+									default : {
+										// do nothing
+										break;
+									}
+								}
+							});
+							if (commandId && projectFilePath) {
 								if (vscode.workspace.workspaceFolders === undefined) { 
 									return; 
 								}
 								var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
 								let rootPath = workspace.uri.fsPath;
-								let fullpath = path.join(rootPath, filepath);
+								let fullpath = path.join(rootPath, projectFilePath);
 								let uri : vscode.Uri = vscode.Uri.file(fullpath);
-								await vscode.commands.executeCommand(commandId, uri);
+								try {
+									await vscode.commands.executeCommand(commandId, uri)
+										.then( () => {
+											vscode.window.showInformationMessage(`Didact just executed ${commandId} with resource uri ${uri}`);
+										});
+								} catch (error) {
+									vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+								}
+							} else if (commandId && srcFilePath) {
+								if (this._extensionPath === undefined) { 
+									return; 
+								}
+								const uri : vscode.Uri = vscode.Uri.file(
+									path.join(this._extensionPath, srcFilePath)
+								);
+								try {
+									await vscode.commands.executeCommand(commandId, uri)
+										.then( () => {
+											vscode.window.showInformationMessage(`Didact just executed ${commandId} with resource uri ${uri}`);
+										});
+								} catch (error) {
+									vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+								}
 							} else if (commandId) {
-								await vscode.commands.executeCommand(commandId);
+								try {
+									await vscode.commands.executeCommand(commandId)
+										.then( () => {
+											vscode.window.showInformationMessage(`Didact just executed ${commandId}`);
+										});
+									} catch (error) {
+										vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+									}
 							}
 						}
 						return;
@@ -248,7 +278,7 @@ class DidactWebviewPanel {
 			Use a content security policy to only allow loading images from https or from our extension directory,
 			and only allow scripts that have a specific nonce.
 			-->
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';">
+			<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';"> -->
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Didact Tutorial</title>
 			<link rel="stylesheet" href="${cssUri}">
