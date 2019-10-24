@@ -33,10 +33,12 @@
 				// Handle click here by posting data back to VS Code
 				// for your extension to handle
 				vscode.postMessage({ command: 'link', text: hrefValue });
-				event.preventDefault();
 
 				// check the box
 				node.parentNode.querySelector('input').checked = true;
+				vscode.postMessage({ command: 'update', text: document.body });
+
+				event.preventDefault();
 
 				return;
 			}

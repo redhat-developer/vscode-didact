@@ -80,6 +80,7 @@ class DidactWebviewPanel {
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionPath: string;
 	private _disposables: vscode.Disposable[] = [];
+	private currentHtml : string | undefined = undefined;
 
 	public static addListener(context: vscode.ExtensionContext) {
 		if (DidactWebviewPanel.currentPanel) {
@@ -118,7 +119,10 @@ class DidactWebviewPanel {
 				enableScripts: true,
 
 				// And restrict the webview to only loading content from our extension's `media` directory.
-				localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
+				localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))], 
+
+				// persist the state 
+				retainContextWhenHidden: true
 			}
 		);
 
@@ -176,7 +180,10 @@ class DidactWebviewPanel {
 			async message => {
 				console.log(message);
 				switch (message.command) {
-					case 'alert':
+					case 'update':
+						if (message.text) {
+							this.currentHtml = message.text;
+						}
 						return;
 					case 'link':
 						if (message.text) {
@@ -272,9 +279,6 @@ class DidactWebviewPanel {
 							}
 						}
 						return;
-					case 'didact':
-						vscode.window.showInformationMessage("Message minder says " + JSON.stringify(message));
-						return;
 				}
 			},
 			null,
@@ -344,8 +348,10 @@ class DidactWebviewPanel {
 
 	private _update() {
 		this._panel.title = "Didact Tutorial";
-		let outHtml = this.wrapMarkdown(getWebviewContent());
-		this._panel.webview.html = outHtml;
+		if (!this.currentHtml) {
+			this.currentHtml = this.wrapMarkdown(getWebviewContent());
+		}
+		this._panel.webview.html = this.currentHtml;
 	}
 
 }
