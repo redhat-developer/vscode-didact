@@ -10,7 +10,7 @@ What follows is a simple example with three actions. One scaffolds a project bas
 
 A simple tutorial is defined in [this MarkDown file](./example/tutorial2.md)
 
-![Three Step Didact Tutorial Example](./images/didact-sample-tutorial-22-OCT-2019.gif)
+![Three Step Didact Tutorial Example](./images/didact-sample-tutorial-24-OCT-2019.gif)
 
 # Implementation Notes
 
@@ -32,12 +32,12 @@ All Didact links have the following qualities:
 
 * Starts with `didact:`
 * Then works in pairs
-  * `commandId:your.vscode.command.id`
-  * (optional) `projectFilePath:my/file/path` (assumes it's in the user's workspace, so has the workspace root prepended)
-  * (optional) `srcFilePath:my/src/file/path` (assumes it's in the extension source, so prepends the extension `__dirname`)
-  * (optional) `completion:'my notification message'` (to provide a human readable message to the user upon task completion)
-  * (optional) `error:'my error message'` (to provide a human readable message to the user upon task error)
-  * Note: projectFilePath and srcFilePath should be mutually exclusive
+  * `commandId=your.vscode.command.id`
+  * (optional) `projectFilePath=my/file/path` (assumes it's in the user's workspace, so has the workspace root prepended)
+  * (optional) `srcFilePath=my/src/file/path` (assumes it's in the extension source, so prepends the extension `__dirname`)
+  * (optional) `completion='my%20notification%20message'` (to provide a human readable message to the user upon task completion - note that spaces must be replaced with %20)
+  * (optional) `error='my%20error%20message'` (to provide a human readable message to the user upon task error - note that spaces must be replaced with %20)
+  * Note: projectFilePath and srcFilePath should be mutually exclusive, but that distinction is not made at present
 
 ## Project JSON Structure
 

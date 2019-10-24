@@ -23,5 +23,5 @@ If the extension is not installed, it will show an error message to the user.
 
 ## Tutorial in Action (Animated Gif)
 
-![Three Step Didact Tutorial Example](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/images/didact-sample-tutorial-22-OCT-2019.gif)
+![Three Step Didact Tutorial Example](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/images/didact-sample-tutorial-24-OCT-2019.gif)
 
