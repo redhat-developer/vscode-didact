@@ -2,8 +2,31 @@
 	"name": "vscode-didact",
 	"displayName": "vscode-didact",
 	"description": "Tutorial framework in VS Code",
+	"license": "Apache-2.0",
 	"version": "0.0.1",
 	"publisher": "redhat",
+	"preview": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bfitzpat/vscode-didact"
+	},
+	"bugs": {
+		"url": "https://github.com/bfitzpat/vscode-didact/issues"
+	},
+	"author": "Brian Fitzpatrick <bfitzpat@redhat.com> (http://redhat.com)",
+	"maintainers": [
+		{
+			"name": "Brian Fitzpatrick",
+			"email": "bfitzpat@redhat.com",
+			"url": "http://redhat.com"
+		}
+	],
+	"homepage": "https://github.com/bfitzpat/vscode-didact",
+	"keywords": [
+		"Didact",
+		"Tutorial",
+		"Framework"
+	],
 	"engines": {
 		"vscode": "^1.39.0"
 	},
@@ -50,6 +73,7 @@
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
-		"@types/markdown-it": "^0.0.9"
+		"@types/markdown-it": "^0.0.9",
+		"markdown-it-task-lists": "^2.1.1"
 	}
 }

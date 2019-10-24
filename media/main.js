@@ -25,12 +25,19 @@
 		let node = event && event.target;
 		while (node) {
 			if (node.href) {
-				let hrefValue = node.href;
+				let hrefValue = node.getAttribute('href');
+				if (!hrefValue.startsWith('didact')) {
+					return; // if it's not a didact link, we don't need to worry about it
+				}
 
 				// Handle click here by posting data back to VS Code
 				// for your extension to handle
 				vscode.postMessage({ command: 'link', text: hrefValue });
 				event.preventDefault();
+
+				// check the box
+				node.parentNode.querySelector('input').checked = true;
+
 				return;
 			}
 			node = node.parentNode;

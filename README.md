@@ -20,13 +20,23 @@ Currently we are using the CSS template suggested by the W3C, as provided [here 
 
 ## Link formatting
 
-The Didact webview is listening for link events and responds if a link starts with `didact:`. All Didact links have the following qualities:
+The Didact webview is listening for link events and responds if a link starts with `didact`. 
+
+Examples:
+
+* `didact://?commandId=vscode.didact.scaffoldProject&srcFilePath='example/project.json'`
+* `didact://?commandId='vscode.openFolder'&projectFilePath='simpleGroovyProject/src/simple.groovy'&completion='Opened the simple.groovy file'`
+* `didact//?commandId='camelk.startintegration'&projectFilePath='simpleGroovyProject/src/simple.groovy'`
+
+All Didact links have the following qualities:
 
 * Starts with `didact:`
 * Then works in pairs
   * `commandId:your.vscode.command.id`
   * (optional) `projectFilePath:my/file/path` (assumes it's in the user's workspace, so has the workspace root prepended)
   * (optional) `srcFilePath:my/src/file/path` (assumes it's in the extension source, so prepends the extension `__dirname`)
+  * (optional) `completion:'my notification message'` (to provide a human readable message to the user upon task completion)
+  * (optional) `error:'my error message'` (to provide a human readable message to the user upon task error)
   * Note: projectFilePath and srcFilePath should be mutually exclusive
 
 ## Project JSON Structure
@@ -62,6 +72,7 @@ The Project JSON file structure is simply a collection of named folders and file
 5. Look into finding ways to chain commands together so that you can do things like create a project and open a file all in one go.
 6. Look at the Eclipse Cheat sheet approach to see if we can glean anything - http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fextension-points%2FcheatSheetContentFileSpec.html 
 7. Also look at the Integr8ly Walkthroughs to see if we can glean anything - https://github.com/integr8ly/tutorial-web-app-walkthroughs/tree/master/walkthroughs
+8. Figure out how to stash the generated HTML from the markdown locally in the user's global workspace so that we can persist the state of checkboxes as the user works through various steps - essentially enabling it between sessions
 
 
 **Enjoy!**
