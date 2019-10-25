@@ -1,20 +1,29 @@
 # vscode-didact README  
 
-The *vscode-didact* extension prototype does a few things. Mainly it shows what's possible through a combination of a simple Markdown file, the VS Code Webview, and calling through to easily accessible commands.
+The **vscode-didact** extension prototype does a few things. Mainly it shows what's possible through a combination of a simple Markdown file, the VS Code Webview, and calling easily accessible commands in VS Code.
 
 ## VSCode-Didact In Action
 
-What follows is a simple example with three actions. One scaffolds a project based on a structure defined in JSON. One opens a file created when the folder structure was created. And one triggers a command in a different extension if it's installed.
-
-## Tutorial in Action
-
-A simple tutorial is defined in [this MarkDown file](./example/tutorial2.md)
+What follows is a simple example with three actions. One scaffolds a project based on a structure defined in JSON. One opens a file created when the folder structure was created. And one triggers a command in a different extension if it's installed. The tutorial is defined in [this MarkDown file](./example/tutorial2.md)
 
 ![Three Step Didact Tutorial Example](./images/didact-sample-tutorial-24-OCT-2019.gif)
 
 # Implementation Notes
 
- A new menu has been added for Markdown files with the `*.md` extension that opens them in the Didact window. Right-click on the Didact Markdown file and select `Start Didact Tutorial from File` from the context menu. (Note that it also works to render most standard Markdown files.)
+## Accessing Didact in the workspace. 
+
+With Didact installed, there are two ways to open a Didact window.
+
+* To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact Markdown file specified in the Settings.
+* To open a local Didact file in the workspace directly, Right-click on the Didact Markdown file (`*.md`) and select **Start Didact Tutorial from File** from the context menu. (Note that it also works to render most standard Markdown files.)
+
+You can also access Didact's scaffolding capabilities by right-clicking on a `*.json` file formatted in the way Didact knows and select **Didact Scaffold Project from File**. [See Project JSON Structure](#project-json-structure) below for details about how to construct the project json file.
+
+## Didact Settings 
+
+To change the default Didact file, access the settings (`File->Preferences->Settings`), type **Didact** and set the `Didact: Default Url`. This can be any valid URL to a Didact formatted Markdown file, including `http://`, `https://`, or `file://` URLs.
+
+![Didact Settings](./images/settings.jpg)
 
 ## CSS Styling
 
@@ -86,5 +95,7 @@ The Project JSON file structure is simply a collection of named folders and file
 7. Also look at the Integr8ly Walkthroughs to see if we can glean anything - https://github.com/integr8ly/tutorial-web-app-walkthroughs/tree/master/walkthroughs
 8. Figure out how to stash the generated HTML from the markdown locally in the user's global workspace so that we can persist the state of checkboxes as the user works through various steps - essentially enabling it between sessions
 9. Figure out a way to limit the `Start Didact Tutorial from File` context menu to only work for Didact files.
+10. Figure out a way to limit the `Didact Scaffold Project from File` context menu to only work for Didact Project Scaffolding files.
+11. Figure out a way to reference files from the project json structure instead of providing file content directly so file content is copied and more manageable going forward.
 
 **Enjoy!**

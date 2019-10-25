@@ -38,14 +38,27 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"configuration": [
+			{
+				"title": "Didact Extension Settings",
+				"properties": {
+					"didact.defaultUrl": {
+						"type": "string",
+						"default": "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/linktest.md",
+						"description": "Default Didact File Shown - can be any valid URL to a Didact Markdown file",
+						"scope": "window"
+					}
+				}
+			}
+		],
 		"commands": [
 			{
 				"command": "vscode.didact.scaffoldProject",
-				"title": "Scaffold Tutorial Project"
+				"title": "Didact Scaffold Project from File"
 			},
 			{
 				"command": "vscode.didact.openTutorial",
-				"title": "Open Didact Tutorial"
+				"title": "Open Didact"
 			},
 			{
 				"command": "vscode.didact.startDidact",
@@ -57,6 +70,11 @@
 				{
 					"command": "vscode.didact.startDidact",
 					"when": "resourceExtname =~ /\\.md$/",
+					"group": "vscode.didact.group"
+				},
+				{
+					"command": "vscode.didact.scaffoldProject",
+					"when": "resourceExtname =~ /\\.json$/",
 					"group": "vscode.didact.group"
 				}
 			]

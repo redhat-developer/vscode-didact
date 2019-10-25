@@ -130,23 +130,28 @@ function getMDParser() : MarkdownIt {
 
 async function getWebviewContent() : Promise<string|void> {
 	if (!_mdFileUri) {
-		_mdFileUri = vscode.Uri.file(path.join(_extensionPath, 'example', 'tutorial2.md'));
+		const configuredUri : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
+		if (configuredUri) {
+			_mdFileUri = vscode.Uri.parse(configuredUri);
+		}
 	}
-	if (_mdFileUri.scheme === 'file') {
-		return await getDataFromFile(_mdFileUri).catch( (error) => {
-			if (_mdFileUri) {
-				vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
-			}
-			console.log(error);
-		});
-	} else if (_mdFileUri.scheme === 'http' || _mdFileUri.scheme === 'https'){
-		const urlToFetch = _mdFileUri.toString();
-		return await getDataFromUrl(urlToFetch).catch( (error) => {
-			if (_mdFileUri) {
-				vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
-			}
-			console.log(error);
-		});
+	if (_mdFileUri) {
+		if (_mdFileUri.scheme === 'file') {
+			return await getDataFromFile(_mdFileUri).catch( (error) => {
+				if (_mdFileUri) {
+					vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
+				}
+				console.log(error);
+			});
+		} else if (_mdFileUri.scheme === 'http' || _mdFileUri.scheme === 'https'){
+			const urlToFetch = _mdFileUri.toString();
+			return await getDataFromUrl(urlToFetch).catch( (error) => {
+				if (_mdFileUri) {
+					vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
+				}
+				console.log(error);
+			});
+		}
 	}
 	return undefined;
 }
