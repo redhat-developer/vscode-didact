@@ -14,11 +14,23 @@ A simple tutorial is defined in [this MarkDown file](./example/tutorial2.md)
 
 # Implementation Notes
 
+ A new menu has been added for Markdown files with the `*.md` extension that opens them in the Didact window. Right-click on the Didact Markdown file and select `Start Didact Tutorial from File` from the context menu. (Note that it also works to render most standard Markdown files.)
+
 ## CSS Styling
 
 Currently we are using the CSS template suggested by the W3C, as provided [here at the Quackit.com site](https://www.quackit.com/css/css_template.cfm). We may be able to reuse some of the PatternFly approach, but that will require additional research.
 
-## Link formatting
+## Didact Link formatting for opening Didact files inside VS Code
+
+Didact now has the ability to open Didact files themselves, which enables us to leverage files that are at public URLs, such as those put into Github repositories as well as those provided in extension source files or even in scaffolded projects. This capability comes in handy if you want to mix and match tutorials and commands, breaking up lengthy processes into smaller chunks.
+
+* You supply https or http links in the format `vscode://redhat.vscode-didact?https=urltofile/file.md` or `vscode://redhat.vscode-didact?http=urltofile/file.md`
+* You supply `extension` links in the format `vscode://redhat.vscode-didact?extension=folder/file.md`
+* You supply `workspace` links in the format `vscode://redhat.vscode-didact?workspace=folder/file.md`
+
+Within a given Didact tutorial Markdown file, you can then mix and match link styles, opening other tutorials or launching commands with [Didact link formatting](https://github.com/bfitzpat/vscode-didact#link-formatting)
+
+## Didact Link formatting for calling Commands
 
 The Didact webview is listening for link events and responds if a link starts with `didact`. 
 
@@ -73,6 +85,6 @@ The Project JSON file structure is simply a collection of named folders and file
 6. Look at the Eclipse Cheat sheet approach to see if we can glean anything - http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fextension-points%2FcheatSheetContentFileSpec.html 
 7. Also look at the Integr8ly Walkthroughs to see if we can glean anything - https://github.com/integr8ly/tutorial-web-app-walkthroughs/tree/master/walkthroughs
 8. Figure out how to stash the generated HTML from the markdown locally in the user's global workspace so that we can persist the state of checkboxes as the user works through various steps - essentially enabling it between sessions
-
+9. Figure out a way to limit the `Start Didact Tutorial from File` context menu to only work for Didact files.
 
 **Enjoy!**

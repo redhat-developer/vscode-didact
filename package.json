@@ -44,14 +44,23 @@
 				"title": "Scaffold Tutorial Project"
 			},
 			{
-				"command": "vscode.didact.tutorialStep",
-				"title": "Trigger a command"
-			},
-			{
 				"command": "vscode.didact.openTutorial",
 				"title": "Open Didact Tutorial"
+			},
+			{
+				"command": "vscode.didact.startDidact",
+				"title": "Start Didact Tutorial from File"
 			}
-		]
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "vscode.didact.startDidact",
+					"when": "resourceExtname =~ /\\.md$/",
+					"group": "vscode.didact.group"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -68,12 +77,14 @@
 		"glob": "^7.1.4",
 		"markdown-it": "^10.0.0",
 		"mocha": "^6.1.4",
-		"typescript": "^3.3.1",
 		"tslint": "^5.12.1",
+		"typescript": "^3.3.1",
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
 		"@types/markdown-it": "^0.0.9",
-		"markdown-it-task-lists": "^2.1.1"
+		"@types/request-promise": "^4.1.44",
+		"markdown-it-task-lists": "^2.1.1",
+		"node-fetch": "^2.6.0"
 	}
 }
