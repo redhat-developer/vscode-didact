@@ -58,6 +58,7 @@ All Didact links have the following qualities:
   * (optional) `srcFilePath=my/src/file/path` (assumes it's in the extension source, so prepends the extension `__dirname`)
   * (optional) `completion='my%20notification%20message'` (to provide a human readable message to the user upon task completion - note that spaces must be replaced with %20)
   * (optional) `error='my%20error%20message'` (to provide a human readable message to the user upon task error - note that spaces must be replaced with %20)
+  * (optional) `text=one$$two$$three` (to provide straight text input to the command, with each argument separated by `$$`) (currently only works out to three arguments, but can likely be expanded further if needed)
   * Note: projectFilePath and srcFilePath should be mutually exclusive, but that distinction is not made at present
 
 ## Project JSON Structure
@@ -89,6 +90,16 @@ The Project JSON file structure is simply a collection of named folders and file
 ```
 
 Files can either have their content specified in the project json file itself (i.e. `content: "myfilecontent"`) or copy content from a file in the directory at the same level as the project json file (i.e. `copy: myfile.txt`).
+
+## Common Command Ids
+
+* java.projectConfiguration.update: Updates a Mavenized Java project, essentially attempting to get it ready to run ([See vscode-java](https://github.com/redhat-developer/vscode-java))
+* vscode.didact.scaffoldProject: Without an input creates a sample project structure. With an input that is a json file in the format from above, generates the designated folder/file structure.
+* vscode.didact.startDidact: Opens a Didact window with the Markdown file passed in
+* vscode.didact.startTerminalWithName: Creates and shows a terminal with the given name in the VS Code window
+* vscode.didact.sendNamedTerminalAString: Sends text to a named terminal, which is then executed in the terminal
+* vscode.openFolder: [See `Commands` in the VS Code API docs](https://code.visualstudio.com/api/references/commands#commands)
+
 
 # Next steps
 
