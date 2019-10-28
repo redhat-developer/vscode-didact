@@ -75,6 +75,10 @@ The Project JSON file structure is simply a collection of named folders and file
                  {
                      "name":"simple.groovy",
                      "content":"from('timer:groovy?period=1s')\n\t.routeId('groovy')\n\t.setBody()\n\t.simple('Hello Camel K from ${routeId}')\n\t.to('log:info?showAll=false')\n"
+                 },
+                 {
+                     "name":"mycopied.file",
+                     "copy":"file-in-same-directory-as-my-project-json-that-I-want-the-contents-of.txt"
                  }
              ]
            }
@@ -83,6 +87,8 @@ The Project JSON file structure is simply a collection of named folders and file
  ]
 }
 ```
+
+Files can either have their content specified in the project json file itself (i.e. `content: "myfilecontent"`) or copy content from a file in the directory at the same level as the project json file (i.e. `copy: myfile.txt`).
 
 # Next steps
 
