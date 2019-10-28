@@ -1,4 +1,6 @@
-[![Apache Camel](https://github.com/bfitzpat/vscode-didact/raw/master/example/camelinaction/post-logo-apache-camel-d.png)](https://camel.apache.org/)
+![Apache Camel](https://github.com/bfitzpat/vscode-didact/raw/master/example/camelinaction/post-logo-apache-camel-d.png)
+
+[Apache Camel](https://camel.apache.org/)
 
 # Camel in Action 2, Chapter 1 - Meeting Camel
 
