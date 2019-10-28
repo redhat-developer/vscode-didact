@@ -52,21 +52,26 @@ export function isJson(item: any) {
 
 export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Promise<any> {
 	try {
-		if (vscode.workspace.workspaceFolders === undefined) { 
-			return; 
+		if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) { 
+			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.'); 
 		}
         var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
 		let rootPath = workspace.uri.fsPath;
 		if (isJson(json)) {
 			var folders = json.folders;
 			if (folders) {
-				createSubFolders(rootPath, folders, jsonpath);
+				try {
+					createSubFolders(rootPath, folders, jsonpath);
+				} catch (error) {
+					throw new Error(`Operation(s) failed - ${error}`);
+				}
 			}
 		} else {
-			return(`Operation(s) failed`);
+			throw new Error('Operation(s) failed - the json file is not configured as a Didact scaffold file.'); 
 		}
 	} catch ( error) {
 		console.log(`Operation(s) failed - ${error}`);
+		throw new Error(`Operation(s) failed -  ${error}`); 
 	}
 }
 
@@ -125,4 +130,12 @@ export function pathEquals(path1: string, path2: string): boolean {
 		path2 = path2.toLowerCase();
 	}
 	return path1 === path2;
+}
+
+export function getWorkspacePath():string | undefined {
+	if(vscode.workspace.workspaceFolders !== undefined && vscode.workspace.workspaceFolders.length > 0) {
+		return vscode.workspace.workspaceFolders[0].uri.fsPath;
+	} else {
+		return undefined;
+	}
 }

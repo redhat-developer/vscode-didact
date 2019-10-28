@@ -17,6 +17,7 @@ Outline:
 
 - [ ] Maven is accessible at the command line
 - [ ] `Extension Pack for Apache Camel by Red Hat` is installed ([Click here to install](vscode:extension/redhat.apache-camel-extension-pack))
+- [ ] At least one folder must exist in your workspace
 
 ## Steps
 

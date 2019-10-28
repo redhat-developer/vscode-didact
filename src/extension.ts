@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 	_extensionPath = context.extensionPath;
 
 	let scaffoldProject = vscode.commands.registerCommand(SCAFFOLD_PROJECT_COMMAND, async (jsonpath:vscode.Uri) => {
-		if (vscode.workspace.workspaceFolders) {
+		if (utils.getWorkspacePath) {
 			let testJson : any;
 			if (jsonpath) {
 				var mdStr = fs.readFileSync(jsonpath.fsPath, 'utf8');
@@ -32,8 +32,10 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			await utils.createFoldersFromJSON(testJson, jsonpath)
 			.catch( (error) => {
-				console.log(`Error found while scaffolding didact project: ${error}`);
+				throw new Error(`Error found while scaffolding didact project: ${error}`);
 			});
+		} else {
+			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin.'); 
 		}
 	});
 	context.subscriptions.push(scaffoldProject);
