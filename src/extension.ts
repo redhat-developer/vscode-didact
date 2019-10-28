@@ -12,6 +12,8 @@ const fetch = require('node-fetch');
 export const SCAFFOLD_PROJECT_COMMAND = 'vscode.didact.scaffoldProject';
 export const OPEN_TUTORIAL_COMMAND = 'vscode.didact.openTutorial';
 export const START_DIDACT_COMMAND = 'vscode.didact.startDidact';
+export const START_TERMINAL_COMMAND = 'vscode.didact.startTerminalWithName';
+export const SEND_TERMINAL_SOME_TEXT_COMMAND = 'vscode.didact.sendNamedTerminalAString';
 
 let _extensionPath : string = '';
 
@@ -110,6 +112,25 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		});
 	}
+
+	let startTerminal = vscode.commands.registerCommand(START_TERMINAL_COMMAND, (name:string) => {
+		const terminal = vscode.window.createTerminal(name);
+		terminal.show();
+	});
+	context.subscriptions.push(startTerminal);
+
+	let sendTerminalText = vscode.commands.registerCommand(SEND_TERMINAL_SOME_TEXT_COMMAND, (name:string, text:string) => {
+		const terminals = <vscode.Terminal[]>(<any>vscode.window).terminals;
+		terminals.forEach(terminal => {
+			if (terminal.name === name) {
+				terminal.show();
+				terminal.sendText(text);
+				return;
+			}
+		});
+	});
+	context.subscriptions.push(sendTerminalText);
+
 }
 
 function getValue(input : string | string[]) : string | undefined {
@@ -392,7 +413,14 @@ class DidactWebviewPanel {
 								}
 							} else if (commandId && text) {
 								try {
-									await vscode.commands.executeCommand(commandId, text)
+									let inputs : string[] = [];
+									if (text.split('$$').length > 0) {
+										inputs = text.split('$$');
+									} else {
+										inputs.push(text);
+									}
+									// I'm sure there's a better way to do this
+									await this.issueTextCommand(commandId, inputs)
 										.then( () => {
 											if (completionMessage) {
 												vscode.window.showInformationMessage(completionMessage);
@@ -432,6 +460,16 @@ class DidactWebviewPanel {
 			null,
 			this._disposables
 		);
+	}
+
+	private async issueTextCommand(commandId: string, args: string[]) : Promise<any> {
+		if (args.length === 1) {
+			return await vscode.commands.executeCommand(commandId, args[0]);
+		} else if (args.length === 2) {
+			return await vscode.commands.executeCommand(commandId, args[0], args[1]);
+		} else if (args.length === 3) {
+			return await vscode.commands.executeCommand(commandId, args[0], args[1], args[2]);
+		}
 	}
 
 	public dispose() {

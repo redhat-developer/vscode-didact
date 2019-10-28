@@ -63,6 +63,14 @@
 			{
 				"command": "vscode.didact.startDidact",
 				"title": "Start Didact Tutorial from File"
+			},
+			{
+				"command": "vscode.didact.startTerminalWithName",
+				"title": "Start a VS Code Terminal with a particular name"
+			},
+			{
+				"command": "vscode.didact.sendNamedTerminalAString",
+				"title": "Send Named Terminal Some Text"
 			}
 		],
 		"menus": {
