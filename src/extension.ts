@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
 			} else {
 				testJson = utils.createSampleProject();
 			}
-			await utils.createFoldersFromJSON(testJson)
+			await utils.createFoldersFromJSON(testJson, jsonpath)
 			.catch( (error) => {
 				console.log(`Error found while scaffolding didact project: ${error}`);
 			});
@@ -320,7 +320,8 @@ class DidactWebviewPanel {
 							let srcFilePath: string | undefined = undefined;
 							let completionMessage : string | undefined = undefined;
 							let errorMessage : string | undefined = undefined;
-
+							let text : string | undefined = undefined;
+							
 							if (query.commandId) {
 								commandId = getValue(query.commandId);
 							}
@@ -336,7 +337,10 @@ class DidactWebviewPanel {
 							if (query.error) {
 								errorMessage = getValue(query.error);
 							}
-
+							if (query.text) {
+								text = getValue(query.text);
+							}
+							
 							if (commandId && projectFilePath) {
 								if (vscode.workspace.workspaceFolders === undefined) { 
 									return; 
@@ -375,6 +379,23 @@ class DidactWebviewPanel {
 												vscode.window.showInformationMessage(completionMessage);
 											} else {
 												vscode.window.showInformationMessage(`Didact just executed ${commandId} with resource uri ${uri}`);
+											}
+										});
+								} catch (error) {
+									if (errorMessage) {
+										vscode.window.showErrorMessage(errorMessage);
+									} else {
+										vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+									}
+								}
+							} else if (commandId && text) {
+								try {
+									await vscode.commands.executeCommand(commandId, text)
+										.then( () => {
+											if (completionMessage) {
+												vscode.window.showInformationMessage(completionMessage);
+											} else {
+												vscode.window.showInformationMessage(`Didact just executed ${commandId} with text ${text}`);
 											}
 										});
 								} catch (error) {

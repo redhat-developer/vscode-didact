@@ -1,0 +1,66 @@
+{
+	"folders": [
+	{
+	   "name":"file-copy",
+			"folders": [
+				{
+					"name":"src",
+					"folders": [
+						{
+							"name":"main",
+							"folders": [
+								{
+									"name":"resources",
+									"files": [
+										{
+											"name":"log4j.properties",
+											"copy":"log4j.properties"
+										}
+									]
+								},
+								{
+									"name":"java",
+									"folders": [
+										{
+											"name":"camelinaction",
+											"files": [
+												{
+													"name":"FileCopier.java",
+													"copy":"FileCopier.java"
+												},
+												{
+													"name":"FileCopierWithCamel.java",
+													"copy":"FileCopierWithCamel.java"
+												}
+											]
+										}
+									]
+								}
+							]
+							}
+					]
+				},
+				{
+					"name":"data",
+					"folders": [
+						{
+							"name":"inbox",
+							"files": [
+								{
+									"name":"message1.xml",
+									"copy":"message1.xml"
+								}
+							]
+						}
+					]
+				}
+		],
+		"files": [
+			{
+				"name":"pom.xml",
+				"copy":"pom.xml.txt"
+			}
+		]
+	}
+	]
+}

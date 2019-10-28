@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 export function createSampleProject() : JSON {
 	let project : any = {
@@ -49,7 +50,7 @@ export function isJson(item: any) {
 	return false;
 }
 
-export async function createFoldersFromJSON(json: any) : Promise<any> {
+export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Promise<any> {
 	try {
 		if (vscode.workspace.workspaceFolders === undefined) { 
 			return; 
@@ -59,7 +60,7 @@ export async function createFoldersFromJSON(json: any) : Promise<any> {
 		if (isJson(json)) {
 			var folders = json.folders;
 			if (folders) {
-				createSubFolders(rootPath, folders);
+				createSubFolders(rootPath, folders, jsonpath);
 			}
 		} else {
 			return(`Operation(s) failed`);
@@ -69,24 +70,35 @@ export async function createFoldersFromJSON(json: any) : Promise<any> {
 	}
 }
 
-export function createFiles(folderNode:any, files:any) {
+export function createFiles(folderNode:any, files:any, jsonpath:vscode.Uri) {
 	if (files) {
 		files.forEach((file:any) => {
 			let newFileName = file.name;
 			let completeFilePath = `${folderNode}/${newFileName}`;
-			let newFileContent = file.content;
+			let newFileContent = undefined;
 			console.log(`Creating ${completeFilePath}`);
-			// write to a new file
-			fs.writeFile(completeFilePath, newFileContent, (err) => {
-				if (err) { 
-					throw err; 
-				}
-			});
+			if (file.content) {
+				newFileContent = file.content;
+			} else if (file.copy && jsonpath) {
+				let relative = path.dirname(jsonpath.fsPath);
+				let filetocopy = path.join(relative, file.copy);
+				newFileContent = fs.readFileSync(filetocopy, 'utf8');
+			}
+			if (newFileContent) {
+				// write to a new file
+				fs.writeFile(completeFilePath, newFileContent, (err) => {
+					if (err) { 
+						throw err; 
+					}
+				});
+			} else {
+				throw new Error(`Unable to retrieve file content for ${completeFilePath}.`);
+			}
 		});
 	}
 }
 
-export function createSubFolders(folderNode : any, folders : any) {
+export function createSubFolders(folderNode : any, folders : any, jsonpath:vscode.Uri) {
 	folders.forEach((folder: any) => {
 		let newFolderName = folder.name;
 		let newFolder = `${folderNode}/${newFolderName}`;
@@ -99,10 +111,10 @@ export function createSubFolders(folderNode : any, folders : any) {
 			}
 		});
 		if (folder.folders) {
-			createSubFolders(newFolder, folder.folders);
+			createSubFolders(newFolder, folder.folders, jsonpath);
 		}
 		if (folder.files) {
-			createFiles(newFolder, folder.files);
+			createFiles(newFolder, folder.files, jsonpath);
 		}
 	});
 }
