@@ -56,7 +56,18 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
+	vscode.workspace.onDidChangeWorkspaceFolders( async (e) => {
+		if (DidactWebviewPanel.currentPanel) {
+			vscode.window.showInformationMessage(`Please restart the Didact window after updating your workspace folders.`);
+			DidactWebviewPanel.currentPanel.dispose();
+		}
+	});
+
 	let startDidact = vscode.commands.registerCommand(START_DIDACT_COMMAND, (uri:vscode.Uri) => {
+
+		// stash it
+		_mdFileUri = uri;
+
 		// handle extension, workspace, https, and http
 		const query = querystring.parse(uri.query);
 		if (query.extension) {
@@ -219,6 +230,10 @@ class DidactWebviewPanel {
 	private mdStr : string | undefined = undefined;
 	private mdPath : vscode.Uri | undefined = undefined;
 
+	public getMDPath() {
+		return this.mdPath;
+	}
+
 	public setMarkdown(value: string | undefined) {
 		this.mdStr = value;
 	}
@@ -285,7 +300,9 @@ class DidactWebviewPanel {
 		);
 
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
-		DidactWebviewPanel.currentPanel.setMDPath(inpath);
+		if (inpath) {
+			DidactWebviewPanel.currentPanel.setMDPath(inpath);
+		}
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
