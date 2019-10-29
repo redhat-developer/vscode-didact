@@ -5,7 +5,8 @@ import * as MarkdownIt from 'markdown-it';
 import * as path from 'path';
 import * as url from 'url';
 import * as querystring from 'querystring';
-import { isArray, TextDecoder } from 'util';
+import { isArray } from 'util';
+import * as child_process from 'child_process';
 
 const fetch = require('node-fetch');
 
@@ -14,6 +15,9 @@ export const OPEN_TUTORIAL_COMMAND = 'vscode.didact.openTutorial';
 export const START_DIDACT_COMMAND = 'vscode.didact.startDidact';
 export const START_TERMINAL_COMMAND = 'vscode.didact.startTerminalWithName';
 export const SEND_TERMINAL_SOME_TEXT_COMMAND = 'vscode.didact.sendNamedTerminalAString';
+export const REQUIREMENT_CHECK_COMMAND = 'vscode.didact.requirementCheck';
+export const EXTENSION_REQUIREMENT_CHECK_COMMAND = 'vscode.didact.extensionRequirementCheck';
+export const WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND = 'vscode.didact.workspaceFolderExistsCheck';
 
 let _extensionPath : string = '';
 
@@ -134,6 +138,42 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(sendTerminalText);
 
+	let requirementCheck = vscode.commands.registerCommand(REQUIREMENT_CHECK_COMMAND, (requirement: string, test: string) => {
+		const testCommand = test;
+		console.log('Running requirements test: ' + testCommand);
+		let result = child_process.execSync(testCommand);
+		console.log('Requirememts test result: ' + result);
+		if (result.includes('Apache Maven')) {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, true);
+			return;
+		} else {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, false);
+		}
+	});
+	context.subscriptions.push(requirementCheck);
+
+	let extRequirementCheck = vscode.commands.registerCommand(EXTENSION_REQUIREMENT_CHECK_COMMAND, (requirement: string, extensionId: string) => {
+		let testExt = vscode.extensions.getExtension(extensionId);
+		if (testExt) {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, true);
+			return;
+		} else {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, false);
+		}
+	});
+	context.subscriptions.push(extRequirementCheck);
+
+	let validWorkspaceCheck = vscode.commands.registerCommand(WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND, (requirement: string, extensionId: string) => {
+		let wsPath = utils.getWorkspacePath();
+		if (wsPath) {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, true);
+			return;
+		} else {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, false);
+		}
+	});
+	context.subscriptions.push(validWorkspaceCheck);
+
 }
 
 function getValue(input : string | string[]) : string | undefined {
@@ -150,7 +190,8 @@ function getValue(input : string | string[]) : string | undefined {
 function getMDParser() : MarkdownIt {
 	const md = new MarkdownIt();
 	const taskLists = require('markdown-it-task-lists');
-	const parser = md.use(taskLists, {enabled: true, label: true});
+	const markdownItAttrs = require('markdown-it-attrs');
+	const parser = md.use(taskLists, {enabled: true, label: true, html: true}).use(markdownItAttrs, {});
 	return parser;
 }
 
@@ -207,7 +248,7 @@ async function getDataFromUrl(url:string) : Promise<string> {
 
 export function deactivate() {}
 
-class DidactWebviewPanel {
+export class DidactWebviewPanel {
 	/**
 	 * Track the currently panel. Only allow a single panel to exist at a time.
 	 */
@@ -306,6 +347,16 @@ class DidactWebviewPanel {
 			return;
 		}
 		let jsonMsg:string = "{ \"command\": \"sendMessage\", \"data\": \"" + message + "\"}";
+		let jsonObj = JSON.parse(jsonMsg);
+		console.log("outgoing message being posted: " + jsonMsg);
+		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonObj);
+	}
+
+	public static async postRequirementsResponseMessage(requirementName: string, result: boolean) {
+		if (!DidactWebviewPanel.currentPanel) {
+			return;
+		}
+		let jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
 		console.log("outgoing message being posted: " + jsonMsg);
 		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
 	}
@@ -332,128 +383,69 @@ class DidactWebviewPanel {
 			this._disposables
 		);
 
-		// Handle messages from the webview
-		this._panel.webview.onDidReceiveMessage(
-			async message => {
-				console.log(message);
-				switch (message.command) {
-					case 'update':
-						if (message.text) {
-							this.currentHtml = message.text;
-						}
-						return;
-					case 'link':
-						if (message.text) {
-							const parsedUrl = url.parse(message.text, true);
-							const query = parsedUrl.query;
+		this.addLinkListener();
+	}
 
-							let commandId: string | undefined = undefined;
-							let projectFilePath: string | undefined = undefined;
-							let srcFilePath: string | undefined = undefined;
-							let completionMessage : string | undefined = undefined;
-							let errorMessage : string | undefined = undefined;
-							let text : string | undefined = undefined;
-							
-							if (query.commandId) {
-								commandId = getValue(query.commandId);
+	public addLinkListener() {
+		if (DidactWebviewPanel.currentPanel) {
+			// Handle messages from the webview
+			DidactWebviewPanel.currentPanel._panel.webview.onDidReceiveMessage(
+				async message => {
+					console.log(message);
+					switch (message.command) {
+						case 'update':
+							if (message.text) {
+								this.currentHtml = message.text;
 							}
-							if (query.projectFilePath) {
-								projectFilePath = getValue(query.projectFilePath);
-							}
-							if (query.srcFilePath) {
-								srcFilePath = getValue(query.srcFilePath);
-							}
-							if (query.completion) {
-								completionMessage = getValue(query.completion);
-							}
-							if (query.error) {
-								errorMessage = getValue(query.error);
-							}
-							if (query.text) {
-								text = getValue(query.text);
-							}
-							
-							if (commandId && projectFilePath) {
-								if (vscode.workspace.workspaceFolders === undefined) { 
-									return; 
+							return;
+						case 'link':
+							if (message.text) {
+								const parsedUrl = url.parse(message.text, true);
+								const query = parsedUrl.query;
+
+								let commandId: string | undefined = undefined;
+								let projectFilePath: string | undefined = undefined;
+								let srcFilePath: string | undefined = undefined;
+								let completionMessage : string | undefined = undefined;
+								let errorMessage : string | undefined = undefined;
+								let text : string | undefined = undefined;
+								
+								if (query.commandId) {
+									commandId = getValue(query.commandId);
 								}
-								var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
-								let rootPath = workspace.uri.fsPath;
-								let fullpath = path.join(rootPath, projectFilePath);
-								let uri : vscode.Uri = vscode.Uri.file(fullpath);
-								try {
-									await vscode.commands.executeCommand(commandId, uri)
-										.then( () => {
-											if (completionMessage) {
-												vscode.window.showInformationMessage(completionMessage);
-											} else {
-												vscode.window.showInformationMessage(`Didact just executed ${commandId} with resource uri ${uri}`);
-											}
-										});
-								} catch (error) {
-									if (errorMessage) {
-										vscode.window.showErrorMessage(errorMessage);
-									} else {
-										vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+								if (query.projectFilePath) {
+									projectFilePath = getValue(query.projectFilePath);
+								}
+								if (query.srcFilePath) {
+									srcFilePath = getValue(query.srcFilePath);
+								}
+								if (query.completion) {
+									completionMessage = getValue(query.completion);
+								}
+								if (query.error) {
+									errorMessage = getValue(query.error);
+								}
+								if (query.text) {
+									text = getValue(query.text);
+								}
+								
+								if (commandId && projectFilePath) {
+									if (vscode.workspace.workspaceFolders === undefined) { 
+										return; 
 									}
-								}
-							} else if (commandId && srcFilePath) {
-								if (this._extensionPath === undefined) { 
-									return; 
-								}
-								const uri : vscode.Uri = vscode.Uri.file(
-									path.join(this._extensionPath, srcFilePath)
-								);
-								try {
-									await vscode.commands.executeCommand(commandId, uri)
-										.then( () => {
-											if (completionMessage) {
-												vscode.window.showInformationMessage(completionMessage);
-											} else {
-												vscode.window.showInformationMessage(`Didact just executed ${commandId} with resource uri ${uri}`);
-											}
-										});
-								} catch (error) {
-									if (errorMessage) {
-										vscode.window.showErrorMessage(errorMessage);
-									} else {
-										vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
-									}
-								}
-							} else if (commandId && text) {
-								try {
-									let inputs : string[] = [];
-									if (text.split('$$').length > 0) {
-										inputs = text.split('$$');
-									} else {
-										inputs.push(text);
-									}
-									// I'm sure there's a better way to do this
-									await this.issueTextCommand(commandId, inputs)
-										.then( () => {
-											if (completionMessage) {
-												vscode.window.showInformationMessage(completionMessage);
-											} else {
-												vscode.window.showInformationMessage(`Didact just executed ${commandId} with text ${text}`);
-											}
-										});
-								} catch (error) {
-									if (errorMessage) {
-										vscode.window.showErrorMessage(errorMessage);
-									} else {
-										vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
-									}
-								}
-							} else if (commandId) {
-								try {
-									await vscode.commands.executeCommand(commandId)
-										.then( () => {
-											if (completionMessage) {
-												vscode.window.showInformationMessage(completionMessage);
-											} else {
-												vscode.window.showInformationMessage(`Didact just executed ${commandId}`);
-											}
-										});
+									var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
+									let rootPath = workspace.uri.fsPath;
+									let fullpath = path.join(rootPath, projectFilePath);
+									let uri : vscode.Uri = vscode.Uri.file(fullpath);
+									try {
+										await vscode.commands.executeCommand(commandId, uri)
+											.then( () => {
+												if (completionMessage) {
+													vscode.window.showInformationMessage(completionMessage);
+												} else {
+													vscode.window.showInformationMessage(`Didact just executed ${commandId} with resource uri ${uri}`);
+												}
+											});
 									} catch (error) {
 										if (errorMessage) {
 											vscode.window.showErrorMessage(errorMessage);
@@ -461,14 +453,79 @@ class DidactWebviewPanel {
 											vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
 										}
 									}
+								} else if (commandId && srcFilePath) {
+									if (this._extensionPath === undefined) { 
+										return; 
+									}
+									const uri : vscode.Uri = vscode.Uri.file(
+										path.join(this._extensionPath, srcFilePath)
+									);
+									try {
+										await vscode.commands.executeCommand(commandId, uri)
+											.then( () => {
+												if (completionMessage) {
+													vscode.window.showInformationMessage(completionMessage);
+												} else {
+													vscode.window.showInformationMessage(`Didact just executed ${commandId} with resource uri ${uri}`);
+												}
+											});
+									} catch (error) {
+										if (errorMessage) {
+											vscode.window.showErrorMessage(errorMessage);
+										} else {
+											vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+										}
+									}
+								} else if (commandId && text) {
+									try {
+										let inputs : string[] = [];
+										if (text.split('$$').length > 0) {
+											inputs = text.split('$$');
+										} else {
+											inputs.push(text);
+										}
+										// I'm sure there's a better way to do this
+										await this.issueTextCommand(commandId, inputs)
+											.then( () => {
+												if (completionMessage) {
+													vscode.window.showInformationMessage(completionMessage);
+												} else {
+													vscode.window.showInformationMessage(`Didact just executed ${commandId} with text ${text}`);
+												}
+											});
+									} catch (error) {
+										if (errorMessage) {
+											vscode.window.showErrorMessage(errorMessage);
+										} else {
+											vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+										}
+									}
+								} else if (commandId) {
+									try {
+										await vscode.commands.executeCommand(commandId)
+											.then( () => {
+												if (completionMessage) {
+													vscode.window.showInformationMessage(completionMessage);
+												} else {
+													vscode.window.showInformationMessage(`Didact just executed ${commandId}`);
+												}
+											});
+										} catch (error) {
+											if (errorMessage) {
+												vscode.window.showErrorMessage(errorMessage);
+											} else {
+												vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+											}
+										}
+								}
 							}
-						}
-						return;
-				}
-			},
-			null,
-			this._disposables
-		);
+							return;
+					}
+				},
+				null,
+				this._disposables
+			);		
+		}
 	}
 
 	private async issueTextCommand(commandId: string, args: string[]) : Promise<any> {
@@ -565,6 +622,9 @@ class DidactWebviewPanel {
 		if (this.currentHtml) {
 			this._panel.webview.html = this.currentHtml;
 		}
+
+		// refresh listener
+		this.addLinkListener();
 	}
 
 }

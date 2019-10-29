@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import {DidactWebviewPanel} from './extension';
 
 var tmp = require('tmp');
 
@@ -60,6 +61,11 @@ export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Pr
 			var tmpobj = tmp.dirSync();
 			rootUri = vscode.Uri.parse(`file://${tmpobj.name}`);
 			vscode.workspace.updateWorkspaceFolders(0,undefined, {uri: rootUri});
+			await vscode.commands.executeCommand('workbench.files.action.refreshFilesExplorer');
+			if (DidactWebviewPanel.currentPanel) {
+				// reestablish the listeners
+				DidactWebviewPanel.currentPanel.addLinkListener();
+			}
 			vscode.window.showWarningMessage(`No workspace folder existed, so we created a temporary one. To avoid this in the future, add a folder to your workspace before scaffolding a project using Didact.`);
 		} else {
 			rootUri = vscode.workspace.workspaceFolders[0].uri;

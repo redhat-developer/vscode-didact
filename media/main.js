@@ -35,8 +35,13 @@
 				vscode.postMessage({ command: 'link', text: hrefValue });
 
 				// check the box
-				node.parentNode.querySelector('input').checked = true;
-				vscode.postMessage({ command: 'update', text: document.body });
+				let element = node.parentNode.querySelector('input');
+				if (element) {
+					element.checked = true;
+					if (document.body) {
+						vscode.postMessage({ command: 'update', text: document.body });
+					}
+				}
 
 				event.preventDefault();
 
@@ -45,4 +50,27 @@
 			node = node.parentNode;
 		}
 	}, true);
+
+
+    // Handle messages sent from the extension to the webview
+    window.addEventListener('message', event => {
+		const message = event.data; // The json data that the extension sent
+		const json = JSON.parse(message);
+        switch (json.command) {
+            case 'requirementCheck':
+				const requirementName = json.requirementName;
+				const isAvailable = json.result;
+
+				let element = document.getElementById(requirementName);
+				if (element) {
+					let message = 'Not currently avaialable';
+					if (isAvailable) {
+						message = 'Available';
+					}
+					element.textContent = `Status: ${message}`;
+				}
+				console.log(`${requirementName} is available: ${isAvailable}`);
+                break;
+        }
+    });
 }());

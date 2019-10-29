@@ -71,6 +71,18 @@
 			{
 				"command": "vscode.didact.sendNamedTerminalAString",
 				"title": "Send Named Terminal Some Text"
+			},
+			{
+				"command": "vscode.didact.requirementCheck",
+				"title": "Check to see if requireement exists"
+			},
+			{
+				"command": "vscode.didact.extensionRequirementCheck",
+				"title": "Check to see if required extension exists"
+			},
+			{
+				"command": "vscode.didact.workspaceFolderExistsCheck",
+				"title": "Check to see if at least one folder exists in workspace"
 			}
 		],
 		"menus": {
@@ -110,6 +122,7 @@
 	"dependencies": {
 		"@types/markdown-it": "^0.0.9",
 		"@types/request-promise": "^4.1.44",
+		"markdown-it-attrs": "^3.0.1",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.0",
 		"tmp": "^0.1.0"

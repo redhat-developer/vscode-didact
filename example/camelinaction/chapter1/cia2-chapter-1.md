@@ -15,9 +15,10 @@ Outline:
 
 ## Prerequisites
 
-- [ ] Maven is accessible at the command line
-- [ ] `Extension Pack for Apache Camel by Red Hat` is installed ([Click here to install](vscode:extension/redhat.apache-camel-extension-pack))
-- [ ] At least one folder must exist in your workspace
+| Requirement (Click to Verify)  | Availability | Additional Information |
+| :--- | :--- | :--- |
+| [Apache Maven accessible at the command line](didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version&completion=Valid "Tests to see if `mvn -version` returns a result") 	| *Status: unknown*{#maven-requirements-status} 	| [Installing Apache Maven](https://maven.apache.org/install.html)
+| [VS Code Extension Pack for Apache Camel by Red Hat is installed](didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack&completion=Valid "Checks the VS Code workspace to make sure the extension pack is installed") | *Status: unknown*{#extension-requirement-status} 	| [Click here to install](vscode:extension/redhat.apache-camel-extension-pack) |
 
 ## Steps
 
