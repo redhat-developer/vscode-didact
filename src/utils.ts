@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+var tmp = require('tmp');
+
 export function createSampleProject() : JSON {
 	let project : any = {
 		"folders": [
@@ -52,18 +54,26 @@ export function isJson(item: any) {
 
 export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Promise<any> {
 	try {
+		let rootUri : vscode.Uri | undefined = undefined;
 		if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) { 
-			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.'); 
+			// if the workspace is empty, we will create a temporary one for the user 
+			var tmpobj = tmp.dirSync();
+			rootUri = vscode.Uri.parse(`file://${tmpobj.name}`);
+			vscode.workspace.updateWorkspaceFolders(0,undefined, {uri: rootUri});
+			vscode.window.showWarningMessage(`No workspace folder existed, so we created a temporary one. To avoid this in the future, add a folder to your workspace before scaffolding a project using Didact.`);
+		} else {
+			rootUri = vscode.workspace.workspaceFolders[0].uri;
 		}
-        var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
-		let rootPath = workspace.uri.fsPath;
-		if (isJson(json)) {
-			var folders = json.folders;
-			if (folders) {
-				try {
-					createSubFolders(rootPath, folders, jsonpath);
-				} catch (error) {
-					throw new Error(`Operation(s) failed - ${error}`);
+		if (rootUri) {
+			let rootPath = rootUri.fsPath;
+			if (isJson(json)) {
+				var folders = json.folders;
+				if (folders) {
+					try {
+						createSubFolders(rootPath, folders, jsonpath);
+					} catch (error) {
+						throw new Error(`Operation(s) failed - ${error}`);
+					}
 				}
 			}
 		} else {
