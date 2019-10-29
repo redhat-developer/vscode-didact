@@ -56,7 +56,15 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
+	vscode.workspace.onDidChangeWorkspaceFolders( async (e) => {
+		if (DidactWebviewPanel.currentPanel) {
+			vscode.window.showInformationMessage(`Please restart the Didact window after updating your workspace folders.`);
+			DidactWebviewPanel.currentPanel.dispose();
+		}
+	});
+
 	let startDidact = vscode.commands.registerCommand(START_DIDACT_COMMAND, (uri:vscode.Uri) => {
+
 		// stash it
 		_mdFileUri = uri;
 
