@@ -5,7 +5,8 @@ import * as MarkdownIt from 'markdown-it';
 import * as path from 'path';
 import * as url from 'url';
 import * as querystring from 'querystring';
-import { isArray, TextDecoder } from 'util';
+import { isArray } from 'util';
+import * as child_process from 'child_process';
 
 const fetch = require('node-fetch');
 
@@ -14,6 +15,11 @@ export const OPEN_TUTORIAL_COMMAND = 'vscode.didact.openTutorial';
 export const START_DIDACT_COMMAND = 'vscode.didact.startDidact';
 export const START_TERMINAL_COMMAND = 'vscode.didact.startTerminalWithName';
 export const SEND_TERMINAL_SOME_TEXT_COMMAND = 'vscode.didact.sendNamedTerminalAString';
+export const REQUIREMENT_CHECK_COMMAND = 'vscode.didact.requirementCheck';
+export const EXTENSION_REQUIREMENT_CHECK_COMMAND = 'vscode.didact.extensionRequirementCheck';
+export const WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND = 'vscode.didact.workspaceFolderExistsCheck';
+export const CREATE_WORKSPACE_FOLDER_COMMAND = 'vscode.didact.createWorkspaceFolder';
+export const RELOAD_DIDACT_COMMAND = 'vscode.didact.reload';
 
 let _extensionPath : string = '';
 
@@ -42,7 +48,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(scaffoldProject);
 
-	let openTutorial = vscode.commands.registerCommand(OPEN_TUTORIAL_COMMAND, () => {
+	let openTutorial = vscode.commands.registerCommand(OPEN_TUTORIAL_COMMAND, async () => {
+
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.addListener(context);
 		_mdFileUri = undefined;
@@ -56,58 +63,57 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	vscode.workspace.onDidChangeWorkspaceFolders( async (e) => {
-		if (DidactWebviewPanel.currentPanel) {
-			vscode.window.showInformationMessage(`Please restart the Didact window after updating your workspace folders.`);
-			DidactWebviewPanel.currentPanel.dispose();
-		}
-	});
+ 	vscode.workspace.onDidChangeWorkspaceFolders( async () => {
+		 await vscode.commands.executeCommand(RELOAD_DIDACT_COMMAND);
+ 	});
 
-	let startDidact = vscode.commands.registerCommand(START_DIDACT_COMMAND, (uri:vscode.Uri) => {
+	let startDidact = vscode.commands.registerCommand(START_DIDACT_COMMAND, async (uri:vscode.Uri) => {
 
 		// stash it
 		_mdFileUri = uri;
 
 		// handle extension, workspace, https, and http
-		const query = querystring.parse(uri.query);
-		if (query.extension) {
-			const value = getValue(query.extension);
-			if (value) {
-				if (_extensionPath === undefined) { 
-					return; 
+		if (uri) {
+			const query = querystring.parse(uri.query);
+			if (query.extension) {
+				const value = getValue(query.extension);
+				if (value) {
+					if (_extensionPath === undefined) { 
+						return; 
+					}
+					_mdFileUri = vscode.Uri.file(
+						path.join(_extensionPath, value)
+					);
 				}
-				_mdFileUri = vscode.Uri.file(
-					path.join(_extensionPath, value)
-				);
-			}
-		} else if (query.workspace) {
-			const value = getValue(query.workspace);
-			if (value) {
-				if (vscode.workspace.workspaceFolders) {
-					var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
-					let rootPath = workspace.uri.fsPath;
-					_mdFileUri = vscode.Uri.file(path.join(rootPath, value));
+			} else if (query.workspace) {
+				const value = getValue(query.workspace);
+				if (value) {
+					if (vscode.workspace.workspaceFolders) {
+						var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
+						let rootPath = workspace.uri.fsPath;
+						_mdFileUri = vscode.Uri.file(path.join(rootPath, value));
+					}
 				}
+			} else if (query.https) {
+				const value = getValue(query.https);
+				if (value) {
+					_mdFileUri = vscode.Uri.parse(`https://${value}`);
+				}
+			} else if (query.http) {
+				const value = getValue(query.http);
+				if (value) {
+					_mdFileUri = vscode.Uri.parse(`http://${value}`);
+				}
+			} else if (uri.fsPath) {
+				_mdFileUri = uri;
 			}
-		} else if (query.https) {
-			const value = getValue(query.https);
-			if (value) {
-				_mdFileUri = vscode.Uri.parse(`https://${value}`);
-			}
-		} else if (query.http) {
-			const value = getValue(query.http);
-			if (value) {
-				_mdFileUri = vscode.Uri.parse(`http://${value}`);
-			}
-		} else if (uri.fsPath) {
-			_mdFileUri = uri;
 		}
 		if (_mdFileUri) {
 			console.log(_mdFileUri.toString());
 		}
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.addListener(context);
-		if (DidactWebviewPanel.currentPanel) {
+		if (DidactWebviewPanel.currentPanel && _mdFileUri) {
 			DidactWebviewPanel.currentPanel.setMDPath(_mdFileUri);
 		}
 
@@ -142,6 +148,73 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(sendTerminalText);
 
+
+	let requirementCheck = vscode.commands.registerCommand(REQUIREMENT_CHECK_COMMAND, (requirement: string, test: string) => {
+		const testCommand = test;
+		console.log('Running requirements test: ' + testCommand);
+		let result = child_process.execSync(testCommand);
+		console.log('Requirememts test result: ' + result);
+		if (result.includes('Apache Maven')) {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, true);
+			return;
+		} else {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, false);
+		}
+	});
+	context.subscriptions.push(requirementCheck);
+
+	let extRequirementCheck = vscode.commands.registerCommand(EXTENSION_REQUIREMENT_CHECK_COMMAND, (requirement: string, extensionId: string) => {
+		let testExt = vscode.extensions.getExtension(extensionId);
+		if (testExt) {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, true);
+			return;
+		} else {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, false);
+		}
+	});
+	context.subscriptions.push(extRequirementCheck);
+
+	let validWorkspaceCheck = vscode.commands.registerCommand(WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND, (requirement: string, extensionId: string) => {
+		let wsPath = utils.getWorkspacePath();
+		if (wsPath) {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, true);
+			return;
+		} else {
+			DidactWebviewPanel.postRequirementsResponseMessage(requirement, false);
+		}
+	});
+	context.subscriptions.push(validWorkspaceCheck);
+
+	let createWorkspaceFolder = vscode.commands.registerCommand(CREATE_WORKSPACE_FOLDER_COMMAND, (requirement: string) => {
+		var tmp = require('tmp');
+		// if the workspace is empty, we will create a temporary one for the user 
+		var tmpobj = tmp.dirSync();
+		let rootUri : vscode.Uri = vscode.Uri.parse(`file://${tmpobj.name}`);
+		vscode.workspace.updateWorkspaceFolders(0,undefined, {uri: rootUri});
+		if (DidactWebviewPanel.currentPanel) {
+			if (rootUri) {
+				DidactWebviewPanel.postRequirementsResponseMessage(requirement, true);
+				return;
+			} else {
+				DidactWebviewPanel.postRequirementsResponseMessage(requirement, false);
+			}
+		}
+	});
+	context.subscriptions.push(createWorkspaceFolder);
+
+	let reloadDidact = vscode.commands.registerCommand(RELOAD_DIDACT_COMMAND, async () => {
+		if (DidactWebviewPanel.currentPanel) {
+			DidactWebviewPanel.currentPanel.dispose();
+		}
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, _mdFileUri);
+
+	});
+	context.subscriptions.push(reloadDidact);
+
+}
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 function getValue(input : string | string[]) : string | undefined {
@@ -158,7 +231,8 @@ function getValue(input : string | string[]) : string | undefined {
 function getMDParser() : MarkdownIt {
 	const md = new MarkdownIt();
 	const taskLists = require('markdown-it-task-lists');
-	const parser = md.use(taskLists, {enabled: true, label: true});
+	const markdownItAttrs = require('markdown-it-attrs');
+	const parser = md.use(taskLists, {enabled: true, label: true, html: true}).use(markdownItAttrs, {});
 	return parser;
 }
 
@@ -299,6 +373,7 @@ class DidactWebviewPanel {
 			}
 		);
 
+
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
 		if (inpath) {
 			DidactWebviewPanel.currentPanel.setMDPath(inpath);
@@ -314,6 +389,15 @@ class DidactWebviewPanel {
 			return;
 		}
 		let jsonMsg:string = "{ \"command\": \"sendMessage\", \"data\": \"" + message + "\"}";
+		console.log("outgoing message being posted: " + jsonMsg);
+		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
+	}
+
+	public static async postRequirementsResponseMessage(requirementName: string, result: boolean) {
+		if (!DidactWebviewPanel.currentPanel) {
+			return;
+		}
+		let jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
 		console.log("outgoing message being posted: " + jsonMsg);
 		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
 	}

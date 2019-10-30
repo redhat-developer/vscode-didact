@@ -54,23 +54,43 @@
 		"commands": [
 			{
 				"command": "vscode.didact.scaffoldProject",
-				"title": "Didact Scaffold Project from File"
+				"title": "Didact: Scaffold Project from File"
 			},
 			{
 				"command": "vscode.didact.openTutorial",
-				"title": "Open Didact"
+				"title": "Didact: Open Didact Window"
 			},
 			{
 				"command": "vscode.didact.startDidact",
-				"title": "Start Didact Tutorial from File"
+				"title": "Didact: Start Didact Tutorial from File"
 			},
 			{
 				"command": "vscode.didact.startTerminalWithName",
-				"title": "Start a VS Code Terminal with a particular name"
+				"title": "Didact: Start a VS Code Terminal with a particular name"
 			},
 			{
 				"command": "vscode.didact.sendNamedTerminalAString",
-				"title": "Send Named Terminal Some Text"
+				"title": "Didact: Send Named Terminal Some Text"
+			},
+			{
+				"command": "vscode.didact.requirementCheck",
+				"title": "Didact: Check to see if requirement exists"
+			},
+			{
+				"command": "vscode.didact.extensionRequirementCheck",
+				"title": "Didact: Check to see if required extension exists"
+			},
+			{
+				"command": "vscode.didact.workspaceFolderExistsCheck",
+				"title": "Didact: Check to see if at least one folder exists in workspace"
+			},
+			{
+				"command": "vscode.didact.createWorkspaceFolder",
+				"title": "Didact: Create a new workspace folder if none exists"
+			},
+			{
+				"command": "vscode.didact.reload",
+				"title": "Didact: Reload Didact window"
 			}
 		],
 		"menus": {
@@ -101,7 +121,7 @@
 		"@types/node": "^10.12.21",
 		"@types/vscode": "^1.39.0",
 		"glob": "^7.1.4",
-		"markdown-it": "^10.0.0",
+		"markdown-it": "^9.0.0",
 		"mocha": "^6.1.4",
 		"tslint": "^5.12.1",
 		"typescript": "^3.3.1",
@@ -111,6 +131,8 @@
 		"@types/markdown-it": "^0.0.9",
 		"@types/request-promise": "^4.1.44",
 		"markdown-it-task-lists": "^2.1.1",
-		"node-fetch": "^2.6.0"
+		"markdown-it-attrs": "^3.0.1",
+		"node-fetch": "^2.6.0",
+		"tmp": "^0.1.0"
 	}
 }
