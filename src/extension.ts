@@ -7,6 +7,7 @@ import * as url from 'url';
 import * as querystring from 'querystring';
 import { isArray } from 'util';
 import * as child_process from 'child_process';
+import { extensionFunctions } from './extensionFunctions';
 
 const fetch = require('node-fetch');
 
@@ -29,24 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	_extensionPath = context.extensionPath;
 
-	let scaffoldProject = vscode.commands.registerCommand(SCAFFOLD_PROJECT_COMMAND, async (jsonpath:vscode.Uri) => {
-		if (utils.getWorkspacePath) {
-			let testJson : any;
-			if (jsonpath) {
-				var mdStr = fs.readFileSync(jsonpath.fsPath, 'utf8');
-				testJson = JSON.parse(mdStr);
-			} else {
-				testJson = utils.createSampleProject();
-			}
-			await utils.createFoldersFromJSON(testJson, jsonpath)
-			.catch( (error) => {
-				throw new Error(`Error found while scaffolding didact project: ${error}`);
-			});
-		} else {
-			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin.'); 
-		}
-	});
-	context.subscriptions.push(scaffoldProject);
+	context.subscriptions.push(vscode.commands.registerCommand(SCAFFOLD_PROJECT_COMMAND, extensionFunctions.scaffoldProjectFromJson));
 
 	let openTutorial = vscode.commands.registerCommand(OPEN_TUTORIAL_COMMAND, async () => {
 
@@ -229,10 +213,33 @@ function getValue(input : string | string[]) : string | undefined {
 }
 
 function getMDParser() : MarkdownIt {
-	const md = new MarkdownIt();
+	const md = new MarkdownIt({html: true});
 	const taskLists = require('markdown-it-task-lists');
 	const markdownItAttrs = require('markdown-it-attrs');
-	const parser = md.use(taskLists, {enabled: true, label: true, html: true}).use(markdownItAttrs, {});
+	const markdownItContainer = require('markdown-it-container');
+	const parser = md
+		.use(taskLists, {enabled: true, label: true})
+		.use(markdownItAttrs, {})
+		.use(markdownItContainer, 'spoiler', {
+ 
+			validate: function(params:any) {
+			  return params.trim().match(/^spoiler\s+(.*)$/);
+			},
+		   
+			render: function (tokens:any, idx:any) {
+			  var m = tokens[idx].info.trim().match(/^spoiler\s+(.*)$/);
+		   
+			  if (tokens[idx].nesting === 1) {
+				// opening tag
+				return '<details><summary>' + m[1] + '</summary>\n';
+		   
+			  } else {
+				// closing tag
+				return '</details>\n';
+			  }
+			}
+		}
+	);
 	return parser;
 }
 

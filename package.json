@@ -130,8 +130,9 @@
 	"dependencies": {
 		"@types/markdown-it": "^0.0.9",
 		"@types/request-promise": "^4.1.44",
-		"markdown-it-task-lists": "^2.1.1",
 		"markdown-it-attrs": "^3.0.1",
+		"markdown-it-container": "^2.0.0",
+		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.0",
 		"tmp": "^0.1.0"
 	}

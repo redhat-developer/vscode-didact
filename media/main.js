@@ -63,8 +63,10 @@
 				let element = document.getElementById(requirementName);
 				if (element) {
 					let message = 'Not currently avaialable';
+					let color = "green";
 					if (String(isAvailable).toLowerCase() === 'true') {
 						message = 'Available';
+						element.style.color = color;
 					}
 					element.textContent = `Status: ${message}`;
 				}

@@ -91,3 +91,7 @@ COL, COLGROUP, TD, TH, CAPTION
   PRE           { page-break-inside: avoid }
   UL, OL, DL    { page-break-before: avoid }
 }
+
+.didact {
+  cursor:crosshair;
+}
