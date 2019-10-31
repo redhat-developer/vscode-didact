@@ -98,6 +98,14 @@ COL, COLGROUP, TD, TH, CAPTION
 
 .imageRight {
   float: right;
-  width:25%; /* you can use % */
+  width:33%;
+  height: auto;
+}
+
+.imageCenter {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width:100%;
   height: auto;
 }

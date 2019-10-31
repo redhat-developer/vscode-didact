@@ -29,9 +29,9 @@ Chapter 1 of *Camel in Action* walks through a simple example that moves files f
 
 ### Step 1: Downloading the Project Source
 
-First, we need to set up our sample project. You can find code for all the *Camel in Action* examples from the [GitHub project that's hosting the source.](https://github.com/camelinaction/camelinaction2)
-
 ![VS Code Add Folder to Workspace Menu](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/add-folder-to-workspace.png){.imageRight}
+
+First, we need to set up our sample project. You can find code for all the *Camel in Action* examples from the [GitHub project that's hosting the source.](https://github.com/camelinaction/camelinaction2)
 
 For this first example, you can download the code yourself from the GitHub repo and then [add the `file-copy` folder to your workspace.](didact://?commandId=workbench.action.addRootFolder "Same action as going to the Command Palette (F1 or Ctrl+Shift+P) and typing 'Workspaces: Add Folder to Workspace...'"){.didact}
 
@@ -47,13 +47,17 @@ The chapter then looks at the Camel solution. You can find that in the `file-cop
 
 ### Step 4: Running the Route
 
-To run the route, you may need to update your project to pull in all the appropriate artifacts from Maven. You can [update the `file-copy` folder in your workspace](didact://?commandId=java.projectConfiguration.update&projectFilePath=file-copy/pom.xml&completion=Updated%20the%20file-copy%20project "Refreshes the project's maven configuration using a command from vscode-java"){.didact}. This is the same action as selecting the `file-copy` folder in the Explorer, then typing "Workspaces: Add Folder to Workspace..." in the Command Palette (F1 or Ctrl+Shift+P).
+To run the route, you may need to update your project to pull in all the appropriate artifacts from Maven. You can [update the `file-copy` folder in your workspace](didact://?commandId=java.projectConfiguration.update&projectFilePath=file-copy/pom.xml&completion=Updated%20the%20file-copy%20project "Refreshes the project's maven configuration using a command from vscode-java"){.didact}. (This is the same action as selecting the `file-copy` folder in the Explorer, then typing `Java: Update project configuration` in the Command Palette (F1 or Ctrl+Shift+P).)
 
 Once your project is up-to-date, you can open a Terminal window to run it at a command prompt. You can use the Terminal menu (`Terminal->New Terminal`) or use [this link to open a new terminal called 'file-copy-term'.](didact://?commandId=vscode.didact.startTerminalWithName&text=file-copy-term&completion=Opened%20the%20file-copy-term%20terminal. "Opens a new terminal called 'file-copy-term' we will use to execute the Camel route"){.didact}
+
+![Terminal with Commands Entered](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/terminal-commands.png){.imageCenter}
 
 To run our route, we must move into the `file-copy` directory (`cd file-copy`) and type `mvn exec:java` at the command prompt. Or you can use [this link to do that for you in the `file-copy-term` terminal we opened a moment ago.](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=file-copy-term$$cd%20file-copy%20%26%26%20mvn%20exec:java&completion=Sent%20commands%20to%20terminal%20window. "Changes to the file-copy folder and runs mvn exec:java in the workspace"){.didact}
 
 You can watch the log as messages appear in the terminal window while the Camel route starts up and copies the file from the `inbox` to the `outbox`.
+
+![Terminal with Camel Console Output](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/terminal-camel-console-log.png){.imageCenter}
 
 When it finishes, you can open the output file in the `file-copy/data/outbox` directory (or [use this link to open the file.](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/data/outbox/message1.xml&completion=Opened%20the%20output%20file "Opens the file copied to the output folder"){.didact})
 
@@ -61,7 +65,7 @@ When it finishes, you can open the output file in the `file-copy/data/outbox` di
 
 To get a feel for modifying a Camel route yourself, why not add a log message?
 
-[Open the FileCopierWithCamel.java file](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file in the created project"){.didact} and add the following in the `public void configure()` method at the end of the `from` line:
+[Open the FileCopierWithCamel.java file](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file in the created project"){.didact} and add the following in the `public void configure()` method between the from and the to:
 
 ```java
     .log("Hello World!")
@@ -78,7 +82,7 @@ Your Camel route then should then look something like:
 ```java
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("file:data/inbox?noop=true").to("file:data/outbox").log("Hello World!");
+                from("file:data/inbox?noop=true").log("Hello World!").to("file:data/outbox");
             }
         });
 ```
