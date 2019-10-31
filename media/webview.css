@@ -98,4 +98,6 @@ COL, COLGROUP, TD, TH, CAPTION
 
 .imageRight {
   float: right;
+  width:25%; /* you can use % */
+  height: auto;
 }
