@@ -43,7 +43,7 @@ The chapter starts by looking at the pure Java solution with no Camel. You can f
 
 ### Step 3: Exploring the Camel Solution
 
-The chapter then looks at the Camel solution. You can find that in the `file-copy` directory at `src/main/java/camleinaction/FileCopierWithCamel.java`. If you have the project in your workspace, you can [open the Java Camel file in the editor.](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file"){.didact}
+The chapter then looks at the Camel solution. You can find that in the `file-copy` directory at `src/main/java/camleinaction/FileCopierWithCamel.java`. If you have the project in your workspace, you can [open the Java Camel file in the editor.](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%20FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file"){.didact}
 
 ### Step 4: Running the Route
 
@@ -86,6 +86,8 @@ Your Camel route then should then look something like:
             }
         });
 ```
+
+And you should find *Hello World!* in your console output when you re-run the route with `mvn exec:java` at the command line. Or you can use [this link to do that for you in the `file-copy-term` terminal we opened a few moments ago.](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=file-copy-term$$mvn%20exec:java&completion=Sent%20commands%20to%20terminal%20window. "Runs mvn exec:java again in the workspace"){.didact}
 
 ![Terminal with Hello World in Camel Console Output](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/terminal-camel-hello-world.png){.imageCenter}
 
