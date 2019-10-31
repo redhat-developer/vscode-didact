@@ -87,6 +87,8 @@ Your Camel route then should then look something like:
         });
 ```
 
+![Terminal with Hello World in Camel Console Output](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/terminal-camel-hello-world.png){.imageCenter}
+
 </details>
 
 </details>
