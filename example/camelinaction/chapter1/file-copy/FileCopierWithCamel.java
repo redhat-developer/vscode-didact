@@ -23,6 +23,7 @@ public class FileCopierWithCamel {
 
         // stop the CamelContext
         context.stop();
+        context.close();
     }
 
 }

@@ -61,7 +61,7 @@ export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Pr
 			var folders = json.folders;
 			if (folders) {
 				try {
-					createSubFolders(rootPath, folders, jsonpath);
+					return createSubFolders(rootPath, folders, jsonpath);
 				} catch (error) {
 					throw new Error(`Operation(s) failed - ${error}`);
 				}
@@ -75,53 +75,67 @@ export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Pr
 	}
 }
 
-export function createFiles(folderNode:any, files:any, jsonpath:vscode.Uri) {
-	if (files) {
-		files.forEach((file:any) => {
-			let newFileName = file.name;
-			let completeFilePath = `${folderNode}/${newFileName}`;
-			let newFileContent = undefined;
-			console.log(`Creating ${completeFilePath}`);
-			if (file.content) {
-				newFileContent = file.content;
-			} else if (file.copy && jsonpath) {
-				let relative = path.dirname(jsonpath.fsPath);
-				let filetocopy = path.join(relative, file.copy);
-				newFileContent = fs.readFileSync(filetocopy, 'utf8');
-			}
-			if (newFileContent) {
-				// write to a new file
-				fs.writeFile(completeFilePath, newFileContent, (err) => {
-					if (err) { 
-						throw err; 
-					}
-				});
-			} else {
-				throw new Error(`Unable to retrieve file content for ${completeFilePath}.`);
-			}
-		});
+export async function createFiles(folderNode:any, files:any, jsonpath:vscode.Uri) : Promise<any> {
+	try {
+		if (files) {
+			files.forEach((file:any) => {
+				let newFileName = file.name;
+				let completeFilePath = `${folderNode}/${newFileName}`;
+				let newFileContent = undefined;
+				console.log(`Creating ${completeFilePath}`);
+				if (file.content) {
+					newFileContent = file.content;
+				} else if (file.copy && jsonpath) {
+					let relative = path.dirname(jsonpath.fsPath);
+					let filetocopy = path.join(relative, file.copy);
+					newFileContent = fs.readFileSync(filetocopy, 'utf8');
+				}
+				if (newFileContent) {
+					// write to a new file
+					fs.writeFileSync(completeFilePath, newFileContent);
+				} else {
+					throw new Error(`Unable to retrieve file content for ${completeFilePath}.`);
+				}
+			});
+		}
+	} catch ( error) {
+		console.log(`Operation(s) failed - ${error}`);
+		throw new Error(`Operation(s) failed -  ${error}`); 
 	}
 }
 
-export function createSubFolders(folderNode : any, folders : any, jsonpath:vscode.Uri) {
-	folders.forEach((folder: any) => {
-		let newFolderName = folder.name;
-		let newFolder = `${folderNode}/${newFolderName}`;
-		console.log(`Creating ${newFolder}`);
-		fs.mkdir(newFolder, err => { 
-			if (err && err.code === 'EEXIST') {
-				// folder already exists
-				console.log(`Folder ${newFolderName} already exists`);
-				return;
+export async function createSubFolders(folderNode : any, folders : any, jsonpath:vscode.Uri) : Promise<any> {
+	try {
+		folders.forEach(async (folder: any) => {
+			let newFolderName = folder.name;
+			let newFolder = `${folderNode}/${newFolderName}`;
+			console.log(`Creating ${newFolder}`);
+			if (!fs.existsSync(newFolder)) {
+				fs.mkdirSync(newFolder);
+			}
+			if (folder.folders) {
+				return await createSubFolders(newFolder, folder.folders, jsonpath).then( async () => {
+					if (folder.files) {
+						return await createFiles(newFolder, folder.files, jsonpath)
+						.catch((error) => {
+							console.log(error);
+						});
+					}
+				}).catch((error) => {
+					console.log(error);
+				});
+			}
+			else if (folder.files) {
+				return await createFiles(newFolder, folder.files, jsonpath)
+				.catch((error) => {
+					console.log(error);
+				});
 			}
 		});
-		if (folder.folders) {
-			createSubFolders(newFolder, folder.folders, jsonpath);
-		}
-		if (folder.files) {
-			createFiles(newFolder, folder.files, jsonpath);
-		}
-	});
+	} catch ( error) {
+		console.log(`Operation(s) failed - ${error}`);
+		throw new Error(`Operation(s) failed -  ${error}`); 
+	}
 }
 
 export function pathEquals(path1: string, path2: string): boolean {
