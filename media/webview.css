@@ -95,3 +95,7 @@ COL, COLGROUP, TD, TH, CAPTION
 .didact {
   cursor:crosshair;
 }
+
+.imageRight {
+  float: right;
+}

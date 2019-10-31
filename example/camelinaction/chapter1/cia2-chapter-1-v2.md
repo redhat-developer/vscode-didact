@@ -31,7 +31,7 @@ Chapter 1 of *Camel in Action* walks through a simple example that moves files f
 
 First, we need to set up our sample project. You can find code for all the *Camel in Action* examples from the [GitHub project that's hosting the source.](https://github.com/camelinaction/camelinaction2)
 
-![VS Code Add Folder to Workspace Menu](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/add-folder-to-workspace.png){float: right}
+![VS Code Add Folder to Workspace Menu](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/add-folder-to-workspace.png){.imageRight}
 
 For this first example, you can download the code yourself from the GitHub repo and then [add the `file-copy` folder to your workspace.](didact://?commandId=workbench.action.addRootFolder "Same action as going to the Command Palette (F1 or Ctrl+Shift+P) and typing 'Workspaces: Add Folder to Workspace...'"){.didact}
 
