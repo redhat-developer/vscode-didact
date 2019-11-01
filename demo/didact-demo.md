@@ -54,13 +54,15 @@ You can check for other extensions to already be installed in the user's VS Code
 
 [You can can even open a terminal, name it, and send it some text.](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerm$$echo%20Hello%20Didact!&completion=Opened%20a%20new%20terminal. "Opens a new terminal and sends some text"){.didact}
 
+[And if you want to have certain inputs be user-specified, you can now do that too.](didact://?commandId=vscode.didact.sendNamedTerminalAString&user=terminal-name$$terminal-command-to-execute&completion=Opened%20a%20new%20terminal. "Opens a new terminal and sends some text"){.didact}
+
 ### Linking to other Didact files
 
 [You can link to other Didact tutorials remotely - this one is on GitHub](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.md "Opens the Tutorial2.md file in GitHub")
 
 [You can link to other Didact tutorials also included in the same extension](vscode://redhat.vscode-didact?extension=example/tutorial.md "Opens the Tutorial.md file in the vscode-didact extension")
 
-[And after you create files in the local workspace (see ["Scaffolding projects"] (#scaffolding-projects)), you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md&completion=Opened%20the%20test.md%20file)
+[And after you create files in the local workspace (see ["Scaffolding projects"](#scaffolding-projects)), you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md&completion=Opened%20the%20test.md%20file)
 
 ### Native HTML
 

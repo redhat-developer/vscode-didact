@@ -100,6 +100,9 @@ COL, COLGROUP, TD, TH, CAPTION
   float: right;
   width:33%;
   height: auto;
+  margin-top:15px;
+  margin-bottom:15px;
+  margin-left:15px;
 }
 
 .imageCenter {
