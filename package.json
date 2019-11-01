@@ -44,7 +44,7 @@
 				"properties": {
 					"didact.defaultUrl": {
 						"type": "string",
-						"default": "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/linktest.md",
+						"default": "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.md",
 						"description": "Default Didact File Shown - can be any valid URL to a Didact Markdown file",
 						"scope": "window"
 					}

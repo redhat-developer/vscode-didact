@@ -1,0 +1,23 @@
+{
+    "folders": [
+    {
+       "name":"anotherProject",
+       "folders": [
+         {
+             "name":"src",
+             "files": [
+                {
+                  "name":"simple.groovy",
+                  "content":"from('timer:groovy?period=1s')\n\t.routeId('groovy')\n\t.setBody()\n\t.simple('Hello Camel K from ${routeId}')\n\t.to('log:info?showAll=false')\n"
+                },
+                {
+                    "name":"test.md",
+                    "content":"# Local Didact Tutorial\n\nThis is an example of a Didact file provided in a scaffolded project.\n\n- [ ] [Click here to open the simple.groovy file in the new sample project](didact://?commandId=vscode.openFolder&projectFilePath=anotherProject/src/simple.groovy&completion=Opened%20the%20simple.groovy%20file)\n"
+                }
+
+             ]
+           }
+     ]
+    }
+ ]
+}

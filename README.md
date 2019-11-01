@@ -59,6 +59,7 @@ All Didact links have the following qualities:
   * (optional) `completion='my%20notification%20message'` (to provide a human readable message to the user upon task completion - note that spaces must be replaced with %20)
   * (optional) `error='my%20error%20message'` (to provide a human readable message to the user upon task error - note that spaces must be replaced with %20)
   * (optional) `text=one$$two$$three` (to provide straight text input to the command, with each argument separated by `$$`) (currently only works out to three arguments, but can likely be expanded further if needed)
+ * (optional) `user=one$$two$$three` (to provide user-provided text input to the command, with each argument separated by `$$` -- each string is used as the prompt for the user) (currently only works out to three arguments, but can likely be expanded further if needed)
   * Note: projectFilePath and srcFilePath should be mutually exclusive, but that distinction is not made at present
 
 ## Project JSON Structure
@@ -93,12 +94,17 @@ Files can either have their content specified in the project json file itself (i
 
 ## Common Command Ids
 
-* java.projectConfiguration.update: Updates a Mavenized Java project, essentially attempting to get it ready to run ([See vscode-java](https://github.com/redhat-developer/vscode-java))
-* vscode.didact.scaffoldProject: Without an input creates a sample project structure. With an input that is a json file in the format from above, generates the designated folder/file structure.
-* vscode.didact.startDidact: Opens a Didact window with the Markdown file passed in
-* vscode.didact.startTerminalWithName: Creates and shows a terminal with the given name in the VS Code window
-* vscode.didact.sendNamedTerminalAString: Sends text to a named terminal, which is then executed in the terminal
-* vscode.openFolder: [See `Commands` in the VS Code API docs](https://code.visualstudio.com/api/references/commands#commands)
+* `java.projectConfiguration.update`: Updates a Mavenized Java project, essentially attempting to get it ready to run ([See vscode-java](https://github.com/redhat-developer/vscode-java))
+* `vscode.didact.createWorkspaceFolder`: Creates a folder in the user's temp directory and adds it to the workspace as a makeshift root directory
+* `vscode.didact.extensionRequirementCheck`: Simple check to see if the extension Id is installed in the user workspace. Takes two parameters: the id of the HTML element to update with the results and the extension Id to check for
+* `vscode.didact.reload`: Forces the Didact window to reload with the default Didact file specified in VS Code settings
+* `vscode.didact.requirementCheck`: Simple command-line check for system capabilities. Takes three parameters - the id of the HTML element to update with the results, the test command (such as `mvn --version`, and a string to search for in the resulting text, such as `Apache Maven` if the mvn command works successfully)
+* `vscode.didact.scaffoldProject`: Without an input creates a sample project structure. With an input that is a json file in the format from above, generates the designated folder/file structure.
+* `vscode.didact.startDidact`: Opens a Didact window with the Markdown file passed in
+* `vscode.didact.startTerminalWithName`: Creates and shows a terminal with the given name in the VS Code window. The name can be omitted.
+* `vscode.didact.sendNamedTerminalAString`: Sends text to a named terminal, which is then executed in the terminal. If the named terminal doesn't exist, it is created
+* `vscode.didact.workspaceFolderExistsCheck`:  Simple check to see if the workspace has at least one root folder. Takes one parameter: the id of the HTML element to update with the results
+* `vscode.openFolder`: [See `Commands` in the VS Code API docs](https://code.visualstudio.com/api/references/commands#commands)
 
 
 # Next steps

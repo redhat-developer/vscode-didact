@@ -99,16 +99,28 @@ export namespace extensionFunctions {
 		terminal.show();		
 	}
 
+	async function showAndSendText(terminal: vscode.Terminal, text:string) {
+		if (terminal) {
+			terminal.show();
+			terminal.sendText(text);
+			return;
+		}
+	}
+
 	// send a message to a named terminal
 	export async function sendTerminalText(name:string, text:string) {
 		const terminals = <vscode.Terminal[]>(<any>vscode.window).terminals;
 		terminals.forEach(terminal => {
 			if (terminal.name === name) {
-				terminal.show();
-				terminal.sendText(text);
+				showAndSendText(terminal, text);
 				return;
 			}
-		});		
+		});
+		
+		// if we didn't find a terminal, we'll create one 
+		const terminal = vscode.window.createTerminal(name);
+		showAndSendText(terminal, text);
+		return;
 	}
 
 	// reset the didact window to use the default set in the settings

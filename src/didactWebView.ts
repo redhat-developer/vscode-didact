@@ -177,6 +177,7 @@ export class DidactWebviewPanel {
 							let completionMessage : string | undefined = undefined;
 							let errorMessage : string | undefined = undefined;
 							let text : string | undefined = undefined;
+							let user : string | undefined = undefined;
 							
 							if (query.commandId) {
 								commandId = getValue(query.commandId);
@@ -195,6 +196,9 @@ export class DidactWebviewPanel {
 							}
 							if (query.text) {
 								text = getValue(query.text);
+							}
+							if (query.user) {
+								user = getValue(query.user);
 							}
 							
 							if (commandId && projectFilePath) {
@@ -268,6 +272,34 @@ export class DidactWebviewPanel {
 										vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
 									}
 								}
+							} else if (commandId && user) {
+								try {
+									let inputs : string[] = [];
+									if (user.split('$$').length > 0) {
+										inputs = user.split('$$');
+									} else {
+										inputs.push(user);
+									}
+									// I'm sure there's a better way to do this
+									await this.collectUserInput(inputs).then( async (args: string[]) => {
+										if (commandId) {
+											await this.issueTextCommand(commandId, args)
+											.then( () => {
+												if (completionMessage) {
+													vscode.window.showInformationMessage(completionMessage);
+												} else {
+													vscode.window.showInformationMessage(`Didact just executed ${commandId} with user input for ${user}`);
+												}
+											});
+										}
+									});
+								} catch (error) {
+									if (errorMessage) {
+										vscode.window.showErrorMessage(errorMessage);
+									} else {
+										vscode.window.showErrorMessage(`Didact was unable to call command ${commandId}: ${error}`);
+									}
+								}
 							} else if (commandId) {
 								try {
 									await vscode.commands.executeCommand(commandId)
@@ -303,6 +335,26 @@ export class DidactWebviewPanel {
 		} else if (args.length === 3) {
 			return await vscode.commands.executeCommand(commandId, args[0], args[1], args[2]);
 		}
+	}
+
+	private async getUserInput(prompt:string): Promise<string | undefined> {
+		return await vscode.window.showInputBox({
+			prompt: `Enter a ${prompt}`,
+			placeHolder: prompt
+		  });		
+	}
+
+	private async collectUserInput(args: string[]) : Promise<string[]> {
+		var outArgs : string[] = [];
+		for(let prompt of args) {
+			let result = await this.getUserInput(prompt);
+			if (result) {
+					outArgs.push(result);
+			} else {
+				throw new Error('Input aborted');
+			}
+		}
+		return outArgs;
 	}
 
 	public dispose() {
