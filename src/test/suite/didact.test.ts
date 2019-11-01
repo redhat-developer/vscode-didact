@@ -3,7 +3,7 @@ import { before } from 'mocha';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as extension from '../../extension';
+import {SCAFFOLD_PROJECT_COMMAND} from '../../extensionFunctions';
 
 suite('Didact test suite', () => {
 	before(() => {
@@ -11,7 +11,7 @@ suite('Didact test suite', () => {
 	});
 
 	test('Scaffold new project', async () => {
-		vscode.commands.executeCommand(extension.SCAFFOLD_PROJECT_COMMAND).then( () => {
+		vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
 			let createdGroovyFileInFolderStructure = path.join(__dirname, './root/resources/text/simple.groovy');
 			assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
 		});
