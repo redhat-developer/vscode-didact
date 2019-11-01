@@ -2,6 +2,8 @@
 
 The **vscode-didact** extension prototype does a few things. Mainly it shows what's possible through a combination of a simple Markdown file, the VS Code Webview, and calling easily accessible commands in VS Code.
 
+For a demo file of what functionality is currently available, check out [the didact-demo.](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.md)
+
 ## VSCode-Didact In Action
 
 What follows is a simple example with three actions. One scaffolds a project based on a structure defined in JSON. One opens a file created when the folder structure was created. And one triggers a command in a different extension if it's installed. The tutorial is defined in [this MarkDown file](./example/tutorial2.md)
@@ -28,6 +30,12 @@ To change the default Didact file, access the settings (`File->Preferences->Sett
 ## CSS Styling
 
 Currently we are using the CSS template suggested by the W3C, as provided [here at the Quackit.com site](https://www.quackit.com/css/css_template.cfm). We may be able to reuse some of the PatternFly approach, but that will require additional research.
+
+We do provide some additions that can be called using curly brackets in the Markdown text for styling...
+
+* `{.didact}` - Changes the cursor for Didact-specific action links to a crosshair instead of a normal link pointer. (Would be great to do this automatically, but this works as a workaround in the short term.)
+* `{.imageRight}` - Useful for images we want to float right.
+* `{.imageCenter}` - Useful for images we want to be centered in the view.
 
 ## Didact Link formatting for opening Didact files inside VS Code
 

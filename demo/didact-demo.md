@@ -1,4 +1,4 @@
-![Welcome to Didact](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/images/welcome-to-didact-header.png)
+![Welcome to Didact](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/images/welcome-to-didact-header.png){.imageCenter}
 
 # Welcome to Didact!
 
@@ -62,7 +62,7 @@ You can check for other extensions to already be installed in the user's VS Code
 
 [You can link to other Didact tutorials also included in the same extension](vscode://redhat.vscode-didact?extension=example/tutorial.md "Opens the Tutorial.md file in the vscode-didact extension")
 
-[And after you create files in the local workspace (see ["Scaffolding projects"](#scaffolding-projects)), you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md&completion=Opened%20the%20test.md%20file)
+If you created the project earlier (see ["Scaffolding projects"](#scaffolding-projects) ), ([you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md&completion=Opened%20the%20test.md%20file)
 
 ### Native HTML
 
