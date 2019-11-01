@@ -59,7 +59,7 @@ All Didact links have the following qualities:
   * (optional) `completion='my%20notification%20message'` (to provide a human readable message to the user upon task completion - note that spaces must be replaced with %20)
   * (optional) `error='my%20error%20message'` (to provide a human readable message to the user upon task error - note that spaces must be replaced with %20)
   * (optional) `text=one$$two$$three` (to provide straight text input to the command, with each argument separated by `$$`) (currently only works out to three arguments, but can likely be expanded further if needed)
- * (optional) `user=one$$two$$three` (to provide user-provided text input to the command, with each argument separated by `$$` -- each string is used as the prompt for the user) (currently only works out to three arguments, but can likely be expanded further if needed)
+  * (optional) `user=one$$two$$three` (to provide user-provided text input to the command, with each argument separated by `$$` -- each string is used as the prompt for the user) (currently only works out to three arguments, but can likely be expanded further if needed)
   * Note: projectFilePath and srcFilePath should be mutually exclusive, but that distinction is not made at present
 
 ## Project JSON Structure
