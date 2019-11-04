@@ -109,8 +109,8 @@ function handleSrcFilePath(srcFilePath: string, extensionPath : string) : vscode
     return uri;
 }
 
-// parse "text=" inputs 
-function handleText(text : string, outputs : string[]) {
+// parse "text=" inputs - exported for testing use
+export function handleText(text : string, outputs : string[]) {
     if (text) {
         let inputs : string[] = [];
         if (text.split('$$').length > 0) {

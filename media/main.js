@@ -16,11 +16,12 @@
  */
 
 // This script will be run within the webview itself
-(function () {
+(
+function () {
 
 	//connect to the vscode api
 	const vscode = acquireVsCodeApi();
-	
+
 	document.body.addEventListener('click', event => {
 		let node = event && event.target;
 		while (node) {
@@ -51,6 +52,23 @@
 		}
 	}, true);
 
+	// clunky, but better than passing in all of these as part of the message? 
+	const requirementCommandLinks = [
+		'didact://?commandId=vscode.didact.extensionRequirementCheck', 
+		'didact://?commandId=vscode.didact.requirementCheck',
+		'didact://?commandId=vscode.didact.workspaceFolderExistsCheck'
+	];
+
+	function collectElements(tagname) {
+		var elements = [];
+		var links = document.getElementsByTagName(tagname);
+		for (let index = 0; index < links.length; index++) {
+			const element = links[index];
+			elements.push(element);
+		}
+		return elements;
+	}
+
 	// Handle messages sent from the extension to the webview
 	window.addEventListener('message', event => {
 		const message = event.data; // The json data that the extension sent
@@ -63,15 +81,33 @@
 				let element = document.getElementById(requirementName);
 				if (element) {
 					let message = 'Not currently avaialable';
-					let color = "green";
+					let green = "green";
+					let red = "red";
 					if (String(isAvailable).toLowerCase() === 'true') {
 						message = 'Available';
-						element.style.color = color;
+						element.style.color = green;
+					} else {
+						message = 'Unavailable';
+						element.style.color = red;
 					}
 					element.textContent = `Status: ${message}`;
 				}
 				console.log(`${requirementName} is available: ${isAvailable}`);
 				break;
-		}
+			case 'allRequirementCheck':
+				var links = collectElements("a");
+				for (let index = 0; index < links.length; index++) {
+					const element = links[index];
+					if (element.getAttribute('href')) {
+						const href = element.getAttribute('href');
+						for(let check of requirementCommandLinks) {
+							if (href.startsWith(check)) {
+								element.click();
+							}
+						}
+					}
+				}
+				break;
+			}
 	});
 }());

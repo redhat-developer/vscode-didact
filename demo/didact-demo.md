@@ -30,6 +30,10 @@ You can check for requirements on the user's machine...
 
 *Status: unknown*{#maven-requirements-status} 
 
+[We'll make sure that this one is NOT accessible so you can see the difference.](didact://?commandId=vscode.didact.requirementCheck&text=nonexistent-requirements-status$$something$$wicked%20this%20way%20comes&error=something%20wicked%20this%20way%20comes. "Tests to see what happens with a requirement guaranteed to fail"){.didact}
+
+*Status: unknown*{#nonexistent-requirements-status} 
+
 You can check for other extensions to already be installed in the user's VS Code instance...
 
 [VS Code Extension Pack for Apache Camel by Red Hat is installed](didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack&completion=Camel%20extension%20pack%20available. "Checks the VS Code workspace to make sure the extension pack is installed"){.didact}
@@ -41,6 +45,10 @@ You can check for other extensions to already be installed in the user's VS Code
 [We can even check to ensure that at least one folder exists in the workspace.](didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status&completion=A%20valid%20folder%20exists%20in%20the%20workspace. "Ensure that at least one folder exists in the user workspace"){.didact}
 
 *Status: unknown*{#workspace-folder-status}
+
+We can now even test all the requirements at once!
+
+<a href='didact://?commandId=vscode.didact.validateAllRequirements' title='Validate all requirements!'><button>Validate all Requirements at Once!</button></a>
 
 ### Scaffolding projects 
 

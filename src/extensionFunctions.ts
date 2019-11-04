@@ -26,6 +26,7 @@ import {getMDParser} from './markdownUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 
 const fetch = require('node-fetch');
+const DOMParser = require('xmldom').DOMParser;
 
 // command IDs
 export const SCAFFOLD_PROJECT_COMMAND = 'vscode.didact.scaffoldProject';
@@ -38,6 +39,9 @@ export const EXTENSION_REQUIREMENT_CHECK_COMMAND = 'vscode.didact.extensionRequi
 export const WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND = 'vscode.didact.workspaceFolderExistsCheck';
 export const CREATE_WORKSPACE_FOLDER_COMMAND = 'vscode.didact.createWorkspaceFolder';
 export const RELOAD_DIDACT_COMMAND = 'vscode.didact.reload';
+export const VALIDATE_ALL_REQS_COMMAND = 'vscode.didact.validateAllRequirements';
+export const GATHER_ALL_REQS_COMMAND = 'vscode.didact.gatherAllRequirements';
+export const GATHER_ALL_COMMANDS = 'vscode.didact.gatherAllCommands';
 
 // stash the extension context for use by the commands 
 export function initializeContext(inContext: vscode.ExtensionContext) {
@@ -165,7 +169,6 @@ export namespace extensionFunctions {
 	// reset the didact window to use the default set in the settings
 	export async function openDidactWithDefault() {
 		DidactWebviewPanel.createOrShow(context.extensionPath);
-		DidactWebviewPanel.addListener(context);
 		_mdFileUri = undefined;
 		DidactWebviewPanel.hardReset();		
 	}
@@ -212,7 +215,6 @@ export namespace extensionFunctions {
 			}
 		}
 		DidactWebviewPanel.createOrShow(context.extensionPath);
-		DidactWebviewPanel.addListener(context);
 		if (DidactWebviewPanel.currentPanel && _mdFileUri) {
 			DidactWebviewPanel.currentPanel.setMDPath(_mdFileUri);
 		}
@@ -220,35 +222,43 @@ export namespace extensionFunctions {
 
 	// very basic requirements testing -- check to see if the results of a command executed at CLI returns a known result
 	// example: testCommand = mvn --version, testResult = 'Apache Maven' 
-	export async function requirementCheck(requirement: string, testCommand: string, testResult: string) {
-		let result = child_process.execSync(testCommand);
-		if (result.includes(testResult)) {
-			postRequirementsResponseMessage(requirement, true);
-			return;
-		} else {
+	export async function requirementCheck(requirement: string, testCommand: string, testResult: string) : Promise<boolean> {
+		try {
+			let result = child_process.execSync(testCommand);
+			if (result.includes(testResult)) {
+				postRequirementsResponseMessage(requirement, true);
+				return true;
+			} else {
+				postRequirementsResponseMessage(requirement, false);
+				return false;
+			}	
+		} catch (error) {
 			postRequirementsResponseMessage(requirement, false);
-		}	
+		}
+		return false;
 	}
 
 	// very basic requirements testing -- check to see if the extension Id is installed in the user workspace
-	export async function extensionCheck(requirement: string, extensionId: string) {
+	export async function extensionCheck(requirement: string, extensionId: string) : Promise<boolean> {
 		let testExt = vscode.extensions.getExtension(extensionId);
 		if (testExt) {
 			postRequirementsResponseMessage(requirement, true);
-			return;
+			return true;
 		} else {
 			postRequirementsResponseMessage(requirement, false);
+			return false;
 		}	
 	}
 
 	// very basic test -- check to see if the workspace has at least one root folder
-	export async function validWorkspaceCheck(requirement: string) {
+	export async function validWorkspaceCheck(requirement: string) : Promise<boolean> {
 		let wsPath = utils.getWorkspacePath();
 		if (wsPath) {
 			postRequirementsResponseMessage(requirement, true);
-			return;
+			return true;
 		} else {
 			postRequirementsResponseMessage(requirement, false);
+			return false;
 		}	
 	}
 
@@ -262,7 +272,7 @@ export namespace extensionFunctions {
 
 	// send a message back to the webview - used for requirements testing mostly 
 	function postRequirementsResponseMessage(requirement: string, booleanResponse: boolean) {
-		if (requirement && booleanResponse && DidactWebviewPanel.currentPanel) {
+		if (requirement && DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.postRequirementsResponseMessage(requirement, booleanResponse);
 		}
 	}
@@ -319,5 +329,72 @@ export namespace extensionFunctions {
 		} catch (error) {
 			throw new Error(error);
 		}
+	}
+
+	export function validateAllRequirements() {
+		if (DidactWebviewPanel.currentPanel) {
+			DidactWebviewPanel.postTestAllRequirementsMessage();
+		}
+	}
+
+	const commandPrefix = 'didact://?commandId';
+
+	function collectElements(tagname: string) : any[] {
+		var elements:any[] = [];
+		if (DidactWebviewPanel.currentPanel) {
+			let html : string | undefined = DidactWebviewPanel.currentPanel.getCurrentHTML();
+			if (html) {
+				var document = new DOMParser().parseFromString(html, 'text/html');
+				var links = document.getElementsByTagName(tagname);
+				for (let index = 0; index < links.length; index++) {
+					const element = links[index];
+					elements.push(element);
+				}
+			}
+		}
+		return elements;
+	}
+
+	const requirementCommandLinks = [
+		'didact://?commandId=vscode.didact.extensionRequirementCheck', 
+		'didact://?commandId=vscode.didact.requirementCheck',
+		'didact://?commandId=vscode.didact.workspaceFolderExistsCheck'
+	];
+
+	export function gatherAllRequirementsLinks() : any[] {
+		var requirements = [];
+		if (DidactWebviewPanel.currentPanel) {
+			var links = collectElements("a");
+			for (let index = 0; index < links.length; index++) {
+				const element = links[index];
+				if (element.getAttribute('href')) {
+					const href = element.getAttribute('href');
+					for(let check of requirementCommandLinks) {
+						if (href.startsWith(check)) {
+							requirements.push(href);
+							break;
+						}
+					}
+				}
+			}
+		}
+		return requirements;
+	}
+
+	export function gatherAllCommandsLinks() {
+		var commandLinks = [];
+		if (DidactWebviewPanel.currentPanel) {
+			var links = collectElements("a");
+			for (let index = 0; index < links.length; index++) {
+				const element = links[index];
+				if (element.getAttribute('href')) {
+					const href = element.getAttribute('href');
+					if (href.startsWith(commandPrefix)) {
+						commandLinks.push(href);
+					}
+				}
+			}
+		}
+		return commandLinks;
 	}
 }

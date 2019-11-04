@@ -91,6 +91,18 @@
 			{
 				"command": "vscode.didact.reload",
 				"title": "Didact: Reload Didact window"
+			},
+			{
+				"command": "vscode.didact.validateAllRequirements",
+				"title": "Didact: Validate all requirements in Didact document"
+			},
+			{
+				"command": "vscode.didact.gatherAllRequirements",
+				"title": "Didact: Gather all requirement links in Didact document"
+			},
+			{
+				"command": "vscode.didact.gatherAllCommands",
+				"title": "Didact: Gather all command links in Didact document"
 			}
 		],
 		"menus": {
@@ -133,6 +145,7 @@
 		"markdown-it-attrs": "^3.0.1",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.0",
-		"tmp": "^0.1.0"
+		"tmp": "^0.1.0",
+		"xmldom": "^0.1.27"
 	}
 }

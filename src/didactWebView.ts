@@ -43,6 +43,10 @@ export class DidactWebviewPanel {
 		this.mdStr = value;
 	}
 
+	public getCurrentHTML() : string | undefined {
+		return this.currentHtml;
+	}
+
 	getMarkdown() {
 		return this.mdStr;
 	}
@@ -57,23 +61,6 @@ export class DidactWebviewPanel {
 			DidactWebviewPanel.currentPanel.setMarkdown(undefined);
 			DidactWebviewPanel.currentPanel.setMDPath(undefined);
 			DidactWebviewPanel.currentPanel._update(true);
-		}
-	}
-
-	public static addListener(context: vscode.ExtensionContext) {
-		if (DidactWebviewPanel.currentPanel) {
-			// Handle messages from the webview
-			DidactWebviewPanel.currentPanel._panel.webview.onDidReceiveMessage(
-				message => {
-				switch (message.command) {
-					case 'alert':
-					vscode.window.showErrorMessage(message.text);
-					return;
-				}
-				},
-				undefined,
-				context.subscriptions
-			);		
 		}
 	}
 
@@ -133,6 +120,28 @@ export class DidactWebviewPanel {
 		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
 	}
 
+	static async postNamedSimpleMessage(msg: string) {
+		if (!DidactWebviewPanel.currentPanel) {
+			return;
+		}
+		let jsonMsg:string = 
+			`{ "command" : "${msg}"}`;
+		console.log("outgoing message being posted: " + jsonMsg);
+		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);		
+	}
+
+	public static async postTestAllRequirementsMessage() {
+		DidactWebviewPanel.postNamedSimpleMessage("allRequirementCheck");
+	}
+
+	public static async postCollectAllRequirementsMessage() {
+		DidactWebviewPanel.postNamedSimpleMessage("returnRequirements");
+	}
+
+	public static async postCollectAllCommandIdsMessage() {
+		DidactWebviewPanel.postNamedSimpleMessage("returnCommands");
+	}
+
 	private constructor(panel: vscode.WebviewPanel, extensionPath: string) {
 		this._panel = panel;
 		this._extensionPath = extensionPath;
@@ -174,7 +183,7 @@ export class DidactWebviewPanel {
 							}
 						}
 						return;
-				}
+					}
 			},
 			null,
 			this._disposables
@@ -223,18 +232,19 @@ export class DidactWebviewPanel {
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
 
+		// <!--
+		// Use a content security policy to only allow loading images from https or from our extension directory,
+		// and only allow scripts that have a specific nonce.
+		// -->
+	// 			<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';"> -->
+
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
 			<meta charset="UTF-8">
-			<!--
-			Use a content security policy to only allow loading images from https or from our extension directory,
-			and only allow scripts that have a specific nonce.
-			-->
-			<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';"> -->
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Didact Tutorial</title>
-			<link rel="stylesheet" href="${cssUri}">
+			<link rel="stylesheet" href="${cssUri}"/>
 			</head>
 		<body>` + mdHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>
