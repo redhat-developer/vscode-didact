@@ -94,9 +94,43 @@ export namespace extensionFunctions {
 	}
 
 	// utility command to start a named terminal so we have a handle to it
-	export async function startTerminal(name:string) {
-		const terminal = vscode.window.createTerminal(name);
-		terminal.show();		
+	export async function startTerminal(...rest: any[]) { //name:string, path: vscode.Uri) {
+		let name : string | undefined = undefined;
+		let uri : vscode.Uri | undefined = undefined;
+		if (rest) {
+			try {
+				for(let arg of rest) {
+					if (typeof arg === 'string' ) {
+						name = arg as string;
+					} else if (typeof arg === 'object' ) {
+						uri = arg as vscode.Uri;
+					}
+				}
+			} catch (error) {
+				throw new Error(error);
+			}
+		}
+		if (name) {
+			if (findTerminal(name)) {
+				throw new Error(`Terminal ${name} already exists`);
+			}
+		}
+		let terminal : vscode.Terminal | undefined = undefined;
+		if (name && uri) {
+			terminal = vscode.window.createTerminal({
+				name: `${name}`,
+				cwd: `${uri.fsPath}`
+			});
+		} else if (name) {
+			terminal = vscode.window.createTerminal({
+				name: `${name}`
+			});
+		} else {
+			terminal = vscode.window.createTerminal();
+		}
+		if (terminal) {
+			terminal.show();
+		}
 	}
 
 	async function showAndSendText(terminal: vscode.Terminal, text:string) {
@@ -107,20 +141,25 @@ export namespace extensionFunctions {
 		}
 	}
 
+	function findTerminal(name: string) : vscode.Terminal | undefined {
+		for(let localTerm of vscode.window.terminals){
+			if(localTerm.name === name){ 
+				return localTerm; 
+			}
+		}		
+		return undefined;
+	}
+
 	// send a message to a named terminal
 	export async function sendTerminalText(name:string, text:string) {
-		const terminals = <vscode.Terminal[]>(<any>vscode.window).terminals;
-		terminals.forEach(terminal => {
-			if (terminal.name === name) {
-				showAndSendText(terminal, text);
-				return;
-			}
-		});
-		
-		// if we didn't find a terminal, we'll create one 
-		const terminal = vscode.window.createTerminal(name);
-		showAndSendText(terminal, text);
-		return;
+		const terminal : vscode.Terminal | undefined = findTerminal(name);
+		if (!terminal) {
+			const newterminal = vscode.window.createTerminal(name);
+			showAndSendText(newterminal, text);
+		}
+		if (terminal) {
+			showAndSendText(terminal, text);
+		}
 	}
 
 	// reset the didact window to use the default set in the settings
