@@ -109,7 +109,7 @@
 			"explorer/context": [
 				{
 					"command": "vscode.didact.startDidact",
-					"when": "resourceExtname =~ /\\.md$/",
+					"when": "resourceExtname =~ /\\.(md|adoc)$/",
 					"group": "vscode.didact.group"
 				},
 				{
@@ -140,8 +140,10 @@
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
+		"@asciidoctor/core": "^2.0.3",
 		"@types/markdown-it": "^0.0.9",
 		"@types/request-promise": "^4.1.44",
+		"asciidoctor": "^2.0.3",
 		"markdown-it-attrs": "^3.0.1",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.0",

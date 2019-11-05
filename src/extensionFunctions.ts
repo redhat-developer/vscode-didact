@@ -23,6 +23,7 @@ import * as querystring from 'querystring';
 import * as path from 'path';
 import * as child_process from 'child_process';
 import {getMDParser} from './markdownUtils';
+import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 
 const fetch = require('node-fetch');
@@ -307,12 +308,19 @@ export namespace extensionFunctions {
 	}
 	
 	// retrieve markdown text from a file
-	async function getDataFromFile(uri:vscode.Uri) : Promise<string> {
+	async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined> {
 		try {
 			const content = fs.readFileSync(uri.fsPath, 'utf8');
-			const parser = getMDParser();
-			const result = parser.render(content);
-			return result;
+			const extname = path.extname(uri.fsPath);
+			let result : string;
+			if (extname.localeCompare('.adoc') === 0) {
+				result = parseADtoHTML(content);
+				return result;
+			} else if (extname.localeCompare('.md') === 0) {
+				const parser = getMDParser();
+				result = parser.render(content);
+				return result;
+			}
 		} catch (error) {
 			throw new Error(error);
 		}

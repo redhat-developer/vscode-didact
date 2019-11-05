@@ -1,0 +1,89 @@
+image:https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/images/welcome-to-didact-header.png[Welcome to Didact,role="center"]
+
+# Welcome to Didact!
+
+Didact is an extension for VS Code that provides a simple Asciidoc-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the https://github.com/bfitzpat/vscode-didact/blob/master/README.md[VSCode Didact readme about link formatting for more information]!
+
+## Functionality
+
+* Didact uses standard Markdown or Asciidoc syntax
+* Didact adds a link format that can be used to leverage VS Code commands in a variety of ways
+* Didact provides a library of commands to aid in creating interactive walkthroughs for the user
+
+## Examples
+
+[.right]image:https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/fireworks.gif[Fireworks from Giphy!, 200, 200]
+
+With our combination of standard Asciidoc and VS Code actions, we have a ton of functionality out of the box.
+
+### Standard Asdiidoc
+
+Except for the custom HTML at the bottom, this whole file was done using standard Asciidoc and the `asciidoc` npm component. You can hhttps://asciidoctor.org//[see it in action here] and https://www.npmjs.com/package/asciidoctor[see its npm page here].
+
+But beyond that, we add a number of nice features that should be useful to those writing tutorials utilizing the capabilities of Didact in VS Code. 
+
+### Checking requirements
+
+You can check for requirements on the user's machine...
+
+* link:didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven&completion=Apache%20Maven%20is%20available%20on%20this%20system.[For example, you could check to see if Apache Maven is accessible at the command line]
+
+* link:didact://?commandId=vscode.didact.requirementCheck&text=nonexistent-requirements-status$$something$$wicked%20this%20way%20comes&error=something%20wicked%20this%20way%20comes.[We'll make sure that this one is NOT accessible so you can see the difference.]
+
+* You can check for other extensions to already be installed in the user's VS Code instance... link:didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack&completion=Camel%20extension%20pack%20available.[Click here to make sure the VS Code Extension Pack for Apache Camel by Red Hat is installed]
+
+NOTE: link:vscode:extension/redhat.apache-camel-extension-pack[And if it's not installed, you can use built-in VS Code functionality to display the page for the extension and allow the user to install it.]
+
+* link:didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status&completion=A%20valid%20folder%20exists%20in%20the%20workspace.[We can even check to ensure that at least one folder exists in the workspace.]
+
+* We can now even test all the requirements at once! link:didact://?commandId=vscode.didact.validateAllRequirements'[Validate all requirements!]
+
+### Scaffolding projects [[scaffolding]]
+
+link:didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectwithdidactfile.json&completion=Created%20project%20with%20sample%20Didact%20file%20and%20Groovy%20file.[You can "scaffold" new projects with complete folder and file structures from a simple json file]
+
+### Other capabilities
+
+* link:didact://?commandId=vscode.openFolder&projectFilePath=anotherProject/src/simple.groovy&completion=Opened%20the%20Simple.groovy%20file[You can open files for viewing and editing in their default editors (this opens the /anotherProject/src/simple.groovy file in the project we scaffolded in the last section).]
+
+* link:didact://?commandId=vscode.didact.startTerminalWithName&completion=Opened%20a%20new%20terminal.[You can open integrated terminals.]
+
+* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerm$$echo%20Hello%20Didact!&completion=Opened%20a%20new%20terminal.[You can can even open a terminal, name it, and send it some text.]
+
+* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&user=terminal-name$$terminal-command-to-execute&completion=Opened%20a%20new%20terminal.[And if you want to have certain inputs be user-specified, you can now do that too.]
+
+### Linking to other Didact files
+
+* link:vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.md[You can link to other Didact tutorials remotely - this one is on GitHub]
+
+* link:vscode://redhat.vscode-didact?extension=example/tutorial.md[You can link to other Didact tutorials also included in the same extension]
+
+* If you created the project earlier (see <<scaffolding>>), (link:vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md&completion=Opened%20the%20test.md%20file[you can actually open project-level didact files as well])
+
+### Native HTML
+
+Asciidoc doesn't seem to support bringing in native HTML. But you can bring in tables...
+
+.My Table
+|===
+| Column1  | Column2 | Column3
+
+| Data | Data | Data
+| Data | Data | Data
+| Data | Data | Data
+|===
+
+## Limitations
+
+* We can only open one Didact file at a time at the moment and there isn't the concept of a tutorial "history" to step forward or back through yet.
+* Didact, beacause it utilizes the VS Code Webview, is limited to what files it can access. For example, local image and text files are inaccessible but those same files served up as raw content through GitHub links work just fine.
+
+# Ideas or want to contribute?
+
+Check out https://github.com/bfitzpat/vscode-didact[the project on Github]! 
+
+https://github.com/bfitzpat/vscode-didact/blob/master/README.md[The readme] has a ton of information about some of the specifics for link formatting, project json format, etc. 
+
+And feel free to https://github.com/bfitzpat/vscode-didact/issues[add issues, submit feature requests, log bugs, etc]!
+
+Thanks!
