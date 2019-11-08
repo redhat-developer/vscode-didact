@@ -34,6 +34,7 @@ export class DidactWebviewPanel {
 	private currentHtml : string | undefined = undefined;
 	private mdStr : string | undefined = undefined;
 	private mdPath : vscode.Uri | undefined = undefined;
+	private defaultTitle = `Didact Tutorial`;
 
 	public getMDPath() {
 		return this.mdPath;
@@ -51,9 +52,23 @@ export class DidactWebviewPanel {
 		return this.mdStr;
 	}
 
-	public setMDPath(path : vscode.Uri | undefined) {
-		this.mdPath = path;
+	public setMDPath(inpath : vscode.Uri | undefined) {
+		this.mdPath = inpath;
+		if (inpath) {
+			let tempFilename = path.basename(inpath.fsPath);
+			if (DidactWebviewPanel.currentPanel) {
+				DidactWebviewPanel.currentPanel.defaultTitle = tempFilename;
+				DidactWebviewPanel.currentPanel.updateTitle();
+			}
+		}
+
 		this._update(true);
+	}
+
+	private updateTitle() {
+		if (DidactWebviewPanel.currentPanel) {
+			DidactWebviewPanel.currentPanel._panel.title = this.defaultTitle;
+		}
 	}
 
 	public static hardReset() {
@@ -76,6 +91,7 @@ export class DidactWebviewPanel {
 		}
 
 		// Otherwise, create a new panel.
+
 		const panel = vscode.window.createWebviewPanel(
 			DidactWebviewPanel.viewType, 'didact',
 			column || vscode.ViewColumn.One,
@@ -255,7 +271,6 @@ export class DidactWebviewPanel {
 	}
 
 	private async _update(flag? : boolean ) {
-		this._panel.title = "Didact Tutorial";
 		if (flag) { // reset based on vscode link
 			const content = await extensionFunctions.getWebviewContent();
 			if (content) {
@@ -275,6 +290,8 @@ export class DidactWebviewPanel {
 		if (this.currentHtml) {
 			this._panel.webview.html = this.currentHtml;
 		}
+
+		this._panel.title = this.defaultTitle;
 	}
 
 }

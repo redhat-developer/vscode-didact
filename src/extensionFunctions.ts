@@ -65,7 +65,7 @@ export namespace extensionFunctions {
 
 	// use the json to model the folder/file structure to be created in the vscode workspace
 	export async function scaffoldProjectFromJson(jsonpath:vscode.Uri) {
-		if (utils.getWorkspacePath) {
+		if (utils.getWorkspacePath()) {
 			let testJson : any;
 			if (jsonpath) {
 				var mdStr = fs.readFileSync(jsonpath.fsPath, 'utf8');
@@ -327,6 +327,7 @@ export namespace extensionFunctions {
 	}
 	
 	// retrieve markdown text from a url
+	// TODO: figure out how to determine adoc vs. md on the fly from the url
 	async function getDataFromUrl(url:string) : Promise<string> {
 		try {
 			const response = await fetch(url);

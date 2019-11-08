@@ -130,14 +130,14 @@
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^5.2.6",
-		"@types/node": "^10.12.21",
-		"@types/vscode": "^1.39.0",
-		"glob": "^7.1.4",
+		"@types/node": "^10.17.4",
+		"@types/vscode": "^1.40.0",
+		"glob": "^7.1.6",
 		"markdown-it": "^9.0.0",
-		"mocha": "^6.1.4",
-		"tslint": "^5.12.1",
-		"typescript": "^3.3.1",
-		"vscode-test": "^1.2.0"
+		"mocha": "^6.2.2",
+		"tslint": "^5.20.1",
+		"typescript": "^3.7.2",
+		"vscode-test": "^1.2.3"
 	},
 	"dependencies": {
 		"@asciidoctor/core": "^2.0.3",
