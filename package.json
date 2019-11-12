@@ -28,7 +28,7 @@
 		"Framework"
 	],
 	"engines": {
-		"vscode": "^1.39.0"
+		"vscode": "^1.40.0"
 	},
 	"categories": [
 		"Other"
@@ -46,6 +46,11 @@
 						"type": "string",
 						"default": "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.md",
 						"description": "Default Didact File Shown - can be any valid URL to a Didact Markdown file",
+						"scope": "window"
+					},
+					"didact.registered": {
+						"type": "array",
+						"description": "Registered Didact tutorials - can be any valid URL to a Didact Markdown file",
 						"scope": "window"
 					}
 				}
@@ -103,6 +108,10 @@
 			{
 				"command": "vscode.didact.gatherAllCommands",
 				"title": "Didact: Gather all command links in Didact document"
+			},
+			{
+				"command": "vscode.didact.view.tutorial.open",
+				"title": "Start Didact tutorial"
 			}
 		],
 		"menus": {
@@ -116,6 +125,21 @@
 					"command": "vscode.didact.scaffoldProject",
 					"when": "resourceExtname =~ /\\.json$/",
 					"group": "vscode.didact.group"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "vscode.didact.view.tutorial.open",
+					"group": "1",
+					"when": "view == didact.tutorials && viewItem == TutorialNode"
+				}
+			]
+		},
+		"views": {
+			"explorer": [
+				{
+					"id": "didact.tutorials",
+					"name": "Didact Tutorials"
 				}
 			]
 		}

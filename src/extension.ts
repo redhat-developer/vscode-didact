@@ -19,8 +19,20 @@ import * as vscode from 'vscode';
 import { extensionFunctions, initializeContext } from './extensionFunctions';
 import * as commandConstants from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
+import { DidactNodeProvider, TreeNode } from './nodeProvider';
+import { registerTutorial } from './utils';
 
-export function activate(context: vscode.ExtensionContext) {
+
+const DIDACT_VIEW = 'didact.tutorials';
+
+const DEFAULT_TUTORIAL_URI = "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.md";
+const DEFAULT_TUTORIAL_CATEGORY = "Didact";
+const DEFAULT_TUTORIAL_NAME = "Didact Demo";
+
+let didactTutorialsProvider = new DidactNodeProvider();
+let didactTreeView : vscode.TreeView<TreeNode>;
+
+export async function activate(context: vscode.ExtensionContext) {
 
 	initializeContext(context); // stash context for command use
 
@@ -36,6 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND, extensionFunctions.validWorkspaceCheck));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.RELOAD_DIDACT_COMMAND, extensionFunctions.reloadDidact));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VALIDATE_ALL_REQS_COMMAND, extensionFunctions.validateAllRequirements));
+	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VIEW_OPEN_TUTORIAL_MENU, extensionFunctions.openTutorialFromView));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
@@ -58,6 +71,21 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		});
 	}
+
+	await registerTutorial(DEFAULT_TUTORIAL_NAME, DEFAULT_TUTORIAL_URI, DEFAULT_TUTORIAL_CATEGORY);
+	await registerTutorial('Your First Integration', 'https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelk/first-integration.md', 'Apache Camel K');
+	createIntegrationsView();
+}
+
+function createIntegrationsView(): void {
+	didactTreeView = vscode.window.createTreeView(DIDACT_VIEW, {
+		treeDataProvider: didactTutorialsProvider
+	});
+	didactTreeView.onDidChangeVisibility(async () => {
+		if (didactTreeView.visible === true) {
+			await didactTutorialsProvider.refresh().catch(err => console.log(err));
+		}
+	});
 }
 
 export function deactivate() {}

@@ -15,15 +15,26 @@ const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=maven-r
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 
 suite('Didact test suite', () => {
-	before(() => {
+	before(async () => {
 		vscode.window.showInformationMessage('Start all Didact tests.');
+		let wsCheck : boolean = await extensionFunctions.validWorkspaceCheck('undefined');
+		vscode.window.showInformationMessage('Workspace has a root folder: ' + wsCheck);
+
+		if (!wsCheck) {
+			await extensionFunctions.createTemporaryFolderAsWorkspaceRoot(undefined);
+		}
 	});
 
 	test('Scaffold new project', async () => {
-		vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
-			let createdGroovyFileInFolderStructure = path.join(__dirname, './root/resources/text/simple.groovy');
-			assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
-		});
+		try {
+			vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
+				let createdGroovyFileInFolderStructure = path.join(__dirname, './root/resources/text/simple.groovy');
+				assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
+			});
+		} catch (error) {
+//			console.log(error);
+			assert.fail(error);
+		}
 	});
 
 	test('Test the extension checking', async () => {
@@ -103,15 +114,17 @@ suite('Didact test suite', () => {
 					if (query.commandId) {
 						const commandId = getValue(query.commandId);
 						if (commandId) {
-							vscode.commands.getCommands().then(commands => {
-								var foundCmds = commands.filter(function (e) {
-									return e.localeCompare(commandId);
-								}).sort();
-								assert.equal(foundCmds.length, 1, `Found command ${commandId} in Didact file but extension is not found`);
+							console.log('Looking for ' + commandId);
+							const vsCommands : string[] = await vscode.commands.getCommands(true);
+							var filteredList : string[] = vsCommands.filter( function (command) {
+								return command === commandId;
 							});
+							assert.equal(filteredList.length, 1, `Found command ${commandId} in Didact file but command is not found`);
 						}
 					}
 				}
+			} else {
+				assert.fail('No commands found in VS Code environment.');
 			}
 		}
 	});

@@ -25,6 +25,7 @@ import * as child_process from 'child_process';
 import {getMDParser} from './markdownUtils';
 import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
+import { TreeNode } from './nodeProvider';
 
 const fetch = require('node-fetch');
 const DOMParser = require('xmldom').DOMParser;
@@ -43,6 +44,7 @@ export const RELOAD_DIDACT_COMMAND = 'vscode.didact.reload';
 export const VALIDATE_ALL_REQS_COMMAND = 'vscode.didact.validateAllRequirements';
 export const GATHER_ALL_REQS_COMMAND = 'vscode.didact.gatherAllRequirements';
 export const GATHER_ALL_COMMANDS = 'vscode.didact.gatherAllCommands';
+export const VIEW_OPEN_TUTORIAL_MENU = 'vscode.didact.view.tutorial.open';
 
 // stash the extension context for use by the commands 
 export function initializeContext(inContext: vscode.ExtensionContext) {
@@ -406,4 +408,13 @@ export namespace extensionFunctions {
 		}
 		return commandLinks;
 	}
+
+	// very basic test -- check to see if the workspace has at least one root folder
+	export async function openTutorialFromView(node: TreeNode) : Promise<void> {
+		if (node && node.uri) {
+			let vsUri = vscode.Uri.parse(node.uri);
+			await startDidact(vsUri);
+		}
+	}
+
 }
