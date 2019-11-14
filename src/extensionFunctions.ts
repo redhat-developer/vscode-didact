@@ -45,6 +45,7 @@ export const VALIDATE_ALL_REQS_COMMAND = 'vscode.didact.validateAllRequirements'
 export const GATHER_ALL_REQS_COMMAND = 'vscode.didact.gatherAllRequirements';
 export const GATHER_ALL_COMMANDS = 'vscode.didact.gatherAllCommands';
 export const VIEW_OPEN_TUTORIAL_MENU = 'vscode.didact.view.tutorial.open';
+export const REGISTER_TUTORIAL = 'vscode.didact.register'; // name, uri, category
 
 // stash the extension context for use by the commands 
 export function initializeContext(inContext: vscode.ExtensionContext) {
@@ -409,12 +410,23 @@ export namespace extensionFunctions {
 		return commandLinks;
 	}
 
-	// very basic test -- check to see if the workspace has at least one root folder
 	export async function openTutorialFromView(node: TreeNode) : Promise<void> {
 		if (node && node.uri) {
 			let vsUri = vscode.Uri.parse(node.uri);
 			await startDidact(vsUri);
 		}
+	}
+
+	export async function registerTutorial(name : string, sourceUri : string, category : string) : Promise<void> {
+		return new Promise<void>( (resolve, reject) => {
+			utils.registerTutorial(name, sourceUri, category).then( () => {
+				resolve();
+				return;
+			}).catch ( (error) => {
+				reject(error);
+				return;
+			});
+		});
 	}
 
 }

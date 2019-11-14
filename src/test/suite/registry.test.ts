@@ -1,6 +1,9 @@
 import * as assert from 'assert';
 import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorial, clearRegisteredTutorials} from '../../utils';
 import {before} from 'mocha';
+import * as vscode from 'vscode';
+import { extensionFunctions, REGISTER_TUTORIAL } from '../../extensionFunctions';
+
 
 const name = 'new-tutorial';
 const category = 'some-category';
@@ -58,5 +61,20 @@ suite('Didact registry test suite', () => {
 	test('verify can get uri for name/category pair', async () => {
 		const rtnUri : string | undefined = getUriForDidactNameAndCategory(name, category);
 		assert.equal(rtnUri, source);
+	});
+
+	test('call command to register tutorial', async() => {
+		const name3 = 'new-tutorial-3';
+		const category3 = 'some-category-3';
+		const source3 = 'my-uri-3';
+		
+		try {
+			await vscode.commands.executeCommand(REGISTER_TUTORIAL, name3, source3, category3).then( () => {
+				assert.ok('Registered via command');
+				return;
+			});
+		} catch (error) {
+			assert.fail('Failed to register via command: ' + error);
+		}
 	});
 });
