@@ -10,29 +10,41 @@ import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/didact-demo.md');
-const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$visualstudioexptteam.vscodeintellicode';
+const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 
 suite('Didact test suite', () => {
+
 	before(async () => {
 		vscode.window.showInformationMessage('Start all Didact tests.');
 		let wsCheck : boolean = await extensionFunctions.validWorkspaceCheck('undefined');
 		vscode.window.showInformationMessage('Workspace has a root folder: ' + wsCheck);
 
+		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
+		console.log('Test workspace: ' + testWorkspace);
+
+        const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
+		console.log('extensionDevelopmentPath: ' + extensionDevelopmentPath);
+
+		const extensionTestsPath = path.resolve(__dirname, './suite/index');
+		console.log('extensionTestsPath: ' + extensionTestsPath);
+
+		// this should not fail because runTest is passing in a test workspace, but it is
 		if (!wsCheck) {
-			await extensionFunctions.createTemporaryFolderAsWorkspaceRoot(undefined);
+			assert.fail('Workspace does not have a root folder');
 		}
+
 	});
 
 	test('Scaffold new project', async () => {
 		try {
-			vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
-				let createdGroovyFileInFolderStructure = path.join(__dirname, './root/resources/text/simple.groovy');
+			await vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
+				let testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
+				let createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
 				assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
 			});
 		} catch (error) {
-//			console.log(error);
 			assert.fail(error);
 		}
 	});
@@ -94,10 +106,9 @@ suite('Didact test suite', () => {
 			}
 			assert.equal(output.length, 1); // 1 argument
 			const wsAvailable : boolean = await extensionFunctions.validWorkspaceCheck(output[0]);
-			// assume that we're in an empty workspace when this test runs
-			assert.equal(wsAvailable, false, `Found command ${commandId} in Didact file but workspace test failed: ${href}`);
+			// assume that we're in valid workspace when this test runs
+			assert.equal(wsAvailable, true, `Found command ${commandId} in Didact file but workspace test failed: ${href}`);
 		}
-
 	});
 
 	test('Walk through the demo didact file to ensure that all commands exist in the VS Code system', async () => {

@@ -20,8 +20,7 @@ import { extensionFunctions, initializeContext } from './extensionFunctions';
 import * as commandConstants from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
-import { registerTutorial } from './utils';
-
+import { registerTutorial, clearRegisteredTutorials } from './utils';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -88,4 +87,6 @@ function createIntegrationsView(): void {
 	});
 }
 
-export function deactivate() {}
+export async function deactivate() {
+	await clearRegisteredTutorials();
+}

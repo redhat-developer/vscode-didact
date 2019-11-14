@@ -1,7 +1,6 @@
 import * as assert from 'assert';
-import { before, after } from 'mocha';
-import * as vscode from 'vscode';
 import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorial, clearRegisteredTutorials} from '../../utils';
+import {before} from 'mocha';
 
 const name = 'new-tutorial';
 const category = 'some-category';
@@ -10,17 +9,17 @@ const name2 = 'new-tutorial-2';
 const category2 = 'some-category-2';
 const source2 = 'my-uri-2';
 
-
 suite('Didact registry test suite', () => {
-	before(async () => {
-		vscode.window.showInformationMessage('Start all Didact registry tests.');
+
+	before('set up the registry tests', async () => {
 		await clearRegisteredTutorials();
 	});
 
 	test('add to registry', async () => {
 		try {
-			await registerTutorial(name, source, category);
-			assert.ok('No errors thrown while creating new didact registry entry');
+			await registerTutorial(name, source, category).then( () => {
+				assert.ok('No errors thrown while creating new didact registry entry');
+			});
 		} catch (error) {
 			assert.fail('We failed to create the new didact registry entry');
 		}
@@ -60,9 +59,4 @@ suite('Didact registry test suite', () => {
 		const rtnUri : string | undefined = getUriForDidactNameAndCategory(name, category);
 		assert.equal(rtnUri, source);
 	});
-
-	after(async () => {  
-		await clearRegisteredTutorials();
-	});
-
 });
