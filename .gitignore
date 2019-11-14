@@ -3,3 +3,5 @@ node_modules
 .vscode-test/
 *.vsix
 /example/**/.project
+testfixture/*
+testfixture/readme.md

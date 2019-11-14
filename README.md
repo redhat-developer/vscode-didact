@@ -14,10 +14,18 @@ What follows is a simple example with three actions. One scaffolds a project bas
 
 ## Accessing Didact in the workspace. 
 
-With Didact installed, there are two ways to open a Didact window.
+With Didact installed, there are three ways to open a Didact window.
 
 * To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact Markdown file specified in the Settings.
 * To open a local Didact file in the workspace directly, Right-click on the Didact Markdown file (`*.md`) and select **Start Didact Tutorial from File** from the context menu. (Note that it also works to render most standard Markdown files.)
+
+In addition, you now have the `Didact Tutorials` view. 
+
+![Didact Tutorials View](./images/didact-view-with-popup.png)
+
+If you right-click on a tutorial (such as "Didact Demo"), you see a `Start Didact Tutorial` menu, which opens the Didact window or changes the current Didact window to the selected tutorial. These entries are provided by registering new tutorial name/tutorial uri/category combinations with Didact's tutorial registry.
+
+### Scaffolding from JSON
 
 You can also access Didact's scaffolding capabilities by right-clicking on a `*.json` file formatted in the way Didact knows and select **Didact Scaffold Project from File**. [See Project JSON Structure](#project-json-structure) below for details about how to construct the project json file.
 
