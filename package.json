@@ -3,7 +3,7 @@
 	"displayName": "vscode-didact",
 	"description": "Tutorial framework in VS Code",
 	"license": "Apache-2.0",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"publisher": "redhat",
 	"preview": true,
 	"repository": {
@@ -160,7 +160,6 @@
 					"when": "view == didact.tutorials",
 					"group": "navigation"
 				}
-			
 			]
 		}
 	},
