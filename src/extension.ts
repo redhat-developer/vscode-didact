@@ -49,6 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VALIDATE_ALL_REQS_COMMAND, extensionFunctions.validateAllRequirements));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VIEW_OPEN_TUTORIAL_MENU, extensionFunctions.openTutorialFromView));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.REGISTER_TUTORIAL, extensionFunctions.registerTutorial));
+	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.REFRESH_DIDACT_VIEW, refreshTreeview));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
@@ -72,8 +73,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		});
 	}
 
+	// always clear the registry and let the extensions register as they are activated
+	await clearRegisteredTutorials();
+
+	// register the default tutorial
 	await registerTutorial(DEFAULT_TUTORIAL_NAME, DEFAULT_TUTORIAL_URI, DEFAULT_TUTORIAL_CATEGORY);
-	await registerTutorial('Your First Integration', 'https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelk/first-integration.md', 'Apache Camel K');
+
+	// create the view
 	createIntegrationsView();
 }
 
@@ -90,4 +96,10 @@ function createIntegrationsView(): void {
 
 export async function deactivate() {
 	await clearRegisteredTutorials();
+}
+
+export async function refreshTreeview() {
+	if (didactTreeView && didactTreeView.visible === true) {
+		await didactTutorialsProvider.refresh().catch(err => console.log(err));
+	}
 }

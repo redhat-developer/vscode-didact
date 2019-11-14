@@ -56,6 +56,14 @@
 				}
 			}
 		],
+		"views": {
+			"explorer": [
+				{
+					"id": "didact.tutorials",
+					"name": "Didact Tutorials"
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "vscode.didact.scaffoldProject",
@@ -116,6 +124,14 @@
 			{
 				"command": "vscode.didact.register",
 				"title": "Register new Didact tutorial"
+			},
+			{
+				"command": "vscode.didact.view.refresh",
+				"title": "Refresh Didact Tutorials view",
+				"icon": {
+					"dark": "resources/dark/refresh.svg",
+					"light": "resources/light/refresh.svg"
+				}
 			}
 		],
 		"menus": {
@@ -137,14 +153,14 @@
 					"group": "1",
 					"when": "view == didact.tutorials && viewItem == TutorialNode"
 				}
-			]
-		},
-		"views": {
-			"explorer": [
+			],
+			"view/title": [
 				{
-					"id": "didact.tutorials",
-					"name": "Didact Tutorials"
+					"command": "vscode.didact.view.refresh",
+					"when": "view == didact.tutorials",
+					"group": "navigation"
 				}
+			
 			]
 		}
 	},
@@ -160,8 +176,6 @@
 		"@types/mocha": "^5.2.6",
 		"@types/node": "^10.17.5",
 		"@types/vscode": "^1.40.0",
-		"glob": "^7.1.6",
-		"markdown-it": "^9.0.0",
 		"mocha": "^6.2.2",
 		"tslint": "^5.20.1",
 		"typescript": "^3.7.2",
@@ -172,6 +186,8 @@
 		"@types/markdown-it": "^0.0.9",
 		"@types/request-promise": "^4.1.44",
 		"asciidoctor": "^2.0.3",
+		"glob": "^7.1.6",
+		"markdown-it": "^9.0.0",
 		"markdown-it-attrs": "^3.0.1",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.0",

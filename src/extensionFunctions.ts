@@ -46,6 +46,7 @@ export const GATHER_ALL_REQS_COMMAND = 'vscode.didact.gatherAllRequirements';
 export const GATHER_ALL_COMMANDS = 'vscode.didact.gatherAllCommands';
 export const VIEW_OPEN_TUTORIAL_MENU = 'vscode.didact.view.tutorial.open';
 export const REGISTER_TUTORIAL = 'vscode.didact.register'; // name, uri, category
+export const REFRESH_DIDACT_VIEW = 'vscode.didact.view.refresh';
 
 // stash the extension context for use by the commands 
 export function initializeContext(inContext: vscode.ExtensionContext) {

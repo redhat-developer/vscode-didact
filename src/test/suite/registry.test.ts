@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorial, clearRegisteredTutorials} from '../../utils';
 import {before} from 'mocha';
 import * as vscode from 'vscode';
-import { extensionFunctions, REGISTER_TUTORIAL } from '../../extensionFunctions';
+import { REGISTER_TUTORIAL } from '../../extensionFunctions';
 
 
 const name = 'new-tutorial';

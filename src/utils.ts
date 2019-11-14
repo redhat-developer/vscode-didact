@@ -16,6 +16,7 @@
  */
 
 import * as vscode from 'vscode';
+import * as extension from './extension';
 
 export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
@@ -98,6 +99,9 @@ export async function registerTutorial(name : string, sourceUri : string, catego
 	}
 
 	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, existingRegistry, vscode.ConfigurationTarget.Global);
+
+	// refresh view
+	extension.refreshTreeview();
 }
 
 export function getDidactCategories() : string[] {
@@ -154,5 +158,8 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 }
 
 export async function clearRegisteredTutorials() {
-	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined, vscode.ConfigurationTarget.Global);
+	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined)
+		.then( () => {
+			console.log('Didact configuration cleared');
+		});
 }
