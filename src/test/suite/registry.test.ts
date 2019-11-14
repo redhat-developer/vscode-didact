@@ -77,4 +77,14 @@ suite('Didact registry test suite', () => {
 			assert.fail('Failed to register via command: ' + error);
 		}
 	});
+
+	test('Clear all the tutorials', async() => {
+		let registry = getRegisteredTutorials();
+		assert.notEqual(registry, undefined);
+
+		await clearRegisteredTutorials();
+
+		let afterregistry = getRegisteredTutorials();
+		assert.deepEqual(afterregistry, []);
+	});
 });

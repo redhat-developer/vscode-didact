@@ -98,7 +98,7 @@ export async function registerTutorial(name : string, sourceUri : string, catego
 		}
 	}
 
-	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, existingRegistry, vscode.ConfigurationTarget.Global);
+	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, existingRegistry, vscode.ConfigurationTarget.Workspace);
 
 	// refresh view
 	extension.refreshTreeview();
@@ -158,8 +158,6 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 }
 
 export async function clearRegisteredTutorials() {
-	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined)
-		.then( () => {
-			console.log('Didact configuration cleared');
-		});
+	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined, vscode.ConfigurationTarget.Workspace);
+	console.log('Didact configuration cleared');
 }
