@@ -27,6 +27,8 @@ import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
 
+let didactOutputChannel: vscode.OutputChannel | undefined = undefined;
+
 const fetch = require('node-fetch');
 const DOMParser = require('xmldom').DOMParser;
 
@@ -48,9 +50,14 @@ export const VIEW_OPEN_TUTORIAL_MENU = 'vscode.didact.view.tutorial.open';
 export const REGISTER_TUTORIAL = 'vscode.didact.register'; // name, uri, category
 export const REFRESH_DIDACT_VIEW = 'vscode.didact.view.refresh';
 
+export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
+
 // stash the extension context for use by the commands 
 export function initializeContext(inContext: vscode.ExtensionContext) {
 	extensionFunctions.setContext(inContext);
+
+	// set up the didact output channel
+	didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);	
 }
 
 // contain all the various command functions in one spot
@@ -69,6 +76,7 @@ export namespace extensionFunctions {
 
 	// use the json to model the folder/file structure to be created in the vscode workspace
 	export async function scaffoldProjectFromJson(jsonpath:vscode.Uri) {
+		sendTextToOutputChannel(`Scaffolding project from json: ${jsonpath}`);
 		if (utils.getWorkspacePath()) {
 			let testJson : any;
 			if (jsonpath) {
@@ -88,11 +96,13 @@ export namespace extensionFunctions {
 
 	// quick and dirty workaround for an empty workspace - creates a folder in the user's temporary store 
 	export async function createTemporaryFolderAsWorkspaceRoot(requirement: string | undefined) {
+		sendTextToOutputChannel(`Creating temporary folder as workspace root`);
 		var tmp = require('tmp');
 		// if the workspace is empty, we will create a temporary one for the user 
 		var tmpobj = tmp.dirSync();
 		let rootUri : vscode.Uri = vscode.Uri.parse(`file://${tmpobj.name}`);
 		vscode.workspace.updateWorkspaceFolders(0,undefined, {uri: rootUri});
+		sendTextToOutputChannel(`-- created ${tmpobj.name}`);
 		if (requirement) {
 			if (rootUri) {
 				postRequirementsResponseMessage(requirement, true);
@@ -119,6 +129,7 @@ export namespace extensionFunctions {
 				throw new Error(error);
 			}
 		}
+		sendTextToOutputChannel(`Starting terminal ${name} with uri ${uri}`);
 		if (name) {
 			if (findTerminal(name)) {
 				throw new Error(`Terminal ${name} already exists`);
@@ -169,10 +180,12 @@ export namespace extensionFunctions {
 		if (terminal) {
 			showAndSendText(terminal, text);
 		}
+		sendTextToOutputChannel(`Sent terminal ${name} the text ${text}`);
 	}
 
 	// reset the didact window to use the default set in the settings
 	export async function openDidactWithDefault() {
+		sendTextToOutputChannel(`Starting Didact window with default`);
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		_mdFileUri = undefined;
 		DidactWebviewPanel.hardReset();		
@@ -180,6 +193,7 @@ export namespace extensionFunctions {
 
 	// open the didact window with the markdown passed in via Uri
 	export async function startDidact(uri:vscode.Uri) {
+		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
 		// stash it
 		_mdFileUri = uri;
 
@@ -219,6 +233,7 @@ export namespace extensionFunctions {
 				_mdFileUri = uri;
 			}
 		}
+		sendTextToOutputChannel(`--Retrieved file URI ${_mdFileUri}`);
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		if (DidactWebviewPanel.currentPanel && _mdFileUri) {
 			DidactWebviewPanel.currentPanel.setMDPath(_mdFileUri);
@@ -229,15 +244,19 @@ export namespace extensionFunctions {
 	// example: testCommand = mvn --version, testResult = 'Apache Maven' 
 	export async function requirementCheck(requirement: string, testCommand: string, testResult: string) : Promise<boolean> {
 		try {
+			sendTextToOutputChannel(`Validating requirement ${testCommand} exists in VS Code workbench`);
 			let result = child_process.execSync(testCommand);
 			if (result.includes(testResult)) {
+				sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: true`);
 				postRequirementsResponseMessage(requirement, true);
 				return true;
 			} else {
+				sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: false`);
 				postRequirementsResponseMessage(requirement, false);
 				return false;
 			}	
 		} catch (error) {
+			sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: false`);
 			postRequirementsResponseMessage(requirement, false);
 		}
 		return false;
@@ -245,11 +264,14 @@ export namespace extensionFunctions {
 
 	// very basic requirements testing -- check to see if the extension Id is installed in the user workspace
 	export async function extensionCheck(requirement: string, extensionId: string) : Promise<boolean> {
+		sendTextToOutputChannel(`Validating extension ${extensionId} exists in VS Code workbench`);
 		let testExt = vscode.extensions.getExtension(extensionId);
 		if (testExt) {
+			sendTextToOutputChannel(`--Extension ${extensionId} exists in VS Code workbench: true`);
 			postRequirementsResponseMessage(requirement, true);
 			return true;
 		} else {
+			sendTextToOutputChannel(`--Extension ${extensionId} exists in VS Code workbench: false`);
 			postRequirementsResponseMessage(requirement, false);
 			return false;
 		}	
@@ -257,11 +279,14 @@ export namespace extensionFunctions {
 
 	// very basic test -- check to see if the workspace has at least one root folder
 	export async function validWorkspaceCheck(requirement: string) : Promise<boolean> {
+		sendTextToOutputChannel(`Validating workspace has at least one root folder`);
 		let wsPath = utils.getWorkspacePath();
 		if (wsPath) {
+			sendTextToOutputChannel(`--Workspace has at least one root folder: true`);
 			postRequirementsResponseMessage(requirement, true);
 			return true;
 		} else {
+			sendTextToOutputChannel(`--Workspace has at least one root folder: false`);
 			postRequirementsResponseMessage(requirement, false);
 			return false;
 		}	
@@ -269,6 +294,7 @@ export namespace extensionFunctions {
 
 	// dispose of and reload the didact window with the latest Uri
 	export async function reloadDidact() {
+		sendTextToOutputChannel(`Reloading Didact window`);
 		if (DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.currentPanel.dispose();
 		}
@@ -346,6 +372,7 @@ export namespace extensionFunctions {
 
 	export function validateAllRequirements() {
 		if (DidactWebviewPanel.currentPanel) {
+			sendTextToOutputChannel(`Validating all requirements specified in Didact tutorial`);
 			DidactWebviewPanel.postTestAllRequirementsMessage();
 		}
 	}
@@ -413,6 +440,7 @@ export namespace extensionFunctions {
 
 	export async function openTutorialFromView(node: TreeNode) : Promise<void> {
 		if (node && node.uri) {
+			sendTextToOutputChannel(`Opening tutorial from Didact view (${node.uri})`);
 			let vsUri = vscode.Uri.parse(node.uri);
 			await startDidact(vsUri);
 		}
@@ -420,6 +448,7 @@ export namespace extensionFunctions {
 
 	export async function registerTutorial(name : string, sourceUri : string, category : string) : Promise<void> {
 		return new Promise<void>( (resolve, reject) => {
+			sendTextToOutputChannel(`Registering Didact tutorial with name (${name}), category (${category}, and sourceUri (${sourceUri})`);
 			utils.registerTutorial(name, sourceUri, category).then( () => {
 				resolve();
 				return;
@@ -428,6 +457,25 @@ export namespace extensionFunctions {
 				return;
 			});
 		});
+	}
+
+	export async function sendTextToOutputChannel(msg: string, channel?: vscode.OutputChannel) : Promise<void> {
+		// set up the didact output channel if it's not set up
+		if (!didactOutputChannel) {
+			didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);	
+		}
+		
+		if (!channel && didactOutputChannel) {
+			channel = didactOutputChannel;
+		}
+		if (channel) {
+			if (!msg.endsWith('\n')) {
+				msg = `${msg} \n`;
+			}
+			channel.append(msg);			
+		} else {
+			console.log('[' + msg + ']');
+		}
 	}
 
 }

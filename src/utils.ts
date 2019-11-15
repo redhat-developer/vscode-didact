@@ -158,6 +158,8 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 }
 
 export async function clearRegisteredTutorials() {
-	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined, vscode.ConfigurationTarget.Workspace);
-	console.log('Didact configuration cleared');
+	if (vscode.workspace.getConfiguration()) {
+		await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined, vscode.ConfigurationTarget.Workspace);
+		console.log('Didact configuration cleared');
+	}
 }
