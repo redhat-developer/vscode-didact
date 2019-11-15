@@ -13,21 +13,29 @@ const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/di
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
+const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/example/projectwithdidactfile.json';
 
 suite('Didact test suite', () => {
 
+	const extensionId = 'redhat.vscode-didact';
+
 	before(async () => {
+
+		assert.ok(vscode.extensions.getExtension(extensionId));
+
 		vscode.window.showInformationMessage('Start all Didact tests.');
 		let wsCheck : boolean = await extensionFunctions.validWorkspaceCheck('undefined');
-		vscode.window.showInformationMessage('Workspace has a root folder: ' + wsCheck);
+		console.log('Workspace has a root folder: ' + wsCheck);
 
 		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
 		console.log('Test workspace: ' + testWorkspace);
 
+		console.log('Test workspace exists: ' + fs.existsSync(testWorkspace));
+
         const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
 		console.log('extensionDevelopmentPath: ' + extensionDevelopmentPath);
 
-		const extensionTestsPath = path.resolve(__dirname, './suite/index');
+		const extensionTestsPath = path.resolve(__dirname, './index');
 		console.log('extensionTestsPath: ' + extensionTestsPath);
 
 		// this should not fail because runTest is passing in a test workspace, but it is
@@ -47,6 +55,16 @@ suite('Didact test suite', () => {
 		} catch (error) {
 			assert.fail(error);
 		}
+	});
+
+	test('Scaffold new project with a uri', async () => {
+		await commandHandler.processInputs(testScaffold).then( () => {
+			let testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
+			let createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.md');
+			assert.equal(fs.existsSync(createdDidactFileInFolderStructure), true);
+		}).catch( (error) => {
+			assert.fail(error);
+		});
 	});
 
 	test('Test the extension checking', async () => {

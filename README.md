@@ -72,6 +72,7 @@ All Didact links have the following qualities:
   * `commandId=your.vscode.command.id`
   * (optional) `projectFilePath=my/file/path` (assumes it's in the user's workspace, so has the workspace root prepended)
   * (optional) `srcFilePath=my/src/file/path` (assumes it's in the extension source, so prepends the extension `__dirname`)
+  * (optional) `extFilePath=extensionId/my/src/file/path` (assumes the file is exposed by another extension and retrieves it from the installed extension path)
   * (optional) `completion='my%20notification%20message'` (to provide a human readable message to the user upon task completion - note that spaces must be replaced with %20)
   * (optional) `error='my%20error%20message'` (to provide a human readable message to the user upon task error - note that spaces must be replaced with %20)
   * (optional) `text=one$$two$$three` (to provide straight text input to the command, with each argument separated by `$$`) (currently only works out to three arguments, but can likely be expanded further if needed)
@@ -121,7 +122,6 @@ Files can either have their content specified in the project json file itself (i
 * `vscode.didact.sendNamedTerminalAString`: Sends text to a named terminal, which is then executed in the terminal. If the named terminal doesn't exist, it is created
 * `vscode.didact.workspaceFolderExistsCheck`:  Simple check to see if the workspace has at least one root folder. Takes one parameter: the id of the HTML element to update with the results
 * `vscode.openFolder`: [See `Commands` in the VS Code API docs](https://code.visualstudio.com/api/references/commands#commands)
-
 
 # Next steps
 
