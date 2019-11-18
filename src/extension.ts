@@ -21,10 +21,10 @@ import * as commandConstants from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials } from './utils';
+import * as path from 'path';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
-const DEFAULT_TUTORIAL_URI = "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.md";
 const DEFAULT_TUTORIAL_CATEGORY = "Didact";
 const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
@@ -77,7 +77,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	await clearRegisteredTutorials();
 
 	// register the default tutorial
-	await registerTutorial(DEFAULT_TUTORIAL_NAME, DEFAULT_TUTORIAL_URI, DEFAULT_TUTORIAL_CATEGORY);
+	const tutorialPath = path.join(context.extensionPath, './demo/didact-demo.md');
+	const tutorialUri = vscode.Uri.parse(`file://${tutorialPath}`);
+	await registerTutorial(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// create the view
 	createIntegrationsView();
