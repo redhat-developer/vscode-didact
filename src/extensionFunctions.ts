@@ -187,6 +187,7 @@ export namespace extensionFunctions {
 	export async function openDidactWithDefault() {
 		sendTextToOutputChannel(`Starting Didact window with default`);
 		DidactWebviewPanel.createOrShow(context.extensionPath);
+		DidactWebviewPanel.setContext(context);
 		_mdFileUri = undefined;
 		DidactWebviewPanel.hardReset();		
 	}
@@ -235,6 +236,7 @@ export namespace extensionFunctions {
 		}
 		sendTextToOutputChannel(`--Retrieved file URI ${_mdFileUri}`);
 		DidactWebviewPanel.createOrShow(context.extensionPath);
+		DidactWebviewPanel.setContext(context);
 		if (DidactWebviewPanel.currentPanel && _mdFileUri) {
 			DidactWebviewPanel.currentPanel.setMDPath(_mdFileUri);
 		}
