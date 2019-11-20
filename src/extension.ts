@@ -68,6 +68,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		// Make sure we register a serializer in activation event
 		vscode.window.registerWebviewPanelSerializer(DidactWebviewPanel.viewType, {
 			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
+				DidactWebviewPanel.setContext(context);
 				DidactWebviewPanel.revive(webviewPanel, context.extensionPath);
 			}
 		});
@@ -80,6 +81,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	const tutorialPath = path.join(context.extensionPath, './demo/didact-demo.md');
 	const tutorialUri = vscode.Uri.parse(`file://${tutorialPath}`);
 	await registerTutorial(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+
+	// register the default tutorial
+	const tutorial2Path = path.join(context.extensionPath, './example/camelinaction/chapter1/cia2-chapter-1-v2.md');
+	const tutorial2Uri = vscode.Uri.parse(`file://${tutorial2Path}`);
+	await registerTutorial("Your First Integration", tutorial2Uri.fsPath, "Camel in Action");
 
 	// create the view
 	createIntegrationsView();
@@ -97,6 +103,7 @@ function createIntegrationsView(): void {
 }
 
 export async function deactivate() {
+	await DidactWebviewPanel.cacheFile();
 	await clearRegisteredTutorials();
 }
 
