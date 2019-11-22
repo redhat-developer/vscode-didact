@@ -5,3 +5,4 @@ node_modules
 /example/**/.project
 testfixture/*
 testfixture/readme.md
+!testfixture/.gitkeep 

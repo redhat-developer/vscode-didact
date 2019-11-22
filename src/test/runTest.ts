@@ -4,10 +4,10 @@ import { downloadAndUnzipVSCode, runTests } from 'vscode-test';
 async function main() {
 
 	const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
-	const extensionTestsPath = path.resolve(__dirname, './suite/index');
+	const extensionTestsPath = path.resolve(__dirname, './suite');
 
 	// always start with an empty workspace using a temp folder
-	const testWorkspace = path.resolve(__dirname, '..', '..', './testfixture');
+	const testWorkspace = path.resolve(__dirname, '../../testfixture');
 	console.log('Test workspace: ' + testWorkspace);
 
 	const vscodeExecutablePath : string = await downloadAndUnzipVSCode('stable');
