@@ -1,0 +1,35 @@
+language: node_js
+node_js: "10"
+npm: "6.4"
+services:
+  - xvfb
+before_install:
+  - 'export PATH=./node_modules/.bin:$PATH'
+  - 'npm install -g typescript'
+install:
+  - 'npm install --ignore-scripts'
+  - 'npm install'
+  # https://github.com/travis-ci/travis-ci/issues/8813
+  - 'rm -f ./node_modules/.bin/which'
+  - 'npm run vscode:prepublish'
+  - 'npm install -g vsce'
+  - 'vsce package'
+script:
+  - 'npm test --silent'
+  - 'npm run ui-test'
+after_success:
+  - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then
+    sonar-scanner;
+    fi
+cache:
+  directories:
+    - "node_modules"
+env: DISPLAY=:99
+branches:
+  except:
+    - /^dependabot.*$/
+addons:
+  sonarcloud:
+    organization: "camel-tooling"
+    branches:
+      - master
