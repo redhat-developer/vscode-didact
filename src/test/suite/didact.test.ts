@@ -9,7 +9,7 @@ import * as url from 'url';
 import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 
-const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/didact-demo.md');
+const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
@@ -60,7 +60,7 @@ suite('Didact test suite', () => {
 	test('Scaffold new project with a uri', async () => {
 		await commandHandler.processInputs(testScaffold).then( () => {
 			let testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
-			let createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.md');
+			let createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.didact.md');
 			assert.equal(fs.existsSync(createdDidactFileInFolderStructure), true);
 		}).catch( (error) => {
 			assert.fail(error);

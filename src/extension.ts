@@ -78,14 +78,14 @@ export async function activate(context: vscode.ExtensionContext) {
 	await clearRegisteredTutorials();
 
 	// register the default tutorial
-	const tutorialPath = path.join(context.extensionPath, './demo/didact-demo.md');
+	const tutorialPath = path.join(context.extensionPath, './demo/didact-demo.didact.md');
 	const tutorialUri = vscode.Uri.parse(`file://${tutorialPath}`);
 	await registerTutorial(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
-	// register the default tutorial
-	const tutorial2Path = path.join(context.extensionPath, './example/camelinaction/chapter1/cia2-chapter-1-v2.md');
-	const tutorial2Uri = vscode.Uri.parse(`file://${tutorial2Path}`);
-	await registerTutorial("Your First Integration", tutorial2Uri.fsPath, "Camel in Action");
+	// // register the default tutorial
+	// const tutorial2Path = path.join(context.extensionPath, './example/camelinaction/chapter1/cia2-chapter-1-v2.didact.md');
+	// const tutorial2Uri = vscode.Uri.parse(`file://${tutorial2Path}`);
+	// await registerTutorial("Your First Integration", tutorial2Uri.fsPath, "Camel in Action");
 
 	// create the view
 	createIntegrationsView();

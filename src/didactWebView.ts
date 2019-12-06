@@ -201,7 +201,7 @@ export class DidactWebviewPanel {
 					case 'link':
 						if (message.text) {
 							try {
-								commandHandler.processInputs(message.text, this._extensionPath);
+								await commandHandler.processInputs(message.text, this._extensionPath);
 							} catch (error) {
 								vscode.window.showErrorMessage(`Didact was unable to call commands: ${message.text}: ${error}`);
 							}

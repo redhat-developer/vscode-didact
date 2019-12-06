@@ -17,13 +17,18 @@ import { DidactWebviewPanel } from "./didactWebView";
  * limitations under the License.
  */
 
-export function getADParser() {
-    const asciidoctor = require('asciidoctor')();
-    return asciidoctor;
-}
+// const asciidoctor = require('asciidoctor.js')();
 
-export function parseADtoHTML(content: string) {
-    const asciidoctor = require('asciidoctor')();
-    const html = asciidoctor.convert(content, { 'safe': 'server', 'attributes': { 'showtitle': true, 'icons': 'font', 'stylesheet': 'webview.css' } });
-    return html;
-}
+// export function getADParser() {
+//     return asciidoctor;
+// }
+
+// export function parseADtoHTML(content: string) {
+//     const html = asciidoctor.convert(content, { 'safe': 'server', 
+//         'attributes': { 
+//             'showtitle': true, 
+//             'icons': 'font', 
+//             'stylesheet': 'webview.css' 
+//         } });
+//     return html;
+// }

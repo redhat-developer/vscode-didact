@@ -75,13 +75,13 @@ export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Pr
 		if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) { 
 			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.'); 
 		}
-        var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
+        var workspace : vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
 		let rootPath = workspace.uri.fsPath;
 		if (isJson(json)) {
 			var folders = json.folders;
 			if (folders) {
 				try {
-					return createSubFolders(rootPath, folders, jsonpath);
+					return await createSubFolders(rootPath, folders, jsonpath);
 				} catch (error) {
 					throw new Error(`Operation(s) failed - ${error}`);
 				}

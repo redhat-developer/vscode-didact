@@ -23,7 +23,7 @@ import * as querystring from 'querystring';
 import * as path from 'path';
 import * as child_process from 'child_process';
 import {getMDParser} from './markdownUtils';
-import {parseADtoHTML} from './asciidocUtils';
+//import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
 
@@ -120,7 +120,7 @@ export namespace extensionFunctions {
 			try {
 				for(let arg of rest) {
 					if (typeof arg === 'string' ) {
-						name = arg as string;
+						name = arg;
 					} else if (typeof arg === 'object' ) {
 						uri = arg as vscode.Uri;
 					}
@@ -215,7 +215,7 @@ export namespace extensionFunctions {
 				const value = utils.getValue(query.workspace);
 				if (value) {
 					if (vscode.workspace.workspaceFolders) {
-						var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
+						var workspace = vscode.workspace.workspaceFolders[0];
 						let rootPath = workspace.uri.fsPath;
 						_mdFileUri = vscode.Uri.file(path.join(rootPath, value));
 					}
@@ -310,6 +310,13 @@ export namespace extensionFunctions {
 		}
 	}
 
+	function showFileUnavailable(error : any) {
+		if (_mdFileUri) {
+			vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
+		}
+		console.log(error);
+	}
+
 	// retrieve the markdown content to render as HTML
 	export async function getWebviewContent() : Promise<string|void> {
 		if (!_mdFileUri) {
@@ -321,18 +328,12 @@ export namespace extensionFunctions {
 		if (_mdFileUri) {
 			if (_mdFileUri.scheme === 'file') {
 				return await getDataFromFile(_mdFileUri).catch( (error) => {
-					if (_mdFileUri) {
-						vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
-					}
-					console.log(error);
+					showFileUnavailable(error);
 				});
 			} else if (_mdFileUri.scheme === 'http' || _mdFileUri.scheme === 'https'){
 				const urlToFetch = _mdFileUri.toString();
 				return await getDataFromUrl(urlToFetch).catch( (error) => {
-					if (_mdFileUri) {
-						vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
-					}
-					console.log(error);
+					showFileUnavailable(error);
 				});
 			}
 		}
@@ -345,10 +346,12 @@ export namespace extensionFunctions {
 			const content = fs.readFileSync(uri.fsPath, 'utf8');
 			const extname = path.extname(uri.fsPath);
 			let result : string;
-			if (extname.localeCompare('.adoc') === 0) {
-				result = parseADtoHTML(content);
-				return result;
-			} else if (extname.localeCompare('.md') === 0) {
+			// asciidoc support is commented out until we resolve an issue with the asciidoc npm library and opal
+			// if (extname.localeCompare('.adoc') === 0) {
+			// 	result = parseADtoHTML(content);
+			// 	return result;
+			// } else 
+			if (extname.localeCompare('.md') === 0) {
 				const parser = getMDParser();
 				result = parser.render(content);
 				return result;

@@ -66,11 +66,11 @@ We can now even test all the requirements at once!
 
 ### Linking to other Didact files
 
-[You can link to other Didact tutorials remotely - this one is on GitHub](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.md "Opens the Tutorial2.md file in GitHub")
+[You can link to other Didact tutorials remotely - this one is on GitHub](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.didact.md "Opens the Tutorial2.didact.md file in GitHub")
 
-[You can link to other Didact tutorials also included in the same extension](vscode://redhat.vscode-didact?extension=example/tutorial.md "Opens the Tutorial.md file in the vscode-didact extension")
+[You can link to other Didact tutorials also included in the same extension](vscode://redhat.vscode-didact?extension=example/tutorial.didact.md "Opens the Tutorial.didact.md file in the vscode-didact extension")
 
-If you created the project earlier (see ["Scaffolding projects"](#scaffolding-projects) ), ([you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md&completion=Opened%20the%20test.md%20file)
+If you created the project earlier (see ["Scaffolding projects"](#scaffolding-projects) ), ([you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.didact.md&completion=Opened%20the%20test.didact.md%20file)
 
 ### Native HTML
 
