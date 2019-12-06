@@ -105,7 +105,7 @@ function handleProjectFilePath(projectFilePath: string) : vscode.Uri | undefined
 	if (vscode.workspace.workspaceFolders === undefined) { 
 		return undefined; 
 	}
-	var workspace = vscode.workspace.workspaceFolders[0] as vscode.WorkspaceFolder;
+	var workspace : vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
 	let rootPath = workspace.uri.fsPath;
 	let fullpath = path.join(rootPath, projectFilePath);
 	return vscode.Uri.file(fullpath);

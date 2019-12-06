@@ -45,7 +45,7 @@ export function getValue(input : string | string[]) : string | undefined {
 		if (Array.isArray(input)) {
 			return input[0]; // grab the first one for now
 		} else {
-			return input as string;
+			return input;
 		}
 	}
 	return undefined;
