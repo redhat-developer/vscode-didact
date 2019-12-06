@@ -44,7 +44,7 @@
 				"properties": {
 					"didact.defaultUrl": {
 						"type": "string",
-						"default": "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.md",
+						"default": "https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.didact.md",
 						"description": "Default Didact File Shown - can be any valid URL to a Didact Markdown file",
 						"scope": "window"
 					},
@@ -138,7 +138,7 @@
 			"explorer/context": [
 				{
 					"command": "vscode.didact.startDidact",
-					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"when": "resourceFilename =~ /[.](didact)[.](md)$/",
 					"group": "vscode.didact.group"
 				},
 				{
@@ -164,8 +164,7 @@
 		}
 	},
 	"files.associations": {
-		"*.didact.md": "markdown",
-		"*.didact.adoc": "asciidoc"
+		"*.didact.md": "markdown"
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run clean && npm run compile",
@@ -178,18 +177,16 @@
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^5.2.6",
-		"@types/node": "^10.17.5",
+		"@types/node": "^10.17.6",
 		"@types/vscode": "^1.40.0",
 		"mocha": "^6.2.2",
 		"tslint": "^5.20.1",
-		"typescript": "^3.7.2",
+		"typescript": "^3.7.3",
 		"vscode-test": "^1.2.3"
 	},
 	"dependencies": {
-		"@asciidoctor/core": "^2.0.3",
 		"@types/markdown-it": "^0.0.9",
-		"@types/request-promise": "^4.1.44",
-		"asciidoctor": "^2.0.3",
+		"@types/request-promise": "^4.1.45",
 		"glob": "^7.1.6",
 		"markdown-it": "^9.0.0",
 		"markdown-it-attrs": "^3.0.1",

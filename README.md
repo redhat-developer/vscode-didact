@@ -2,11 +2,11 @@
 
 The **vscode-didact** extension prototype does a few things. Mainly it shows what's possible through a combination of a simple Markdown file, the VS Code Webview, and calling easily accessible commands in VS Code.
 
-For a demo file of what functionality is currently available, check out [the didact-demo.](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.md)
+For a demo file of what functionality is currently available, check out [the didact-demo.](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/didact-demo.didact.md)
 
 ## VSCode-Didact In Action
 
-What follows is a simple example with three actions. One scaffolds a project based on a structure defined in JSON. One opens a file created when the folder structure was created. And one triggers a command in a different extension if it's installed. The tutorial is defined in [this MarkDown file](./example/tutorial2.md)
+What follows is a simple example with three actions. One scaffolds a project based on a structure defined in JSON. One opens a file created when the folder structure was created. And one triggers a command in a different extension if it's installed. The tutorial is defined in [this MarkDown file](./example/tutorial2.didact.md)
 
 ![Three Step Didact Tutorial Example](./images/didact-sample-tutorial-24-OCT-2019.gif)
 
@@ -17,7 +17,7 @@ What follows is a simple example with three actions. One scaffolds a project bas
 With Didact installed, there are three ways to open a Didact window.
 
 * To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact Markdown file specified in the Settings.
-* To open a local Didact file in the workspace directly, Right-click on the Didact Markdown file (`*.md`) and select **Start Didact Tutorial from File** from the context menu. (Note that it also works to render most standard Markdown files.)
+* To open a local Didact file in the workspace directly, Right-click on the Didact Markdown file (`*.didact.md`) and select **Start Didact Tutorial from File** from the context menu. (Note that it also works to render most standard Markdown files.)
 
 In addition, you now have the `Didact Tutorials` view. 
 
@@ -49,9 +49,9 @@ We do provide some additions that can be called using curly brackets in the Mark
 
 Didact now has the ability to open Didact files themselves, which enables us to leverage files that are at public URLs, such as those put into Github repositories as well as those provided in extension source files or even in scaffolded projects. This capability comes in handy if you want to mix and match tutorials and commands, breaking up lengthy processes into smaller chunks.
 
-* You supply https or http links in the format `vscode://redhat.vscode-didact?https=urltofile/file.md` or `vscode://redhat.vscode-didact?http=urltofile/file.md`
-* You supply `extension` links in the format `vscode://redhat.vscode-didact?extension=folder/file.md`
-* You supply `workspace` links in the format `vscode://redhat.vscode-didact?workspace=folder/file.md`
+* You supply https or http links in the format `vscode://redhat.vscode-didact?https=urltofile/file.didact.md` or `vscode://redhat.vscode-didact?http=urltofile/file.didact.md`
+* You supply `extension` links in the format `vscode://redhat.vscode-didact?extension=folder/file.didact.md`
+* You supply `workspace` links in the format `vscode://redhat.vscode-didact?workspace=folder/file.didact.md`
 
 Within a given Didact tutorial Markdown file, you can then mix and match link styles, opening other tutorials or launching commands with [Didact link formatting](https://github.com/bfitzpat/vscode-didact#link-formatting)
 

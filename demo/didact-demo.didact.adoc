@@ -54,11 +54,11 @@ link:didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectw
 
 ### Linking to other Didact files
 
-* link:vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.md[You can link to other Didact tutorials remotely - this one is on GitHub]
+* link:vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.didact.md[You can link to other Didact tutorials remotely - this one is on GitHub]
 
-* link:vscode://redhat.vscode-didact?extension=example/tutorial.md[You can link to other Didact tutorials also included in the same extension]
+* link:vscode://redhat.vscode-didact?extension=example/tutorial.didact.md[You can link to other Didact tutorials also included in the same extension]
 
-* If you created the project earlier (see <<scaffolding>>), (link:vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md&completion=Opened%20the%20test.md%20file[you can actually open project-level didact files as well])
+* If you created the project earlier (see <<scaffolding>>), (link:vscode://redhat.vscode-didact?workspace=anotherProject/src/test.didact.md&completion=Opened%20the%20test.didact.md%20file[you can actually open project-level didact files as well])
 
 ### Native HTML
 

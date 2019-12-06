@@ -6,12 +6,12 @@ Didact is an extension for VS Code that provides a simple Markdown-based way to 
 
 ## Here are some links to Didact files in Github, in the extension itself, and in a workspace location.
 
-[Github link to Tutorial 2 - remote](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.md)
+[Github link to Tutorial 2 - remote](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.didact.md)
 
-[Extension file link to Tutorial 1 - local in didact extension](vscode://redhat.vscode-didact?extension=example/tutorial.md)
+[Extension file link to Tutorial 1 - local in didact extension](vscode://redhat.vscode-didact?extension=example/tutorial.didact.md)
 
-[Extension file link to Tutorial 2 - local in didact extension](vscode://redhat.vscode-didact?extension=example/tutorial2.md)
+[Extension file link to Tutorial 2 - local in didact extension](vscode://redhat.vscode-didact?extension=example/tutorial2.didact.md)
 
-[Extension file link to Tutorial 3 - which creates a project with a didact file included](vscode://redhat.vscode-didact?extension=example/tutorial3.md)
+[Extension file link to Tutorial 3 - which creates a project with a didact file included](vscode://redhat.vscode-didact?extension=example/tutorial3.didact.md)
 
-[After Tutorial 3's project is created you can then open the local workspace didact file in the user's workspace](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.md)
+[After Tutorial 3's project is created you can then open the local workspace didact file in the user's workspace](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.didact.md)
