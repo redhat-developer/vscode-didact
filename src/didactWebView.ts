@@ -328,6 +328,9 @@ export class DidactWebviewPanel {
 
     static async createHTMLCacheFile(html : string) {
 		if (DidactWebviewPanel.context) {
+			if (!DidactWebviewPanel.context.globalStoragePath) {
+				fs.mkdirSync(DidactWebviewPanel.context.globalStoragePath);
+			}
 			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`);
 			const htmlFilePath = path.join(cachePath, 'currentHtml.html');
 			const titleFilePath = path.join(cachePath, 'currentTitle.txt');
