@@ -28,6 +28,6 @@ branches:
     - /^dependabot.*$/
 addons:
   sonarcloud:
-    organization: "camel-tools"
+    organization: "redhat-developer"
     branches:
       - master
