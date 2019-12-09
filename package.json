@@ -138,7 +138,7 @@
 			"explorer/context": [
 				{
 					"command": "vscode.didact.startDidact",
-					"when": "resourceFilename =~ /[.](didact)[.](md)$/",
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
 					"group": "vscode.didact.group"
 				},
 				{
@@ -164,7 +164,8 @@
 		}
 	},
 	"files.associations": {
-		"*.didact.md": "markdown"
+		"*.didact.md": "markdown",
+		"*.didact.adoc": "asciidoctor"
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run clean && npm run compile",
@@ -187,6 +188,7 @@
 	"dependencies": {
 		"@types/markdown-it": "^0.0.9",
 		"@types/request-promise": "^4.1.45",
+		"asciidoctor": "^2.0.3",
 		"glob": "^7.1.6",
 		"markdown-it": "^9.0.0",
 		"markdown-it-attrs": "^3.0.1",

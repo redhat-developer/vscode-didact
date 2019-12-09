@@ -23,7 +23,7 @@ import * as querystring from 'querystring';
 import * as path from 'path';
 import * as child_process from 'child_process';
 import {getMDParser} from './markdownUtils';
-//import {parseADtoHTML} from './asciidocUtils';
+import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
 
@@ -234,6 +234,7 @@ export namespace extensionFunctions {
 				_mdFileUri = uri;
 			}
 		}
+		console.log(`--Retrieved file URI ${_mdFileUri}`);
 		sendTextToOutputChannel(`--Retrieved file URI ${_mdFileUri}`);
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.setContext(context);
@@ -346,12 +347,10 @@ export namespace extensionFunctions {
 			const content = fs.readFileSync(uri.fsPath, 'utf8');
 			const extname = path.extname(uri.fsPath);
 			let result : string;
-			// asciidoc support is commented out until we resolve an issue with the asciidoc npm library and opal
-			// if (extname.localeCompare('.adoc') === 0) {
-			// 	result = parseADtoHTML(content);
-			// 	return result;
-			// } else 
-			if (extname.localeCompare('.md') === 0) {
+			if (extname.localeCompare('.adoc') === 0) {
+				result = parseADtoHTML(content);
+				return result;
+			} else if (extname.localeCompare('.md') === 0) {
 				const parser = getMDParser();
 				result = parser.render(content);
 				return result;
