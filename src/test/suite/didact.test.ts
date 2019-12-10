@@ -11,7 +11,7 @@ import * as commandHandler from '../../commandHandler';
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
-const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven';
+const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$uname$$Linux&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/example/projectwithdidactfile.json';
 
