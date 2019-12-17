@@ -74,6 +74,12 @@ async function registerTutorialWithDidact(context: vscode.ExtensionContext) {
 			const tutorialCategory = 'Your First Tutorial Category';
 
 			console.log('Tutorial URI registered: ' + tutorialUri.fsPath);
+
+			await vscode.commands.executeCommand(
+				commandId,
+				tutorialName, 
+				tutorialUri,
+				tutorialCategory);			
 		}
 	} catch (error) {
 		console.log(error);

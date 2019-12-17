@@ -1,0 +1,35 @@
+{
+	"Register Tutorial with Didact": {
+		"prefix": "didact",
+    "body": [
+      "async function registerTutorialWithDidact(context: vscode.ExtensionContext) {",
+      "\ttry {",
+      "\t\t// test to ensure didact is available ",
+      "\t\tconst extensionId = 'redhat.vscode-didact';",
+      "\t\tconst didactExt : any = vscode.extensions.getExtension(extensionId);",
+      "\t\tif (didactExt) {",
+      "\t\t\t// command ID: vscode.didact.register",
+      "\t\t\tconst commandId = 'vscode.didact.register';",
+      "",
+      "\t\t\tconst tutorialName = 'Your First Integration'; // replace this with the name of your integration to appear in the Didact view",
+      "\t\t\tconst tutorialPath = path.join(context.extensionPath, './path/to/tutorial.md'); // replace this path with the location of your markdown file",
+      "\t\t\tconst tutorialUri = vscode.Uri.parse(`file://\\${tutorialPathdidact\\}`);",
+      "\t\t\tconst tutorialCategory = 'Apache Camel K'; // replace this with the name of the category for your tutorial",
+      "",
+      "\t\t\tconsole.log('Tutorial URI registered: ' + tutorialUri.fsPath);",
+      "",
+      "\t\t\t// then pass name, uri, and category",
+      "\t\t\tawait vscode.commands.executeCommand(",
+      "\t\t\t\tcommandId,",
+      "\t\t\t\ttutorialName, ",
+      "\t\t\t\ttutorialUri,",
+      "\t\t\t\ttutorialCategory);",
+      "\t\t}",
+      "\t} catch (error) {",
+      "\t\tconsole.log(error);",
+      "\t}",
+      "}"
+    ],
+		"description": "Register tutorial with Didact"
+	}
+}
