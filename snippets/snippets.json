@@ -13,7 +13,7 @@
       "",
       "\t\t\tconst tutorialName = 'Your First Integration'; // replace this with the name of your integration to appear in the Didact view",
       "\t\t\tconst tutorialPath = path.join(context.extensionPath, './path/to/tutorial.md'); // replace this path with the location of your markdown file",
-      "\t\t\tconst tutorialUri = vscode.Uri.parse(`file://\\${tutorialPathdidact\\}`);",
+      "\t\t\tconst tutorialUri = vscode.Uri.parse(`file://\\${tutorialPath\\}`);",
       "\t\t\tconst tutorialCategory = 'Apache Camel K'; // replace this with the name of the category for your tutorial",
       "",
       "\t\t\tconsole.log('Tutorial URI registered: ' + tutorialUri.fsPath);",

@@ -27,10 +27,10 @@ You must have a few things set up prior to walking through the steps in this tut
 
 The Visual Studio Code site has a great tutorial on creating a new VS Code extension [here](https://code.visualstudio.com/api/get-started/your-first-extension). We are going to leverage that approach for our new extension.
 
-* [Call `yo code`](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=runyocode$$yo%20code&completion=started%20generator-code%20generator "Start the VS Code Extension Generator")
-* Specify `New Extension (TypeScript)`
-* Provide the name for your new extension (perhaps `first-didact-tutorial`)
-* Use the defaults and specify `npm` as the package manager to use
+1. [Call `yo code`](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=runyocode$$yo%20code&completion=started%20generator-code%20generator "Start the VS Code Extension Generator")
+2. Specify `New Extension (TypeScript)`
+3. Provide the name for your new extension (perhaps `first-didact-tutorial`)
+4. Use the defaults and specify `npm` as the package manager
 
 ## Creating a New Didact Tutorial File
 
