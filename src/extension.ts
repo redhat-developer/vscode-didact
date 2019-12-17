@@ -82,10 +82,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	const tutorialUri = vscode.Uri.parse(`file://${tutorialPath}`);
 	await registerTutorial(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
-	// // register the default tutorial
-	// const tutorial2Path = path.join(context.extensionPath, './example/camelinaction/chapter1/cia2-chapter-1-v2.didact.md');
-	// const tutorial2Uri = vscode.Uri.parse(`file://${tutorial2Path}`);
-	// await registerTutorial("Your First Integration", tutorial2Uri.fsPath, "Camel in Action");
+	// register the tutorial for creating a new extension with a didact file
+	const tutorial2Path = path.join(context.extensionPath, './create_extension/create-new-tutorial-with-extension.didact.md');
+	const tutorial2Uri = vscode.Uri.parse(`file://${tutorial2Path}`);
+	await registerTutorial("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// create the view
 	createIntegrationsView();
