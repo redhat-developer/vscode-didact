@@ -34,12 +34,10 @@ The Visual Studio Code site has a great tutorial on creating a new VS Code exten
 
 ## Creating a New Didact Tutorial File
 
-Didact can consume either a Markdown (`*.didact.md`) or AsciiDoc (`*.didact.adoc`) formatted file. 
+Didact can consume either a Markdown (`*.didact.md`) or AsciiDoc (`*.didact.adoc`) formatted file. Use either of the following links to create a template file for your tutorial. If no folder is selected in the Explorer, the file will be placed in the first root folder found. Otherwise, it will be placed in the selected folder.
 
 * [Create a new Didact tutorial using the Markdown format](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/create_extension/md-tutorial.project.didact.json&completion=Created%20starting%20Didact%20file.)
 * [Create a new Didact tutorial using the AsciiDoc format](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/create_extension/adoc-tutorial.project.didact.json&completion=Created%20starting%20Didact%20file.)
-
-!!! Note: Improve the Scaffold command so that if a folder is selected, that is used instead of the first available child folder in the workspace.
 
 ### Testing the Tutorial File in the Didact window
 
