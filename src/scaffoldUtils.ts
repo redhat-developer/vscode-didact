@@ -85,6 +85,21 @@ export async function createFoldersFromJSON(json: any, jsonpath:vscode.Uri) : Pr
 				} catch (error) {
 					throw new Error(`Operation(s) failed - ${error}`);
 				}
+			} else {
+				var files = json.files;
+				if (files) {
+					try {
+						if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]) {
+							let folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath; // get the root folder path
+							return await createFiles(folderPath, files, jsonpath)
+								.catch((error) => {
+									console.log(error);
+								});
+						}						
+					} catch (error) {
+						throw new Error(`Operation(s) failed - ${error}`);
+					}
+				}
 			}
 		} else {
 			throw new Error('Operation(s) failed - the json file is not configured as a Didact scaffold file.'); 

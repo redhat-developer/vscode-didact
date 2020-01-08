@@ -35,4 +35,4 @@ Other things that Didact can do:
 ## Further Information
 
 * For more about Markdown formatting, check out the [Markdown Guide](https://www.markdownguide.org/)
-* For more about Didact, check out [the VSCode Didact](https://github.com/redhat-developer/vscode-didact/blob/master/README.md)
+* For more about Didact, check out [the VSCode Didact readme](https://github.com/redhat-developer/vscode-didact/blob/master/README.md)
