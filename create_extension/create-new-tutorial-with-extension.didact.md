@@ -49,46 +49,12 @@ Right-click on your new tutorial file and select `Didact: Start Didact Tutorial 
 
 Open the `extension.ts` file and do the following:
 
+* Use the Didact snippet (`Ctrl+Space`) in the editor to add the `registerTutorialWithDidact` method. 
+* Change the values for `tutorialName`, `tutorialPath`, and `tutorialCategory` to suit your needs. Remember that if you register multiple tutorials and want them all to be under the same category, you must use the same category name for each.
 * Add `registerTutorialWithDidact(context);` to the `activate` function
-* Add this function to the end of the TypeScript file:
-
-```
-async function registerTutorialWithDidact(context: vscode.ExtensionContext) {
-	// call didact command to register tutorial
-	try {
-		// test to ensure didact is available 
-		const extensionId = 'redhat.vscode-didact';
-		const didactExt : any = vscode.extensions.getExtension(extensionId);
-
-		// if didact is available, register the new extension
-		if (didactExt) {
-			// command ID: vscode.didact.register
-			const commandId = 'vscode.didact.register';
-
-			// then pass name, uri, and category
-			const tutorialName = 'Your First Tutorial';
-			const tutorialPath = path.join(context.extensionPath, './path/to/tutorial.didact.md'); // add path to your tutorial here
-			const tutorialUri = vscode.Uri.parse(`file://${tutorialPath}`);
-			const tutorialCategory = 'Your First Tutorial Category';
-
-			console.log('Tutorial URI registered: ' + tutorialUri.fsPath);
-
-			await vscode.commands.executeCommand(
-				commandId,
-				tutorialName, 
-				tutorialUri,
-				tutorialCategory);			
-		}
-	} catch (error) {
-		console.log(error);
-	}
-}
-```
-
-!!! Note: Turn the above code into a Snippet!
 
 ## Running the Extension and Testing your Didact file
 
 Then, inside the editor, press `F5`. This will compile and run the extension in a new Extension Development Host window.
 
-In the `Didact Tutorials` view, once your extension has finished activating, look for the category `Your First Tutorial Category` and expand it to find `Your First Tutorial` beneath it. Right-click the tutorial and select `Start Didact tutorial`.
+In the `Didact Tutorials` view, once your extension has finished activating, look for the category you registered your tutorial with in the last step and expand it to find your tutorial beneath it. Right-click the tutorial and select `Start Didact tutorial`.
