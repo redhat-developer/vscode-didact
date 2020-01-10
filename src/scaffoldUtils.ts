@@ -18,6 +18,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as utils from './utils';
 
 // prototypical sample project with a few folders and a file with text content provided
 export function createSampleProject(): JSON {
@@ -69,41 +70,6 @@ function isJson(item: any) {
 	return false;
 }
 
-function getCurrentFolder(): Promise<string> {
-	return new Promise(async (resolve, reject) => {
-		// set focus to the Explorer view
-		await vscode.commands.executeCommand('workbench.view.explorer').then( async () => {
-			// then get the resource with focus
-			await vscode.commands.executeCommand('copyFilePath').then(async () => {
-				try {
-					await vscode.env.clipboard.readText().then((copyPath) => {
-						try {
-							if (fs.existsSync(copyPath)) {
-								if (fs.lstatSync(copyPath).isFile()) {
-									// if it's a file, get the directory for the file and pass that back
-									let dirpath = path.dirname(copyPath);
-									resolve(dirpath);
-									return dirpath;
-								} else {
-									// otherwise just pass the path back
-									resolve(copyPath);
-									return copyPath;
-								}
-							}
-						} catch (err) {
-							reject(err);
-							return undefined;
-						}
-					});
-				} catch (err) {
-					reject(err);
-					return undefined;
-				}
-			});
-		});
-	});
-}
-
 // create the folder structure from the json project file
 export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Promise<any> {
 	try {
@@ -111,7 +77,7 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.');
 		}
 		var rootPath: string | undefined;
-		await getCurrentFolder().then(value => rootPath = value);
+		await utils.getCurrentFolder().then(value => rootPath = value);
 		if (!rootPath) {
 			if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]) {
 				var workspace: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];

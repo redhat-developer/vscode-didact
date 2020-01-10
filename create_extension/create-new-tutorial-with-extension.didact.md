@@ -41,9 +41,7 @@ Didact can consume either a Markdown (`*.didact.md`) or AsciiDoc (`*.didact.adoc
 
 ### Testing the Tutorial File in the Didact window
 
-Right-click on your new tutorial file and select `Didact: Start Didact Tutorial from File`.
-
-!!! Note: If we create the file in the previous step, we should open it, which will select it in the Workspace Explorer. Can we just invoke the `vscode.didact.startDidact` command with the file selected and have it open?
+Select your new tutorial file in the Explorer view and select `Didact: Start Didact Tutorial from File` or [click here](didact://?commandId=vscode.didact.startDidact).
 
 ## Registering the New Tutorial
 
@@ -55,6 +53,12 @@ Open the `extension.ts` file and do the following:
 
 ## Running the Extension and Testing your Didact file
 
+VS Code offers the ability to debug your extension, launching another window and connecting the debugger for breakpoint support. To set this up, you will need to [create a Launch Configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations). 
+
 Then, inside the editor, press `F5`. This will compile and run the extension in a new Extension Development Host window.
 
 In the `Didact Tutorials` view, once your extension has finished activating, look for the category you registered your tutorial with in the last step and expand it to find your tutorial beneath it. Right-click the tutorial and select `Start Didact tutorial`.
+
+## Next Steps
+
+From here, you can add to your new Didact file, create and register other files, and so on!
