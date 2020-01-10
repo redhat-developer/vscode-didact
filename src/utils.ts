@@ -17,6 +17,8 @@
 
 import * as vscode from 'vscode';
 import * as extension from './extension';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
@@ -162,4 +164,69 @@ export async function clearRegisteredTutorials() {
 		await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined, vscode.ConfigurationTarget.Workspace);
 		console.log('Didact configuration cleared');
 	}
+}
+
+export function getCurrentFileSelectionPath(): Promise<string> {
+	return new Promise(async (resolve, reject) => {
+		// set focus to the Explorer view
+		await vscode.commands.executeCommand('workbench.view.explorer').then( async () => {
+			// then get the resource with focus
+			await vscode.commands.executeCommand('copyFilePath').then(async () => {
+				try {
+					await vscode.env.clipboard.readText().then((copyPath) => {
+						try {
+							if (fs.existsSync(copyPath)) {
+								if (fs.lstatSync(copyPath).isFile()) {
+									// if it's a file, pass the path back
+									resolve(copyPath);
+									return copyPath;
+								}
+							}
+						} catch (err) {
+							reject(err);
+							return undefined;
+						}
+					});
+				} catch (err) {
+					reject(err);
+					return undefined;
+				}
+			});
+		});
+	});
+}
+
+export function getCurrentFolder(): Promise<string> {
+	return new Promise(async (resolve, reject) => {
+		// set focus to the Explorer view
+		await vscode.commands.executeCommand('workbench.view.explorer').then( async () => {
+			// then get the resource with focus
+			await vscode.commands.executeCommand('copyFilePath').then(async () => {
+				try {
+					await vscode.env.clipboard.readText().then((copyPath) => {
+						try {
+							if (fs.existsSync(copyPath)) {
+								if (fs.lstatSync(copyPath).isFile()) {
+									// if it's a file, get the directory for the file and pass that back
+									let dirpath = path.dirname(copyPath);
+									resolve(dirpath);
+									return dirpath;
+								} else {
+									// otherwise just pass the path back
+									resolve(copyPath);
+									return copyPath;
+								}
+							}
+						} catch (err) {
+							reject(err);
+							return undefined;
+						}
+					});
+				} catch (err) {
+					reject(err);
+					return undefined;
+				}
+			});
+		});
+	});
 }

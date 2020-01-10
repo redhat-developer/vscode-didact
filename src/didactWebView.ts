@@ -326,18 +326,17 @@ export class DidactWebviewPanel {
 		}
 	}
 
-    static async createHTMLCacheFile(html : string) {
+	static async createHTMLCacheFile(html : string) {
 		if (DidactWebviewPanel.context) {
 			if (!DidactWebviewPanel.context.globalStoragePath) {
-				fs.mkdirSync(DidactWebviewPanel.context.globalStoragePath);
+				fs.mkdirSync(DidactWebviewPanel.context.globalStoragePath, { recursive: true });
 			}
 			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`);
 			const htmlFilePath = path.join(cachePath, 'currentHtml.html');
 			const titleFilePath = path.join(cachePath, 'currentTitle.txt');
 			try {
 				if (!fs.existsSync(cachePath)) {
-					fs.mkdirSync(path.join(DidactWebviewPanel.context.globalStoragePath, `didact`));
-					fs.mkdirSync(path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`));
+					fs.mkdirSync(path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`), { recursive: true });
 				}
 				fs.writeFileSync(htmlFilePath, html, {encoding:'utf8', flag:'w'});
 				if (DidactWebviewPanel.currentPanel) {

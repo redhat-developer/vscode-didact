@@ -45,9 +45,9 @@ suite('Didact test suite', () => {
 
 	});
 
-	test('Scaffold new project', async () => {
+	test('Scaffold new project', function (done) {
 		try {
-			await vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
+			vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
 				let testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
 				let createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
 				assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
@@ -55,16 +55,18 @@ suite('Didact test suite', () => {
 		} catch (error) {
 			assert.fail(error);
 		}
+		done();
 	});
 
-	test('Scaffold new project with a uri', async () => {
-		await commandHandler.processInputs(testScaffold).then( () => {
+	test('Scaffold new project with a uri', function (done) {
+		commandHandler.processInputs(testScaffold).then( () => {
 			let testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
 			let createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.didact.md');
 			assert.equal(fs.existsSync(createdDidactFileInFolderStructure), true);
 		}).catch( (error) => {
 			assert.fail(error);
 		});
+		done();
 	});
 
 	test('Test the extension checking', async () => {

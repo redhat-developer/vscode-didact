@@ -194,9 +194,16 @@ export namespace extensionFunctions {
 
 	// open the didact window with the markdown passed in via Uri
 	export async function startDidact(uri:vscode.Uri) {
+		if (!uri) {
+			await utils.getCurrentFileSelectionPath().then( (currentFilePath) => {
+				let tempuri = vscode.Uri.file(currentFilePath);
+				uri = tempuri;
+			}).catch( (error) => {
+				throw (new Error(error));
+			});
+		}
+
 		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
-		// stash it
-		_mdFileUri = uri;
 
 		// handle extension, workspace, https, and http
 		if (uri) {
