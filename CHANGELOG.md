@@ -10,6 +10,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 - Updated the tutorial to include how to use the snippet as part of the process and bring in the registerTutorialWithDidact function
 - Updated the snippet for the registerTutorialWithDidact function to include three areas the user can step through and update for the tutorial name, category, and path
 - Fix for snippet error was to escape the second curly bracket in the file://${tutorialPath} string
+- Fixed issue with caching didact content
 
 ## 0.0.1
 
