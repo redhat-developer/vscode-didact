@@ -37,6 +37,7 @@ export class DidactWebviewPanel {
 	private mdStr : string | undefined = undefined;
 	private mdPath : vscode.Uri | undefined = undefined;
 	private defaultTitle = `Didact Tutorial`;
+	private mdImagePath : vscode.Uri | undefined = undefined;
 
 	public static setContext(ctxt : vscode.ExtensionContext) {
 		DidactWebviewPanel.context = ctxt;
@@ -61,6 +62,13 @@ export class DidactWebviewPanel {
 	public setMDPath(inpath : vscode.Uri | undefined) {
 		this.mdPath = inpath;
 		if (inpath) {
+			let tempImgPath = path.dirname(inpath.fsPath);
+			if (tempImgPath) {
+				let imgPathUri = vscode.Uri.file(
+					path.join(tempImgPath)
+				);
+				this.mdImagePath = imgPathUri;
+			}
 			let tempFilename = path.basename(inpath.fsPath);
 			if (DidactWebviewPanel.currentPanel) {
 				DidactWebviewPanel.currentPanel.defaultTitle = tempFilename;
@@ -267,23 +275,26 @@ export class DidactWebviewPanel {
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
 
-		// <!--
-		// Use a content security policy to only allow loading images from https or from our extension directory,
-		// and only allow scripts that have a specific nonce.
-		// -->
-		// <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';"> -->
+		var imgSrcText = `img-src ${this._panel.webview.cspSource} https: file:`;
+		console.log(imgSrcText);
+		if (this.mdImagePath) {
+			const imageUri = this.mdImagePath.with({ scheme: 'vscode-resource' });
+			imgSrcText += ` ${imageUri}`;
+			console.log(`Updated:` + imgSrcText);
+		}
 
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; ${imgSrcText}; script-src 'nonce-${nonce}' ${scriptUri}; style-src ${this._panel.webview.cspSource} ${cssUri} https:;">
 			<title>Didact Tutorial</title>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 			<link rel="stylesheet" href="${cssUri}"/> 
 			<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 			</head>
-		<body class="content" style="background-color:white;">` + mdHtml + 
+		<body class="content">` + mdHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
 		</html>`;
