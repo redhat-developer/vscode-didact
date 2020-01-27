@@ -275,24 +275,26 @@ export class DidactWebviewPanel {
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
 
-		var imgSrcText = `img-src ${this._panel.webview.cspSource} https: file:`;
-		console.log(imgSrcText);
-		if (this.mdImagePath) {
-			const imageUri = this.mdImagePath.with({ scheme: 'vscode-resource' });
-			imgSrcText += ` ${imageUri}`;
-			console.log(`Updated:` + imgSrcText);
-		}
+		// <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https://use.fontawesome.com/releases/v5.3.1/js/all.js; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">
+		// var imgSrcText = `img-src ${this._panel.webview.cspSource} https: file:`;
+		// console.log(imgSrcText);
+		// if (this.mdImagePath) {
+		// 	const imageUri = this.mdImagePath.with({ scheme: 'vscode-resource' });
+		// 	imgSrcText += ` ${imageUri}`;
+		// 	console.log(`Updated:` + imgSrcText);
+		// }
 
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; ${imgSrcText}; script-src 'nonce-${nonce}' ${scriptUri}; style-src ${this._panel.webview.cspSource} ${cssUri} https:;">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this._panel.webview.cspSource} https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' ${scriptUri}; style-src 'unsafe-inline' ${this._panel.webview.cspSource} ${cssUri} https: data:; font-src ${this._panel.webview.cspSource} https: data:;">
 			<title>Didact Tutorial</title>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 			<link rel="stylesheet" href="${cssUri}"/> 
 			<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+			<base href="vscode-resource://file///${this.getMDPath()?.fsPath}">
 			</head>
 		<body class="content">` + mdHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>
