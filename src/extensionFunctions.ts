@@ -255,7 +255,7 @@ export namespace extensionFunctions {
 	export async function requirementCheck(requirement: string, testCommand: string, testResult: string) : Promise<boolean> {
 		try {
 			sendTextToOutputChannel(`Validating requirement ${testCommand} exists in VS Code workbench`);
-			let result = child_process.execSync(testCommand);
+			let result = child_process.execSync(testCommand, {encoding: "UTF-8"}).toString();
 			if (result.includes(testResult)) {
 				sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: true`);
 				postRequirementsResponseMessage(requirement, true);
@@ -267,6 +267,7 @@ export namespace extensionFunctions {
 			}	
 		} catch (error) {
 			sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: false`);
+			sendTextToOutputChannel(`Error returned: ${error}`);
 			postRequirementsResponseMessage(requirement, false);
 		}
 		return false;
