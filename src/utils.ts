@@ -22,6 +22,7 @@ import * as path from 'path';
 
 export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
+export const DIDACT_NOTIFICATION_SETTING : string = 'didact.disableNotifications';
 
 // simple file path comparison
 export function pathEquals(path1: string, path2: string): boolean {
@@ -61,6 +62,11 @@ export function delay(ms: number) {
 export function getDefaultUrl() : string | undefined {
 	const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
 	return configuredUri;
+}
+
+export function getNotificationSetting() : boolean | undefined {
+	const notificationSetting : boolean | undefined = vscode.workspace.getConfiguration().get(DIDACT_NOTIFICATION_SETTING);
+	return notificationSetting;
 }
 
 export function getRegisteredTutorials() : string[] | undefined {

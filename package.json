@@ -52,6 +52,12 @@
 						"type": "array",
 						"description": "Registered Didact tutorials - can be any valid URL to a Didact Markdown file",
 						"scope": "window"
+					},
+					"didact.disableNotifications": {
+						"type": "boolean",
+						"default": "true",
+						"description": "Disable all generic Didact completion notifications",
+						"scope": "window"
 					}
 				}
 			}
