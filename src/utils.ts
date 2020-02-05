@@ -64,7 +64,7 @@ export function getDefaultUrl() : string | undefined {
 	return configuredUri;
 }
 
-export function getNotificationSetting() : boolean | undefined {
+export function isDefaultNotificationDisabled() : boolean | undefined {
 	const notificationSetting : boolean | undefined = vscode.workspace.getConfiguration().get(DIDACT_NOTIFICATION_SETTING);
 	return notificationSetting;
 }

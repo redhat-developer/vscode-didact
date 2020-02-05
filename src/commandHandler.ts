@@ -20,7 +20,7 @@ import * as path from 'path';
 import {getValue} from './utils';
 import * as url from 'url';
 import {extensionFunctions} from './extensionFunctions';
-import {getNotificationSetting} from './utils';
+import {isDefaultNotificationDisabled} from './utils';
 
 // take the incoming didact link and allow a mix of a uri and text/user inputs
 export async function processInputs(incoming : string, extensionPath? : string) : Promise<void | undefined>  {
@@ -218,7 +218,7 @@ async function callCommand(commandId: string, args : any[], completionMessage: s
 				if (completionMessage) {
 					vscode.window.showInformationMessage(completionMessage);
 				} else {
-					if (!getNotificationSetting()) {
+					if (!isDefaultNotificationDisabled()) {
 						vscode.window.showInformationMessage(`Didact just executed ${commandId} with arguments ${args}`);
 					}
 				}
