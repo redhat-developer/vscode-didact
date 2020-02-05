@@ -49,6 +49,7 @@ export const GATHER_ALL_COMMANDS = 'vscode.didact.gatherAllCommands';
 export const VIEW_OPEN_TUTORIAL_MENU = 'vscode.didact.view.tutorial.open';
 export const REGISTER_TUTORIAL = 'vscode.didact.register'; // name, uri, category
 export const REFRESH_DIDACT_VIEW = 'vscode.didact.view.refresh';
+export const SEND_TERMINAL_KEY_SEQUENCE = 'vscode.didact.sendNamedTerminalCtrlC';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -161,6 +162,14 @@ export namespace extensionFunctions {
 		}
 	}
 
+	async function showAndSendCtrlC(terminal: vscode.Terminal) {
+		if (terminal) {
+			terminal.show();
+			await vscode.commands.executeCommand("workbench.action.terminal.sendSequence", { text : "\x03" });
+			return;
+		}
+	}
+
 	function findTerminal(name: string) : vscode.Terminal | undefined {
 		for(let localTerm of vscode.window.terminals){
 			if(localTerm.name === name){ 
@@ -183,6 +192,19 @@ export namespace extensionFunctions {
 		sendTextToOutputChannel(`Sent terminal ${name} the text ${text}`);
 	}
 
+	// send a message to a named terminal
+	export async function sendTerminalCtrlC(name:string) {
+		const terminal : vscode.Terminal | undefined = findTerminal(name);
+		if (!terminal) {
+			const newterminal = vscode.window.createTerminal(name);
+			showAndSendCtrlC(newterminal);
+		}
+		if (terminal) {
+			showAndSendCtrlC(terminal);
+		}
+		sendTextToOutputChannel(`Sent terminal ${name} a Ctrl+C`);
+	}
+	
 	// reset the didact window to use the default set in the settings
 	export async function openDidactWithDefault() {
 		sendTextToOutputChannel(`Starting Didact window with default`);

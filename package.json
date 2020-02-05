@@ -138,6 +138,10 @@
 					"dark": "resources/dark/refresh.svg",
 					"light": "resources/light/refresh.svg"
 				}
+			},
+			{
+				"command": "vscode.didact.sendNamedTerminalCtrlC",
+				"title": "Didact: Send Named Terminal a Key Sequence"
 			}
 		],
 		"menus": {
