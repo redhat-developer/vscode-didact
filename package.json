@@ -141,7 +141,7 @@
 			},
 			{
 				"command": "vscode.didact.sendNamedTerminalCtrlC",
-				"title": "Didact: Send Named Terminal a Key Sequence"
+				"title": "Didact: Send Named Terminal a Ctrl+C Signal"
 			}
 		],
 		"menus": {
