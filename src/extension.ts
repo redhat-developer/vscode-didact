@@ -51,6 +51,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.REGISTER_TUTORIAL, extensionFunctions.registerTutorial));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.REFRESH_DIDACT_VIEW, refreshTreeview));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.SEND_TERMINAL_KEY_SEQUENCE, extensionFunctions.sendTerminalCtrlC));
+	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.CLOSE_TERMINAL, extensionFunctions.closeTerminal));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({

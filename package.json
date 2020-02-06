@@ -142,6 +142,10 @@
 			{
 				"command": "vscode.didact.sendNamedTerminalCtrlC",
 				"title": "Didact: Send Named Terminal a Ctrl+C Signal"
+			},
+			{
+				"command": "vscode.didact.closeNamedTerminal",
+				"title": "Didact: Close Named Terminal Window"
 			}
 		],
 		"menus": {
