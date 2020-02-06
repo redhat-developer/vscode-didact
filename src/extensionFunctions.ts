@@ -180,11 +180,15 @@ export namespace extensionFunctions {
 	}
 
 	export function findTerminal(name: string) : vscode.Terminal | undefined {
-		for(let localTerm of vscode.window.terminals){
-			if(localTerm.name === name){ 
-				return localTerm; 
-			}
-		}		
+		try {
+			for(let localTerm of vscode.window.terminals){
+				if(localTerm.name === name){ 
+					return localTerm; 
+				}
+			}	
+		} catch {
+			return undefined;
+		}	
 		return undefined;
 	}
 
@@ -216,7 +220,11 @@ export namespace extensionFunctions {
 		if (!terminal) {
 			throw new Error(`No terminal found with name ${name} to close`);
 		} else {
-			killTerminal(terminal);
+			await killTerminal(terminal).then( () => {
+				if (terminal) {
+					terminal.dispose();
+				}
+			});
 			sendTextToOutputChannel(`Closed terminal ${name}`);
 		}
 	}

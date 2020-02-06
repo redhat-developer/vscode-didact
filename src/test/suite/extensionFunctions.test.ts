@@ -22,8 +22,10 @@ suite('Extension Functions Test Suite', () => {
 		var terminalC : vscode.Terminal | undefined = extensionFunctions.findTerminal(testTerminalName);
 		assert.equal(terminalC, undefined);
 
-		// open to ideas on how to check to see that ctrl+c was actually committed to the terminal
-		await extensionFunctions.sendTerminalCtrlC(testTerminalName);
+		// if it can't find the terminal, it will error out
+		await extensionFunctions.sendTerminalCtrlC(testTerminalName).catch( (error) => {
+			assert.notEqual(error, undefined);
+		});
 
 		// terminal should not have been created as part of the method call
 		terminalC = extensionFunctions.findTerminal(testTerminalName);
@@ -41,4 +43,24 @@ suite('Extension Functions Test Suite', () => {
 		assert.notEqual(terminalC, undefined);
 	});
 
+	test('open new terminal and then close it', async function() {
+		const terminalNameToClose = 'terminalToKill';
+		var terminal : vscode.Terminal | undefined = extensionFunctions.findTerminal(terminalNameToClose);
+		assert.equal(terminal, undefined);
+
+		// if it can't find the terminal, it will error out
+		await extensionFunctions.closeTerminal(terminalNameToClose).catch( (error) => {
+			assert.notEqual(error, undefined);
+		});
+
+		await extensionFunctions.startTerminal(terminalNameToClose);
+		terminal = extensionFunctions.findTerminal(terminalNameToClose);
+		assert.notEqual(terminal, undefined);
+
+		await extensionFunctions.closeTerminal(terminalNameToClose).finally( async () => {
+			terminal = extensionFunctions.findTerminal(terminalNameToClose);
+			// the terminal should be disposed at this point, but we can't test for it
+			// looking in the debugger, the _isDisposed property is set to true, so we should be ok
+		});
+	});
 });
