@@ -170,7 +170,7 @@ export namespace extensionFunctions {
 		}
 	}
 
-	function findTerminal(name: string) : vscode.Terminal | undefined {
+	export function findTerminal(name: string) : vscode.Terminal | undefined {
 		for(let localTerm of vscode.window.terminals){
 			if(localTerm.name === name){ 
 				return localTerm; 
@@ -192,17 +192,14 @@ export namespace extensionFunctions {
 		sendTextToOutputChannel(`Sent terminal ${name} the text ${text}`);
 	}
 
-	// send a message to a named terminal
 	export async function sendTerminalCtrlC(name:string) {
 		const terminal : vscode.Terminal | undefined = findTerminal(name);
 		if (!terminal) {
-			const newterminal = vscode.window.createTerminal(name);
-			showAndSendCtrlC(newterminal);
-		}
-		if (terminal) {
+			sendTextToOutputChannel(`No terminal found with name ${name} to send a Ctrl+C`);
+		} else {
 			showAndSendCtrlC(terminal);
+			sendTextToOutputChannel(`Sent terminal ${name} a Ctrl+C`);
 		}
-		sendTextToOutputChannel(`Sent terminal ${name} a Ctrl+C`);
 	}
 	
 	// reset the didact window to use the default set in the settings
