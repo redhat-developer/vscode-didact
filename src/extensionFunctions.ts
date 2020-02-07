@@ -50,6 +50,7 @@ export const VIEW_OPEN_TUTORIAL_MENU = 'vscode.didact.view.tutorial.open';
 export const REGISTER_TUTORIAL = 'vscode.didact.register'; // name, uri, category
 export const REFRESH_DIDACT_VIEW = 'vscode.didact.view.refresh';
 export const SEND_TERMINAL_KEY_SEQUENCE = 'vscode.didact.sendNamedTerminalCtrlC';
+export const CLOSE_TERMINAL = 'vscode.didact.closeNamedTerminal';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -130,7 +131,6 @@ export namespace extensionFunctions {
 				throw new Error(error);
 			}
 		}
-		sendTextToOutputChannel(`Starting terminal ${name} with uri ${uri}`);
 		if (name) {
 			if (findTerminal(name)) {
 				throw new Error(`Terminal ${name} already exists`);
@@ -138,6 +138,7 @@ export namespace extensionFunctions {
 		}
 		let terminal : vscode.Terminal | undefined = undefined;
 		if (name && uri) {
+			sendTextToOutputChannel(`Starting terminal ${name} with uri ${uri}`);
 			terminal = vscode.window.createTerminal({
 				name: `${name}`,
 				cwd: `${uri.fsPath}`
@@ -170,12 +171,24 @@ export namespace extensionFunctions {
 		}
 	}
 
+	async function killTerminal(terminal: vscode.Terminal) {
+		if (terminal) {
+			terminal.show();
+			await vscode.commands.executeCommand("workbench.action.terminal.kill");
+			return;
+		}
+	}
+
 	export function findTerminal(name: string) : vscode.Terminal | undefined {
-		for(let localTerm of vscode.window.terminals){
-			if(localTerm.name === name){ 
-				return localTerm; 
-			}
-		}		
+		try {
+			for(let localTerm of vscode.window.terminals){
+				if(localTerm.name === name){ 
+					return localTerm; 
+				}
+			}	
+		} catch {
+			return undefined;
+		}	
 		return undefined;
 	}
 
@@ -195,13 +208,27 @@ export namespace extensionFunctions {
 	export async function sendTerminalCtrlC(name:string) {
 		const terminal : vscode.Terminal | undefined = findTerminal(name);
 		if (!terminal) {
-			sendTextToOutputChannel(`No terminal found with name ${name} to send a Ctrl+C`);
+			throw new Error(`No terminal found with name ${name} to send a Ctrl+C`);
 		} else {
 			showAndSendCtrlC(terminal);
 			sendTextToOutputChannel(`Sent terminal ${name} a Ctrl+C`);
 		}
 	}
 	
+	export async function closeTerminal(name:string) {
+		const terminal : vscode.Terminal | undefined = findTerminal(name);
+		if (!terminal) {
+			throw new Error(`No terminal found with name ${name} to close`);
+		} else {
+			await killTerminal(terminal).then( () => {
+				if (terminal) {
+					terminal.dispose();
+				}
+			});
+			sendTextToOutputChannel(`Closed terminal ${name}`);
+		}
+	}
+
 	// reset the didact window to use the default set in the settings
 	export async function openDidactWithDefault() {
 		sendTextToOutputChannel(`Starting Didact window with default`);
