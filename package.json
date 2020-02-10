@@ -4,8 +4,13 @@
 	"description": "Tutorial framework in VS Code",
 	"license": "Apache-2.0",
 	"version": "0.1.6",
+	"icon": "icons/logo.png",
 	"publisher": "redhat",
 	"preview": true,
+	"galleryBanner": {
+		"color": "#d8ebff",
+		"theme": "light"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/redhat-developer/vscode-didact"
