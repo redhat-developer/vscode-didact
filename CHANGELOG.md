@@ -2,6 +2,8 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.1.7
+
 ## 0.1.6
 
 - Added new preference to disable the default information notifications when didact commands are invoked. Links specifying explicit completion messages are still displayed, but links without are not. Preference is set to true by default.
