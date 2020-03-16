@@ -74,7 +74,6 @@ export function isDefaultNotificationDisabled() : boolean | undefined {
 
 export function getRegisteredTutorials() : string[] | undefined {
 	const registered : string[] | undefined = context.workspaceState.get(DIDACT_REGISTERED_SETTING);
-	//const registered : string[] | undefined = vscode.workspace.getConfiguration().get(DIDACT_REGISTERED_SETTING);
 	return registered;
 }
 
@@ -111,7 +110,6 @@ export async function registerTutorial(name : string, sourceUri : string, catego
 	}
 
 	await context.workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
-	//await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, existingRegistry, vscode.ConfigurationTarget.Workspace);
 
 	// refresh view
 	extension.refreshTreeview();
