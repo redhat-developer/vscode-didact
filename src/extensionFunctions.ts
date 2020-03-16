@@ -57,6 +57,7 @@ export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 // stash the extension context for use by the commands 
 export function initializeContext(inContext: vscode.ExtensionContext) {
 	extensionFunctions.setContext(inContext);
+	utils.setContext(inContext);
 
 	// set up the didact output channel
 	didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);	
