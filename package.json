@@ -52,11 +52,6 @@
 						"description": "Default Didact File Shown - can be any valid URL to a Didact Markdown file",
 						"scope": "window"
 					},
-					"didact.registered": {
-						"type": "array",
-						"description": "Registered Didact tutorials - can be any valid URL to a Didact Markdown file",
-						"scope": "window"
-					},
 					"didact.disableNotifications": {
 						"type": "boolean",
 						"default": "true",
