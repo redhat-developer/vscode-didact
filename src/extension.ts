@@ -20,7 +20,7 @@ import { extensionFunctions, initializeContext } from './extensionFunctions';
 import * as commandConstants from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
-import { registerTutorial, clearRegisteredTutorials } from './utils';
+import { registerTutorial, clearRegisteredTutorials, setContext } from './utils';
 import * as path from 'path';
 
 const DIDACT_VIEW = 'didact.tutorials';

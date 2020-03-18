@@ -85,6 +85,6 @@ suite('Didact registry test suite', () => {
 		await clearRegisteredTutorials();
 
 		let afterregistry = getRegisteredTutorials();
-		assert.deepEqual(afterregistry, []);
+		assert.deepEqual(afterregistry, undefined);
 	});
 });

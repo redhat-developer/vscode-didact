@@ -24,6 +24,9 @@ export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
 export const DIDACT_NOTIFICATION_SETTING : string = 'didact.disableNotifications';
 
+// stashed extension context
+let context : vscode.ExtensionContext;
+
 // simple file path comparison
 export function pathEquals(path1: string, path2: string): boolean {
 	if (process.platform !== 'linux') {
@@ -70,7 +73,7 @@ export function isDefaultNotificationDisabled() : boolean | undefined {
 }
 
 export function getRegisteredTutorials() : string[] | undefined {
-	const registered : string[] | undefined = vscode.workspace.getConfiguration().get(DIDACT_REGISTERED_SETTING);
+	const registered : string[] | undefined = context.workspaceState.get(DIDACT_REGISTERED_SETTING);
 	return registered;
 }
 
@@ -106,7 +109,7 @@ export async function registerTutorial(name : string, sourceUri : string, catego
 		}
 	}
 
-	await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, existingRegistry, vscode.ConfigurationTarget.Workspace);
+	await context.workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
 
 	// refresh view
 	extension.refreshTreeview();
@@ -167,7 +170,7 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 
 export async function clearRegisteredTutorials() {
 	if (vscode.workspace.getConfiguration()) {
-		await vscode.workspace.getConfiguration().update(DIDACT_REGISTERED_SETTING, undefined, vscode.ConfigurationTarget.Workspace);
+		await context.workspaceState.update(DIDACT_REGISTERED_SETTING, undefined);
 		console.log('Didact configuration cleared');
 	}
 }
@@ -235,4 +238,9 @@ export function getCurrentFolder(): Promise<string> {
 			});
 		});
 	});
+}
+
+// stash the context so we have it for use by the command functions without passing it each time
+export function setContext(inContext: vscode.ExtensionContext) {
+	context = inContext;
 }
