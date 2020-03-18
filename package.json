@@ -145,6 +145,10 @@
 			{
 				"command": "vscode.didact.closeNamedTerminal",
 				"title": "Didact: Close Named Terminal Window"
+			},
+			{
+				"command": "vscode.didact.cliCommandSuccessful",
+				"title": "Didact: Test CLI Command Success Code"
 			}
 		],
 		"menus": {

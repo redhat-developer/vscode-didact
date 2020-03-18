@@ -63,4 +63,16 @@ suite('Extension Functions Test Suite', () => {
 			// looking in the debugger, the _isDisposed property is set to true, so we should be ok
 		});
 	});
+
+	test('try executing a valid command', async function() {
+		await extensionFunctions.cliExecutionCheck('test-pwd','pwd').then( (returnBool) => {
+			assert.equal(returnBool, true);
+		});
+	});
+
+	test('try executing an ivalid command', async function() {
+		await extensionFunctions.cliExecutionCheck('test-bogus','doesnotexist').then( (returnBool) => {
+			assert.equal(returnBool, false);
+		});
+	});
 });
