@@ -83,52 +83,8 @@
 				"title": "Didact: Start Didact Tutorial from File"
 			},
 			{
-				"command": "vscode.didact.startTerminalWithName",
-				"title": "Didact: Start a VS Code Terminal with a particular name"
-			},
-			{
-				"command": "vscode.didact.sendNamedTerminalAString",
-				"title": "Didact: Send Named Terminal Some Text"
-			},
-			{
-				"command": "vscode.didact.requirementCheck",
-				"title": "Didact: Check to see if requirement exists"
-			},
-			{
-				"command": "vscode.didact.extensionRequirementCheck",
-				"title": "Didact: Check to see if required extension exists"
-			},
-			{
-				"command": "vscode.didact.workspaceFolderExistsCheck",
-				"title": "Didact: Check to see if at least one folder exists in workspace"
-			},
-			{
-				"command": "vscode.didact.createWorkspaceFolder",
-				"title": "Didact: Create a new workspace folder if none exists"
-			},
-			{
-				"command": "vscode.didact.reload",
-				"title": "Didact: Reload Didact window"
-			},
-			{
-				"command": "vscode.didact.validateAllRequirements",
-				"title": "Didact: Validate all requirements in Didact document"
-			},
-			{
-				"command": "vscode.didact.gatherAllRequirements",
-				"title": "Didact: Gather all requirement links in Didact document"
-			},
-			{
-				"command": "vscode.didact.gatherAllCommands",
-				"title": "Didact: Gather all command links in Didact document"
-			},
-			{
 				"command": "vscode.didact.view.tutorial.open",
 				"title": "Start Didact tutorial"
-			},
-			{
-				"command": "vscode.didact.register",
-				"title": "Register new Didact tutorial"
 			},
 			{
 				"command": "vscode.didact.view.refresh",
@@ -137,18 +93,6 @@
 					"dark": "resources/dark/refresh.svg",
 					"light": "resources/light/refresh.svg"
 				}
-			},
-			{
-				"command": "vscode.didact.sendNamedTerminalCtrlC",
-				"title": "Didact: Send Named Terminal a Ctrl+C Signal"
-			},
-			{
-				"command": "vscode.didact.closeNamedTerminal",
-				"title": "Didact: Close Named Terminal Window"
-			},
-			{
-				"command": "vscode.didact.cliCommandSuccessful",
-				"title": "Didact: Test CLI Command Success Code"
 			}
 		],
 		"menus": {

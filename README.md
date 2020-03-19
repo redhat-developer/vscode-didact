@@ -32,11 +32,15 @@ If you right-click on a tutorial (such as "Didact Demo"), you see a `Start Didac
 
 To change the default Didact file, access the settings (`File->Preferences->Settings`), type **Didact** and set the `Didact: Default Url`. This can be any valid URL to a Didact formatted Markdown file, including `http://`, `https://`, or `file://` URLs.
 
+To turn on generic Didact completion notifications (off by default), access the settings (`File->Preferences->Settings`), type **Didact** and set the `Didact: Disable Notifications` checkbox. If unchecked, additional notifications will occur when Didact actions are activated in the IDE.
+
 ![Didact Settings](./images/settings.jpg)
 
 ## Additional Details
 
 Check out the Wiki pages [here](https://github.com/redhat-developer/vscode-didact/wiki/Welcome-to-Didact!) for details about how to use Didact, write your first tutorial, format links, and much more. 
+
+For a list of available commands, check out the [Command Reference](examples/commands.reference.md).
 
 # Next steps
 

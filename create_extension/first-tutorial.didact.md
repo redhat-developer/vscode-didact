@@ -32,6 +32,8 @@ Other things that Didact can do:
 * Gather all requirements from tutorial
 * Gather all commands from tutorial
 
+For more about specific Didact commands, check out [the VSCode Didact Commands Reference](https://github.com/redhat-developer/vscode-didact/blob/master/examples/commands.reference.md)
+
 ## Further Information
 
 * For more about Markdown formatting, check out the [Markdown Guide](https://www.markdownguide.org/)
