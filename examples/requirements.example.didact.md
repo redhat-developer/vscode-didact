@@ -19,7 +19,19 @@ You can set up a button to automatically walk through all the requirements links
 
 To check to see if a command-line requirement is available, you can execute a command and check the text that comes back for a particular string result. For example, click here to check if [Minikube is accessible and running at the command line](didact://?commandId=vscode.didact.requirementCheck&text=minikube-requirements-status$$minikube%20status$$host:%20Running "Tests to see if `minikube status` returns a result"){.didact}
 
-*Status: unknown*{#minikube-requirements-status} 	
+*Status: unknown*{#minikube-requirements-status}
+
+Note that this tests for the text to show up in the result (i.e. `result.includes(testResult)`).
+
+## Checking to see if CLI call passes with a 0 return code
+
+In some cases, a particular command at the command line may return different strings depending on the version of the CLI. In such cases, you may want to simply make sure that the command executed and returned a zero return code. 
+
+To check to see if a command-line requirement is available, you can execute a command and check if the return code is zero (successful). For example, click here to check if [OpenShift (oc) is accessible and running at the command line](didact://?commandId=vscode.didact.cliCommandSuccessful&text=oc-install-status$$oc%20version "Tests to see if `oc version` returns a 0 return code"){.didact}
+
+If `oc version` returns `oc: command not found`, this returns a false. If it returns a valid version, it would return true.
+
+*Status: unknown*{#oc-install-status}
 
 ## Checking for an installed VS Code extension
 

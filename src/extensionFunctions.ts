@@ -51,6 +51,7 @@ export const REGISTER_TUTORIAL = 'vscode.didact.register'; // name, uri, categor
 export const REFRESH_DIDACT_VIEW = 'vscode.didact.view.refresh';
 export const SEND_TERMINAL_KEY_SEQUENCE = 'vscode.didact.sendNamedTerminalCtrlC';
 export const CLOSE_TERMINAL = 'vscode.didact.closeNamedTerminal';
+export const CLI_SUCCESS_COMMAND = 'vscode.didact.cliCommandSuccessful';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -314,6 +315,23 @@ export namespace extensionFunctions {
 			}	
 		} catch (error) {
 			sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: false`);
+			postRequirementsResponseMessage(requirement, false);
+		}
+		return false;
+	}
+
+	// even more basic CLI check - tests to see if CLI command returns zero meaning it executed successfully
+	export async function cliExecutionCheck(requirement: string, testCommand: string) : Promise<boolean> {
+		try {
+			sendTextToOutputChannel(`Validating requirement ${testCommand} exists in VS Code workbench`);
+			let result = child_process.execSync(testCommand).toString();
+			if (result) {
+				sendTextToOutputChannel(`--CLI command ${testCommand} returned code 0 and result ${result}`);
+				postRequirementsResponseMessage(requirement, true);
+				return true;
+			}
+		} catch (error) {
+			sendTextToOutputChannel(`--CLI command ${testCommand} failed with error ${error.status}`);
 			postRequirementsResponseMessage(requirement, false);
 		}
 		return false;
