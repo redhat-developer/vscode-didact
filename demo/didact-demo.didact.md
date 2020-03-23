@@ -26,13 +26,17 @@ But beyond that, we add a number of nice features that should be useful to those
 
 You can check for requirements on the user's machine...
 
-[For example, you could check to see if Apache Maven is accessible at the command line](didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven&completion=Apache%20Maven%20is%20available%20on%20this%20system. "Tests to see if `mvn -version` returns a result"){.didact}
+[For example, you could check to see if Apache Maven is accessible at the command line by checking the text that is returned (in this case it tests to see if `mvn -version` returns the string `Apache Maven`.)](didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven&completion=Apache%20Maven%20is%20available%20on%20this%20system. "Tests to see if `mvn -version` returns a result"){.didact}
 
-*Status: unknown*{#maven-requirements-status} 
+*Status: unknown*{#maven-requirements-status}
+
+[Or you could check to see if `uname` is accessible at the command line by checking that the return code from the command is 0. If it is non-zero, it will fail.)](didact://?commandId=vscode.didact.cliCommandSuccessful&text=uname-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine. "Tests to see if `uname` returns a return code of zero"){.didact}
+
+*Status: unknown*{#uname-cli-return-status}
 
 - [ ] [We'll make sure that this one is NOT accessible so you can see the difference.](didact://?commandId=vscode.didact.requirementCheck&text=nonexistent-requirements-status$$something$$wicked%20this%20way%20comes&error=something%20wicked%20this%20way%20comes. "Tests to see what happens with a requirement guaranteed to fail"){.didact}
 
-*Status: unknown*{#nonexistent-requirements-status} 
+*Status: unknown*{#nonexistent-requirements-status}
 
 You can check for other extensions to already be installed in the user's VS Code instance...
 

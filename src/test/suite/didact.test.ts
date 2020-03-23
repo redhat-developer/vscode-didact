@@ -12,6 +12,7 @@ import * as commandHandler from '../../commandHandler';
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$uname$$Linux&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
+const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/example/projectwithdidactfile.json';
 
@@ -91,6 +92,26 @@ suite('Didact test suite', () => {
 	});
 
 	test('test the command line requirements checking', async () => {
+		const href = testReqCli;
+		const parsedUrl = url.parse(href, true);
+		const query = parsedUrl.query;
+		assert.notEqual(query.commandId, undefined);
+		if (query.commandId) {
+			const commandId = getValue(query.commandId);
+			let output : any[] = [];
+			if (query.text) {
+				const text = getValue(query.text);
+				if (text) {
+					commandHandler.handleText(text, output);
+				}
+			}
+			assert.equal(output.length, 2); // 2 arguments
+			const reqAvailable : boolean = await extensionFunctions.cliExecutionCheck(output[0], output[1]);
+			assert.equal(reqAvailable, true, `Found command ${commandId} in Didact file but did not receive 0 as return code: ${href}`);
+		}
+	});
+
+	test('test the command line requirement return checking', async () => {
 		const href = testReq;
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
@@ -109,6 +130,7 @@ suite('Didact test suite', () => {
 			assert.equal(reqAvailable, true, `Found command ${commandId} in Didact file but requirement test is not found: ${href}`);
 		}
 	});
+
 
 	test('test the workspace checking', async () => {
 		const href = testWS.toString();
@@ -160,4 +182,16 @@ suite('Didact test suite', () => {
 			}			
 		});
 	});
+
+	test('Walk through the demo didact file to ensure that we get all the requirements commands successfully', async () => {
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
+			if (DidactWebviewPanel.currentPanel) {
+				const hrefs : any[] = extensionFunctions.gatherAllRequirementsLinks();
+				console.log('Gathered these requirements URIs: ' + hrefs);
+				// currently there are 5 requirements links in the test 
+				assert.equal(hrefs && hrefs.length === 5, true);
+			}			
+		});
+	});
+
 });
