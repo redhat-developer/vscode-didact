@@ -55,13 +55,13 @@ export const CLI_SUCCESS_COMMAND = 'vscode.didact.cliCommandSuccessful';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
-// stash the extension context for use by the commands 
+// stash the extension context for use by the commands
 export function initializeContext(inContext: vscode.ExtensionContext) {
 	extensionFunctions.setContext(inContext);
 	utils.setContext(inContext);
 
 	// set up the didact output channel
-	didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);	
+	didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);
 }
 
 // contain all the various command functions in one spot
@@ -94,15 +94,15 @@ export namespace extensionFunctions {
 				throw new Error(`Error found while scaffolding didact project: ${error}`);
 			});
 		} else {
-			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin.'); 
+			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin.');
 		}
 	}
 
-	// quick and dirty workaround for an empty workspace - creates a folder in the user's temporary store 
+	// quick and dirty workaround for an empty workspace - creates a folder in the user's temporary store
 	export async function createTemporaryFolderAsWorkspaceRoot(requirement: string | undefined) {
 		sendTextToOutputChannel(`Creating temporary folder as workspace root`);
 		var tmp = require('tmp');
-		// if the workspace is empty, we will create a temporary one for the user 
+		// if the workspace is empty, we will create a temporary one for the user
 		var tmpobj = tmp.dirSync();
 		let rootUri : vscode.Uri = vscode.Uri.parse(`file://${tmpobj.name}`);
 		vscode.workspace.updateWorkspaceFolders(0,undefined, {uri: rootUri});
@@ -112,7 +112,7 @@ export namespace extensionFunctions {
 				postRequirementsResponseMessage(requirement, true);
 			} else {
 				postRequirementsResponseMessage(requirement, false);
-			}	
+			}
 		}
 	}
 
@@ -184,13 +184,13 @@ export namespace extensionFunctions {
 	export function findTerminal(name: string) : vscode.Terminal | undefined {
 		try {
 			for(let localTerm of vscode.window.terminals){
-				if(localTerm.name === name){ 
-					return localTerm; 
+				if(localTerm.name === name){
+					return localTerm;
 				}
-			}	
+			}
 		} catch {
 			return undefined;
-		}	
+		}
 		return undefined;
 	}
 
@@ -216,7 +216,7 @@ export namespace extensionFunctions {
 			sendTextToOutputChannel(`Sent terminal ${name} a Ctrl+C`);
 		}
 	}
-	
+
 	export async function closeTerminal(name:string) {
 		const terminal : vscode.Terminal | undefined = findTerminal(name);
 		if (!terminal) {
@@ -237,18 +237,13 @@ export namespace extensionFunctions {
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.setContext(context);
 		_mdFileUri = undefined;
-		DidactWebviewPanel.hardReset();		
+		DidactWebviewPanel.hardReset();
 	}
 
 	// open the didact window with the markdown passed in via Uri
 	export async function startDidact(uri:vscode.Uri) {
 		if (!uri) {
-			await utils.getCurrentFileSelectionPath().then( (currentFilePath) => {
-				let tempuri = vscode.Uri.file(currentFilePath);
-				uri = tempuri;
-			}).catch( (error) => {
-				throw (new Error(error));
-			});
+      uri = await utils.getCurrentFileSelectionPath();
 		}
 
 		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
@@ -259,8 +254,8 @@ export namespace extensionFunctions {
 			if (query.extension) {
 				const value = utils.getValue(query.extension);
 				if (value) {
-					if (context.extensionPath === undefined) { 
-						return; 
+					if (context.extensionPath === undefined) {
+						return;
 					}
 					_mdFileUri = vscode.Uri.file(
 						path.join(context.extensionPath, value)
@@ -299,7 +294,7 @@ export namespace extensionFunctions {
 	}
 
 	// very basic requirements testing -- check to see if the results of a command executed at CLI returns a known result
-	// example: testCommand = mvn --version, testResult = 'Apache Maven' 
+	// example: testCommand = mvn --version, testResult = 'Apache Maven'
 	export async function requirementCheck(requirement: string, testCommand: string, testResult: string) : Promise<boolean> {
 		try {
 			sendTextToOutputChannel(`Validating requirement ${testCommand} exists in VS Code workbench`);
@@ -312,7 +307,7 @@ export namespace extensionFunctions {
 				sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: false`);
 				postRequirementsResponseMessage(requirement, false);
 				return false;
-			}	
+			}
 		} catch (error) {
 			sendTextToOutputChannel(`--Requirement ${testCommand} exists in VS Code workbench: false`);
 			postRequirementsResponseMessage(requirement, false);
@@ -349,7 +344,7 @@ export namespace extensionFunctions {
 			sendTextToOutputChannel(`--Extension ${extensionId} exists in VS Code workbench: false`);
 			postRequirementsResponseMessage(requirement, false);
 			return false;
-		}	
+		}
 	}
 
 	// very basic test -- check to see if the workspace has at least one root folder
@@ -364,7 +359,7 @@ export namespace extensionFunctions {
 			sendTextToOutputChannel(`--Workspace has at least one root folder: false`);
 			postRequirementsResponseMessage(requirement, false);
 			return false;
-		}	
+		}
 	}
 
 	// dispose of and reload the didact window with the latest Uri
@@ -376,7 +371,7 @@ export namespace extensionFunctions {
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, _mdFileUri);
 	}
 
-	// send a message back to the webview - used for requirements testing mostly 
+	// send a message back to the webview - used for requirements testing mostly
 	function postRequirementsResponseMessage(requirement: string, booleanResponse: boolean) {
 		if (requirement && DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.postRequirementsResponseMessage(requirement, booleanResponse);
@@ -412,7 +407,7 @@ export namespace extensionFunctions {
 		}
 		return undefined;
 	}
-	
+
 	// retrieve markdown text from a file
 	async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined> {
 		try {
@@ -431,7 +426,7 @@ export namespace extensionFunctions {
 			throw new Error(error);
 		}
 	}
-	
+
 	// retrieve markdown text from a url
 	// TODO: figure out how to determine adoc vs. md on the fly from the url
 	async function getDataFromUrl(url:string) : Promise<string> {
@@ -472,7 +467,7 @@ export namespace extensionFunctions {
 	}
 
 	const requirementCommandLinks = [
-		'didact://?commandId=vscode.didact.extensionRequirementCheck', 
+		'didact://?commandId=vscode.didact.extensionRequirementCheck',
 		'didact://?commandId=vscode.didact.requirementCheck',
 		'didact://?commandId=vscode.didact.workspaceFolderExistsCheck'
 	];
@@ -538,9 +533,9 @@ export namespace extensionFunctions {
 	export async function sendTextToOutputChannel(msg: string, channel?: vscode.OutputChannel) : Promise<void> {
 		// set up the didact output channel if it's not set up
 		if (!didactOutputChannel) {
-			didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);	
+			didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);
 		}
-		
+
 		if (!channel && didactOutputChannel) {
 			channel = didactOutputChannel;
 		}
@@ -548,7 +543,7 @@ export namespace extensionFunctions {
 			if (!msg.endsWith('\n')) {
 				msg = `${msg} \n`;
 			}
-			channel.append(msg);			
+			channel.append(msg);
 		} else {
 			console.log('[' + msg + ']');
 		}

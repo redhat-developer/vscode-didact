@@ -175,34 +175,22 @@ export async function clearRegisteredTutorials() {
 	}
 }
 
-export function getCurrentFileSelectionPath(): Promise<string> {
-	return new Promise(async (resolve, reject) => {
+export async function getCurrentFileSelectionPath(): Promise<vscode.Uri> {
+  if (vscode.window.activeTextEditor)
+  {
+    return vscode.window.activeTextEditor.document.uri;
+  }
+  else{
 		// set focus to the Explorer view
-		await vscode.commands.executeCommand('workbench.view.explorer').then( async () => {
-			// then get the resource with focus
-			await vscode.commands.executeCommand('copyFilePath').then(async () => {
-				try {
-					await vscode.env.clipboard.readText().then((copyPath) => {
-						try {
-							if (fs.existsSync(copyPath)) {
-								if (fs.lstatSync(copyPath).isFile()) {
-									// if it's a file, pass the path back
-									resolve(copyPath);
-									return copyPath;
-								}
-							}
-						} catch (err) {
-							reject(err);
-							return undefined;
-						}
-					});
-				} catch (err) {
-					reject(err);
-					return undefined;
-				}
-			});
-		});
-	});
+    await vscode.commands.executeCommand('workbench.view.explorer');
+    // then get the resource with focus
+    await vscode.commands.executeCommand('copyFilePath');
+    const copyPath = await vscode.env.clipboard.readText();
+    if (fs.existsSync(copyPath) && fs.lstatSync(copyPath).isFile() ) {
+      return vscode.Uri.file(copyPath);
+    }
+  }
+  throw new Error("Can not determine current file selection");
 }
 
 export function getCurrentFolder(): Promise<string> {
