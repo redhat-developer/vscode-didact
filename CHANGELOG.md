@@ -4,7 +4,8 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.8
 
- - TBD
+ - Fixing bug where new CLI command checking wasn't included in "validate all requirements" check
+ - Update getCurrentFileSelectionPath to use active editor
 
 ## 0.1.7
 

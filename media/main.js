@@ -56,7 +56,8 @@ function () {
 	const requirementCommandLinks = [
 		'didact://?commandId=vscode.didact.extensionRequirementCheck', 
 		'didact://?commandId=vscode.didact.requirementCheck',
-		'didact://?commandId=vscode.didact.workspaceFolderExistsCheck'
+		'didact://?commandId=vscode.didact.workspaceFolderExistsCheck',
+		'didact://?commandId=vscode.didact.cliCommandSuccessful'
 	];
 
 	function collectElements(tagname) {

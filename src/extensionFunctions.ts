@@ -466,10 +466,12 @@ export namespace extensionFunctions {
 		return elements;
 	}
 
+	// note that this MUST be also updated in the main.js file 
 	const requirementCommandLinks = [
 		'didact://?commandId=vscode.didact.extensionRequirementCheck',
 		'didact://?commandId=vscode.didact.requirementCheck',
-		'didact://?commandId=vscode.didact.workspaceFolderExistsCheck'
+		'didact://?commandId=vscode.didact.workspaceFolderExistsCheck',
+		'didact://?commandId=vscode.didact.cliCommandSuccessful'
 	];
 
 	export function gatherAllRequirementsLinks() : any[] {
