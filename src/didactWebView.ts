@@ -322,6 +322,7 @@ export class DidactWebviewPanel {
 			}
 		}
 		if (this.currentHtml) {
+			DidactWebviewPanel.cacheFile(); // update the cache with the new content
 			this._panel.webview.html = this.currentHtml;
 		}
 	}
