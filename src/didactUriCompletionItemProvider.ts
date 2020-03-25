@@ -32,10 +32,15 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList> {
 		let lineToSearch = document.lineAt(position).text;
 		if (lineToSearch.indexOf('didact://?') > -1) {
-			return this.provideCompletionItemsForDidactProtocol(lineToSearch, document.offsetAt(position));
-		} else {
-			let completions: vscode.CompletionItem[] = [];
+			return this.provideCompletionItemsForDidactProtocol(lineToSearch);
+		}
+		return this.provideCompletionItemsOutsideDidactURI(lineToSearch);
+	}
 
+	public provideCompletionItemsOutsideDidactURI(lineToSearch: string) : vscode.CompletionItem[] {
+		let completions: vscode.CompletionItem[] = [];
+
+		if (lineToSearch.indexOf('didact://?') === -1) {
 			// Add Validate All button
 			this.insertValidateAllButtonCompletion("Insert Validate All Button", completions);
 
@@ -53,13 +58,12 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 			// Add didact starter 
 			this.insertDidactProtocolStarterCompletion("Start a didact link", completions);
-
-			return completions;
 		}
-		return undefined;
+
+		return completions;
 	}
 
-	public provideCompletionItemsForDidactProtocol(text: string, offset: number): vscode.CompletionItem[] {
+	public provideCompletionItemsForDidactProtocol(text: string): vscode.CompletionItem[] {
 		let completions: vscode.CompletionItem[] = [];
 		if (text.indexOf('didact://?') > -1) {
 			const start = text.indexOf('didact://?');
@@ -75,44 +79,44 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		return completions;
 	}
 
-	private startTerminalWithNameCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private startTerminalWithNameCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.startTerminalWithName&text=NamedTerminal
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['TerminalNameIsOptional'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.START_TERMINAL_COMMAND, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet that enables you to set the Terminal Name for the new Terminal.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
-	private sendNamedTerminalAStringCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private sendNamedTerminalAStringCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.sendNamedTerminalAString&text=NamedTerminal$$ping%20localhost
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['TerminalName', 'URLEncodedTextToSendTerminal'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.SEND_TERMINAL_SOME_TEXT_COMMAND, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet that enables you to set the Terminal Name and Text to send the Terminal.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
-	private sendTerminalCtrlCCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private sendTerminalCtrlCCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.sendNamedTerminalCtrlC&text=SecondTerminal
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['TerminalName'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.SEND_TERMINAL_KEY_SEQUENCE, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet to send a Ctrl+C to a named Terminal to stop a long-running process.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
-	private closeTerminalCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private closeTerminalCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.closeNamedTerminal&text=NamedTerminal
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['TerminalName'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.CLOSE_TERMINAL, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet to close/kill a named Terminal.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
 	private insertValidateAllButtonCompletion(labelText: string, completions : vscode.CompletionItem[]) {
@@ -154,54 +158,54 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		this.processSimplerLink(labelText, snippetString, docs, completions);
 	}
 
-	private commandLineTextRequirementCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private commandLineTextRequirementCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.requirementCheck&text=minikube-requirements-status$$minikube%20status$$host:%20Running
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['Requirement-Label', 'URLEncodedCLIToExecute', 'URLEncodedTextToCheckInReturn'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.REQUIREMENT_CHECK_COMMAND, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet to validate if a CLI command, when executed, returns a string in the text that comes back.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
-	private commandLineRequirementCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private commandLineRequirementCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.cliCommandSuccessful&text=oc-install-status$$oc%20version
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['Requirement-Label', 'URLEncodedCLIToExecute'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.CLI_SUCCESS_COMMAND, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet to validate if a CLI command, when executed, runs successfully (returns a 0 return code).");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
-	private extensionRequirementCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private extensionRequirementCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['Requirement-Label', 'ExtensionIDToCheck'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.EXTENSION_REQUIREMENT_CHECK_COMMAND, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet to validate if a particular VS Code Extension is installed.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
-	private workspaceFolderRequirementCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private workspaceFolderRequirementCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const parms = ['Requirement-Label'];
 		const snippetString = this.createCommandParmSnippetString({ commandId: extensionFunctions.WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND, parms });
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet to validate if the user workspace has at least one root folder.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
-	private projectScaffoldingCompletion(labelText: string, completions? : vscode.CompletionItem[]) {
+	private projectScaffoldingCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/create_extension/md-tutorial.project.didact.json
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		const pathStr = 'projectFilePath=${1:pathToProjectJSONInWorkspace}';
 		const snippetString = this.createCommandPathSnippetString(extensionFunctions.SCAFFOLD_PROJECT_COMMAND, pathStr);
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString("Inserts a snippet to scaffold a project from a project.json file located in a folder in the extension.");
-		completions?.push(snippetCompletion);
+		completions.push(snippetCompletion);
 	}
 
 	private startDidactCompletion(labelText: string, completions : vscode.CompletionItem[]) {
@@ -293,7 +297,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	private createPathSnippetString(pathSnippet : string) : string {
 		//&projectPath=${1:pathtofile}
-		return '&' + pathSnippet;
+		return `&${pathSnippet}`;
 	}
 
 	private createTextParameterSnippetString(num: number, param : string, isFirst? : boolean) : string {

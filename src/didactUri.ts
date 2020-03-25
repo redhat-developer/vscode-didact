@@ -22,14 +22,14 @@ import {getValue} from './utils';
 import * as vscode from 'vscode';
 
 export class DidactUri {
-	private commandId: string | undefined = undefined;
-	private completionMessage : string | undefined = undefined;
-	private errorMessage : string | undefined = undefined;
-	private projectFilePath : string | undefined = undefined;
-	private srcFilePath : string | undefined = undefined;
-	private extFilePath : string | undefined = undefined;
-	private text : string | undefined = undefined;
-	private user : string | undefined = undefined;
+	private commandId: string | undefined;
+	private completionMessage : string | undefined;
+	private errorMessage : string | undefined;
+	private projectFilePath : string | undefined;
+	private srcFilePath : string | undefined;
+	private extFilePath : string | undefined;
+	private text : string | undefined;
+	private user : string | undefined;
 
 	private context: vscode.ExtensionContext;
 
