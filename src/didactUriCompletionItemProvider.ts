@@ -74,10 +74,8 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	public provideCompletionItemsForDidactProtocol(text: string): vscode.CompletionItem[] {
 		let completions: vscode.CompletionItem[] = [];
 		let didactUri = this.getDidactUriFromLine(text);
-		if (didactUri) {
-			if (!didactUri.getCommandId()) {
-				completions = this.getCommandCompletionItems();
-			}
+		if (didactUri && !didactUri.getCommandId()) {
+			completions = this.getCommandCompletionItems();
 		}
 		return completions;
 	}

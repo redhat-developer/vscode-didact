@@ -27,12 +27,10 @@ export class DidactUriCompletionItemProviderAsciiDoc extends DidactUriCompletion
 		let completions : vscode.CompletionItem[] = super.provideCompletionItemsForDidactProtocol(text);
 
 		let didactUri = this.getDidactUriFromLine(text);
-		if (didactUri) {
-			if (!didactUri.getCommandId()) {
-				// add some additional didact types here because we can't do HTML kinds of things in AsciiDoc
-				this.validateAllRequirementsCompletion("Validate All Didact Requirements", completions);
-				this.addWorkspaceFolderCompletion("Add Temporary Folder as WS Root", completions);
-			}
+		if (didactUri && !didactUri.getCommandId()) {
+			// add some additional didact types here because we can't do HTML kinds of things in AsciiDoc
+			this.validateAllRequirementsCompletion("Validate All Didact Requirements", completions);
+			this.addWorkspaceFolderCompletion("Add Temporary Folder as WS Root", completions);
 		}
 
 		return completions;
