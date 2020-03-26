@@ -23,7 +23,7 @@ import {DidactUri} from './didactUri';
 
 let extContext: vscode.ExtensionContext;
 
-const didactProtocol = 'didact://?';
+export const didactProtocol = 'didact://?';
 
 export function setContext(ctxt: vscode.ExtensionContext) {
 	extContext = ctxt;
@@ -54,8 +54,8 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		return completions;
 	}
 
-	public provideCompletionItemsForDidactProtocol(text: string): vscode.CompletionItem[] {
-		let completions: vscode.CompletionItem[] = [];
+	public getDidactUriFromLine(text: string) : DidactUri | undefined {
+		let returnedObject;
 		const start = text.indexOf(didactProtocol);
 		if (start > -1) {
 			const linkRegex = /\w+:(\/?\/?)[^\s]+/;
@@ -64,10 +64,19 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 				const parsethis = matches[0];
 				const didactUri = new DidactUri(parsethis, extContext);
 				if (didactUri) {
-					if (!didactUri.getCommandId()) {
-						completions = this.getCommandCompletionItems();
-					}
+					returnedObject = didactUri;
 				}
+			}
+		}
+		return returnedObject;
+	}
+
+	public provideCompletionItemsForDidactProtocol(text: string): vscode.CompletionItem[] {
+		let completions: vscode.CompletionItem[] = [];
+		let didactUri = this.getDidactUriFromLine(text);
+		if (didactUri) {
+			if (!didactUri.getCommandId()) {
+				completions = this.getCommandCompletionItems();
 			}
 		}
 		return completions;
@@ -130,7 +139,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		this.processSimplerLink(labelText, snippetString, docs, completions);
 	}
 
-	private processSimplerLink(labelText: string, snippetString : string, docs : string, completions? : vscode.CompletionItem[]) : vscode.CompletionItem {
+	public processSimplerLink(labelText: string, snippetString : string, docs : string, completions? : vscode.CompletionItem[]) : vscode.CompletionItem {
 		const snippetCompletion = new vscode.CompletionItem(labelText);
 		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
 		snippetCompletion.documentation = new vscode.MarkdownString(docs);
@@ -211,7 +220,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		completions.push(snippetCompletion);
 	}
 
-	private insertRedhatDidactLinkCompletion(labelText: string, completions : vscode.CompletionItem[]) {
+	public insertRedhatDidactLinkCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: vscode://redhat.vscode-didact?extension=example/tutorial.didact.md
 		const snippetString = "vscode://redhat.vscode-didact?extension=${1:PathToFileInExtensionFolder}";
 		const docs = "Inserts a snippet to open the Didact window with a file elsewhere in the extension folder structure.";
@@ -225,7 +234,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		this.processSimplerLink(labelText, snippetString, docs, completions);
 	}
 
-	private insertDidactProtocolStarterCompletion(labelText: string, completions : vscode.CompletionItem[]) {
+	public insertDidactProtocolStarterCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?
 		const snippetString = didactProtocol;
 		const docs = "Inserts the `didact://?` start to a link";
@@ -234,7 +243,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		completions.push(item);
 	}
 
-	private getCommandCompletionItems() : vscode.CompletionItem[] {
+	public getCommandCompletionItems() : vscode.CompletionItem[] {
 		let completions: vscode.CompletionItem[] = [];
 
 		// Terminal commands
@@ -261,7 +270,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		return completions;
 	}
 
-	private createCommandParmSnippetString({ commandId, parms }: { commandId: string; parms?: string[]; }) : string {
+	public createCommandParmSnippetString({ commandId, parms }: { commandId: string; parms?: string[]; }) : string {
 		if (parms) {
 			return this.createCommandString(commandId) + this.createTextParameterSnippetStringFromArray(parms);
 		}
