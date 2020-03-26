@@ -22,6 +22,7 @@ import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials, setContext } from './utils';
 import * as path from 'path';
+import {DidactUriCompletionItemProvider} from './didactUriCompletionItemProvider';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -60,6 +61,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			await vscode.commands.executeCommand(commandConstants.START_DIDACT_COMMAND, uri);
 		}
 	});
+
+	// set up our completion provider
+	let markdown:vscode.DocumentSelector = { scheme: 'file', language: 'markdown', pattern: '**/**.didact.md' };
+	vscode.languages.registerCompletionItemProvider(markdown, new DidactUriCompletionItemProvider());
 
 	// if there are changes in the workspace (i.e. a new root folder being added), refresh the didact window
  	vscode.workspace.onDidChangeWorkspaceFolders( async () => {

@@ -36,6 +36,35 @@ To turn on generic Didact completion notifications (off by default), access the 
 
 ![Didact Settings](./images/settings.jpg)
 
+## Auto-complete for Didact in Markdown files
+
+To help you set up Didact tutorials, we've added a number of auto-completions (accessible by pressing `Ctrl+Space` while editing a Markdown file) to provide most of the basic things you'll need.
+
+![Didact Auto-Completion Demo](./images/didact-uri-completion-demo.gif)
+
+Included completions:
+
+* Insert Validate All button
+* Insert Requirements label
+* Insert link to install required VS Code extension
+* Insert link to create temporary folder as WS root
+* Insert link to start didact from File in Extension folder
+* Start a new didact link (inserts `didact://?` and then offers additional completions
+
+From a `didact://?` start, you also get:
+
+* Start terminal with name
+* Send named terminal some text
+* Send named terminal a Ctrl+C
+* Close terminal with name
+* Non-didact command
+* Check CLI for some returned text
+* Check CLI for some success (no text)
+* Check for required extension
+* Check for root folder in the WS
+* Scaffold project
+* Start Didact from Currently Selected File
+
 ## Additional Details
 
 Check out the Wiki pages [here](https://github.com/redhat-developer/vscode-didact/wiki/Welcome-to-Didact!) for details about how to use Didact, write your first tutorial, format links, and much more. 
