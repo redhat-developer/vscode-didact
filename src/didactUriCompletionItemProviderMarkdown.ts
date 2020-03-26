@@ -26,25 +26,25 @@ export class DidactUriCompletionItemProviderMarkdown extends DidactUriCompletion
 		let completions: vscode.CompletionItem[] = [];
 
 		// Terminal commands
-		this.startTerminalWithNameCompletion("Start Terminal with Name", completions);
-		this.sendNamedTerminalAStringCompletion("Send Named Terminal Some Text", completions);
-		this.sendTerminalCtrlCCompletion("Send Named Terminal a Ctrl+C", completions);
-		this.closeTerminalCompletion("Close Terminal with Name", completions);
+		super.startTerminalWithNameCompletion("Start Terminal with Name", completions);
+		super.sendNamedTerminalAStringCompletion("Send Named Terminal Some Text", completions);
+		super.sendTerminalCtrlCCompletion("Send Named Terminal a Ctrl+C", completions);
+		super.closeTerminalCompletion("Close Terminal with Name", completions);
 
 		// Non-didact command
-		this.nonDidactCommandCompletion("Non-Didact Command", completions);
+		super.nonDidactCommandCompletion("Non-Didact Command", completions);
 
 		// Requirements commands
-		this.commandLineTextRequirementCompletion("Check CLI for Returned Text", completions);
-		this.commandLineRequirementCompletion("Check CLI for Success (No Text)", completions);
-		this.extensionRequirementCompletion("Check for Required Extension", completions);
-		this.workspaceFolderRequirementCompletion("Check for Root Folder in the WS", completions);
+		super.commandLineTextRequirementCompletion("Check CLI for Returned Text", completions);
+		super.commandLineRequirementCompletion("Check CLI for Success (No Text)", completions);
+		super.extensionRequirementCompletion("Check for Required Extension", completions);
+		super.workspaceFolderRequirementCompletion("Check for Root Folder in the WS", completions);
 
 		// Project Scaffolding commands
-		this.projectScaffoldingCompletion("Scaffold Project", completions);
+		super.projectScaffoldingCompletion("Scaffold Project", completions);
 
 		// Starting other didact files
-		this.startDidactCompletion("Start Didact from Currently Selected File", completions);
+		super.startDidactCompletion("Start Didact from Currently Selected File", completions);
 
 		return completions;
 	}
@@ -53,12 +53,12 @@ export class DidactUriCompletionItemProviderMarkdown extends DidactUriCompletion
 		let completions: vscode.CompletionItem[] = [];
 
 		if (lineToSearch.indexOf(didactProtocol) === -1) {
-			this.insertValidateAllButtonCompletion("Insert Validate All Button", completions);
-			this.insertNamedStatusLabelForRequirementCompletion("Insert Requirements Label", completions);
-			this.insertInstallExtensionLinkCompletion("Insert link to install required VS Code extension", completions);
-			this.insertAddWorkspaceFolderLinkCompletion("Insert link to create a temporary folder as WS root", completions);
-			this.insertRedhatDidactLinkCompletion("Insert link to start Didact from File Elsewhere in Extension Folder", completions);
-			this.insertDidactProtocolStarterCompletion("Start a new Didact link", completions);
+			super.insertValidateAllButtonCompletion("Insert Validate All Button", completions);
+			super.insertNamedStatusLabelForRequirementCompletion("Insert Requirements Label", completions);
+			super.insertInstallExtensionLinkCompletion("Insert link to install required VS Code extension", completions);
+			super.insertAddWorkspaceFolderLinkCompletion("Insert link to create a temporary folder as WS root", completions);
+			super.insertRedhatDidactLinkCompletion("Insert link to start Didact from File Elsewhere in Extension Folder", completions);
+			super.insertDidactProtocolStarterCompletion("Start a new Didact link", completions);
 		}
 
 		return completions;
