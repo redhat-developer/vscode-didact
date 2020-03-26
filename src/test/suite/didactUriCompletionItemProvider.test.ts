@@ -29,11 +29,13 @@ suite("Didact URI completion", function () {
 	});
 
 	test("should get result for uri completion when didact link in line", () => {
-		expect(new DidactUriCompletionItemProvider().provideCompletionItemsForDidactProtocol(notEmptyContent)).not.empty;
+		const expectedUriResult = 11;
+		expect(new DidactUriCompletionItemProvider().provideCompletionItemsForDidactProtocol(notEmptyContent).length).to.equal(expectedUriResult);
 	});
 
 	test("should get result for outside uri completion when no didact link in line", () => {
-		expect(new DidactUriCompletionItemProvider().provideCompletionItemsOutsideDidactURI(emptyContent)).not.empty;
+		const expectedOutsideUriResult = 6;
+		expect(new DidactUriCompletionItemProvider().provideCompletionItemsOutsideDidactURI(emptyContent).length).to.equal(expectedOutsideUriResult);
 	});
 
 	test("should not get result for outside uri completion when didact link in line", () => {

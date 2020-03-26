@@ -23,6 +23,8 @@ import {DidactUri} from './didactUri';
 
 let extContext: vscode.ExtensionContext;
 
+const didactProtocol = 'didact://?';
+
 export function setContext(ctxt: vscode.ExtensionContext) {
 	extContext = ctxt;
 }
@@ -31,7 +33,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	
 	provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList> {
 		let lineToSearch = document.lineAt(position).text;
-		if (lineToSearch.indexOf('didact://?') > -1) {
+		if (lineToSearch.indexOf(didactProtocol) > -1) {
 			return this.provideCompletionItemsForDidactProtocol(lineToSearch);
 		}
 		return this.provideCompletionItemsOutsideDidactURI(lineToSearch);
@@ -40,24 +42,13 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	public provideCompletionItemsOutsideDidactURI(lineToSearch: string) : vscode.CompletionItem[] {
 		let completions: vscode.CompletionItem[] = [];
 
-		if (lineToSearch.indexOf('didact://?') === -1) {
-			// Add Validate All button
+		if (lineToSearch.indexOf(didactProtocol) === -1) {
 			this.insertValidateAllButtonCompletion("Insert Validate All Button", completions);
-
-			// Add requirements label
 			this.insertNamedStatusLabelForRequirementCompletion("Insert Requirements Label", completions);
-
-			// Add link to install required VS Code extension
 			this.insertInstallExtensionLinkCompletion("Insert link to install required VS Code extension", completions);
-
-			// Add link to create temp folder and set it as the workspace root
 			this.insertAddWorkspaceFolderLinkCompletion("Insert link to create a temporary folder as WS root", completions);
-
-			// Add link to open didact file from elsewhere in the extension 
 			this.insertRedhatDidactLinkCompletion("Insert link to start Didact from File Elsewhere in Extension Folder", completions);
-
-			// Add didact starter 
-			this.insertDidactProtocolStarterCompletion("Start a didact link", completions);
+			this.insertDidactProtocolStarterCompletion("Start a new Didact link", completions);
 		}
 
 		return completions;
@@ -65,8 +56,8 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	public provideCompletionItemsForDidactProtocol(text: string): vscode.CompletionItem[] {
 		let completions: vscode.CompletionItem[] = [];
-		if (text.indexOf('didact://?') > -1) {
-			const start = text.indexOf('didact://?');
+		const start = text.indexOf(didactProtocol);
+		if (start > -1) {
 			const end = text.indexOf(' ', start);
 			const parsethis = text.substring(start, end);
 			const didactUri = new DidactUri(parsethis, extContext);
@@ -233,7 +224,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	private insertDidactProtocolStarterCompletion(labelText: string, completions : vscode.CompletionItem[]) {
 		// example: didact://?
-		const snippetString = "didact://?";
+		const snippetString = didactProtocol;
 		const docs = "Inserts the `didact://?` start to a link";
 		const item = this.processSimplerLink(labelText, snippetString, docs);
 		item.command = { command: 'editor.action.triggerSuggest', title: 'Re-trigger completions...' };
@@ -253,10 +244,10 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		this.nonDidactCommandCompletion("Non-Didact Command", completions);
 
 		// Requirements commands
-		this.commandLineTextRequirementCompletion("Check CLI for some returned text", completions);
-		this.commandLineRequirementCompletion("Check CLI for some success (no text)", completions);
-		this.extensionRequirementCompletion("Check for required extension", completions);
-		this.workspaceFolderRequirementCompletion("Check for root folder in the WS", completions);
+		this.commandLineTextRequirementCompletion("Check CLI for Returned Text", completions);
+		this.commandLineRequirementCompletion("Check CLI for Success (No Text)", completions);
+		this.extensionRequirementCompletion("Check for Required Extension", completions);
+		this.workspaceFolderRequirementCompletion("Check for Root Folder in the WS", completions);
 
 		// Project Scaffolding commands
 		this.projectScaffoldingCompletion("Scaffold Project", completions);
