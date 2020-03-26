@@ -70,7 +70,7 @@ export class DidactUri {
 		return this.user;
 	}
 
-	private parseDidactUrl(incoming: string) {
+	private parseDidactUrl(incoming: string) : void {
 		const parsedUrl = url.parse(incoming, true);
 		const query = parsedUrl.query;
 

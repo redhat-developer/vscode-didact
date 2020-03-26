@@ -58,12 +58,15 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		let completions: vscode.CompletionItem[] = [];
 		const start = text.indexOf(didactProtocol);
 		if (start > -1) {
-			const end = text.indexOf(' ', start);
-			const parsethis = text.substring(start, end);
-			const didactUri = new DidactUri(parsethis, extContext);
-			if (didactUri) {
-				if (!didactUri.getCommandId()) {
-					completions = this.getCommandCompletionItems();
+			const linkRegex = /\w+:(\/?\/?)[^\s]+/;
+			const matches = text.match(linkRegex);
+			if (matches && matches.length > 0) {
+				const parsethis = matches[0];
+				const didactUri = new DidactUri(parsethis, extContext);
+				if (didactUri) {
+					if (!didactUri.getCommandId()) {
+						completions = this.getCommandCompletionItems();
+					}
 				}
 			}
 		}
