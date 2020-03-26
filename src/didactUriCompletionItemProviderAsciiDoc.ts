@@ -23,15 +23,33 @@ import * as extensionFunctions from './extensionFunctions';
 
 export class DidactUriCompletionItemProviderAsciiDoc extends DidactUriCompletionItemProvider {
 
-	public provideCompletionItemsForDidactProtocol(text: string): vscode.CompletionItem[] {
-		let completions : vscode.CompletionItem[] = super.provideCompletionItemsForDidactProtocol(text);
+	protected getCommandCompletionItems() : vscode.CompletionItem[] {
+		let completions : vscode.CompletionItem[] = [];
 
-		let didactUri = this.getDidactUriFromLine(text);
-		if (didactUri && !didactUri.getCommandId()) {
-			// add some additional didact types here because we can't do HTML kinds of things in AsciiDoc
-			this.validateAllRequirementsCompletion("Validate All Didact Requirements", completions);
-			this.addWorkspaceFolderCompletion("Add Temporary Folder as WS Root", completions);
-		}
+		// Terminal commands
+		super.startTerminalWithNameCompletion("Start Terminal with Name", completions);
+		super.sendNamedTerminalAStringCompletion("Send Named Terminal Some Text", completions);
+		super.sendTerminalCtrlCCompletion("Send Named Terminal a Ctrl+C", completions);
+		super.closeTerminalCompletion("Close Terminal with Name", completions);
+
+		// Non-didact command
+		super.nonDidactCommandCompletion("Non-Didact Command", completions);
+
+		// Requirements commands
+		super.commandLineTextRequirementCompletion("Check CLI for Returned Text", completions);
+		super.commandLineRequirementCompletion("Check CLI for Success (No Text)", completions);
+		super.extensionRequirementCompletion("Check for Required Extension", completions);
+		super.workspaceFolderRequirementCompletion("Check for Root Folder in the WS", completions);
+
+		// Project Scaffolding commands
+		super.projectScaffoldingCompletion("Scaffold Project", completions);
+
+		// Starting other didact files
+		super.startDidactCompletion("Start Didact from Currently Selected File", completions);
+
+		// add some additional didact types here because we can't do HTML kinds of things in AsciiDoc
+		this.validateAllRequirementsCompletion("Validate All Didact Requirements", completions);
+		this.addWorkspaceFolderCompletion("Add Temporary Folder as WS Root", completions);
 
 		return completions;
 	}
@@ -40,9 +58,11 @@ export class DidactUriCompletionItemProviderAsciiDoc extends DidactUriCompletion
 		let completions: vscode.CompletionItem[] = [];
 
 		if (lineToSearch.indexOf(didactProtocol) === -1) {
-			this.insertInstallExtensionLinkAsciiDocCompletion("Insert link to install required VS Code extension", completions);
 			super.insertRedhatDidactLinkCompletion("Insert link to start Didact from File Elsewhere in Extension Folder", completions);
 			super.insertDidactProtocolStarterCompletion("Start a new Didact link", completions);
+
+			// add one for asciidoc 
+			this.insertInstallExtensionLinkAsciiDocCompletion("Insert link to install required VS Code extension", completions);
 		}
 
 		return completions;

@@ -17,29 +17,29 @@
 'use strict';
 
 import { expect } from 'chai';
-import { DidactUriCompletionItemProvider } from "../../didactUriCompletionItemProvider";
+import { DidactUriCompletionItemProviderMarkdown } from "../../didactUriCompletionItemProviderMarkdown";
 
-suite("Didact URI completion", function () {
+suite("Didact URI completion for Markdown", function () {
 
 	let emptyContent = '';
 	let notEmptyContent = 'this is text with a didact://? link stuffed inside';
 
 	test("no result for uri completion when no didact link in line", () => {
-		expect(new DidactUriCompletionItemProvider().provideCompletionItemsForDidactProtocol(emptyContent)).to.be.empty;
+		expect(new DidactUriCompletionItemProviderMarkdown().provideCompletionItemsForDidactProtocol(emptyContent)).to.be.empty;
 	});
 
 	test("should get result for uri completion when didact link in line", () => {
 		const expectedUriResult = 11;
-		expect(new DidactUriCompletionItemProvider().provideCompletionItemsForDidactProtocol(notEmptyContent).length).to.equal(expectedUriResult);
+		expect(new DidactUriCompletionItemProviderMarkdown().provideCompletionItemsForDidactProtocol(notEmptyContent).length).to.equal(expectedUriResult);
 	});
 
 	test("should get result for outside uri completion when no didact link in line", () => {
 		const expectedOutsideUriResult = 6;
-		expect(new DidactUriCompletionItemProvider().provideCompletionItemsOutsideDidactURI(emptyContent).length).to.equal(expectedOutsideUriResult);
+		expect(new DidactUriCompletionItemProviderMarkdown().provideCompletionItemsOutsideDidactURI(emptyContent).length).to.equal(expectedOutsideUriResult);
 	});
 
 	test("should not get result for outside uri completion when didact link in line", () => {
-		expect(new DidactUriCompletionItemProvider().provideCompletionItemsOutsideDidactURI(notEmptyContent)).to.be.empty;
+		expect(new DidactUriCompletionItemProviderMarkdown().provideCompletionItemsOutsideDidactURI(notEmptyContent)).to.be.empty;
 	});
 
 });

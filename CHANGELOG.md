@@ -4,8 +4,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.9
 
- - Expanded autocompletion to cover Didact URIs in AsciiDoc documents
- - Adding autocompletion to ease creation of Didact URIs in Markdown documents
+ - Adding autocompletion to ease creation of Didact URIs in Markdown and AsciiDoc documents
 
 ## 0.1.8
 

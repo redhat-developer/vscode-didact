@@ -22,7 +22,7 @@ import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials, setContext } from './utils';
 import * as path from 'path';
-import {DidactUriCompletionItemProvider} from './didactUriCompletionItemProvider';
+import {DidactUriCompletionItemProviderMarkdown} from './didactUriCompletionItemProviderMarkdown';
 import {DidactUriCompletionItemProviderAsciiDoc} from './didactUriCompletionItemProviderAsciiDoc';
 
 const DIDACT_VIEW = 'didact.tutorials';
@@ -65,10 +65,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// set up our completion providers
 	let markdown:vscode.DocumentSelector = { scheme: 'file', language: 'markdown', pattern: '**/**.didact.md' };
-	vscode.languages.registerCompletionItemProvider(markdown, new DidactUriCompletionItemProvider());
+	let markdownProvider = new DidactUriCompletionItemProviderMarkdown();
+	markdownProvider.setContext(context);
+	vscode.languages.registerCompletionItemProvider(markdown, markdownProvider);
 
 	let asciidoc:vscode.DocumentSelector = { scheme: 'file', language: 'asciidoc', pattern: '**/**.didact.adoc' };
-	vscode.languages.registerCompletionItemProvider(asciidoc, new DidactUriCompletionItemProviderAsciiDoc());
+	let asciidocProvider = new DidactUriCompletionItemProviderAsciiDoc();
+	asciidocProvider.setContext(context);
+	vscode.languages.registerCompletionItemProvider(asciidoc, asciidocProvider);
 
 	// if there are changes in the workspace (i.e. a new root folder being added), refresh the didact window
  	vscode.workspace.onDidChangeWorkspaceFolders( async () => {
