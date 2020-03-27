@@ -37,6 +37,11 @@ export class DidactWebviewPanel {
 	private mdStr : string | undefined = undefined;
 	private mdPath : vscode.Uri | undefined = undefined;
 	private defaultTitle = `Didact Tutorial`;
+	private isAsciiDoc : boolean = false;
+
+	public setIsAsciiDoc(flag : boolean) {
+		this.isAsciiDoc = flag;
+	}
 
 	public static setContext(ctxt : vscode.ExtensionContext) {
 		DidactWebviewPanel.context = ctxt;
@@ -261,9 +266,13 @@ export class DidactWebviewPanel {
 		// And the uri we use to load this script in the webview
 		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
-		// attempted to load some CSS, but it's not getting picked up
+		let cssFile = 'webviewslim.css';
+		if (this.isAsciiDoc) {
+			cssFile = 'asciidoctor.css';
+		}
+
 		const cssPathOnDisk = vscode.Uri.file(
-			path.join(this._extensionPath, 'media', 'webviewslim.css')
+			path.join(this._extensionPath, 'media', cssFile)
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
 
@@ -308,9 +317,11 @@ export class DidactWebviewPanel {
 				if (this.getMarkdown()) {
 					this.currentHtml = this.wrapMarkdown(this.getMarkdown());
 				} else {
+					const isAdoc = extensionFunctions.isAsciiDoc();
 					const content = await extensionFunctions.getWebviewContent();
 					if (content) {
 						this.currentHtml = this.wrapMarkdown(content);
+						this.setIsAsciiDoc(isAdoc);
 					}
 				}
 				this._panel.title = this.defaultTitle;
