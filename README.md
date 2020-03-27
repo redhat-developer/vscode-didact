@@ -65,6 +65,35 @@ From a `didact://?` start, you also get:
 * Scaffold project
 * Start Didact from Currently Selected File
 
+## A Note about Auto-complete for Didact in AsciiDoc files
+
+This functionality requires an AsciiDoc extension to be installed in your Workspace. We have seem intermittent issues with these extensions, including this [popular AsciiDoc extension.](vscode:extension/joaompinto.asciidoctor-vscode). We have noticed that the Didact extension does not always start when this extension is installed.
+
+When it works, we should have access to the following completions.
+
+Outside a didact link, you get:
+
+* Start a new didact link (inserts `didact://?` and then offers additional completions
+* Insert Link to Start Didact from File in Extension folder
+* Insert Link to Install Required VS Code extension
+
+
+From a `didact://?` start, you get:
+
+* Start terminal with name
+* Send named terminal some text
+* Send named terminal a Ctrl+C
+* Close terminal with name
+* Non-didact command
+* Check CLI for some returned text
+* Check CLI for some success (no text)
+* Check for required extension
+* Check for root folder in the WS
+* Scaffold project
+* Start Didact from Currently Selected File
+* Validate All Didact Requirements
+* Add Temporary Folder as WS Root
+
 ## Additional Details
 
 Check out the Wiki pages [here](https://github.com/redhat-developer/vscode-didact/wiki/Welcome-to-Didact!) for details about how to use Didact, write your first tutorial, format links, and much more. 
