@@ -26,7 +26,6 @@ import {getMDParser} from './markdownUtils';
 import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
-import { isatty } from 'tty';
 
 let didactOutputChannel: vscode.OutputChannel | undefined = undefined;
 
