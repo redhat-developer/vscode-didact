@@ -38,7 +38,7 @@ export class DidactUriCompletionItemProviderAsciiDoc extends DidactUriCompletion
 
 		if (lineToSearch.indexOf(didactProtocol) === -1) {
 			// add one for asciidoc 
-			this.insertInstallExtensionLinkAsciiDocCompletion("Insert link to install required VS Code extension", completions);
+			this.insertInstallExtensionLinkAsciiDocCompletion("Insert Link to Install Required VS Code extension", completions);
 		}
 
 		return completions;
