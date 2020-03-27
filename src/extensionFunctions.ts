@@ -245,7 +245,7 @@ export namespace extensionFunctions {
 		DidactWebviewPanel.hardReset();
 	}
 
-	// open the didact window with the markdown passed in via Uri
+	// open the didact window with the didact file passed in via Uri
 	export async function startDidact(uri:vscode.Uri) {
 		if (!uri) {
       uri = await utils.getCurrentFileSelectionPath();
@@ -390,7 +390,7 @@ export namespace extensionFunctions {
 		console.log(error);
 	}
 
-	// retrieve the markdown content to render as HTML
+	// retrieve the didact content to render as HTML
 	export async function getWebviewContent() : Promise<string|void> {
 		if (!_mdFileUri) {
 			const configuredUri : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
@@ -413,7 +413,7 @@ export namespace extensionFunctions {
 		return undefined;
 	}
 
-	// retrieve markdown text from a file
+	// retrieve didact text from a file
 	async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined> {
 		try {
 			const content = fs.readFileSync(uri.fsPath, 'utf8');
