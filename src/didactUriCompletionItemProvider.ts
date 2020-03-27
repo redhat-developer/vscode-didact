@@ -28,7 +28,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	
 	private extContext!: vscode.ExtensionContext;
 
-	public setContext(ctxt: vscode.ExtensionContext) {
+	public constructor(ctxt: vscode.ExtensionContext) {
 		this.extContext = ctxt;
 	}
 
