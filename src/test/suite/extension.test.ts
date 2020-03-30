@@ -9,4 +9,13 @@ suite('Extension Test Suite', () => {
 		done();
 	});
 
+	test.skip('look for key binding conflict with Ctrl+Shift+V', async function() {
+		try {
+			await vscode.commands.executeCommand('keybindings.editor.showConflicts', "Control+Shift+V").then( (result) => {
+				console.log(result);
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	});
 });
