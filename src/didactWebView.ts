@@ -266,15 +266,27 @@ export class DidactWebviewPanel {
 		// And the uri we use to load this script in the webview
 		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
-		let cssFile = 'webviewslim.css';
-		if (this.isAsciiDoc) {
-			cssFile = 'asciidoctor.css';
-		}
+		const bulmaCssHtml = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">`;
+
+		const adCssPathOnDisk = vscode.Uri.file(
+			path.join(this._extensionPath, 'media', 'asciidoctor.css')
+		);
+		const adCssUri = adCssPathOnDisk.with({ scheme: 'vscode-resource' });
+		const adUriHtml = `<link rel="stylesheet" href="${adCssUri}"/>`;
 
 		const cssPathOnDisk = vscode.Uri.file(
-			path.join(this._extensionPath, 'media', cssFile)
+			path.join(this._extensionPath, 'media', 'webviewslim.css')
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
+		const cssUriHtml = `<link rel="stylesheet" href="${cssUri}"/>`;
+
+		let stylesheetHtml = '';
+		if (this.isAsciiDoc) {
+			stylesheetHtml = `${adUriHtml}\n ${cssUriHtml}\n`;
+
+		} else {
+			stylesheetHtml = `${bulmaCssHtml}\n ${cssUriHtml}\n`;
+		}
 
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
@@ -282,10 +294,9 @@ export class DidactWebviewPanel {
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this._panel.webview.cspSource} https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' ${scriptUri}; style-src 'unsafe-inline' ${this._panel.webview.cspSource} ${cssUri} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none'; base-uri 'none'">
-			<title>Didact Tutorial</title>
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-			<link rel="stylesheet" href="${cssUri}"/> 
-			<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+			<title>Didact Tutorial</title>` + 
+			stylesheetHtml + 
+			`<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 			</head>
 		<body class="content">` + didactHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>

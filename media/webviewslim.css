@@ -22,5 +22,14 @@ body {
   padding-right: 30px;
   padding-bottom: 50px;
   padding-left: 80px;
-  background-color:white;
+  color: var(--vscode-editor-foreground);
+  background-color:var(--vscode-editor-background);
+}
+
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6, .paragraph {
+  color: var(--vscode-editor-foreground);
+}
+
+a {
+  color: var (--vscode-textlink-foreground);
 }
