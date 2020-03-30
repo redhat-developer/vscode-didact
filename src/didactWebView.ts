@@ -253,6 +253,26 @@ export class DidactWebviewPanel {
 		return text;
 	}
 
+	produceStylesheetHTML(cssUriHtml : string) : string {
+		let stylesheetHtml = '';
+
+		if (this.isAsciiDoc) {
+			// use asciidoctor.css from https://github.com/darshandsoni/asciidoctor-skins/blob/gh-pages/css/asciidoctor.css 
+			const adCssPathOnDisk = vscode.Uri.file(
+				path.join(this._extensionPath, 'media', 'asciidoctor.css')
+			);
+			const adCssUri = adCssPathOnDisk.with({ scheme: 'vscode-resource' });
+			const adUriHtml = `<link rel="stylesheet" href="${adCssUri}"/>`;
+			stylesheetHtml = `${adUriHtml}\n ${cssUriHtml}\n`;
+		} else {
+			// use bulma.min.css as the default stylesheet for markdown from https://bulma.io/
+			const bulmaCssHtml = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">`;
+			stylesheetHtml = `${bulmaCssHtml}\n ${cssUriHtml}\n`;
+		}
+
+		return stylesheetHtml;
+	}
+
 	wrapDidactContent(didactHtml: string | undefined) : string | undefined {
 		if (!didactHtml) {
 			return;
@@ -266,27 +286,17 @@ export class DidactWebviewPanel {
 		// And the uri we use to load this script in the webview
 		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
-		const bulmaCssHtml = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">`;
-
-		const adCssPathOnDisk = vscode.Uri.file(
-			path.join(this._extensionPath, 'media', 'asciidoctor.css')
-		);
-		const adCssUri = adCssPathOnDisk.with({ scheme: 'vscode-resource' });
-		const adUriHtml = `<link rel="stylesheet" href="${adCssUri}"/>`;
-
+		// the cssUri is our path to the stylesheet included in the security policy
 		const cssPathOnDisk = vscode.Uri.file(
 			path.join(this._extensionPath, 'media', 'webviewslim.css')
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
+
+		// this css holds our overrides for both asciidoc and markdown html
 		const cssUriHtml = `<link rel="stylesheet" href="${cssUri}"/>`;
 
-		let stylesheetHtml = '';
-		if (this.isAsciiDoc) {
-			stylesheetHtml = `${adUriHtml}\n ${cssUriHtml}\n`;
-
-		} else {
-			stylesheetHtml = `${bulmaCssHtml}\n ${cssUriHtml}\n`;
-		}
+		// process the stylesheet details for asciidoc or markdown-based didact files
+		let stylesheetHtml = this.produceStylesheetHTML(cssUriHtml);
 
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
