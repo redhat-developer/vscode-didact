@@ -32,7 +32,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		this.treeNodes = [];
 	}
 
-	// set up so we don't pollute test runs with camel k integrations
+	// set up so we don't pollute test runs with registered tutorials
 	public setRetrieveIntegrations(flag:boolean): void {
 		this.retrieveTutorials = flag;
 	}
@@ -107,7 +107,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		return false;
 	}
 
-	// process the text-based list we get back from the kubectl command
+	// process the list of registered tutorials 
 	processRegisteredTutorials(): void {
         let categories : string[] | undefined = utils.getDidactCategories();
         if (categories) {
@@ -140,7 +140,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
   
 }
 
-// simple tree node for our integration view
+// simple tree node for our tutorials view
 export class TreeNode extends vscode.TreeItem {
 	type: string;
 	uri : string | undefined;
@@ -154,17 +154,9 @@ export class TreeNode extends vscode.TreeItem {
 		super(label, collapsibleState);
 		this.type = type;
 		this.uri = uri;
-//		this.iconPath = this.getIconForPodStatus(this.status);
-
-		// let namespace: string = config.getNamespaceconfig() as string;
-		// if (namespace) {
-		// 	this.tooltip = `Status: ${this.status} \nNamespace: ${namespace}`;
-		// } else {
-		// 	this.tooltip = `Status: ${this.status}`;
-		// }
 	}
 }
 
 export class TutorialNode extends TreeNode {
-
+	// empty
 }
