@@ -267,23 +267,18 @@ export class DidactWebviewPanel {
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
 
-		// <!--
-		// Use a content security policy to only allow loading images from https or from our extension directory,
-		// and only allow scripts that have a specific nonce.
-		// -->
-		// <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';"> -->
-
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this._panel.webview.cspSource} https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' ${scriptUri}; style-src 'unsafe-inline' ${this._panel.webview.cspSource} ${cssUri} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none'; base-uri 'none'">
 			<title>Didact Tutorial</title>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 			<link rel="stylesheet" href="${cssUri}"/> 
 			<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 			</head>
-		<body class="content" style="background-color:white;">` + mdHtml + 
+		<body class="content">` + mdHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
 		</html>`;
