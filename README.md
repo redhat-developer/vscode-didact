@@ -20,7 +20,7 @@ What follows is a simple example with three actions. One scaffolds a project bas
 With Didact installed, there are three ways to open a Didact window.
 
 * To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact Markdown file specified in the Settings.
-* To open a local Didact file in the workspace directly, Right-click on the Didact Markdown file (`*.didact.md` or `*.didact.adoc`) and select **Start Didact Tutorial from File** from the context menu.
+* To open a local Didact file in the workspace directly, Right-click on the Didact file (`*.didact.md` or `*.didact.adoc`) and select **Start Didact Tutorial from File** from the context menu.
 
 In addition, you now have the `Didact Tutorials` view. 
 

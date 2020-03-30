@@ -453,7 +453,7 @@ export namespace extensionFunctions {
 		}
 	}
 
-	// retrieve markdown text from a url
+	// retrieve didact text from a url
 	async function getDataFromUrl(url:string) : Promise<string> {
 		try {
 			const response = await fetch(url);
