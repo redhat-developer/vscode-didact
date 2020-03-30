@@ -248,7 +248,7 @@ export namespace extensionFunctions {
 	// open the didact window with the didact file passed in via Uri
 	export async function startDidact(uri:vscode.Uri) {
 		if (!uri) {
-      uri = await utils.getCurrentFileSelectionPath();
+			uri = await utils.getCurrentFileSelectionPath();
 		}
 
 		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
@@ -291,9 +291,11 @@ export namespace extensionFunctions {
 		}
 		console.log(`--Retrieved file URI ${_mdFileUri}`);
 		sendTextToOutputChannel(`--Retrieved file URI ${_mdFileUri}`);
+		const isAdoc = extensionFunctions.isAsciiDoc();
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.setContext(context);
 		if (DidactWebviewPanel.currentPanel && _mdFileUri) {
+			DidactWebviewPanel.currentPanel.setIsAsciiDoc(isAdoc);
 			DidactWebviewPanel.currentPanel.setMDPath(_mdFileUri);
 		}
 	}
@@ -411,6 +413,25 @@ export namespace extensionFunctions {
 			}
 		}
 		return undefined;
+	}
+
+	export function isAsciiDoc() : boolean {
+		let uriToTest : vscode.Uri | undefined;
+		if (!_mdFileUri) {
+			let strToTest : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
+			if (strToTest) {
+				uriToTest = vscode.Uri.parse(strToTest);
+			}
+		} else {
+			uriToTest = _mdFileUri;
+		}
+		if (uriToTest) {
+			const extname = path.extname(uriToTest.fsPath);
+			if (extname.localeCompare('.adoc') === 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// retrieve didact text from a file
