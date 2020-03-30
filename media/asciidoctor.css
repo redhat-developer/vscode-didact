@@ -1,4 +1,5 @@
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* This CSS is found: https://github.com/darshandsoni/asciidoctor-skins/blob/gh-pages/css/asciidoctor.css */
 /* Remove comment around @import statement below when using as a custom stylesheet */
 /*@import url("//fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700");*/
 article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
