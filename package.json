@@ -95,6 +95,14 @@
 				}
 			}
 		],
+		"keybindings": [
+			{
+			  "command": "vscode.didact.startDidact",
+			  "key": "ctrl+alt+d",
+			  "mac": "ctrl+cmd+d",
+			  "when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+			}
+		],
 		"menus": {
 			"explorer/context": [
 				{
