@@ -59,7 +59,7 @@ export class DidactWebviewPanel {
 		return this.currentHtml;
 	}
 
-	getMarkdown() {
+	getDidactStr() {
 		return this.didactStr;
 	}
 
@@ -314,8 +314,8 @@ export class DidactWebviewPanel {
 				}
 				console.log('Retrieved cached Didact content');
 			} else if (!this.currentHtml) {
-				if (this.getMarkdown()) {
-					this.currentHtml = this.wrapDidactContent(this.getMarkdown());
+				if (this.getDidactStr()) {
+					this.currentHtml = this.wrapDidactContent(this.getDidactStr());
 				} else {
 					const isAdoc = extensionFunctions.isAsciiDoc();
 					const content = await extensionFunctions.getWebviewContent();
