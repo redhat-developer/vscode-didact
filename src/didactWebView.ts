@@ -34,8 +34,8 @@ export class DidactWebviewPanel {
 	private static context :  vscode.ExtensionContext | undefined = undefined;
 	private _disposables: vscode.Disposable[] = [];
 	private currentHtml : string | undefined = undefined;
-	private mdStr : string | undefined = undefined;
-	private mdPath : vscode.Uri | undefined = undefined;
+	private didactStr : string | undefined = undefined;
+	private didactUriPath : vscode.Uri | undefined = undefined;
 	private defaultTitle = `Didact Tutorial`;
 	private isAsciiDoc : boolean = false;
 
@@ -47,24 +47,24 @@ export class DidactWebviewPanel {
 		DidactWebviewPanel.context = ctxt;
 	}
 
-	public getMDPath() {
-		return this.mdPath;
+	public getDidactUriPath() {
+		return this.didactUriPath;
 	}
 
-	public setMarkdown(value: string | undefined) {
-		this.mdStr = value;
+	public setDidactStr(value: string | undefined) {
+		this.didactStr = value;
 	}
 
 	public getCurrentHTML() : string | undefined {
 		return this.currentHtml;
 	}
 
-	getMarkdown() {
-		return this.mdStr;
+	getDidactStr() {
+		return this.didactStr;
 	}
 
-	public setMDPath(inpath : vscode.Uri | undefined) {
-		this.mdPath = inpath;
+	public setDidactUriPath(inpath : vscode.Uri | undefined) {
+		this.didactUriPath = inpath;
 		if (inpath) {
 			let tempFilename = path.basename(inpath.fsPath);
 			if (DidactWebviewPanel.currentPanel) {
@@ -84,8 +84,8 @@ export class DidactWebviewPanel {
 
 	public static hardReset() {
 		if (DidactWebviewPanel.currentPanel) {
-			DidactWebviewPanel.currentPanel.setMarkdown(undefined);
-			DidactWebviewPanel.currentPanel.setMDPath(undefined);
+			DidactWebviewPanel.currentPanel.setDidactStr(undefined);
+			DidactWebviewPanel.currentPanel.setDidactUriPath(undefined);
 			DidactWebviewPanel.currentPanel._update(true);
 		}
 	}
@@ -121,7 +121,7 @@ export class DidactWebviewPanel {
 
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
 		if (inpath) {
-			DidactWebviewPanel.currentPanel.setMDPath(inpath);
+			DidactWebviewPanel.currentPanel.setDidactUriPath(inpath);
 		}
 	}
 
@@ -253,8 +253,8 @@ export class DidactWebviewPanel {
 		return text;
 	}
 
-	wrapMarkdown(mdHtml: string | undefined) : string | undefined {
-		if (!mdHtml) {
+	wrapDidactContent(didactHtml: string | undefined) : string | undefined {
+		if (!didactHtml) {
 			return;
 		}
 		const nonce = this.getNonce();
@@ -287,7 +287,7 @@ export class DidactWebviewPanel {
 			<link rel="stylesheet" href="${cssUri}"/> 
 			<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 			</head>
-		<body class="content">` + mdHtml + 
+		<body class="content">` + didactHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
 		</html>`;
@@ -299,7 +299,7 @@ export class DidactWebviewPanel {
 		if (flag) { // reset based on vscode link
 			const content = await extensionFunctions.getWebviewContent();
 			if (content) {
-				this.currentHtml = this.wrapMarkdown(content);
+				this.currentHtml = this.wrapDidactContent(content);
 			}
 		} else {
 			let cachedHtml = this.getCachedHTML();
@@ -314,13 +314,13 @@ export class DidactWebviewPanel {
 				}
 				console.log('Retrieved cached Didact content');
 			} else if (!this.currentHtml) {
-				if (this.getMarkdown()) {
-					this.currentHtml = this.wrapMarkdown(this.getMarkdown());
+				if (this.getDidactStr()) {
+					this.currentHtml = this.wrapDidactContent(this.getDidactStr());
 				} else {
 					const isAdoc = extensionFunctions.isAsciiDoc();
 					const content = await extensionFunctions.getWebviewContent();
 					if (content) {
-						this.currentHtml = this.wrapMarkdown(content);
+						this.currentHtml = this.wrapDidactContent(content);
 						this.setIsAsciiDoc(isAdoc);
 					}
 				}

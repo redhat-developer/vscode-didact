@@ -70,8 +70,8 @@ export namespace extensionFunctions {
 	// stashed extension context
 	let context : vscode.ExtensionContext;
 
-	// stashed markdown URI
-	let _mdFileUri : vscode.Uri | undefined = undefined;
+	// stashed Didact URI
+	let _didactFileUri : vscode.Uri | undefined = undefined;
 
 	// stash the context so we have it for use by the command functions without passing it each time
 	export function setContext(inContext: vscode.ExtensionContext) {
@@ -89,8 +89,8 @@ export namespace extensionFunctions {
 		if (utils.getWorkspacePath()) {
 			let testJson : any;
 			if (jsonpath) {
-				var mdStr = fs.readFileSync(jsonpath.fsPath, 'utf8');
-				testJson = JSON.parse(mdStr);
+				var jsoncontent = fs.readFileSync(jsonpath.fsPath, 'utf8');
+				testJson = JSON.parse(jsoncontent);
 			} else {
 				testJson = scaffoldUtils.createSampleProject();
 			}
@@ -241,7 +241,7 @@ export namespace extensionFunctions {
 		sendTextToOutputChannel(`Starting Didact window with default`);
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.setContext(context);
-		_mdFileUri = undefined;
+		_didactFileUri = undefined;
 		DidactWebviewPanel.hardReset();
 	}
 
@@ -262,7 +262,7 @@ export namespace extensionFunctions {
 					if (context.extensionPath === undefined) {
 						return;
 					}
-					_mdFileUri = vscode.Uri.file(
+					_didactFileUri = vscode.Uri.file(
 						path.join(context.extensionPath, value)
 					);
 				}
@@ -272,31 +272,31 @@ export namespace extensionFunctions {
 					if (vscode.workspace.workspaceFolders) {
 						var workspace = vscode.workspace.workspaceFolders[0];
 						let rootPath = workspace.uri.fsPath;
-						_mdFileUri = vscode.Uri.file(path.join(rootPath, value));
+						_didactFileUri = vscode.Uri.file(path.join(rootPath, value));
 					}
 				}
 			} else if (query.https) {
 				const value = utils.getValue(query.https);
 				if (value) {
-					_mdFileUri = vscode.Uri.parse(`https://${value}`);
+					_didactFileUri = vscode.Uri.parse(`https://${value}`);
 				}
 			} else if (query.http) {
 				const value = utils.getValue(query.http);
 				if (value) {
-					_mdFileUri = vscode.Uri.parse(`http://${value}`);
+					_didactFileUri = vscode.Uri.parse(`http://${value}`);
 				}
 			} else if (uri.fsPath) {
-				_mdFileUri = uri;
+				_didactFileUri = uri;
 			}
 		}
-		console.log(`--Retrieved file URI ${_mdFileUri}`);
-		sendTextToOutputChannel(`--Retrieved file URI ${_mdFileUri}`);
+		console.log(`--Retrieved file URI ${_didactFileUri}`);
+		sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
 		const isAdoc = extensionFunctions.isAsciiDoc();
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.setContext(context);
-		if (DidactWebviewPanel.currentPanel && _mdFileUri) {
+		if (DidactWebviewPanel.currentPanel && _didactFileUri) {
 			DidactWebviewPanel.currentPanel.setIsAsciiDoc(isAdoc);
-			DidactWebviewPanel.currentPanel.setMDPath(_mdFileUri);
+			DidactWebviewPanel.currentPanel.setDidactUriPath(_didactFileUri);
 		}
 	}
 
@@ -375,7 +375,7 @@ export namespace extensionFunctions {
 		if (DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.currentPanel.dispose();
 		}
-		await vscode.commands.executeCommand(START_DIDACT_COMMAND, _mdFileUri);
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, _didactFileUri);
 	}
 
 	// send a message back to the webview - used for requirements testing mostly
@@ -386,27 +386,27 @@ export namespace extensionFunctions {
 	}
 
 	function showFileUnavailable(error : any) {
-		if (_mdFileUri) {
-			vscode.window.showErrorMessage(`File at ${_mdFileUri.toString()} is unavailable`);
+		if (_didactFileUri) {
+			vscode.window.showErrorMessage(`File at ${_didactFileUri.toString()} is unavailable`);
 		}
 		console.log(error);
 	}
 
 	// retrieve the didact content to render as HTML
 	export async function getWebviewContent() : Promise<string|void> {
-		if (!_mdFileUri) {
+		if (!_didactFileUri) {
 			const configuredUri : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
 			if (configuredUri) {
-				_mdFileUri = vscode.Uri.parse(configuredUri);
+				_didactFileUri = vscode.Uri.parse(configuredUri);
 			}
 		}
-		if (_mdFileUri) {
-			if (_mdFileUri.scheme === 'file') {
-				return await getDataFromFile(_mdFileUri).catch( (error) => {
+		if (_didactFileUri) {
+			if (_didactFileUri.scheme === 'file') {
+				return await getDataFromFile(_didactFileUri).catch( (error) => {
 					showFileUnavailable(error);
 				});
-			} else if (_mdFileUri.scheme === 'http' || _mdFileUri.scheme === 'https'){
-				const urlToFetch = _mdFileUri.toString();
+			} else if (_didactFileUri.scheme === 'http' || _didactFileUri.scheme === 'https'){
+				const urlToFetch = _didactFileUri.toString();
 				return await getDataFromUrl(urlToFetch).catch( (error) => {
 					showFileUnavailable(error);
 				});
@@ -417,13 +417,13 @@ export namespace extensionFunctions {
 
 	export function isAsciiDoc() : boolean {
 		let uriToTest : vscode.Uri | undefined;
-		if (!_mdFileUri) {
+		if (!_didactFileUri) {
 			let strToTest : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
 			if (strToTest) {
 				uriToTest = vscode.Uri.parse(strToTest);
 			}
 		} else {
-			uriToTest = _mdFileUri;
+			uriToTest = _didactFileUri;
 		}
 		if (uriToTest) {
 			const extname = path.extname(uriToTest.fsPath);
@@ -453,8 +453,7 @@ export namespace extensionFunctions {
 		}
 	}
 
-	// retrieve markdown text from a url
-	// TODO: figure out how to determine adoc vs. md on the fly from the url
+	// retrieve didact text from a url
 	async function getDataFromUrl(url:string) : Promise<string> {
 		try {
 			const response = await fetch(url);
@@ -576,5 +575,4 @@ export namespace extensionFunctions {
 			console.log('[' + msg + ']');
 		}
 	}
-
 }
