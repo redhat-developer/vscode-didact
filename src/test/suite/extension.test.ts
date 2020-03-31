@@ -8,5 +8,4 @@ suite('Extension Test Suite', () => {
 		assert.ok(vscode.extensions.getExtension(extensionId));
 		done();
 	});
-
 });
