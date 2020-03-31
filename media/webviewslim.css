@@ -30,6 +30,10 @@ body {
   color: var(--vscode-editor-foreground);
 }
 
+.content table thead th {
+  color: var(--vscode-editor-foreground);
+}
+
 a {
   color: var (--vscode-textlink-foreground);
 }
