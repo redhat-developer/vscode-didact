@@ -91,22 +91,3 @@ COL, COLGROUP, TD, TH, CAPTION
   PRE           { page-break-inside: avoid }
   UL, OL, DL    { page-break-before: avoid }
 }
-
-.didact {
-  cursor:crosshair;
-}
-
-.imageRight {
-  float: right;
-  width:33%;
-  height: auto;
-  margin-top:15px;
-  margin-bottom:15px;
-  margin-left:15px;
-}
-
-.imageCenter {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
