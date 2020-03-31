@@ -2,8 +2,13 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.1.10
+
+- TBD
+
 ## 0.1.9
 
+ - Pick up colors from current VS Code theme for Didact CSS
  - Adding key binding to Start Didact command (Ctrl+Shift+V or Cmd+Shift+V) when a Didact file is open in an editor to quickly open the Didact window with the selected file
  - Fixing stylesheet used to render Didact files written in AsciiDoc
  - Adding autocompletion to ease creation of Didact URIs in Markdown and AsciiDoc documents
