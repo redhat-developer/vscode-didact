@@ -37,3 +37,10 @@ body {
 a {
   color: var (--vscode-textlink-foreground);
 }
+code{color:var(--vscode-editor-selectionForeground);
+   background-color: var(--vscode-editor-selectionHighlightBackground) !important}
+
+ .literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], .listingblock pre.CodeRay, .listingblock pre.prettyprint {
+        background: var(--vscode-editor-selectionHighlightBackground);
+        color:var(--vscode-editor-selectionForeground);
+}

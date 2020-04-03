@@ -24,11 +24,10 @@ export function getADParser() {
 }
 
 export function parseADtoHTML(content: string) {
-    const html = asciidoctor.convert(content, { 'safe': 'server', 
-        'attributes': { 
-            'showtitle': true, 
-            'icons': 'font', 
-            'stylesheet': 'webview.css' 
+    const html = asciidoctor.convert(content, { 'safe': 'server',
+        'attributes': {
+            'showtitle': true,
+            'icons': 'font'
         } });
     return html;
 }
