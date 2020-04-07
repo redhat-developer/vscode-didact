@@ -239,6 +239,7 @@ export namespace extensionFunctions {
 	// reset the didact window to use the default set in the settings
 	export async function openDidactWithDefault() {
 		sendTextToOutputChannel(`Starting Didact window with default`);
+		// TODO: add Didact document path here?
 		DidactWebviewPanel.createOrShow(context.extensionPath);
 		DidactWebviewPanel.setContext(context);
 		_didactFileUri = undefined;
@@ -292,7 +293,7 @@ export namespace extensionFunctions {
 		console.log(`--Retrieved file URI ${_didactFileUri}`);
 		sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
 		const isAdoc = extensionFunctions.isAsciiDoc();
-		DidactWebviewPanel.createOrShow(context.extensionPath);
+		DidactWebviewPanel.createOrShow(context.extensionPath, _didactFileUri);
 		DidactWebviewPanel.setContext(context);
 		if (DidactWebviewPanel.currentPanel && _didactFileUri) {
 			DidactWebviewPanel.currentPanel.setIsAsciiDoc(isAdoc);

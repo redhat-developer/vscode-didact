@@ -102,6 +102,11 @@ export class DidactWebviewPanel {
 		}
 
 		// Otherwise, create a new panel.
+		const localResourceRoots = [vscode.Uri.file(path.join(extensionPath, 'media'))];
+		if (inpath) {
+			const dirName = path.dirname(inpath.fsPath);
+			localResourceRoots.push(vscode.Uri.file(dirName));
+		}
 
 		const panel = vscode.window.createWebviewPanel(
 			DidactWebviewPanel.viewType, 'didact',
@@ -111,7 +116,7 @@ export class DidactWebviewPanel {
 				enableScripts: true,
 
 				// And restrict the webview to only loading content from our extension's `media` directory.
-				localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))], 
+				localResourceRoots: localResourceRoots, 
 
 				// persist the state 
 				retainContextWhenHidden: true
@@ -280,7 +285,10 @@ export class DidactWebviewPanel {
 		const nonce = this.getNonce();
 		
 		// Base uri to support images
-		const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionPath, 'media'))).toString();
+		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
+		
+		const didactUriPath = path.dirname(didactUri.fsPath);
+		const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.file(
 			path.join(this._extensionPath, 'media', 'main.js')
