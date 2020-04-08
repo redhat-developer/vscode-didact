@@ -95,10 +95,11 @@ export class DidactWebviewPanel {
 			? vscode.window.activeTextEditor.viewColumn
 			: undefined;
 
-		// If we already have a panel, show it.
+		// If we already have a panel, dispose it to reset the resource roots
+		// we assume that all images are in the same directory as the didact file or a 
+		// folder under the directory the didact file is in
 		if (DidactWebviewPanel.currentPanel) {
-			DidactWebviewPanel.currentPanel._panel.reveal(column);
-			return;
+			DidactWebviewPanel.currentPanel._panel.dispose();
 		}
 
 		// Otherwise, create a new panel.
