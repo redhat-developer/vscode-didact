@@ -289,6 +289,7 @@ export class DidactWebviewPanel {
 		
 		const didactUriPath = path.dirname(didactUri.fsPath);
 		const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+		
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.file(
 			path.join(this._extensionPath, 'media', 'main.js')
@@ -314,7 +315,7 @@ export class DidactWebviewPanel {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' ${scriptUri}; style-src 'unsafe-inline' ${this._panel.webview.cspSource} ${cssUri} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';">
 			<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
