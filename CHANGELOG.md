@@ -4,7 +4,10 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.10
 
-- TBD
+- Fixed problem with image resource roots not being reset when didact window reloads
+- Fixed image loading to work for workspace, extension, and vscode-didact extension-level resources
+- Fixed security policy to be more limiting
+- Addressed stylesheet issue with code blocks
 
 ## 0.1.9
 
