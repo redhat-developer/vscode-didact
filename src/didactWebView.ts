@@ -102,6 +102,11 @@ export class DidactWebviewPanel {
 		}
 
 		// Otherwise, create a new panel.
+		const localResourceRoots = [vscode.Uri.file(path.join(extensionPath, 'media'))];
+		if (inpath) {
+			const dirName = path.dirname(inpath.fsPath);
+			localResourceRoots.push(vscode.Uri.file(dirName));
+		}
 
 		const panel = vscode.window.createWebviewPanel(
 			DidactWebviewPanel.viewType, 'didact',
@@ -111,7 +116,7 @@ export class DidactWebviewPanel {
 				enableScripts: true,
 
 				// And restrict the webview to only loading content from our extension's `media` directory.
-				localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))], 
+				localResourceRoots: localResourceRoots, 
 
 				// persist the state 
 				retainContextWhenHidden: true
@@ -278,6 +283,13 @@ export class DidactWebviewPanel {
 			return;
 		}
 		const nonce = this.getNonce();
+		
+		// Base uri to support images
+		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
+		
+		const didactUriPath = path.dirname(didactUri.fsPath);
+		const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+		
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.file(
 			path.join(this._extensionPath, 'media', 'main.js')
@@ -303,7 +315,8 @@ export class DidactWebviewPanel {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${this._panel.webview.cspSource} https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' ${scriptUri}; style-src 'unsafe-inline' ${this._panel.webview.cspSource} ${cssUri} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none'; base-uri 'none'">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';">
+			<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
 			`<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>

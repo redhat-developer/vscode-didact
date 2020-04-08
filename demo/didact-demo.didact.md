@@ -1,4 +1,5 @@
-![Welcome to Didact](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/images/welcome-to-didact-header.png){.imageCenter}
+![Welcome to Didact](images/welcome-to-didact-header.png){.imageCenter}
+
 
 # Welcome to Didact!
 
