@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.1.11
+
+ - TBD
+
 ## 0.1.10
 
 - Fixed problem with image resource roots not being reset when didact window reloads
