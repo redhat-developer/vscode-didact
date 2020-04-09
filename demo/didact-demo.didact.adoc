@@ -1,4 +1,4 @@
-image:https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/images/welcome-to-didact-header.png[Welcome to Didact,role="center"]
+image:images/welcome-to-didact-header.png[Welcome to Didact,role="center"]
 
 # Welcome to Didact!
 
@@ -12,7 +12,7 @@ Didact is an extension for VS Code that provides a simple Asciidoc-based way to 
 
 ## Examples
 
-[.right]image:https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/fireworks.gif[Fireworks from Giphy!, 200, 200]
+image:fireworks.gif[Fireworks from Giphy!, 200, 200,role="right"]
 
 With our combination of standard Asciidoc and VS Code actions, we have a ton of functionality out of the box.
 
