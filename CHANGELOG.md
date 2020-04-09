@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.1.12
+
+ - TBD
+
 ## 0.1.11
 
  - Addressed stylesheet issue with blockquotes in Markdown
