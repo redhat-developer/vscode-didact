@@ -4,7 +4,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.12
 
- - TBD
+ - Fixed issue with extension-provided links to Didact files not working properly
 
 ## 0.1.11
 
