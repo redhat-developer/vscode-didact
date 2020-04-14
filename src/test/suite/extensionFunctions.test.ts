@@ -1,7 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {extensionFunctions} from '../../extensionFunctions';
-import { handleExtFilePath } from '../../commandHandler';
 
 suite('Extension Functions Test Suite', () => {
 
