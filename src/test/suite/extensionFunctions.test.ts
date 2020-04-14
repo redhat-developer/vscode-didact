@@ -75,4 +75,28 @@ suite('Extension Functions Test Suite', () => {
 			assert.equal(returnBool, false);
 		});
 	});
+
+	test('try parsing didact url with extension path - extension id in url', async function() {
+		checkCanParseDidactUriForPath(
+			'vscode://redhat.vscode-didact?extension=redhat.vscode-didact/examples/requirements.example.didact.md', 
+			'vscode-didact/examples/requirements.example.didact.md');
+	});
+
+	test('try parsing didact url with extension path - no extension id in url', async function() {
+		checkCanParseDidactUriForPath(
+			'vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md', 
+			'vscode-didact/demo/didact-demo.didact.md');
+	});
+
+	test('try parsing didact url with http link in url', async function() {
+		checkCanParseDidactUriForPath(
+			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demo/didact-demo.didact.md', 
+			'vscode-didact/master/demo/didact-demo.didact.md');
+	});
 });
+
+function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string) {
+	const textUri = vscode.Uri.parse(urlValue);
+	const rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
+	assert.strictEqual(rtnUri?.fsPath.endsWith(endToCheck), true);
+}

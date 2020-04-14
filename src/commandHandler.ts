@@ -123,8 +123,8 @@ function handleSrcFilePath(srcFilePath: string, extensionPath : string) : vscode
 	return uri;
 }
 
-// take a "extFilePath=" extId/filepath 
-function handleExtFilePath(extFilePath: string) : vscode.Uri | undefined {
+// take a "extFilePath=" or "extension=" extId/filepath 
+export function handleExtFilePath(extFilePath: string) : vscode.Uri | undefined {
 	extensionFunctions.sendTextToOutputChannel(`Processing extension file path input ${extFilePath}`);
 	if (extFilePath) {
 		const separator = '/';

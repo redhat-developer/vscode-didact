@@ -26,6 +26,7 @@ import {getMDParser} from './markdownUtils';
 import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
+import { handleExtFilePath } from './commandHandler';
 
 let didactOutputChannel: vscode.OutputChannel | undefined = undefined;
 
@@ -246,13 +247,8 @@ export namespace extensionFunctions {
 		DidactWebviewPanel.hardReset();
 	}
 
-	// open the didact window with the didact file passed in via Uri
-	export async function startDidact(uri:vscode.Uri) {
-		if (!uri) {
-			uri = await utils.getCurrentFileSelectionPath();
-		}
-
-		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
+	export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri | undefined {
+		let out : vscode.Uri | undefined = undefined;
 
 		// handle extension, workspace, https, and http
 		if (uri) {
@@ -260,10 +256,13 @@ export namespace extensionFunctions {
 			if (query.extension) {
 				const value = utils.getValue(query.extension);
 				if (value) {
-					if (context.extensionPath === undefined) {
-						return;
+					let extUri = handleExtFilePath(value);
+					if (extUri) {
+						return extUri;
+					} else if (context.extensionPath === undefined) {
+						return undefined;
 					}
-					_didactFileUri = vscode.Uri.file(
+					out = vscode.Uri.file(
 						path.join(context.extensionPath, value)
 					);
 				}
@@ -273,22 +272,42 @@ export namespace extensionFunctions {
 					if (vscode.workspace.workspaceFolders) {
 						var workspace = vscode.workspace.workspaceFolders[0];
 						let rootPath = workspace.uri.fsPath;
-						_didactFileUri = vscode.Uri.file(path.join(rootPath, value));
+						out = vscode.Uri.file(path.join(rootPath, value));
 					}
 				}
 			} else if (query.https) {
 				const value = utils.getValue(query.https);
 				if (value) {
-					_didactFileUri = vscode.Uri.parse(`https://${value}`);
+					out = vscode.Uri.parse(`https://${value}`);
 				}
 			} else if (query.http) {
 				const value = utils.getValue(query.http);
 				if (value) {
-					_didactFileUri = vscode.Uri.parse(`http://${value}`);
+					out = vscode.Uri.parse(`http://${value}`);
 				}
 			} else if (uri.fsPath) {
-				_didactFileUri = uri;
+				out = uri;
 			}
+		}
+		return out;
+	}
+
+	// open the didact window with the didact file passed in via Uri
+	export async function startDidact(uri:vscode.Uri) {
+		if (!uri) {
+			uri = await utils.getCurrentFileSelectionPath();
+		}
+
+		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
+
+		let out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(uri);
+		if (!out) {
+			let errmsg = `--Error: No Didact file found when parsing URI ${uri}`;
+			sendTextToOutputChannel(errmsg);
+			vscode.window.showErrorMessage(errmsg);
+			return;
+		} else {
+			_didactFileUri = out;
 		}
 		console.log(`--Retrieved file URI ${_didactFileUri}`);
 		sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
