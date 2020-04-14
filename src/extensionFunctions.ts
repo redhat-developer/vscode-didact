@@ -302,6 +302,9 @@ export namespace extensionFunctions {
 
 		let out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(uri);
 		if (!out) {
+			let errmsg = `--Error: No Didact file found when parsing URI ${uri}`;
+			sendTextToOutputChannel(errmsg);
+			vscode.window.showErrorMessage(errmsg);
 			return;
 		} else {
 			_didactFileUri = out;
