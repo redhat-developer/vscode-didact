@@ -77,23 +77,27 @@ suite('Extension Functions Test Suite', () => {
 		});
 	});
 
-	test('test to make sure we can get the file path from a whole Uri', async function() {
-		const shouldEndWith = 'vscode-didact/demo/didact-demo.didact.md';
-		const shouldEndWithRaw = 'vscode-didact/master/demo/didact-demo.didact.md';
+	test('try parsing didact url with extension path - extension id in url', async function() {
+		checkCanParseDidactUriForPath(
+			'vscode://redhat.vscode-didact?extension=redhat.vscode-didact/examples/requirements.example.didact.md', 
+			'vscode-didact/examples/requirements.example.didact.md');
+	});
 
-		const textUri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=redhat.vscode-didact/demo/didact-demo.didact.md');
-		const rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
-		console.log('---------------handleVSCodeDidactUriParsingForPath returned (1) = ' + rtnUri);
-		assert.strictEqual(rtnUri?.fsPath.endsWith(shouldEndWith), true);
+	test('try parsing didact url with extension path - no extension id in url', async function() {
+		checkCanParseDidactUriForPath(
+			'vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md', 
+			'vscode-didact/demo/didact-demo.didact.md');
+	});
 
-		const textUri2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md');
-		const rtnUri2 = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri2);
-		console.log('---------------handleVSCodeDidactUriParsingForPath returned (2) = ' + rtnUri2);
-		assert.strictEqual(rtnUri2?.fsPath.endsWith(shouldEndWith), true);
-
-		const textUri3 = vscode.Uri.parse('vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demo/didact-demo.didact.md');
-		const rtnUri3 = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri3);
-		console.log('---------------handleVSCodeDidactUriParsingForPath returned (3) = ' + rtnUri3);
-		assert.strictEqual(rtnUri3?.fsPath.endsWith(shouldEndWithRaw), true);
+	test('try parsing didact url with http link in url', async function() {
+		checkCanParseDidactUriForPath(
+			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demo/didact-demo.didact.md', 
+			'vscode-didact/master/demo/didact-demo.didact.md');
 	});
 });
+
+function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string) {
+	const textUri = vscode.Uri.parse(urlValue);
+	const rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
+	assert.strictEqual(rtnUri?.fsPath.endsWith(endToCheck), true);
+}
