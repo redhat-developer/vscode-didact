@@ -1,8 +1,5 @@
 Asciidoctor Demo
 ================
-
-This document came from https://gist.github.com/mojavelinux/4402636 
-
 ////
 Big ol' comment
 
@@ -134,12 +131,12 @@ after this brief interruption.
 
 == We're back!
 
-Want to see a image:tiger.png[Tiger]?
+Want to see a image:images/tiger.png[Tiger]?
 
 Do you feel safer with the tiger in a box?
 
 .Tiger in a box
-image::tiger.png[]
+image::images/tiger.png[]
 
 include::include.asciidoc.txt[]
 
