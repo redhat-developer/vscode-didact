@@ -17,13 +17,18 @@
   margin-right: auto;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   padding-top: 50px;
   padding-right: 30px;
   padding-bottom: 50px;
   padding-left: 80px;
   color: var(--vscode-editor-foreground);
-  background-color:var(--vscode-editor-background);
+  background-color: var(--vscode-editor-background);
 }
 
 .content, blockquote {
