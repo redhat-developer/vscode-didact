@@ -23,6 +23,12 @@ export function getMDParser() : MarkdownIt {
 	const taskLists = require('markdown-it-task-lists');
 	const markdownItAttrs = require('markdown-it-attrs');
 	const parser = md
+		.set({ typographer: true })
+		.set({ linkify: true })
+		.enable('linkify')
+		.enable('replacements')
+		.enable('strikethrough')
+		.enable('table')
 		.use(taskLists, {enabled: true, label: true})
 		.use(markdownItAttrs, {});
 	return parser;

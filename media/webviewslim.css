@@ -17,13 +17,18 @@
   margin-right: auto;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   padding-top: 50px;
   padding-right: 30px;
   padding-bottom: 50px;
   padding-left: 80px;
   color: var(--vscode-editor-foreground);
-  background-color:var(--vscode-editor-background);
+  background-color: var(--vscode-editor-background);
 }
 
 .content, blockquote {
@@ -35,9 +40,46 @@ strong {
   color: var(--vscode-editor-foreground);
 }
 
-.content h1, .content h2, .content h3, .content h4, .content h5, .content h6, .paragraph, .content blockquote {
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6, .paragraph, .content blockquote,
+.paragraph.lead>p, .quoteblock, .verseblock, .quoteblock blockquote p, .verseblock pre, .attribution cite, pre {
   color: var(--vscode-editor-foreground);
   background-color:var(--vscode-editor-background);
+}
+
+.exampleblock>.content {
+  background-color: var(--vscode-editor-selectionHighlightBackground);
+}
+
+pre {
+  background: var(--vscode-editor-selectionHighlightBackground);
+}
+
+#preamble>.sectionbody>.paragraph:first-of-type p, .sidebarblock>.content>.title, .admonitionblock>table td.content, .sidebarblock {
+  background: var(--vscode-editor-selectionHighlightBackground);
+  color:var(--vscode-editor-selectionForeground);
+}
+
+table thead, table tfoot {
+  background: var(--vscode-editor-background);
+  color:var(--vscode-editor-foreground);
+  font-weight: bold;
+}
+
+table tr {
+  background: var(--vscode-editor-selectionHighlightBackground);
+  color:var(--vscode-editor-selectionForeground);
+}
+
+.quoteblock blockquote:before {
+  color:var(--vscode-editor-selectionForeground);
+}
+
+.admonitionblock>table td.icon {
+  color:var(--vscode-editor-selectionForeground);
+}
+
+.subheader, .admonitionblock td.content>.title, .audioblock>.title, .exampleblock>.title, .imageblock>.title, .listingblock>.title, .literalblock>.title, .stemblock>.title, .openblock>.title, .paragraph>.title, .quoteblock>.title, table.tableblock>.title, .verseblock>.title, .videoblock>.title, .dlist>.title, .olist>.title, .ulist>.title, .qlist>.title, .hdlist>.title {
+  color: var(--vscode-editor-foreground);
 }
 
 .content table thead th {
@@ -53,7 +95,8 @@ code{
   background-color: var(--vscode-editor-selectionHighlightBackground) !important
 }
 
-.literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], .listingblock pre.CodeRay, .listingblock pre.prettyprint {
+.literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], 
+  .listingblock pre.CodeRay, .listingblock pre.prettyprint {
   background: var(--vscode-editor-selectionHighlightBackground);
   color:var(--vscode-editor-selectionForeground);
 }
