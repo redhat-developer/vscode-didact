@@ -346,9 +346,13 @@ export namespace extensionFunctions {
 	export async function cliExecutionCheck(requirement: string, testCommand: string) : Promise<boolean> {
 		try {
 			sendTextToOutputChannel(`Validating requirement ${testCommand} exists in VS Code workbench`);
-			let result = child_process.execSync(testCommand).toString();
+			var options = {
+				timeout: 15000 // adding timeout for network calls
+			  };
+			  
+			let result = child_process.execSync(testCommand, options);
 			if (result) {
-				sendTextToOutputChannel(`--CLI command ${testCommand} returned code 0 and result ${result}`);
+				sendTextToOutputChannel(`--CLI command ${testCommand} returned code 0 and result ${result.toString()}`);
 				postRequirementsResponseMessage(requirement, true);
 				return true;
 			}
