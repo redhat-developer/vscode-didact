@@ -92,7 +92,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	await clearRegisteredTutorials();
 
 	// register the default tutorial
-	const tutorialPath = path.join(context.extensionPath, './demo/didact-demo.didact.md');
+	const tutorialPath = path.join(context.extensionPath, './demos/markdown/didact-demo.didact.md');
 	const tutorialUri = vscode.Uri.parse(`file://${tutorialPath}`);
 	await registerTutorial(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 

@@ -1,6 +1,5 @@
 ![Welcome to Didact](images/welcome-to-didact-header.png){.imageCenter}
 
-
 # Welcome to Didact!
 
 Didact is an extension for VS Code that provides a simple Markdown-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the [VSCode Didact readme about link formatting for more information](https://github.com/bfitzpat/vscode-didact/blob/master/README.md)!
@@ -104,7 +103,7 @@ And you can even bring in tables...
 ## Limitations
 
 * We can only open one Didact file at a time at the moment and there isn't the concept of a tutorial "history" to step forward or back through yet.
-* Didact, beacause it utilizes the VS Code Webview, is limited to what files it can access. For example, local image and text files are inaccessible but those same files served up as raw content through GitHub links work just fine.
+* Didact, beacause it utilizes the VS Code Webview, is limited to what files it can access. For example, local image files must exist in the same folder as the didact file or in a child folder.
 
 # Ideas or want to contribute?
 
