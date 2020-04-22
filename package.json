@@ -84,7 +84,11 @@
 			},
 			{
 				"command": "vscode.didact.view.tutorial.open",
-				"title": "Start Didact tutorial"
+				"title": "Start Didact tutorial",
+				"icon": {
+					"dark": "resources/dark/run.svg",
+					"light": "resources/light/run.svg"
+				}
 			},
 			{
 				"command": "vscode.didact.view.refresh",
@@ -119,9 +123,15 @@
 			"view/item/context": [
 				{
 					"command": "vscode.didact.view.tutorial.open",
+					"group": "inline",
+					"when": "view == didact.tutorials && viewItem == TutorialNode"
+				},
+				{
+					"command": "vscode.didact.view.tutorial.open",
 					"group": "1",
 					"when": "view == didact.tutorials && viewItem == TutorialNode"
 				}
+
 			],
 			"view/title": [
 				{
