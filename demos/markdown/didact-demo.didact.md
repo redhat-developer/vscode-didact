@@ -56,7 +56,7 @@ We can now even test all the requirements at once!
 
 ### Scaffolding projects 
 
-[You can "scaffold" new projects with complete folder and file structures from a simple json file](didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectwithdidactfile.json&completion=Created%20project%20with%20sample%20Didact%20file%20and%20Groovy%20file.)
+[You can "scaffold" new projects with complete folder and file structures from a simple json file](didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demos/projectwithdidactfile.json&completion=Created%20project%20with%20sample%20Didact%20file%20and%20Groovy%20file.)
 
 ### Other capabilities
 
@@ -70,9 +70,9 @@ We can now even test all the requirements at once!
 
 ### Linking to other Didact files
 
-[You can link to other Didact tutorials remotely - this one is on GitHub](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.didact.md "Opens the Tutorial2.didact.md file in GitHub")
+[You can link to other Didact tutorials remotely - this one is on GitHub](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/requirements.example.didact.md "Opens the requirements.example.didact.md file in GitHub")
 
-[You can link to other Didact tutorials also included in the same extension](vscode://redhat.vscode-didact?extension=example/tutorial.didact.md "Opens the Tutorial.didact.md file in the vscode-didact extension")
+[You can link to other Didact tutorials also included in the same extension](vscode://redhat.vscode-didact?extension=demos/markdown/helloJS/helloJS.didact.md "Opens the helloJS.didact.md file in the vscode-didact extension")
 
 If you created the project earlier (see ["Scaffolding projects"](#scaffolding-projects) ), ([you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.didact.md&completion=Opened%20the%20test.didact.md%20file)
 
