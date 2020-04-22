@@ -50,6 +50,8 @@ Open the `extension.ts` file and do the following:
 * Use the Didact snippet (`Ctrl+Space`) in the editor to add the `registerTutorialWithDidact` method. 
 * Change the values for `tutorialName`, `tutorialPath`, and `tutorialCategory` to suit your needs. Remember that if you register multiple tutorials and want them all to be under the same category, you must use the same category name for each.
 * Add `registerTutorialWithDidact(context);` to the `activate` function
+* In your `package.json` file, change `activationEvents` from `onCommand:extension.helloWorld` to `*`.
+* Make sure everything is saved and start a new workspace with your `first-didact-tutorial` folder as the root.
 
 ## Running the Extension and Testing your Didact file
 
