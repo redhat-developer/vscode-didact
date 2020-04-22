@@ -77,7 +77,9 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.');
 		}
 		var rootPath: string | undefined;
-		await utils.getCurrentFolder().then(value => rootPath = value);
+		await vscode.commands.executeCommand('copyFilePath').then ( (value) => {
+			rootPath = value as string;
+		});
 		if (!rootPath) {
 			if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]) {
 				var workspace: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];

@@ -16,7 +16,7 @@ First, we need to make sure you have Node.js available.
 
 ![Ramaksoud2000 via Chris Williams / Public domain](256px-JavaScript-logo.png){.imageRight}
 
-Create a new file in your workspace called `index.js`.  [(Execute^)](didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demos/markdown/helloJS/project.json)
+Create a new file called `index.js`.  [(Execute^)](didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demos/markdown/helloJS/project.json)
 
 Open your new file. [(Execute^)](didact://?commandId=vscode.openFolder&projectFilePath=index.js)
 
@@ -26,8 +26,6 @@ Check out these two lines of code:
 var greeting = 'Hello World!';
 console.log(greeting);
 ```
-
-You can change the greeting to something else and show that when it runs instead.
 
 ## Step 3: Run the file using Node
 
