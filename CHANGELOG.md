@@ -8,6 +8,10 @@ All notable changes to the "vscode-didact" extension will be documented in this 
  - Improved support for themes with additional AsciiDoc and Markdown styles
  - Tested support for Quarkus Dark, Light (Visual Studio), Dark (Visual Studio) themes
  - Added sample AsciiDoc and Markdown files demonstrating styles supported
+ - Rearranged and cleaned up demo files
+ - Added new helloJS tutorial to show more vendor-neutral example
+ - Added samples showing a dependency table in both MD and Adoc
+ - Added sample demonstrating a TOC and nested set of didact files
 
 ## 0.1.11
 
