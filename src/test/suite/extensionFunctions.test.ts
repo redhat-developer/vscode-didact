@@ -84,19 +84,22 @@ suite('Extension Functions Test Suite', () => {
 
 	test('try parsing didact url with extension path - no extension id in url', async function() {
 		checkCanParseDidactUriForPath(
-			'vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md', 
-			'vscode-didact/demo/didact-demo.didact.md');
+			'vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md', 
+			'vscode-didact/demos/markdown/didact-demo.didact.md');
 	});
 
 	test('try parsing didact url with http link in url', async function() {
 		checkCanParseDidactUriForPath(
-			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demo/didact-demo.didact.md', 
-			'vscode-didact/master/demo/didact-demo.didact.md');
+			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md', 
+			'vscode-didact/master/demos/markdown/didact-demo.didact.md');
 	});
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string) {
 	const textUri = vscode.Uri.parse(urlValue);
 	const rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
-	assert.strictEqual(rtnUri?.fsPath.endsWith(endToCheck), true);
+	assert.notStrictEqual(rtnUri, undefined);
+	if (rtnUri) {
+		assert.strictEqual(rtnUri.fsPath.endsWith(endToCheck), true);
+	}
 }
