@@ -193,41 +193,6 @@ export async function getCurrentFileSelectionPath(): Promise<vscode.Uri> {
   throw new Error("Can not determine current file selection");
 }
 
-export function getCurrentFolder(): Promise<string> {
-	return new Promise(async (resolve, reject) => {
-		// set focus to the Explorer view
-		await vscode.commands.executeCommand('workbench.view.explorer').then( async () => {
-			// then get the resource with focus
-			await vscode.commands.executeCommand('copyFilePath').then(async () => {
-				try {
-					await vscode.env.clipboard.readText().then((copyPath) => {
-						try {
-							if (fs.existsSync(copyPath)) {
-								if (fs.lstatSync(copyPath).isFile()) {
-									// if it's a file, get the directory for the file and pass that back
-									let dirpath = path.dirname(copyPath);
-									resolve(dirpath);
-									return dirpath;
-								} else {
-									// otherwise just pass the path back
-									resolve(copyPath);
-									return copyPath;
-								}
-							}
-						} catch (err) {
-							reject(err);
-							return undefined;
-						}
-					});
-				} catch (err) {
-					reject(err);
-					return undefined;
-				}
-			});
-		});
-	});
-}
-
 // stash the context so we have it for use by the command functions without passing it each time
 export function setContext(inContext: vscode.ExtensionContext) {
 	context = inContext;

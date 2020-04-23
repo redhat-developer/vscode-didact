@@ -27,13 +27,13 @@ import * as url from 'url';
 import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 
-const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/didact-demo.didact.md');
-const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demo/simple-example.didact.md');
+const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
+const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$uname$$Linux&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
-const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/example/projectwithdidactfile.json';
+const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/projectwithdidactfile.json';
 
 suite('Didact test suite', () => {
 
@@ -65,9 +65,9 @@ suite('Didact test suite', () => {
 
 	});
 
-	test('Scaffold new project', function (done) {
+	test('Scaffold new project', async function () {
 		try {
-			vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
+			await vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
 				let testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
 				let createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
 				assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
@@ -75,18 +75,16 @@ suite('Didact test suite', () => {
 		} catch (error) {
 			assert.fail(error);
 		}
-		done();
 	});
 
-	test('Scaffold new project with a uri', function (done) {
-		commandHandler.processInputs(testScaffold).then( () => {
+	test('Scaffold new project with a uri', async function () {
+		await commandHandler.processInputs(testScaffold).then( () => {
 			let testWorkspace = path.resolve(__dirname, '..', '..', '..', './testfixture');
 			let createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.didact.md');
 			assert.equal(fs.existsSync(createdDidactFileInFolderStructure), true);
 		}).catch( (error) => {
 			assert.fail(error);
 		});
-		done();
 	});
 
 	test('Test the extension checking', async () => {

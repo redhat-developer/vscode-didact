@@ -1,4 +1,4 @@
-![Apache Camel](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/post-logo-apache-camel-d.png)
+![Apache Camel](post-logo-apache-camel-d.png)
 
 # Camel in Action 2, Chapter 1 - Meeting Camel
 
@@ -31,13 +31,13 @@ Chapter 1 of *Camel in Action* walks through a simple example that moves files f
 
 ### Step 1: Downloading the Project Source
 
-![VS Code Add Folder to Workspace Menu](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/add-folder-to-workspace.png){.imageRight}
+![VS Code Add Folder to Workspace Menu](add-folder-to-workspace.png){.imageRight}
 
 First, we need to set up our sample project. You can find code for all the *Camel in Action* examples from the [GitHub project that's hosting the source.](https://github.com/camelinaction/camelinaction2)
 
 For this first example, you can download the code yourself from the GitHub repo and then [add the `file-copy` folder to your workspace.](didact://?commandId=workbench.action.addRootFolder "Same action as going to the Command Palette (F1 or Ctrl+Shift+P) and typing 'Workspaces: Add Folder to Workspace...'"){.didact}
 
-Or you can [create a sample project in your VS Code workspace.](didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=example/camelinaction/chapter1/file-copy/file-copy-project.json&completion=Created%20file-copy%20project. "Scaffolds a project based on the Chapter 1 project structure"){.didact}
+Or you can [create a sample project in your VS Code workspace.](didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demos/markdown/camelinaction/chapter1/file-copy/file-copy-project.json&completion=Created%20file-copy%20project. "Scaffolds a project based on the Chapter 1 project structure"){.didact}
 
 ### Step 2: Exploring the Pure Java Solution
 
@@ -57,7 +57,7 @@ To run our route, we must execute `mvn exec:java` at the command prompt in our p
 
 You can watch the log as messages appear in the terminal window while the Camel route starts up and copies the file from the `inbox` to the `outbox`.
 
-![Terminal with Camel Console Output](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/camelinaction/chapter1/terminal-camel-console-log.png){.imageCenter}
+![Terminal with Camel Console Output](terminal-camel-console-log.png){.imageCenter}
 
 When it finishes, you can open the output file in the `file-copy/data/outbox` directory (or [use this link to open the file.](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/data/outbox/message1.xml&completion=Opened%20the%20output%20file "Opens the file copied to the output folder"){.didact})
 
