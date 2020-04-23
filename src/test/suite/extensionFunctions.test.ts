@@ -79,31 +79,37 @@ suite('Extension Functions Test Suite', () => {
 	test('try parsing didact url with extension path - extension id in url', async function() {
 		checkCanParseDidactUriForPath(
 			'vscode://redhat.vscode-didact?extension=redhat.vscode-didact/examples/requirements.example.didact.md', 
-			'vscode-didact/examples/requirements.example.didact.md');
+			'vscode-didact/examples/requirements.example.didact.md',
+			'vscode-didact-release/examples/requirements.example.didact.md'); // jenkins
 	});
 
 	test('try parsing didact url with extension path - no extension id in url', async function() {
 		checkCanParseDidactUriForPath(
 			'vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md', 
-			'vscode-didact/demos/markdown/didact-demo.didact.md');
+			'vscode-didact/demos/markdown/didact-demo.didact.md',
+			'vscode-didact-release/demos/markdown/didact-demo.didact.md'); // jenkins
 	});
 
 	test('try parsing didact url with http link in url', async function() {
 		checkCanParseDidactUriForPath(
 			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md', 
-			'vscode-didact/master/demos/markdown/didact-demo.didact.md');
+			'vscode-didact/master/demos/markdown/didact-demo.didact.md',
+			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
 	});
 });
 
-function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string) {
+function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
 	console.log(`Testing ${urlValue} to ensure that it resolves to ${endToCheck}`);
 	var textUri = vscode.Uri.parse(urlValue);
 	var rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
 	assert.notStrictEqual(rtnUri, undefined);
 	if (rtnUri) {
-		console.log(`-- resolved path = ${rtnUri.fsPath}`);
-		var checkEnd = rtnUri.fsPath.endsWith(endToCheck);
-		console.log(`-- does it resolve? ${checkEnd}`);
-		assert.strictEqual(checkEnd, true);
+		console.log(`-- resolved path1 = ${rtnUri.fsPath}`);
+		var checkEnd1 = rtnUri.fsPath.endsWith(endToCheck);
+		console.log(`-- does it resolve? ${checkEnd1}`);
+		var checkEnd2 = rtnUri.fsPath.endsWith(alternateEnd);
+		console.log(`-- does it resolve? ${checkEnd2}`);
+		var checkEnds = checkEnd1 || checkEnd2;
+		assert.strictEqual(checkEnds, true);
 	}
 }
