@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.1.13
+
+ - Fixing some testing issues
+
 ## 0.1.12
 
  - Fixed issue with extension-provided links to Didact files not working properly
@@ -12,6 +16,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
  - Added new helloJS tutorial to show more vendor-neutral example
  - Added samples showing a dependency table in both MD and Adoc
  - Added sample demonstrating a TOC and nested set of didact files
+ - Added new shortcut inline toolbar button to launch tutorial from view 
 
 ## 0.1.11
 
