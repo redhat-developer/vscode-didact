@@ -96,10 +96,14 @@ suite('Extension Functions Test Suite', () => {
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string) {
-	const textUri = vscode.Uri.parse(urlValue);
-	const rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
+	console.log(`Testing ${urlValue} to ensure that it resolves to ${endToCheck}`);
+	var textUri = vscode.Uri.parse(urlValue);
+	var rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
 	assert.notStrictEqual(rtnUri, undefined);
 	if (rtnUri) {
-		assert.strictEqual(rtnUri.fsPath.endsWith(endToCheck), true);
+		console.log(`-- resolved path = ${rtnUri.fsPath}`);
+		var checkEnd = rtnUri.fsPath.endsWith(endToCheck);
+		console.log(`-- does it resolve? ${checkEnd}`);
+		assert.strictEqual(checkEnd, true);
 	}
 }
