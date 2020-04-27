@@ -11,15 +11,22 @@ For a demo file of what functionality is currently available, check out [the did
 
 ## VSCode-Didact In Action
 
-What follows is a simple example with three actions. One scaffolds a project based on a structure defined in JSON. One opens a file created when the folder structure was created. And one triggers a command in a different extension if it's installed. The tutorial is defined in [this MarkDown file](./example/tutorial2.didact.md)
+We have created a tutorial that walks through creating a simple Hello World in JavaScript. This tutorial, though simple, shows several of Didact's features in action, including:
 
-![Three Step Didact Tutorial Example](./images/didact-sample-tutorial-24-OCT-2019.gif)
+* Using a Didact command to test to see if Node is available in the user's system.
+* Using a Didact command to create a file in the user workspace.
+* Using a built-in command from VS Code to open the file we create in the user workspace.
+* Using Didact commands to not only open a named terminal window, but call a command in that same window at the command line.
+
+You can find the source for the HelloJS tutorial in [this MarkDown file](./demos/markdown/helloJS/helloJS.didact.md).
+
+![Three Step Didact Tutorial Example](./images/helloJS-didact-demo-APR-2020.gif)
 
 ## Accessing Didact in the workspace. 
 
 With Didact installed, there are three ways to open a Didact window.
 
-* To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact Markdown file specified in the Settings.
+* To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact file specified in the Settings.
 * To open a local Didact file in the workspace directly, Right-click on the Didact file (`*.didact.md` or `*.didact.adoc`) and select **Start Didact Tutorial from File** from the context menu.
 
 In addition, you now have the `Didact Tutorials` view. 
@@ -27,6 +34,10 @@ In addition, you now have the `Didact Tutorials` view.
 ![Didact Tutorials View](./images/didact-view-with-popup.png)
 
 If you right-click on a tutorial (such as "Didact Demo"), you see a `Start Didact Tutorial` menu, which opens the Didact window or changes the current Didact window to the selected tutorial. These entries are provided by registering new tutorial name/tutorial uri/category combinations with Didact's tutorial registry.
+
+*NEW!* You can also simply mouse over a registered tutorial and hit the 'play' button (triangle) to launch it in the Didact window.
+
+![One Click Open a Didact Tutorial](./images/didact-tutorial-start-button.gif)
 
 ## Didact Settings 
 
@@ -77,7 +88,6 @@ Outside a didact link, you get:
 * Insert Link to Start Didact from File in Extension folder
 * Insert Link to Install Required VS Code extension
 
-
 From a `didact://?` start, you get:
 
 * Start terminal with name
@@ -100,13 +110,12 @@ Check out the Wiki pages [here](https://github.com/redhat-developer/vscode-didac
 
 For a list of available commands, check out the [Command Reference](examples/commands.reference.md).
 
-# Next steps
+## Ideas or want to contribute?
 
-1. Find the best way to ensure that files (project.json, commands referencing files in a project scaffolded by a project.json) are accessible across extensions (i.e. if I register a tutorial in Camel K, the Didact extension should be ok with finding all the available commands and any files)
-2. Look into finding ways to chain commands together so that you can do things like create a project and open a file all in one go.
-3. Look at the Eclipse Cheat sheet approach to see if we can glean anything - http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fextension-points%2FcheatSheetContentFileSpec.html 
-4. Also look at the Integr8ly Walkthroughs to see if we can glean anything - https://github.com/integr8ly/solution-patterns/tree/master/walkthroughs
-5. Figure out a way to limit the `Start Didact Tutorial from File` context menu to only work for Didact files.
-6. Figure out a way to limit the `Didact Scaffold Project from File` context menu to only work for Didact Project Scaffolding files.
+Check out [the project on Github](https://github.com/redhat-developer/vscode-didact)! 
+
+[The readme](https://github.com/redhat-developer/vscode-didact/blob/master/README.md) has a ton of information about some of the specifics for link formatting, project json format, etc. 
+
+And feel free to [add issues, submit feature requests, log bugs, etc](https://github.com/redhat-developer/vscode-didact/issues)!
 
 **Enjoy!**
