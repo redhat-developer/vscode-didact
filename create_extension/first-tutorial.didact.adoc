@@ -2,7 +2,7 @@
 
 Thanks for creating your first Didact tutorial in AsciiDoc!
 
-Didact is an extension for VS Code that provides a simple Asciidoc-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the https://github.com/bfitzpat/vscode-didact/blob/master/README.md[VSCode Didact readme about link formatting for more information]!
+Didact is an extension for VS Code that provides a simple Asciidoc-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the https://github.com/redhat-developer/vscode-didact/blob/master/README.md[VSCode Didact readme about link formatting for more information]!
 
 Constructing a Didact tutorial is as easy as writing an https://asciidoctor.org/docs/asciidoc-writers-guide/[AsciiDoc formatted document] and embedding some links that call specific VS Code commands.
 

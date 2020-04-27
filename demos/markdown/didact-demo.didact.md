@@ -1,8 +1,8 @@
-![Welcome to Didact](images/welcome-to-didact-header.png){.imageCenter}
+![Welcome to Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/images/welcome-to-didact-header.png){.imageCenter}
 
 # Welcome to Didact!
 
-Didact is an extension for VS Code that provides a simple Markdown-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the [VSCode Didact readme about link formatting for more information](https://github.com/bfitzpat/vscode-didact/blob/master/README.md)!
+Didact is an extension for VS Code that provides a simple Markdown-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the [VSCode Didact readme about link formatting for more information](https://github.com/redhat-developer/vscode-didact/blob/master/README.md)!
 
 ## Functionality
 
@@ -12,7 +12,7 @@ Didact is an extension for VS Code that provides a simple Markdown-based way to 
 
 ## Examples
 
-![Fireworks from Giphy!](https://raw.githubusercontent.com/bfitzpat/vscode-didact/master/demo/fireworks.gif){.imageRight}
+![Fireworks from Giphy!](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/fireworks.gif){.imageRight}
 
 With our combination of standard Markdown and VS Code actions, we have a ton of functionality out of the box.
 
@@ -107,10 +107,10 @@ And you can even bring in tables...
 
 # Ideas or want to contribute?
 
-Check out [the project on Github](https://github.com/bfitzpat/vscode-didact)! 
+Check out [the project on Github](https://github.com/redhat-developer/vscode-didact)! 
 
-[The readme](https://github.com/bfitzpat/vscode-didact/blob/master/README.md) has a ton of information about some of the specifics for link formatting, project json format, etc. 
+[The readme](https://github.com/redhat-developer/vscode-didact/blob/master/README.md) has a ton of information about some of the specifics for link formatting, project json format, etc. 
 
-And feel free to [add issues, submit feature requests, log bugs, etc](https://github.com/bfitzpat/vscode-didact/issues)!
+And feel free to [add issues, submit feature requests, log bugs, etc](https://github.com/redhat-developer/vscode-didact/issues)!
 
 Thanks!
