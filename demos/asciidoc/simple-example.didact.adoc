@@ -1,5 +1,4 @@
-Accessing Commands in Visual Studio Code
-================
+= Accessing Commands in Visual Studio Code
 
 Though Visual Studio Code is, at heart, a code editor, it employs a command API under the covers that does everything from opening views and files to creating and manipulating integrated terminals. It's an amazingly powerful framework and it's available at your fingertips!
 
