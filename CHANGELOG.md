@@ -4,7 +4,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.14
 
- - TBD
+ - Updating readme and fixing a few errant links
 
 ## 0.1.13
 
