@@ -105,7 +105,7 @@ For a list of available commands, check out the [Command Reference](examples/com
 1. Find the best way to ensure that files (project.json, commands referencing files in a project scaffolded by a project.json) are accessible across extensions (i.e. if I register a tutorial in Camel K, the Didact extension should be ok with finding all the available commands and any files)
 2. Look into finding ways to chain commands together so that you can do things like create a project and open a file all in one go.
 3. Look at the Eclipse Cheat sheet approach to see if we can glean anything - http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fextension-points%2FcheatSheetContentFileSpec.html 
-4. Also look at the Integr8ly Walkthroughs to see if we can glean anything - https://github.com/integr8ly/tutorial-web-app-walkthroughs/tree/master/walkthroughs
+4. Also look at the Integr8ly Walkthroughs to see if we can glean anything - https://github.com/integr8ly/solution-patterns/tree/master/walkthroughs
 5. Figure out a way to limit the `Start Didact Tutorial from File` context menu to only work for Didact files.
 6. Figure out a way to limit the `Didact Scaffold Project from File` context menu to only work for Didact Project Scaffolding files.
 
