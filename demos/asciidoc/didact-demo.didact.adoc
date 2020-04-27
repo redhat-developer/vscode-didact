@@ -2,7 +2,7 @@ image:images/welcome-to-didact-header.png[Welcome to Didact,role="center"]
 
 # Welcome to Didact!
 
-Didact is an extension for VS Code that provides a simple Asciidoc-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the https://github.com/bfitzpat/vscode-didact/blob/master/README.md[VSCode Didact readme about link formatting for more information]!
+Didact is an extension for VS Code that provides a simple Asciidoc-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the https://github.com/redhat-developer/vscode-didact/blob/master/README.md[VSCode Didact readme about link formatting for more information]!
 
 ## Functionality
 
@@ -54,9 +54,9 @@ link:didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectw
 
 ### Linking to other Didact files
 
-* link:vscode://redhat.vscode-didact?https=raw.githubusercontent.com/bfitzpat/vscode-didact/master/example/tutorial2.didact.md[You can link to other Didact tutorials remotely - this one is on GitHub]
+* link:vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/requirements.example.didact.md[You can link to other Didact tutorials remotely - this one is on GitHub]
 
-* link:vscode://redhat.vscode-didact?extension=example/tutorial.didact.md[You can link to other Didact tutorials also included in the same extension]
+* link:vscode://redhat.vscode-didact?extension=demos/markdown/helloJS/helloJS.didact.md[You can link to other Didact tutorials also included in the same extension]
 
 * If you created the project earlier (see <<scaffolding>>), (link:vscode://redhat.vscode-didact?workspace=anotherProject/src/test.didact.md&completion=Opened%20the%20test.didact.md%20file[you can actually open project-level didact files as well])
 
@@ -80,10 +80,10 @@ Asciidoc doesn't seem to support bringing in native HTML. But you can bring in t
 
 # Ideas or want to contribute?
 
-Check out https://github.com/bfitzpat/vscode-didact[the project on Github]! 
+Check out https://github.com/redhat-developer/vscode-didact[the project on Github]! 
 
-https://github.com/bfitzpat/vscode-didact/blob/master/README.md[The readme] has a ton of information about some of the specifics for link formatting, project json format, etc. 
+https://github.com/redhat-developer/vscode-didact/blob/master/README.md[The readme] has a ton of information about some of the specifics for link formatting, project json format, etc. 
 
-And feel free to https://github.com/bfitzpat/vscode-didact/issues[add issues, submit feature requests, log bugs, etc]!
+And feel free to https://github.com/redhat-developer/vscode-didact/issues[add issues, submit feature requests, log bugs, etc]!
 
 Thanks!
