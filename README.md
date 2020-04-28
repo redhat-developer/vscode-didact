@@ -20,7 +20,7 @@ We have created a tutorial that walks through creating a simple Hello World in J
 
 You can find the source for the HelloJS tutorial in [this MarkDown file](./demos/markdown/helloJS/helloJS.didact.md).
 
-![Three Step Didact Tutorial Example](./images/helloJS-didact-demo-APR-2020.gif)
+![Three Steps Didact Tutorial Example](./images/helloJS-didact-demo-APR-2020.gif)
 
 ## Accessing Didact in the workspace. 
 
