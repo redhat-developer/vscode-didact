@@ -609,7 +609,7 @@ export namespace extensionFunctions {
 		if (DidactWebviewPanel.currentPanel) {
 			const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 			if (commands && commands.length > 0) {
-				sendTextToOutputChannel(`Starting validation.`);
+				sendTextToOutputChannel(`Starting validation...`);
 				let allOk = true;
 				for(let command of commands) {
 					// validate all commands we found
