@@ -4,7 +4,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.15
 
- - TBD
+ - Adding "Didact: Validate Command IDs in Current Didact File" command to provide diagnostic
 
 ## 0.1.14
 

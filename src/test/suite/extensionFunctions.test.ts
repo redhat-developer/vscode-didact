@@ -70,7 +70,7 @@ suite('Extension Functions Test Suite', () => {
 		});
 	});
 
-	test('try executing an ivalid command', async function() {
+	test('try executing an invalid command', async function() {
 		await extensionFunctions.cliExecutionCheck('test-bogus','doesnotexist').then( (returnBool) => {
 			assert.equal(returnBool, false);
 		});

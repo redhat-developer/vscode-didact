@@ -27,6 +27,7 @@ import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
 import { handleExtFilePath } from './commandHandler';
+import * as url from 'url';
 
 let didactOutputChannel: vscode.OutputChannel | undefined = undefined;
 
@@ -53,6 +54,7 @@ export const REFRESH_DIDACT_VIEW = 'vscode.didact.view.refresh';
 export const SEND_TERMINAL_KEY_SEQUENCE = 'vscode.didact.sendNamedTerminalCtrlC';
 export const CLOSE_TERMINAL = 'vscode.didact.closeNamedTerminal';
 export const CLI_SUCCESS_COMMAND = 'vscode.didact.cliCommandSuccessful';
+export const VALIDATE_COMMAND_IDS = 'vscode.didact.verifyCommands';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -597,6 +599,37 @@ export namespace extensionFunctions {
 			channel.append(msg);
 		} else {
 			console.log('[' + msg + ']');
+		}
+	}
+
+	export async function validateCommandIDsInSelectedFile() : Promise<void> {
+		if (DidactWebviewPanel.currentPanel) {
+			const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
+			if (commands && commands.length > 0) {
+				sendTextToOutputChannel(`Validating commands in current file)`);
+				for(let command of commands) {
+					// validate all commands
+					const parsedUrl = url.parse(command, true);
+					const query = parsedUrl.query;
+					if (query.commandId) {
+						const commandId = utils.getValue(query.commandId);
+						if (commandId) {
+							const vsCommands : string[] = await vscode.commands.getCommands(true);
+							var filteredList : string[] = vsCommands.filter( function (command) {
+								return command === commandId;
+							});
+							if (filteredList.length === 1) {
+								sendTextToOutputChannel(`--Found command (${commandId})`);
+							} else {
+								sendTextToOutputChannel(`--Found command ${commandId} in Didact file but command is not found`);
+
+							}
+						}
+					}
+				}
+			} else {
+				sendTextToOutputChannel(`Validation failed: No command IDs found in current Didact file`);
+			}
 		}
 	}
 }
