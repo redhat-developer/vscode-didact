@@ -148,7 +148,7 @@
 					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
 					"command": "vscode.didact.verifyCommands",
 					"alt": "vscode.didact.verifyCommands",
-					"group": "myGroup"
+					"group": "didact.editor"
 				}
 			]
 		},
