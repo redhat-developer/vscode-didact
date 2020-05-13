@@ -606,7 +606,7 @@ export namespace extensionFunctions {
 		if (DidactWebviewPanel.currentPanel) {
 			const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 			if (commands && commands.length > 0) {
-				sendTextToOutputChannel(`Validating commands in current file)`);
+				sendTextToOutputChannel(`Validating commands in current file`);
 				for(let command of commands) {
 					// validate all commands
 					const parsedUrl = url.parse(command, true);
