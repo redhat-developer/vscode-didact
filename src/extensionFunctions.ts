@@ -602,13 +602,17 @@ export namespace extensionFunctions {
 		}
 	}
 
-	export async function validateCommandIDsInSelectedFile() : Promise<void> {
+	export async function validateCommandIDsInSelectedFile(didactUri: vscode.Uri) : Promise<void> {
+		if (didactUri) {
+			await vscode.commands.executeCommand(START_DIDACT_COMMAND, didactUri);
+		}
 		if (DidactWebviewPanel.currentPanel) {
 			const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 			if (commands && commands.length > 0) {
-				sendTextToOutputChannel(`Validating commands in current file`);
+				sendTextToOutputChannel(`Starting validation.`);
+				let allOk = true;
 				for(let command of commands) {
-					// validate all commands
+					// validate all commands we found
 					const parsedUrl = url.parse(command, true);
 					const query = parsedUrl.query;
 					if (query.commandId) {
@@ -619,16 +623,23 @@ export namespace extensionFunctions {
 								return command === commandId;
 							});
 							if (filteredList.length === 1) {
-								sendTextToOutputChannel(`--Found command (${commandId})`);
+								// expected result - we found the command in the vscode command list
 							} else {
-								sendTextToOutputChannel(`--Found command ${commandId} in Didact file but command is not found`);
-
+								// unexpected result - let the user know
+								sendTextToOutputChannel(`--Missing Command ID ${commandId}`);
+								allOk = false;
 							}
 						}
 					}
 				}
+				if (allOk) {
+					sendTextToOutputChannel(`--Command IDs: OK`);
+					sendTextToOutputChannel(`Validation Result: SUCCESS`);
+				} else {
+					sendTextToOutputChannel(`Validation Result: FAILURE`);
+				}
 			} else {
-				sendTextToOutputChannel(`Validation failed: No command IDs found in current Didact file`);
+				sendTextToOutputChannel(`Validation Result: FAILURE - No command IDs found in current Didact file`);
 			}
 		}
 	}

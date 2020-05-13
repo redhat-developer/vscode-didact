@@ -100,7 +100,7 @@
 			},
 			{
 				"command": "vscode.didact.verifyCommands",
-				"title": "Didact: Validate Command IDs in Current Didact File"
+				"title": "Validate Didact File"
 			}
 		],
 		"keybindings": [
@@ -141,6 +141,14 @@
 					"command": "vscode.didact.view.refresh",
 					"when": "view == didact.tutorials",
 					"group": "navigation"
+				}
+			],
+			"editor/title": [
+				{
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"command": "vscode.didact.verifyCommands",
+					"alt": "vscode.didact.verifyCommands",
+					"group": "myGroup"
 				}
 			]
 		},
