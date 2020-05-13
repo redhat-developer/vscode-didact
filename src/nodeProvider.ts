@@ -89,7 +89,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 			if (this.retrieveTutorials) {
                 this.processRegisteredTutorials();
 			}
-			this._onDidChangeTreeData.fire();
+			this._onDidChangeTreeData.fire(undefined);
 			resolve();
 		});
 	}
