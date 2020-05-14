@@ -602,41 +602,62 @@ export namespace extensionFunctions {
 		}
 	}
 
+	// exported for testing
+	export async function validateDidactCommands(commands : any[]) : Promise<boolean> {
+		let allOk = true;
+		if (commands && commands.length > 0) {
+			sendTextToOutputChannel(`Starting validation...`);
+			const vsCommands : string[] = await vscode.commands.getCommands(true);
+			for(let command of commands) {
+				// validate all commands we found
+				const parsedUrl = url.parse(command, true);
+				const query = parsedUrl.query;
+				if (query.commandId) {
+					const commandId = utils.getValue(query.commandId);
+					if (commandId) {
+						let foundCommand = validateCommand(commandId, vsCommands);
+						if (foundCommand) {
+							// expected result - we found the command in the vscode command list
+						} else {
+							// unexpected result - let the user know
+							sendTextToOutputChannel(`--Missing Command ID ${commandId}.`);
+							allOk = false;
+						}
+					}
+				}
+			}
+		}
+		return allOk;
+	}
+
+	// exported for testing
+	export function validateCommand(commandId:string, vsCommands:string[]) : boolean {
+		if (commandId) {
+			var filteredList : string[] = vsCommands.filter( function (command) {
+				return command === commandId;
+			});
+			if (filteredList.length >= 1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	export async function validateCommandIDsInSelectedFile(didactUri: vscode.Uri) : Promise<void> {
 		if (didactUri) {
 			await vscode.commands.executeCommand(START_DIDACT_COMMAND, didactUri);
 		}
 		if (DidactWebviewPanel.currentPanel) {
 			const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
+			let allOk = false;
 			if (commands && commands.length > 0) {
-				sendTextToOutputChannel(`Starting validation...`);
-				let allOk = true;
-				for(let command of commands) {
-					// validate all commands we found
-					const parsedUrl = url.parse(command, true);
-					const query = parsedUrl.query;
-					if (query.commandId) {
-						const commandId = utils.getValue(query.commandId);
-						if (commandId) {
-							const vsCommands : string[] = await vscode.commands.getCommands(true);
-							var filteredList : string[] = vsCommands.filter( function (command) {
-								return command === commandId;
-							});
-							if (filteredList.length === 1) {
-								// expected result - we found the command in the vscode command list
-							} else {
-								// unexpected result - let the user know
-								sendTextToOutputChannel(`--Missing Command ID ${commandId}`);
-								allOk = false;
-							}
-						}
-					}
-				}
+				allOk = await validateDidactCommands(commands);
 				if (allOk) {
 					sendTextToOutputChannel(`--Command IDs: OK`);
 					sendTextToOutputChannel(`Validation Result: SUCCESS`);
 				} else {
 					sendTextToOutputChannel(`Validation Result: FAILURE`);
+					sendTextToOutputChannel(`-- Note that command IDs not found may be due to a missing extension or simply an invalid ID.`);
 				}
 			} else {
 				sendTextToOutputChannel(`Validation Result: FAILURE - No command IDs found in current Didact file`);

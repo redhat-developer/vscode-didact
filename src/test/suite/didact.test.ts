@@ -175,28 +175,21 @@ suite('Didact test suite', () => {
 			if (DidactWebviewPanel.currentPanel) {
 				const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 				assert.equal(commands && commands.length > 0, true);
-				if (commands && commands.length > 0) {
-					for(let command of commands) {
-						// validate all commands
-						const parsedUrl = url.parse(command, true);
-						const query = parsedUrl.query;
-						assert.notEqual(query.commandId, undefined);
-						if (query.commandId) {
-							const commandId = getValue(query.commandId);
-							if (commandId) {
-								console.log('Looking for ' + commandId);
-								const vsCommands : string[] = await vscode.commands.getCommands(true);
-								var filteredList : string[] = vsCommands.filter( function (command) {
-									return command === commandId;
-								});
-								assert.equal(filteredList.length, 1, `Found command ${commandId} in Didact file but command is not found`);
-							}
+
+				const isOk = await extensionFunctions.validateDidactCommands(commands);
+				assert.equal(isOk, true, `Missing commands in test file.`);
+
+				// if we failed the above, we can do a deeper dive to figure out what command is missing
+				if (!isOk) {
+					const vsCommands : string[] = await vscode.commands.getCommands(true);
+					for (let command of commands) {
+						let commandOk = extensionFunctions.validateCommand(command, vsCommands);
+						if (!commandOk) {
+							console.log(`--Missing Command ID ${command}`);
 						}
 					}
-				} else {
-					assert.fail('No commands found in VS Code environment.');
 				}
-			}			
+			}
 		});
 	});
 
