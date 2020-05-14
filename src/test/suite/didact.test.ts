@@ -29,6 +29,7 @@ import * as commandHandler from '../../commandHandler';
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
+const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$uname$$Linux&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
@@ -174,31 +175,34 @@ suite('Didact test suite', () => {
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
 			if (DidactWebviewPanel.currentPanel) {
 				const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
-				assert.equal(commands && commands.length > 0, true);
-				if (commands && commands.length > 0) {
-					for(let command of commands) {
-						// validate all commands
-						const parsedUrl = url.parse(command, true);
-						const query = parsedUrl.query;
-						assert.notEqual(query.commandId, undefined);
-						if (query.commandId) {
-							const commandId = getValue(query.commandId);
-							if (commandId) {
-								console.log('Looking for ' + commandId);
-								const vsCommands : string[] = await vscode.commands.getCommands(true);
-								var filteredList : string[] = vsCommands.filter( function (command) {
-									return command === commandId;
-								});
-								assert.equal(filteredList.length, 1, `Found command ${commandId} in Didact file but command is not found`);
-							}
+				assert.strictEqual(commands && commands.length > 0, true);
+				const isOk = await extensionFunctions.validateDidactCommands(commands);
+
+				// if we failed the above, we can do a deeper dive to figure out what command is missing
+				if (!isOk) {
+					const vsCommands : string[] = await vscode.commands.getCommands(true);
+					for (let command of commands) {
+						let commandOk = extensionFunctions.validateCommand(command, vsCommands);
+						if (!commandOk) {
+							console.log(`--Missing Command ID ${command}`);
 						}
 					}
-				} else {
-					assert.fail('No commands found in VS Code environment.');
 				}
-			}			
+				assert.strictEqual(isOk, true, `Missing commands in test file.`);
+			}
 		});
 	});
+
+	test('Verify that validation fails when given a negative case', async () => {
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD3).then( async () => {
+			if (DidactWebviewPanel.currentPanel) {
+				const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
+				assert.strictEqual(commands && commands.length > 0, true);
+				const isOk = await extensionFunctions.validateDidactCommands(commands);
+				assert.strictEqual(isOk, false, `Invalid file should not have passed validation test`);
+			}
+		});
+	});	
 
 	test('Walk through the demo didact file to ensure that we get all the requirements commands successfully', async () => {
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {

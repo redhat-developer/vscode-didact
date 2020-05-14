@@ -97,6 +97,11 @@
 					"dark": "resources/dark/refresh.svg",
 					"light": "resources/light/refresh.svg"
 				}
+			},
+			{
+				"command": "vscode.didact.verifyCommands",
+				"title": "Validate Didact File",
+				"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
 			}
 		],
 		"keybindings": [
@@ -112,12 +117,12 @@
 				{
 					"command": "vscode.didact.startDidact",
 					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
-					"group": "vscode.didact.group"
+					"group": "vscode.didact.group@1"
 				},
 				{
 					"command": "vscode.didact.scaffoldProject",
 					"when": "resourceExtname =~ /\\.json$/",
-					"group": "vscode.didact.group"
+					"group": "vscode.didact.group@2"
 				}
 			],
 			"view/item/context": [
@@ -137,6 +142,14 @@
 					"command": "vscode.didact.view.refresh",
 					"when": "view == didact.tutorials",
 					"group": "navigation"
+				}
+			],
+			"editor/title": [
+				{
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"command": "vscode.didact.verifyCommands",
+					"alt": "vscode.didact.verifyCommands",
+					"group": "didact.editor"
 				}
 			]
 		},

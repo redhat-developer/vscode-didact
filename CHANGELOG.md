@@ -4,7 +4,8 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.15
 
- - TBD
+ - Adding "Validate Didact File" command to provide diagnostic validation
+ - Adding title-level context menu item to Markdown and AsciiDoc editors to call validation
 
 ## 0.1.14
 
