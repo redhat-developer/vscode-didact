@@ -113,12 +113,6 @@
 			}
 		],
 		"menus": {
-			"commandPalette": [
-				{
-					"command": "vscode.didact.verifyCommands",
-					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
-				}
-			],
 			"explorer/context": [
 				{
 					"command": "vscode.didact.startDidact",
