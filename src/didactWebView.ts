@@ -20,6 +20,7 @@ import {extensionFunctions} from './extensionFunctions';
 import * as path from 'path';
 import * as commandHandler from './commandHandler';
 import * as fs from 'fs';
+import { ViewColumn } from 'vscode';
 
 export class DidactWebviewPanel {
 	/**
@@ -90,10 +91,10 @@ export class DidactWebviewPanel {
 		}
 	}
 
-	public static createOrShow(extensionPath: string, inpath? : vscode.Uri | undefined ) {
-		const column = vscode.window.activeTextEditor
-			? vscode.window.activeTextEditor.viewColumn
-			: undefined;
+	public static createOrShow(extensionPath: string, inpath?: vscode.Uri | undefined, column?: ViewColumn) {
+		if (!column) {
+			column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : ViewColumn.One;
+		}
 
 		// If we already have a panel, dispose it to reset the resource roots
 		// we assume that all images are in the same directory as the didact file or a 
