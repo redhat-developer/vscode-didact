@@ -295,7 +295,7 @@ export namespace extensionFunctions {
 	}
 
 	// open the didact window with the didact file passed in via Uri
-	export async function startDidact(uri:vscode.Uri) {
+	export async function startDidact(uri:vscode.Uri, viewColumn?: vscode.ViewColumn) {
 		if (!uri) {
 			uri = await utils.getCurrentFileSelectionPath();
 		}
@@ -314,7 +314,7 @@ export namespace extensionFunctions {
 		console.log(`--Retrieved file URI ${_didactFileUri}`);
 		sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
 		const isAdoc = extensionFunctions.isAsciiDoc();
-		DidactWebviewPanel.createOrShow(context.extensionPath, _didactFileUri);
+		DidactWebviewPanel.createOrShow(context.extensionPath, _didactFileUri, viewColumn);
 		DidactWebviewPanel.setContext(context);
 		if (DidactWebviewPanel.currentPanel && _didactFileUri) {
 			DidactWebviewPanel.currentPanel.setIsAsciiDoc(isAdoc);
