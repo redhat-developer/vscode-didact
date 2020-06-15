@@ -200,8 +200,8 @@ export function setContext(inContext: vscode.ExtensionContext) {
 	context = inContext;
 }
 
-export async function getLastColumnUsedSetting() : Promise<number> {
-	let lastColumn : number | undefined = await context.workspaceState.get(DIDACT_COLUMN_SETTING);
+export function getLastColumnUsedSetting() : number {
+	let lastColumn : number | undefined = context.workspaceState.get(DIDACT_COLUMN_SETTING);
 	if (!lastColumn) {
 		// if we can, grab the current column from the active text editor
 		if (vscode.window.activeTextEditor) {

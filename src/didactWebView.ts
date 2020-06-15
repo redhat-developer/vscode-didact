@@ -92,13 +92,13 @@ export class DidactWebviewPanel {
 		}
 	}
 
-	public static async createOrShow(extensionPath: string, inpath?: vscode.Uri | undefined, column?: ViewColumn) {
+	public static createOrShow(extensionPath: string, inpath?: vscode.Uri | undefined, column?: ViewColumn) {
 		if (!column) {
 			// if we weren't passed a column, use the last column setting
-			column = await getLastColumnUsedSetting();
+			column = getLastColumnUsedSetting();
 		} else {
 			// if we are passed a column, stash it
-			await setLastColumnUsedSetting(column);
+			setLastColumnUsedSetting(column);
 		}
 
 		// If we already have a panel, dispose it to reset the resource roots
