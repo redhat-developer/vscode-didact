@@ -55,6 +55,7 @@ export const SEND_TERMINAL_KEY_SEQUENCE = 'vscode.didact.sendNamedTerminalCtrlC'
 export const CLOSE_TERMINAL = 'vscode.didact.closeNamedTerminal';
 export const CLI_SUCCESS_COMMAND = 'vscode.didact.cliCommandSuccessful';
 export const VALIDATE_COMMAND_IDS = 'vscode.didact.verifyCommands';
+export const TEXT_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyToClipboardCommand';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -663,5 +664,11 @@ export namespace extensionFunctions {
 				sendTextToOutputChannel(`Validation Result: FAILURE - No command IDs found in current Didact file`);
 			}
 		}
+	}
+
+	export async function placeTextOnClipboard(clipText : string ) {
+		await vscode.env.clipboard.writeText(clipText).then( () => {
+			sendTextToOutputChannel(`Text sent to clipboard: {clipText}`);
+		});
 	}
 }
