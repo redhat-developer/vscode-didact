@@ -202,13 +202,13 @@ export function setContext(inContext: vscode.ExtensionContext) {
 
 export function getLastColumnUsedSetting() : number {
 	let lastColumn : number | undefined = context.workspaceState.get(DIDACT_COLUMN_SETTING);
-	if (!lastColumn) {
+	if (lastColumn === undefined) {
 		// if we can, grab the current column from the active text editor
 		if (vscode.window.activeTextEditor) {
 			lastColumn = vscode.window.activeTextEditor.viewColumn;
 		}
 		// otherwise assume it's the first column
-		if (!lastColumn) {
+		if (lastColumn === undefined) {
 			lastColumn = ViewColumn.One;
 		}
 	}
