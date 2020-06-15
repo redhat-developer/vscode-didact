@@ -668,7 +668,7 @@ export namespace extensionFunctions {
 
 	export async function placeTextOnClipboard(clipText : string ) {
 		await vscode.env.clipboard.writeText(clipText).then( () => {
-			sendTextToOutputChannel(`Text sent to clipboard: {clipText}`);
+			sendTextToOutputChannel(`Text sent to clipboard: "${clipText}"`);
 		});
 	}
 }
