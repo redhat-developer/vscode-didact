@@ -21,6 +21,7 @@ import * as path from 'path';
 import * as commandHandler from './commandHandler';
 import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
+import { getLastColumnUsedSetting, setLastColumnUsedSetting } from './utils';
 
 export class DidactWebviewPanel {
 	/**
@@ -91,9 +92,13 @@ export class DidactWebviewPanel {
 		}
 	}
 
-	public static createOrShow(extensionPath: string, inpath?: vscode.Uri | undefined, column?: ViewColumn) {
+	public static async createOrShow(extensionPath: string, inpath?: vscode.Uri | undefined, column?: ViewColumn) {
 		if (!column) {
-			column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : ViewColumn.One;
+			// if we weren't passed a column, use the last column setting
+			column = await getLastColumnUsedSetting();
+		} else {
+			// if we are passed a column, stash it
+			await setLastColumnUsedSetting(column);
 		}
 
 		// If we already have a panel, dispose it to reset the resource roots
@@ -112,7 +117,7 @@ export class DidactWebviewPanel {
 
 		const panel = vscode.window.createWebviewPanel(
 			DidactWebviewPanel.viewType, 'didact',
-			column || vscode.ViewColumn.One,
+			column,
 			{
 				// Enable javascript in the webview
 				enableScripts: true,
@@ -186,6 +191,8 @@ export class DidactWebviewPanel {
 		// Listen for when the panel is disposed
 		// This happens when the user closes the panel or when the panel is closed programatically
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+
+		this._panel.onDidChangeViewState(async () => await setLastColumnUsedSetting(panel.viewColumn));
 
 		// Update the content based on view changes
 		this._panel.onDidChangeViewState(

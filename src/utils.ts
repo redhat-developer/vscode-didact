@@ -18,11 +18,13 @@
 import * as vscode from 'vscode';
 import * as extension from './extension';
 import * as fs from 'fs';
-import * as path from 'path';
+import { ViewColumn } from 'vscode';
+
 
 export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
 export const DIDACT_NOTIFICATION_SETTING : string = 'didact.disableNotifications';
+export const DIDACT_COLUMN_SETTING : string = 'didact.lastColumnUsed';
 
 // stashed extension context
 let context : vscode.ExtensionContext;
@@ -196,4 +198,23 @@ export async function getCurrentFileSelectionPath(): Promise<vscode.Uri> {
 // stash the context so we have it for use by the command functions without passing it each time
 export function setContext(inContext: vscode.ExtensionContext) {
 	context = inContext;
+}
+
+export async function getLastColumnUsedSetting() : Promise<number> {
+	let lastColumn : number | undefined = await context.workspaceState.get(DIDACT_COLUMN_SETTING);
+	if (!lastColumn) {
+		// if we can, grab the current column from the active text editor
+		if (vscode.window.activeTextEditor) {
+			lastColumn = vscode.window.activeTextEditor.viewColumn;
+		}
+		// otherwise assume it's the first column
+		if (!lastColumn) {
+			lastColumn = ViewColumn.One;
+		}
+	}
+	return lastColumn;
+}
+
+export async function setLastColumnUsedSetting(column: number | undefined) {
+	await context.workspaceState.update(DIDACT_COLUMN_SETTING, column);
 }
