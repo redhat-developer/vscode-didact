@@ -646,7 +646,7 @@ export namespace extensionFunctions {
 			var foundCommand : string | undefined = vsCommands.find( function (command) {
 				return command === commandId;
 			});
-			if (foundCommand !== undefined) {
+			if (foundCommand) {
 				return true;
 			}
 		}
