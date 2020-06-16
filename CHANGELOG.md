@@ -8,6 +8,8 @@ All notable changes to the "vscode-didact" extension will be documented in this 
  - Adding title-level context menu item to Markdown and AsciiDoc editors to call validation
  - Adding awareness so Didact view column is persisted if moved
  - Adding new 'vscode.didact.copyToClipboardCommand' command that can put text on the clipboard
+ - Improving validation to show number of commands validated and open Didact output channel to see results
+ - Improving command validation code to use find vs. filter 
 
 ## 0.1.14
 

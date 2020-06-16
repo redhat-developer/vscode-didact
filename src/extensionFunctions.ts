@@ -603,6 +603,15 @@ export namespace extensionFunctions {
 		}
 	}
 
+	async function openDidactOutputChannel() : Promise<void> {
+		if (!didactOutputChannel) {
+			didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);
+		}
+		if (didactOutputChannel) {
+			didactOutputChannel.show();
+		}
+	}
+
 	// exported for testing
 	export async function validateDidactCommands(commands : any[]) : Promise<boolean> {
 		let allOk = true;
@@ -634,10 +643,10 @@ export namespace extensionFunctions {
 	// exported for testing
 	export function validateCommand(commandId:string, vsCommands:string[]) : boolean {
 		if (commandId) {
-			var filteredList : string[] = vsCommands.filter( function (command) {
+			var foundCommand : string | undefined = vsCommands.find( function (command) {
 				return command === commandId;
 			});
-			if (filteredList.length >= 1) {
+			if (foundCommand !== undefined) {
 				return true;
 			}
 		}
@@ -651,11 +660,12 @@ export namespace extensionFunctions {
 		if (DidactWebviewPanel.currentPanel) {
 			const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 			let allOk = false;
+			await openDidactOutputChannel();
 			if (commands && commands.length > 0) {
 				allOk = await validateDidactCommands(commands);
 				if (allOk) {
 					sendTextToOutputChannel(`--Command IDs: OK`);
-					sendTextToOutputChannel(`Validation Result: SUCCESS`);
+					sendTextToOutputChannel(`Validation Result: SUCCESS (${commands.length} Commands Validated)`);
 				} else {
 					sendTextToOutputChannel(`Validation Result: FAILURE`);
 					sendTextToOutputChannel(`-- Note that command IDs not found may be due to a missing extension or simply an invalid ID.`);
