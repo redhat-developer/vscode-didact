@@ -607,9 +607,7 @@ export namespace extensionFunctions {
 		if (!didactOutputChannel) {
 			didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);
 		}
-		if (didactOutputChannel) {
-			didactOutputChannel.show();
-		}
+		didactOutputChannel.show();
 	}
 
 	// exported for testing
