@@ -8,4 +8,4 @@ src/**
 **/*.map
 **/*.ts
 example/**/.project
-testfixture/**
+test Fixture with speci@l chars/**

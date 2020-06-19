@@ -7,7 +7,7 @@ async function main() {
 	const extensionTestsPath = path.resolve(__dirname, './suite');
 
 	// always start with an empty workspace using a temp folder
-	const testWorkspace = path.resolve(__dirname, '../../testfixture');
+	const testWorkspace = path.resolve(__dirname, '../../test Fixture with speci@l chars');
 	console.log('Test workspace: ' + testWorkspace);
 
 	const vscodeExecutablePath : string = await downloadAndUnzipVSCode('stable');
