@@ -26,7 +26,7 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
-				"${workspaceRoot}/testfixture",
+				"${workspaceRoot}/test Fixture with speci@l chars",
 				"--disable-extensions"
 			],
 			"outFiles": [

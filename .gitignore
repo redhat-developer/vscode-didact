@@ -3,6 +3,6 @@ node_modules
 .vscode-test/
 *.vsix
 /example/**/.project
-testfixture/*
-testfixture/readme.md
-!testfixture/.gitkeep 
+test Fixture with speci@l chars/*
+test Fixture with speci@l chars/readme.md
+!test Fixture with speci@l chars/.gitkeep 
