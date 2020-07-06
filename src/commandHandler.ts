@@ -102,7 +102,7 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 }
 
 // take a "projectFilePath=" path and make it project-relative to the user workspace
-function handleProjectFilePath(projectFilePath: string) : vscode.Uri | undefined {
+export function handleProjectFilePath(projectFilePath: string) : vscode.Uri | undefined {
 	if (vscode.workspace.workspaceFolders === undefined) { 
 		return undefined; 
 	}

@@ -57,6 +57,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.CLI_SUCCESS_COMMAND, extensionFunctions.cliExecutionCheck));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VALIDATE_COMMAND_IDS, extensionFunctions.validateCommandIDsInSelectedFile));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.TEXT_TO_CLIPBOARD_COMMAND, extensionFunctions.placeTextOnClipboard));
+	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.COPY_FILE_URL_TO_WORKSPACE_COMMAND, extensionFunctions.copyFileFromURLtoLocalURI));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
