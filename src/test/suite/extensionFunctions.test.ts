@@ -134,24 +134,23 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('try to copy a zip file and not unzip it with a change to location and filename change', async function() {
-		const urlToTest = 'https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz';
-		const filepathUri = handleProjectFilePath('camel-k-examples2'); // create a folder to unzip into
-		const newFilename = `camel-k-examples.tar.gz`;
+		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz';
+		const filepathUri = handleProjectFilePath('expanded'); // create a folder to unzip into
+		const newFilename = `giphy.tar.gz`;
 		if (filepathUri) {
 			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, false);
 		}
 	});
 
 	test('try to copy and unzip a file with a change to location and filename change', async function() {
-		const urlToTest = 'https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz';
-		const filepathUri = handleProjectFilePath('camel-k-examples'); // create a folder to unzip into
-		const newFilename = `camel-k-examples.tar.gz`;
-		const fileToLookFor = `README.md`;
+		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz';
+		const filepathUri = handleProjectFilePath('expanded2'); // create a folder to unzip into
+		const newFilename = `testarchive.tar.gz`;
+		const fileToLookFor = `testfile/spongebob-expands.gif`;
 		if (filepathUri) {
 			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, true, fileToLookFor);
 		}
 	});
-
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
