@@ -99,58 +99,56 @@ suite('Extension Functions Test Suite', () => {
 			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
 	});
 
-	test('try to copy a file with no change to filename', async function() {
+	test('try to copy a file to workspace root with no change to filename', async function() {
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
 		const filepathUri = handleProjectFilePath(''); // get workspace root
 		if (filepathUri) {
-			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath)
-				.then( async (returnedFilePath) => {
-					await checkCanFindCopiedFile(returnedFilePath);
-			});
-		}
-	});
-
-	test('try to copy a file with a change to filename', async function() {
-		const filepathUri = handleProjectFilePath(''); // workspace root
-		if (filepathUri) {
-			const newFilename = `spongebob-exit.gif`;
-			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath, newFilename)
-				.then( async (returnedFilePath) => {
-					await checkCanFindCopiedFile(returnedFilePath);
-			});
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath);
 		}
 	});
 
 	test('try to copy a file with a change to location', async function() {
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
 		const filepathUri = handleProjectFilePath('newfolder'); // add a folder
 		if (filepathUri) {
-			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath)
-				.then( async (returnedFilePath) => {
-					await checkCanFindCopiedFile(returnedFilePath);
-			});
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath);
+		}
+	});
+
+	test('try to copy a file to workspace root with a change to filename', async function() {
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
+		const filepathUri = handleProjectFilePath(''); // get workspace root
+		const newFilename = `spongebob-exit.gif`;
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename);
 		}
 	});
 
 	test('try to copy a file with a change to location and filename change', async function() {
-		const filepathUri = handleProjectFilePath('newfolder'); // add a folder
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
+		const filepathUri = handleProjectFilePath('newfolder2'); // create a new folder
+		const newFilename = `spongebob-exit2.gif`;
 		if (filepathUri) {
-			const newFilename = `spongebob-exit.gif`;
-			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath, newFilename)
-				.then( async (returnedFilePath) => {
-					await checkCanFindCopiedFile(returnedFilePath);
-			});
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename);
+		}
+	});
+
+	test('try to copy a zip file and not unzip it with a change to location and filename change', async function() {
+		const urlToTest = 'https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz';
+		const filepathUri = handleProjectFilePath('camel-k-examples2'); // create a folder to unzip into
+		const newFilename = `camel-k-examples.tar.gz`;
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, false);
 		}
 	});
 
 	test('try to copy and unzip a file with a change to location and filename change', async function() {
-		const filepathUri = handleProjectFilePath('camel-k-examples'); // add a folder for the unzip
+		const urlToTest = 'https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz';
+		const filepathUri = handleProjectFilePath('camel-k-examples'); // create a folder to unzip into
+		const newFilename = `camel-k-examples.tar.gz`;
+		const fileToLookFor = `README.md`;
 		if (filepathUri) {
-			const newFilename = `camel-k-examples.tar.gz`;
-			await extensionFunctions.downloadAndUnzipFile('https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz', filepathUri.fsPath, newFilename, true)
-				.then( async (returnedFolderPath) => {
-					let folder = path.dirname(returnedFolderPath);
-					let readmefile = path.join(folder, `README.md`);
-					await checkCanFindCopiedFile(readmefile);
-			});
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, true, fileToLookFor);
 		}
 	});
 
@@ -180,4 +178,17 @@ async function checkCanFindCopiedFile(filepath : string) {
 	await vscode.workspace.fs.readFile(pathUri).then( (rtnUri) => {
 		assert.notStrictEqual(rtnUri, undefined);
 	});	
+}
+
+async function testCopyFileFromURLtoLocalURI( fileURL : string, workspaceLocation : string, newfilename? : string, unzip? : boolean, testFileInFolder? : string) {
+	await extensionFunctions.downloadAndUnzipFile(fileURL, workspaceLocation, newfilename, unzip)
+		.then( async (returnedFilePath) => {
+			if (testFileInFolder) {
+				let folder = path.dirname(returnedFilePath);
+				let testFile = path.join(folder, testFileInFolder);
+				await checkCanFindCopiedFile(testFile);
+			} else {
+				await checkCanFindCopiedFile(returnedFilePath);
+			}
+	});
 }
