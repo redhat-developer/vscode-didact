@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {extensionFunctions} from '../../extensionFunctions';
 import { handleProjectFilePath } from '../../commandHandler';
+import * as path from 'path';
 
 suite('Extension Functions Test Suite', () => {
 
@@ -98,21 +99,61 @@ suite('Extension Functions Test Suite', () => {
 			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
 	});
 
-	test('try to copy a file', async function() {
-		const filepathUri = handleProjectFilePath('');
+	test('try to copy a file with no change to filename', async function() {
+		const filepathUri = handleProjectFilePath(''); // get workspace root
 		if (filepathUri) {
-			const filename = '';
-			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath, filename)
-				.then( async (something) => {
-					assert.notStrictEqual(something, null);
-					assert.notStrictEqual(something, undefined);
-					let pathUri = vscode.Uri.parse(something);
-					await vscode.workspace.fs.readFile(pathUri).then( (rtnUri) => {
-						assert.notStrictEqual(rtnUri, undefined);
-					});
+			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath)
+				.then( async (returnedFilePath) => {
+					await checkCanFindCopiedFile(returnedFilePath);
 			});
 		}
 	});
+
+	test('try to copy a file with a change to filename', async function() {
+		const filepathUri = handleProjectFilePath(''); // workspace root
+		if (filepathUri) {
+			const newFilename = `spongebob-exit.gif`;
+			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath, newFilename)
+				.then( async (returnedFilePath) => {
+					await checkCanFindCopiedFile(returnedFilePath);
+			});
+		}
+	});
+
+	test('try to copy a file with a change to location', async function() {
+		const filepathUri = handleProjectFilePath('newfolder'); // add a folder
+		if (filepathUri) {
+			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath)
+				.then( async (returnedFilePath) => {
+					await checkCanFindCopiedFile(returnedFilePath);
+			});
+		}
+	});
+
+	test('try to copy a file with a change to location and filename change', async function() {
+		const filepathUri = handleProjectFilePath('newfolder'); // add a folder
+		if (filepathUri) {
+			const newFilename = `spongebob-exit.gif`;
+			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath, newFilename)
+				.then( async (returnedFilePath) => {
+					await checkCanFindCopiedFile(returnedFilePath);
+			});
+		}
+	});
+
+	test('try to copy and unzip a file with a change to location and filename change', async function() {
+		const filepathUri = handleProjectFilePath('camel-k-examples'); // add a folder for the unzip
+		if (filepathUri) {
+			const newFilename = `camel-k-examples.tar.gz`;
+			await extensionFunctions.downloadAndUnzipFile('https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz', filepathUri.fsPath, newFilename, true)
+				.then( async (returnedFolderPath) => {
+					let folder = path.dirname(returnedFolderPath);
+					let readmefile = path.join(folder, `README.md`);
+					await checkCanFindCopiedFile(readmefile);
+			});
+		}
+	});
+
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
@@ -129,4 +170,14 @@ function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alt
 		var checkEnds = checkEnd1 || checkEnd2;
 		assert.strictEqual(checkEnds, true);
 	}
+}
+
+async function checkCanFindCopiedFile(filepath : string) {
+	console.log(`Testing ${filepath} to ensure that it exists after a copyFileFromURLtoLocalURI call`);
+	assert.notStrictEqual(filepath, null);
+	assert.notStrictEqual(filepath, undefined);
+	let pathUri = vscode.Uri.parse(filepath);
+	await vscode.workspace.fs.readFile(pathUri).then( (rtnUri) => {
+		assert.notStrictEqual(rtnUri, undefined);
+	});	
 }

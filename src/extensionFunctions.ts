@@ -694,17 +694,17 @@ export namespace extensionFunctions {
 		} else {
 			filename = dlFilename;
 		}
-		const downloadFile : string = path.join(installFolder, filename);
-		await downloadAndExtract(httpFileUrl, installFolder, filename, extractFlag)
-			.then( async () => {
-				sendTextToOutputChannel(`Downloaded ${downloadFile}`);
-				return Promise.resolve(downloadFile);
-			})
-		.catch ( (error) => {
+		try {
+			const downloadFile : string = path.join(installFolder, filename);
+			const downloadResult: boolean = await downloadAndExtract(httpFileUrl, installFolder, filename, extractFlag);
+			console.log(`Downloaded ${downloadFile} : ${downloadResult}`);
+			sendTextToOutputChannel(`Downloaded ${downloadFile}`);
+			return downloadFile;
+		 } catch ( error ) {
 			console.log(error);
 			sendTextToOutputChannel(`Failed to download file: ${error}`);
-			return Promise.reject(error);
-		});
+			return error;
+		}
 	}
 
 	export async function copyFileFromURLtoLocalURI(httpurl : any, fileName? : string, fileuri? : string, unzip = false) {
