@@ -694,8 +694,42 @@ export namespace extensionFunctions {
 		} else {
 			filename = dlFilename;
 		}
+
+		const downloadFile : string = path.join(installFolder, filename);
+		if (extractFlag) {
+			let answer = await vscode.window.showQuickPick([
+				'Yes',
+				'No'
+			], {
+				canPickMany: false,
+				placeHolder: `The archive ${filename} may overwrite folders and files in the workspace. Are you sure?`
+			});
+			if (answer === 'No') {
+				sendTextToOutputChannel(`Copy and unzip of file ${filename} was canceled.`);
+				return null;
+			}
+		} else {
+			try {
+				let pathUri = vscode.Uri.parse(downloadFile);
+				await vscode.workspace.fs.readFile(pathUri).then( async (rtnUri) => {
+					let answer = await vscode.window.showQuickPick([
+						'Yes',
+						'No'
+					], {
+						canPickMany: false,
+						placeHolder: `The file ${filename} already exists. Do you want to overwrite it?`
+					});
+					if (answer === 'No') {
+						sendTextToOutputChannel(`Copy of file ${filename} was canceled.`);
+						return null;
+					}
+				});	
+			} catch (error) {
+				// ignore error, it means the file does not exist
+			}
+		}
+
 		try {
-			const downloadFile : string = path.join(installFolder, filename);
 			const downloadResult: boolean = await downloadAndExtract(httpFileUrl, installFolder, filename, extractFlag);
 			console.log(`Downloaded ${downloadFile} : ${downloadResult}`);
 			sendTextToOutputChannel(`Downloaded ${downloadFile}`);

@@ -41,9 +41,9 @@ Here's the Didact URL: `didact://?commandId=vscode.didact.copyFileURLtoWorkspace
 
 ## That's all well and good, but what if I have an archive file I want to pull down and unzip at the same time?
 
-This is another issue (https://github.com/redhat-developer/vscode-didact/issues/135) that came up and now we can do that too! Let's take the Apache Camel K examples archive and unzip it into a new folder called `camel-k-examples`.
+This is another issue (https://github.com/redhat-developer/vscode-didact/issues/135) that came up and now we can do that too! Let's take a sample image archive and unzip it into a new folder called `expandme`.
 
-* [Click here to download and unzip the Apache Camel K examples archive into a new directory.](didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz$$camel-k-examples.tar.gz$$camel-k-examples$$true)
-* [Click here to open `camel-k-examples/README.md`](didact://?commandId=vscode.open&projectFilePath=camel-k-examples/README.md)
+* [Click here to download and unzip the test image archive into a new directory.](didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz$$testarchive.tar.gz$$expandme$$true)
+* [Click here to open `expandme/testfile/spongebob-expands.gif`](didact://?commandId=vscode.open&projectFilePath=expandme/testfile/spongebob-expands.gif)
 
-Here's the Didact URL: `didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/apache/camel-k/releases/download/1.0.1/camel-k-examples-1.0.1.tar.gz$$camel-k-examples.tar.gz$$camel-k-examples$$true`
+Here's the Didact URL: `didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz$$testarchive.tar.gz$$expandme$$true`
