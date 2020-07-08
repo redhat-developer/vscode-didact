@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {extensionFunctions} from '../../extensionFunctions';
+import { handleProjectFilePath } from '../../commandHandler';
 
 suite('Extension Functions Test Suite', () => {
 
@@ -95,6 +96,22 @@ suite('Extension Functions Test Suite', () => {
 			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md', 
 			'vscode-didact/master/demos/markdown/didact-demo.didact.md',
 			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
+	});
+
+	test('try to copy a file', async function() {
+		const filepathUri = handleProjectFilePath('');
+		if (filepathUri) {
+			const filename = '';
+			await extensionFunctions.downloadAndUnzipFile('https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif', filepathUri.fsPath, filename)
+				.then( async (something) => {
+					assert.notStrictEqual(something, null);
+					assert.notStrictEqual(something, undefined);
+					let pathUri = vscode.Uri.parse(something);
+					await vscode.workspace.fs.readFile(pathUri).then( (rtnUri) => {
+						assert.notStrictEqual(rtnUri, undefined);
+					});
+			});
+		}
 	});
 });
 

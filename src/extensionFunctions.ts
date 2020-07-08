@@ -483,9 +483,9 @@ export namespace extensionFunctions {
 	}
 
 	// retrieve didact text from a url
-	async function getDataFromUrl(url:string) : Promise<string> {
+	async function getDataFromUrl(inurl:string) : Promise<string> {
 		try {
-			const response = await fetch(url);
+			const response = await fetch(inurl);
 			const content = await response.text();
 			const parser = getMDParser();
 			const result = parser.render(content);
@@ -682,12 +682,37 @@ export namespace extensionFunctions {
 		});
 	}
 
+	// exported for testing
+	export async function downloadAndUnzipFile(httpFileUrl : string, installFolder : string, dlFilename? : string, extractFlag = false) : Promise<any> {
+		let filename : string = '';
+		if (!dlFilename) {
+			var fileUrl = url.parse(httpFileUrl);
+			var pathname = fileUrl.pathname;
+			if (pathname) {
+				filename = pathname.substring(pathname.lastIndexOf('/')+1);
+			}
+		} else {
+			filename = dlFilename;
+		}
+		const downloadFile : string = path.join(installFolder, filename);
+		await downloadAndExtract(httpFileUrl, installFolder, filename, extractFlag)
+			.then( async () => {
+				sendTextToOutputChannel(`Downloaded ${downloadFile}`);
+				return Promise.resolve(downloadFile);
+			})
+		.catch ( (error) => {
+			console.log(error);
+			sendTextToOutputChannel(`Failed to download file: ${error}`);
+			return Promise.reject(error);
+		});
+	}
+
 	export async function copyFileFromURLtoLocalURI(httpurl : any, fileName? : string, fileuri? : string, unzip = false) {
 		let filepathUri : vscode.Uri | undefined;
 		let projectFilePath : string = '';
 
-		if (fileuri && fileuri.startsWith('projectFilePath') && fileuri.includes('=')) {
-			projectFilePath = fileuri.split('=')[1];
+		if (fileuri && fileuri.length > 0) {
+			projectFilePath = fileuri.trim();
 		}
 		let dlFileName = '';
 		if (fileName) {
@@ -695,23 +720,8 @@ export namespace extensionFunctions {
 		}
 
 		filepathUri = handleProjectFilePath(projectFilePath);
-
 		if (filepathUri) {
-			const downloadFile = path.join(filepathUri.fsPath, dlFileName);
-			await downloadAndExtract(httpurl, filepathUri.fsPath, fileName, unzip)
-			.then( async (flag) => {
-				sendTextToOutputChannel(`Downloaded ${downloadFile}`);
-				if (!unzip && !fs.existsSync(downloadFile) && fileName) {
-					sendTextToOutputChannel(`Failed to download file`);
-				// } else {
-				// 	let downloadFileUri = vscode.Uri.parse(downloadFile);
-				// 	vscode.commands.executeCommand('vscode.open', downloadFileUri);
-				}
-			})
-			.catch ( (error) => {
-				console.log(error);
-				sendTextToOutputChannel(`Failed to download file: ${error}`);
-			});
+			await downloadAndUnzipFile(httpurl, filepathUri.fsPath, dlFileName, unzip);
 		}
 	}
 
