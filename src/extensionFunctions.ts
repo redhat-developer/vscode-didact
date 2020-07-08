@@ -683,7 +683,7 @@ export namespace extensionFunctions {
 	}
 
 	// exported for testing
-	export async function downloadAndUnzipFile(httpFileUrl : string, installFolder : string, dlFilename? : string, extractFlag = false) : Promise<any> {
+	export async function downloadAndUnzipFile(httpFileUrl : string, installFolder : string, dlFilename? : string, extractFlag = false, ignoreOverwrite = false) : Promise<any> {
 		let filename : string = '';
 		if (!dlFilename) {
 			var fileUrl = url.parse(httpFileUrl);
@@ -696,7 +696,7 @@ export namespace extensionFunctions {
 		}
 
 		const downloadFile : string = path.join(installFolder, filename);
-		if (extractFlag) {
+		if (extractFlag && !ignoreOverwrite) {
 			let answer = await vscode.window.showQuickPick([
 				'Yes',
 				'No'
@@ -708,7 +708,7 @@ export namespace extensionFunctions {
 				sendTextToOutputChannel(`Copy and unzip of file ${filename} was canceled.`);
 				return null;
 			}
-		} else {
+		} else if (!extractFlag && !ignoreOverwrite) {
 			try {
 				let pathUri = vscode.Uri.parse(downloadFile);
 				await vscode.workspace.fs.readFile(pathUri).then( async (rtnUri) => {

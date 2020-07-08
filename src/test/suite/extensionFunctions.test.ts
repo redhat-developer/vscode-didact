@@ -148,7 +148,7 @@ suite('Extension Functions Test Suite', () => {
 		const newFilename = `testarchive.tar.gz`;
 		const fileToLookFor = `testfile/spongebob-expands.gif`;
 		if (filepathUri) {
-			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, true, fileToLookFor);
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, true, fileToLookFor, true);
 		}
 	});
 });
@@ -179,8 +179,8 @@ async function checkCanFindCopiedFile(filepath : string) {
 	});	
 }
 
-async function testCopyFileFromURLtoLocalURI( fileURL : string, workspaceLocation : string, newfilename? : string, unzip? : boolean, testFileInFolder? : string) {
-	await extensionFunctions.downloadAndUnzipFile(fileURL, workspaceLocation, newfilename, unzip)
+async function testCopyFileFromURLtoLocalURI( fileURL : string, workspaceLocation : string, newfilename? : string, unzip? : boolean, testFileInFolder? : string, ignoreOverwrite = false) {
+	await extensionFunctions.downloadAndUnzipFile(fileURL, workspaceLocation, newfilename, unzip, ignoreOverwrite)
 		.then( async (returnedFilePath) => {
 			if (testFileInFolder) {
 				let folder = path.dirname(returnedFilePath);
