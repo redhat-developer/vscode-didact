@@ -10,7 +10,7 @@ Let's say we have this image:
 
 We can find it at this URL: https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif
 
-And let's say we have this archive file: 
+And let's say we have this archive file: https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz 
 
 ## Copying a File into the Workspace root with no name change
 

@@ -696,8 +696,9 @@ export namespace extensionFunctions {
 		}
 
 		const downloadFile : string = path.join(installFolder, filename);
+		let overwriteFile : boolean = false;
 		if (extractFlag && !ignoreOverwrite) {
-			let answer = await vscode.window.showQuickPick([
+			const answer = await vscode.window.showQuickPick([
 				'Yes',
 				'No'
 			], {
@@ -708,36 +709,53 @@ export namespace extensionFunctions {
 				sendTextToOutputChannel(`Copy and unzip of file ${filename} was canceled.`);
 				return null;
 			}
+			if (answer === 'Yes') {
+				overwriteFile = true;
+			}
 		} else if (!extractFlag && !ignoreOverwrite) {
 			try {
 				let pathUri = vscode.Uri.parse(downloadFile);
-				await vscode.workspace.fs.readFile(pathUri).then( async (rtnUri) => {
-					let answer = await vscode.window.showQuickPick([
-						'Yes',
-						'No'
-					], {
-						canPickMany: false,
-						placeHolder: `The file ${filename} already exists. Do you want to overwrite it?`
-					});
-					if (answer === 'No') {
-						sendTextToOutputChannel(`Copy of file ${filename} was canceled.`);
-						return null;
+				try {
+					let contents = await vscode.workspace.fs.readFile(pathUri);
+					if (contents) {
+						const answer = await vscode.window.showQuickPick([
+							'Yes',
+							'No'
+						], {
+							canPickMany: false,
+							placeHolder: `The file ${filename} already exists. Do you want to overwrite it?`
+						});
+						if (answer === 'No') {
+							sendTextToOutputChannel(`Copy of file ${filename} was canceled.`);
+							return null;
+						}
+						if (answer === 'Yes') {
+							overwriteFile = true;
+						}
+					} else {
+						overwriteFile = true; // file doesn't exist
 					}
-				});	
+				} catch (error) {
+					// ignore error, it means the file does not exist
+					overwriteFile = true;
+				}
 			} catch (error) {
 				// ignore error, it means the file does not exist
+				overwriteFile = true;
 			}
 		}
 
-		try {
-			const downloadResult: boolean = await downloadAndExtract(httpFileUrl, installFolder, filename, extractFlag);
-			console.log(`Downloaded ${downloadFile} : ${downloadResult}`);
-			sendTextToOutputChannel(`Downloaded ${downloadFile}`);
-			return downloadFile;
-		 } catch ( error ) {
-			console.log(error);
-			sendTextToOutputChannel(`Failed to download file: ${error}`);
-			return error;
+		if (overwriteFile || ignoreOverwrite) {
+			try {
+				const downloadResult: boolean = await downloadAndExtract(httpFileUrl, installFolder, filename, extractFlag);
+				console.log(`Downloaded ${downloadFile} : ${downloadResult}`);
+				sendTextToOutputChannel(`Downloaded ${downloadFile}`);
+				return downloadFile;
+			} catch ( error ) {
+				console.log(error);
+				sendTextToOutputChannel(`Failed to download file: ${error}`);
+				return error;
+			}
 		}
 	}
 
