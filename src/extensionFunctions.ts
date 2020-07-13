@@ -26,8 +26,9 @@ import {getMDParser} from './markdownUtils';
 import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
-import { handleExtFilePath } from './commandHandler';
+import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as url from 'url';
+import * as download from 'download';
 
 let didactOutputChannel: vscode.OutputChannel | undefined = undefined;
 
@@ -56,6 +57,7 @@ export const CLOSE_TERMINAL = 'vscode.didact.closeNamedTerminal';
 export const CLI_SUCCESS_COMMAND = 'vscode.didact.cliCommandSuccessful';
 export const VALIDATE_COMMAND_IDS = 'vscode.didact.verifyCommands';
 export const TEXT_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyToClipboardCommand';
+export const COPY_FILE_URL_TO_WORKSPACE_COMMAND = 'vscode.didact.copyFileURLtoWorkspaceCommand';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -481,9 +483,9 @@ export namespace extensionFunctions {
 	}
 
 	// retrieve didact text from a url
-	async function getDataFromUrl(url:string) : Promise<string> {
+	async function getDataFromUrl(inurl:string) : Promise<string> {
 		try {
-			const response = await fetch(url);
+			const response = await fetch(inurl);
 			const content = await response.text();
 			const parser = getMDParser();
 			const result = parser.render(content);
@@ -679,4 +681,145 @@ export namespace extensionFunctions {
 			sendTextToOutputChannel(`Text sent to clipboard: "${clipText}"`);
 		});
 	}
+
+	// exported for testing
+	export async function downloadAndUnzipFile(httpFileUrl : string, installFolder : string, dlFilename? : string, extractFlag = false, ignoreOverwrite = false) : Promise<any> {
+		let filename : string = '';
+		if (!dlFilename) {
+			var fileUrl = url.parse(httpFileUrl);
+			var pathname = fileUrl.pathname;
+			if (pathname) {
+				filename = pathname.substring(pathname.lastIndexOf('/')+1);
+			}
+		} else {
+			filename = dlFilename;
+		}
+
+		const downloadFile : string = path.join(installFolder, filename);
+		let overwriteFile : boolean = false;
+		if (extractFlag && !ignoreOverwrite) {
+			const answer = await vscode.window.showQuickPick([
+				'Yes',
+				'No'
+			], {
+				canPickMany: false,
+				placeHolder: `The archive ${filename} may overwrite folders and files in the workspace. Are you sure?`
+			});
+			if (answer === 'No') {
+				sendTextToOutputChannel(`Copy and unzip of file ${filename} was canceled.`);
+				return null;
+			}
+			if (answer === 'Yes') {
+				overwriteFile = true;
+			}
+		} else if (!extractFlag && !ignoreOverwrite) {
+			try {
+				let pathUri = vscode.Uri.parse(downloadFile);
+				try {
+					let contents = await vscode.workspace.fs.readFile(pathUri);
+					if (contents) {
+						const answer = await vscode.window.showQuickPick([
+							'Yes',
+							'No'
+						], {
+							canPickMany: false,
+							placeHolder: `The file ${filename} already exists. Do you want to overwrite it?`
+						});
+						if (answer === 'No') {
+							sendTextToOutputChannel(`Copy of file ${filename} was canceled.`);
+							return null;
+						}
+						if (answer === 'Yes') {
+							overwriteFile = true;
+						}
+					} else {
+						overwriteFile = true; // file doesn't exist
+					}
+				} catch (error) {
+					// ignore error, it means the file does not exist
+					overwriteFile = true;
+				}
+			} catch (error) {
+				// ignore error, it means the file does not exist
+				overwriteFile = true;
+			}
+		}
+
+		if (overwriteFile || ignoreOverwrite) {
+			try {
+				const downloadResult: boolean = await downloadAndExtract(httpFileUrl, installFolder, filename, extractFlag);
+				console.log(`Downloaded ${downloadFile} : ${downloadResult}`);
+				sendTextToOutputChannel(`Downloaded ${downloadFile}`);
+				return downloadFile;
+			} catch ( error ) {
+				console.log(error);
+				sendTextToOutputChannel(`Failed to download file: ${error}`);
+				return error;
+			}
+		}
+	}
+
+	export async function copyFileFromURLtoLocalURI(httpurl : any, fileName? : string, fileuri? : string, unzip = false) {
+		let filepathUri : vscode.Uri | undefined;
+		let projectFilePath : string = '';
+
+		if (fileuri && fileuri.length > 0) {
+			projectFilePath = fileuri.trim();
+		}
+		let dlFileName = '';
+		if (fileName) {
+			dlFileName = fileName;
+		}
+
+		filepathUri = handleProjectFilePath(projectFilePath);
+		if (filepathUri) {
+			await downloadAndUnzipFile(httpurl, filepathUri.fsPath, dlFileName, unzip);
+		}
+	}
+
+	async function downloadAndExtract(link : string, installFolder : string, dlFilename? : string, extractFlag?: boolean) : Promise<boolean> {
+		let myStatusBarItem: vscode.StatusBarItem;
+		myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	
+		let downloadSettings;
+		if (dlFilename) {
+			downloadSettings = {
+				filename: `${dlFilename}`,
+				extract: extractFlag
+			};
+		} else {
+			downloadSettings = {
+				extract: extractFlag
+			};
+		}
+
+		sendTextToOutputChannel('Downloading from: ' + link);
+		await download(link, installFolder, downloadSettings)
+			.on('response', (response) => {
+				sendTextToOutputChannel(`Bytes to transfer: ${response.headers['content-length']}`);
+			}).on('downloadProgress', (progress) => {
+				let incr = progress.total > 0 ? Math.floor(progress.transferred / progress.total * 100) : 0;
+				let percent = Math.round(incr);
+				let message = `Download progress: ${progress.transferred} / ${progress.total} (${percent}%)`;
+				let tooltip = `Download progress for ${installFolder}`;
+				updateStatusBarItem(myStatusBarItem, message, tooltip);
+			}).then(async () => {
+				myStatusBarItem.dispose();
+				return true;
+			}).catch((error) => {
+				console.log(error);
+			});
+		myStatusBarItem.dispose();
+		return false;
+	}
+	
+	function updateStatusBarItem(sbItem : vscode.StatusBarItem, text: string, tooltip : string): void {
+		if (text) {
+			sbItem.text = text;
+			sbItem.tooltip = tooltip;
+			sbItem.show();
+		} else {
+			sbItem.hide();
+		}
+	}	
 }

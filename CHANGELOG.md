@@ -4,7 +4,8 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.16
 
- - TBD
+ - Adding "vscode.didact.copyFileURLtoWorkspaceCommand" command to copy a file from a file URL into the workspace
+ - Improved "vscode.didact.copyFileURLtoWorkspaceCommand" to also unzip when needed
 
 ## 0.1.15
 

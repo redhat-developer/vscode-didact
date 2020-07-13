@@ -1,6 +1,8 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {extensionFunctions} from '../../extensionFunctions';
+import { handleProjectFilePath } from '../../commandHandler';
+import * as path from 'path';
 
 suite('Extension Functions Test Suite', () => {
 
@@ -96,6 +98,59 @@ suite('Extension Functions Test Suite', () => {
 			'vscode-didact/master/demos/markdown/didact-demo.didact.md',
 			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
 	});
+
+	test('try to copy a file to workspace root with no change to filename', async function() {
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
+		const filepathUri = handleProjectFilePath(''); // get workspace root
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath);
+		}
+	});
+
+	test('try to copy a file with a change to location', async function() {
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
+		const filepathUri = handleProjectFilePath('newfolder'); // add a folder
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath);
+		}
+	});
+
+	test('try to copy a file to workspace root with a change to filename', async function() {
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
+		const filepathUri = handleProjectFilePath(''); // get workspace root
+		const newFilename = `spongebob-exit.gif`;
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename);
+		}
+	});
+
+	test('try to copy a file with a change to location and filename change', async function() {
+		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
+		const filepathUri = handleProjectFilePath('newfolder2'); // create a new folder
+		const newFilename = `spongebob-exit2.gif`;
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename);
+		}
+	});
+
+	test('try to copy a zip file and not unzip it with a change to location and filename change', async function() {
+		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz';
+		const filepathUri = handleProjectFilePath('expanded'); // create a folder to unzip into
+		const newFilename = `giphy.tar.gz`;
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, false);
+		}
+	});
+
+	test('try to copy and unzip a file with a change to location and filename change', async function() {
+		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz';
+		const filepathUri = handleProjectFilePath('expanded2'); // create a folder to unzip into
+		const newFilename = `testarchive.tar.gz`;
+		const fileToLookFor = `testfile/spongebob-expands.gif`;
+		if (filepathUri) {
+			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, true, fileToLookFor, true);
+		}
+	});
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
@@ -112,4 +167,27 @@ function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alt
 		var checkEnds = checkEnd1 || checkEnd2;
 		assert.strictEqual(checkEnds, true);
 	}
+}
+
+async function checkCanFindCopiedFile(filepath : string) {
+	console.log(`Testing ${filepath} to ensure that it exists after a copyFileFromURLtoLocalURI call`);
+	assert.notStrictEqual(filepath, null);
+	assert.notStrictEqual(filepath, undefined);
+	let pathUri = vscode.Uri.parse(filepath);
+	await vscode.workspace.fs.readFile(pathUri).then( (rtnUri) => {
+		assert.notStrictEqual(rtnUri, undefined);
+	});	
+}
+
+async function testCopyFileFromURLtoLocalURI( fileURL : string, workspaceLocation : string, newfilename? : string, unzip? : boolean, testFileInFolder? : string, ignoreOverwrite = false) {
+	await extensionFunctions.downloadAndUnzipFile(fileURL, workspaceLocation, newfilename, unzip, ignoreOverwrite)
+		.then( async (returnedFilePath) => {
+			if (testFileInFolder) {
+				let folder = path.dirname(returnedFilePath);
+				let testFile = path.join(folder, testFileInFolder);
+				await checkCanFindCopiedFile(testFile);
+			} else {
+				await checkCanFindCopiedFile(returnedFilePath);
+			}
+	});
 }
