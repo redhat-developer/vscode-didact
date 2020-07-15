@@ -89,7 +89,7 @@ export class DidactWebviewPanel {
 			DidactWebviewPanel.currentPanel.setDidactStr(undefined);
 			const configuredUri : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
 			if (configuredUri) {
-				let defaultUri = vscode.Uri.parse(configuredUri);
+				const defaultUri = vscode.Uri.parse(configuredUri);
 				DidactWebviewPanel.currentPanel.setDidactUriPath(defaultUri);
 			}
 			DidactWebviewPanel.currentPanel._update(true);
