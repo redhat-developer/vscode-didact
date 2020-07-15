@@ -87,7 +87,11 @@ export class DidactWebviewPanel {
 	public static hardReset() {
 		if (DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.currentPanel.setDidactStr(undefined);
-			DidactWebviewPanel.currentPanel.setDidactUriPath(undefined);
+			const configuredUri : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
+			if (configuredUri) {
+				let defaultUri = vscode.Uri.parse(configuredUri);
+				DidactWebviewPanel.currentPanel.setDidactUriPath(defaultUri);
+			}
 			DidactWebviewPanel.currentPanel._update(true);
 		}
 	}
