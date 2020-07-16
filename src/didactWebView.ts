@@ -21,7 +21,7 @@ import * as path from 'path';
 import * as commandHandler from './commandHandler';
 import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
-import { getLastColumnUsedSetting, setLastColumnUsedSetting } from './utils';
+import { getLastColumnUsedSetting, setLastColumnUsedSetting, DIDACT_DEFAULT_URL } from './utils';
 
 export class DidactWebviewPanel {
 	/**
@@ -87,7 +87,11 @@ export class DidactWebviewPanel {
 	public static hardReset() {
 		if (DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.currentPanel.setDidactStr(undefined);
-			DidactWebviewPanel.currentPanel.setDidactUriPath(undefined);
+			const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
+			if (configuredUri) {
+				const defaultUri = vscode.Uri.parse(configuredUri);
+				DidactWebviewPanel.currentPanel.setDidactUriPath(defaultUri);
+			}
 			DidactWebviewPanel.currentPanel._update(true);
 		}
 	}
