@@ -20,22 +20,30 @@ import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { DidactWebviewPanel } from '../../didactWebView';
 import { START_DIDACT_COMMAND } from '../../extensionFunctions';
-
-const testUri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
-
-// this is set as the default in package.json for the didact.defaultUrl setting
-const defaultUri = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md';
+import { fail } from 'assert';
+import { DIDACT_DEFAULT_URL } from '../../utils';
 
 suite("Didact Web View tests", function () {
 
+	const testUri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
+
 	test("ensure that we can reset the didact URI to return to the default", async () => {
-		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testUri);
-		if (DidactWebviewPanel.currentPanel) {
-			let oldPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
-			DidactWebviewPanel.hardReset();
-			let newPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
-			expect(oldPath).not.equals(newPath);
-			expect(newPath).equals(defaultUri);
+		const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
+		if (configuredUri) {
+			const defaultUri = vscode.Uri.parse(configuredUri);
+			await vscode.commands.executeCommand(START_DIDACT_COMMAND, testUri);
+			if (DidactWebviewPanel.currentPanel) {
+				let oldPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
+				DidactWebviewPanel.hardReset();
+
+				let newPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
+				expect(oldPath).not.equals(newPath);
+				expect(newPath).equals(defaultUri.toString());
+			} else {
+				fail(`DidactWebviewPanel did not open properly.`);
+			}
+		} else {
+			fail (`Unable to retrieve default didact tutorial URI from user settings`);
 		}
 	});	
 
