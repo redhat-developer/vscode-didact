@@ -44,7 +44,7 @@ link:didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectw
 
 ### Other capabilities
 
-* link:didact://?commandId=vscode.openFolder&projectFilePath=anotherProject/src/simple.groovy&completion=Opened%20the%20Simple.groovy%20file[You can open files for viewing and editing in their default editors (this opens the /anotherProject/src/simple.groovy file in the project we scaffolded in the last section).]
+* link:didact://?commandId=vscode.open&projectFilePath=anotherProject/src/simple.groovy&completion=Opened%20the%20Simple.groovy%20file[You can open files for viewing and editing in their default editors (this opens the /anotherProject/src/simple.groovy file in the project we scaffolded in the last section).]
 
 * link:didact://?commandId=vscode.didact.startTerminalWithName&completion=Opened%20a%20new%20terminal.[You can open integrated terminals.]
 
