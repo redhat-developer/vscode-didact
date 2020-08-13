@@ -20,7 +20,7 @@ import { extensionFunctions, initializeContext } from './extensionFunctions';
 import * as commandConstants from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
-import { registerTutorial, clearRegisteredTutorials } from './utils';
+import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting } from './utils';
 import * as path from 'path';
 import {DidactUriCompletionItemProviderMarkdown} from './didactUriCompletionItemProviderMarkdown';
 import {DidactUriCompletionItemProviderAsciiDoc} from './didactUriCompletionItemProviderAsciiDoc';
@@ -111,6 +111,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// create the view
 	createIntegrationsView();
+
+	// open at startup if setting is true
+	const openAtStartup : boolean = getOpenAtStartupSetting();
+	if (openAtStartup === true) {
+		await extensionFunctions.openDidactWithDefault();
+	}
 }
 
 function createIntegrationsView(): void {
