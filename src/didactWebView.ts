@@ -22,6 +22,7 @@ import * as commandHandler from './commandHandler';
 import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
 import { getLastColumnUsedSetting, setLastColumnUsedSetting, DIDACT_DEFAULT_URL } from './utils';
+import { parse } from 'node-html-parser';
 
 export class DidactWebviewPanel {
 	/**
@@ -71,14 +72,23 @@ export class DidactWebviewPanel {
 			let tempFilename = path.basename(inpath.fsPath);
 			if (DidactWebviewPanel.currentPanel) {
 				DidactWebviewPanel.currentPanel.defaultTitle = tempFilename;
-				DidactWebviewPanel.currentPanel.updateTitle();
 			}
 		}
-
 		this._update(true);
 	}
 
-	private updateTitle() {
+	private updateDefaultTitle() {
+		if (DidactWebviewPanel.currentPanel) {
+			if (DidactWebviewPanel.currentPanel.currentHtml) {
+				const firstHeading = this.getFirstHeadingText();
+				if (firstHeading && firstHeading.trim().length > 0) {
+					this.defaultTitle = firstHeading;
+				}
+			}
+		}
+	}
+
+	private updateWebViewTitle() {
 		if (DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.currentPanel._panel.title = this.defaultTitle;
 		}
@@ -356,7 +366,6 @@ export class DidactWebviewPanel {
 				if (cachedTitle) {
 					if (DidactWebviewPanel.currentPanel) {
 						DidactWebviewPanel.currentPanel.defaultTitle = cachedTitle;
-						DidactWebviewPanel.currentPanel.updateTitle();
 					}
 				}
 				console.log('Retrieved cached Didact content');
@@ -371,12 +380,16 @@ export class DidactWebviewPanel {
 						this.setIsAsciiDoc(isAdoc);
 					}
 				}
-				this._panel.title = this.defaultTitle;
 			}
 		}
 		if (this.currentHtml) {
 			DidactWebviewPanel.cacheFile(); // update the cache with the new content
 			this._panel.webview.html = this.currentHtml;
+		}
+		if (DidactWebviewPanel.currentPanel) {
+			// try to get a better title from the html if we can
+			this.updateDefaultTitle();
+			DidactWebviewPanel.currentPanel.updateWebViewTitle();
 		}
 	}
 
@@ -430,6 +443,24 @@ export class DidactWebviewPanel {
 				}
 			} catch (error) {
 				console.error(error);
+			}
+		}
+		return undefined;
+	}
+
+	getFirstHeadingText() : string | undefined {
+		const html = this.getCurrentHTML();
+		if (html) {
+			const parsed = parse(html);
+			if (parsed) {
+				const h1 = parsed.querySelector('h1');
+				if (h1) {
+					return h1.text;
+				}
+				const h2 = parsed.querySelector('h2');
+				if (h2) {
+					return h2.text;
+				}
 			}
 		}
 		return undefined;

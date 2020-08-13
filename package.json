@@ -200,6 +200,7 @@
 		"markdown-it-attrs": "^3.0.3",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.0",
+		"node-html-parser": "^1.2.20",
 		"tmp": "^0.1.0",
 		"xmldom": "^0.1.31"
 	}
