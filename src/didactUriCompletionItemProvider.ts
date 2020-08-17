@@ -226,7 +226,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	}
 
 	protected nonDidactCommandCompletion(labelText: string, completions : vscode.CompletionItem[]) {
-		// example: didact://?commandId=vscode.openFolder&projectFilePath=anotherProject/src/simple.groovy	
+		// example: didact://?commandId=vscode.open&projectFilePath=anotherProject/src/simple.groovy	
 		const snippetString = "commandId=${1:CommandId}";
 		const docs = "Inserts a snippet for Didact to call another kind of command. May require additional configuration based on parameters required.";
 		this.processSimplerLink(labelText, snippetString, docs, completions);

@@ -60,7 +60,7 @@ We can now even test all the requirements at once!
 
 ### Other capabilities
 
-[You can open files for viewing and editing in their default editors (this opens the /anotherProject/src/simple.groovy file in the project we scaffolded in the last section).](didact://?commandId=vscode.openFolder&projectFilePath=anotherProject/src/simple.groovy&completion=Opened%20the%20Simple.groovy%20file "Opens the Simple.groovy file in the 'anotherProject' folder we scaffolded in the last section"){.didact}
+[You can open files for viewing and editing in their default editors (this opens the /anotherProject/src/simple.groovy file in the project we scaffolded in the last section).](didact://?commandId=vscode.open&projectFilePath=anotherProject/src/simple.groovy&completion=Opened%20the%20Simple.groovy%20file "Opens the Simple.groovy file in the 'anotherProject' folder we scaffolded in the last section"){.didact}
 
 [You can open integrated terminals.](didact://?commandId=vscode.didact.startTerminalWithName&completion=Opened%20a%20new%20terminal. "Opens a new terminal"){.didact}
 

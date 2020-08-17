@@ -41,11 +41,11 @@ Or you can [create a sample project in your VS Code workspace.](didact://?comman
 
 ### Step 2: Exploring the Pure Java Solution
 
-The chapter starts by looking at the pure Java solution with no Camel. You can find that in the `file-copy` directory at `src/main/java/camleinaction/FileCopier.java`. If you have the project in your workspace, you can [open the java file in the editor.](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/src/main/java/camelinaction/FileCopier.java&completion=Opened%20the%20FileCopier.java%20file "Opens the FileCopier.java file"){.didact}
+The chapter starts by looking at the pure Java solution with no Camel. You can find that in the `file-copy` directory at `src/main/java/camleinaction/FileCopier.java`. If you have the project in your workspace, you can [open the java file in the editor.](didact://?commandId=vscode.open&projectFilePath=file-copy/src/main/java/camelinaction/FileCopier.java&completion=Opened%20the%20FileCopier.java%20file "Opens the FileCopier.java file"){.didact}
 
 ### Step 3: Exploring the Camel Solution
 
-The chapter then looks at the Camel solution. You can find that in the `file-copy` directory at `src/main/java/camleinaction/FileCopierWithCamel.java`. If you have the project in your workspace, you can [open the Java Camel file in the editor.](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%20FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file"){.didact}
+The chapter then looks at the Camel solution. You can find that in the `file-copy` directory at `src/main/java/camleinaction/FileCopierWithCamel.java`. If you have the project in your workspace, you can [open the Java Camel file in the editor.](didact://?commandId=vscode.open&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%20FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file"){.didact}
 
 ### Step 4: Running the Route
 
@@ -59,13 +59,13 @@ You can watch the log as messages appear in the terminal window while the Camel 
 
 ![Terminal with Camel Console Output](terminal-camel-console-log.png){.imageCenter}
 
-When it finishes, you can open the output file in the `file-copy/data/outbox` directory (or [use this link to open the file.](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/data/outbox/message1.xml&completion=Opened%20the%20output%20file "Opens the file copied to the output folder"){.didact})
+When it finishes, you can open the output file in the `file-copy/data/outbox` directory (or [use this link to open the file.](didact://?commandId=vscode.open&projectFilePath=file-copy/data/outbox/message1.xml&completion=Opened%20the%20output%20file "Opens the file copied to the output folder"){.didact})
 
 <details><summary>Step 5: Bonus points!</summary>
 
 To get a feel for modifying a Camel route yourself, why not add a log message?
 
-[Open the FileCopierWithCamel.java file](didact://?commandId=vscode.openFolder&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file in the created project"){.didact} and add the following in the `public void configure()` method between the from and the to:
+[Open the FileCopierWithCamel.java file](didact://?commandId=vscode.open&projectFilePath=file-copy/src/main/java/camelinaction/FileCopierWithCamel.java&completion=Opened%20the%FileCopierWithCamel.java%20file "Opens the FileCopierWithCamel.java file in the created project"){.didact} and add the following in the `public void configure()` method between the from and the to:
 
 ```java
     .log("Hello World!")
