@@ -76,11 +76,7 @@ export function isDefaultNotificationDisabled() : boolean | undefined {
 }
 
 export function getOpenAtStartupSetting() : boolean {
-	const openAtStartupSetting : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_OPEN_AT_STARTUP);
-	if (openAtStartupSetting && openAtStartupSetting === `true`) {
-		return true;
-	}
-	return false;
+	return vscode.workspace.getConfiguration().get(DIDACT_OPEN_AT_STARTUP, false);
 }
 
 export function getRegisteredTutorials() : string[] | undefined {

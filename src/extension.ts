@@ -114,7 +114,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// open at startup if setting is true
 	const openAtStartup : boolean = getOpenAtStartupSetting();
-	if (openAtStartup === true) {
+	if (openAtStartup) {
 		await extensionFunctions.openDidactWithDefault();
 	}
 }
