@@ -66,6 +66,14 @@ export class DidactWebviewPanel {
 		return this.didactStr;
 	}
 
+	// public for testing purposes
+	public getDidactDefaultTitle() : string | undefined {
+		if (DidactWebviewPanel.currentPanel) {
+			return DidactWebviewPanel.currentPanel.defaultTitle;
+		}
+		return undefined;
+	}
+
 	public setDidactUriPath(inpath : vscode.Uri | undefined) {
 		this.didactUriPath = inpath;
 		if (inpath) {
@@ -80,7 +88,7 @@ export class DidactWebviewPanel {
 	private updateDefaultTitle() {
 		if (DidactWebviewPanel.currentPanel) {
 			if (DidactWebviewPanel.currentPanel.currentHtml) {
-				const firstHeading = this.getFirstHeadingText();
+				const firstHeading : string | undefined = this.getFirstHeadingText();
 				if (firstHeading && firstHeading.trim().length > 0) {
 					this.defaultTitle = firstHeading;
 				}
@@ -434,12 +442,11 @@ export class DidactWebviewPanel {
 
 	getCachedTitle() : string | undefined {
 		if (DidactWebviewPanel.context) {
-			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`);
-			const titleFilePath = path.join(cachePath, 'currentTitle.txt');
+			const cachePath : string = path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`);
+			const titleFilePath : string = path.join(cachePath, 'currentTitle.txt');
 			try {
 				if (fs.existsSync(titleFilePath)) {
-					let contents = fs.readFileSync(titleFilePath);
-					return contents.toLocaleString();
+					return fs.readFileSync(titleFilePath).toLocaleString();
 				}
 			} catch (error) {
 				console.error(error);
