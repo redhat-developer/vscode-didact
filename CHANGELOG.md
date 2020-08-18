@@ -4,7 +4,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.17
 
- - TBD
+ - Improved webview title handling, attempting to grab the first H1 or H2 heading in the generated HTML [#118](https://github.com/redhat-developer/vscode-didact/issues/118)
 
 ## 0.1.16
 

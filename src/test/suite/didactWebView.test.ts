@@ -20,7 +20,7 @@ import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { DidactWebviewPanel } from '../../didactWebView';
 import { START_DIDACT_COMMAND } from '../../extensionFunctions';
-import { fail } from 'assert';
+import { ok, fail } from 'assert';
 import { DIDACT_DEFAULT_URL } from '../../utils';
 
 suite("Didact Web View tests", function () {
@@ -45,6 +45,75 @@ suite("Didact Web View tests", function () {
 		} else {
 			fail (`Unable to retrieve default didact tutorial URI from user settings`);
 		}
-	});	
+	});
 
+	test("ensure we can get a valid H1 title out of the didact file", async () => {
+		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithH1.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
+		if (DidactWebviewPanel.currentPanel) {
+			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			if (firstheading) {
+				console.log(`Retrieved first heading: ${firstheading}`);
+				expect(firstheading).equals('This should be the H1 heading');
+				expect(firstheading).not.equals('This would be the H2 heading, but should not be picked');
+			} else {
+				fail(`DidactWebviewPanel did not find first H1 heading.`);
+			}
+		} else {
+			fail(`DidactWebviewPanel did not open properly.`);
+		}
+	});
+
+	test("ensure we can get the first valid H1 title out of a didact file with multiple H1s", async () => {
+		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithMultipleH1.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
+		if (DidactWebviewPanel.currentPanel) {
+			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			if (firstheading) {
+				console.log(`Retrieved first heading: ${firstheading}`);
+				expect(firstheading).equals('This should be the first H1 heading');
+				expect(firstheading).not.equals('This would be a second H1 heading, but should not be picked');
+			} else {
+				fail(`DidactWebviewPanel did not find first H1 heading.`);
+			}
+		} else {
+			fail(`DidactWebviewPanel did not open properly.`);
+		}
+	});
+
+	test("ensure we can get a valid H2 title out of the didact file", async () => {
+		const testOneH2Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithH2.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH2Uri);
+		if (DidactWebviewPanel.currentPanel) {
+			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			if (firstheading) {
+				console.log(`Retrieved first heading: ${firstheading}`);
+				expect(firstheading).equals('This should be the H2 heading');
+				expect(firstheading).not.equals('This would be the H3 heading, but should not be picked');
+			} else {
+				fail(`DidactWebviewPanel did not find first H2 heading.`);
+			}
+		} else {
+			fail(`DidactWebviewPanel did not open properly.`);
+		}
+	});
+
+	test("ensure we can get no title out of the didact file if no headings present", async () => {
+		const testOneH2Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithNoHeadings.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH2Uri);
+		if (DidactWebviewPanel.currentPanel) {
+			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			if (firstheading) {
+				console.log(`Retrieved first heading, though we should not have: ${firstheading}`);
+				fail(`DidactWebviewPanel found a heading when no heading should be present.`);
+			} else {
+				ok(`DidactWebviewPanel did not find a heading when there was no heading to find.`);
+				let defaultTitle : string | undefined = DidactWebviewPanel.currentPanel.getDidactDefaultTitle();
+				console.log(`Retrieved default heading: ${defaultTitle}`);
+				expect(defaultTitle).equals('didactWithNoHeadings.didact.md');
+			}
+		} else {
+			fail(`DidactWebviewPanel did not open properly.`);
+		}
+	});
 });
