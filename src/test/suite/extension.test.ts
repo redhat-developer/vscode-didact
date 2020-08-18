@@ -1,9 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { DidactWebviewPanel } from '../../didactWebView';
 import { getOpenAtStartupSetting } from '../../utils';
-import { systemDefaultPlatform } from 'vscode-test/out/util';
-
+import { expect } from 'chai';
 
 suite('Extension Test Suite', () => {
 	const extensionId = 'redhat.vscode-didact';
@@ -13,14 +11,9 @@ suite('Extension Test Suite', () => {
 		done();
 	});
 
-	test('by default, didact setting to open on startup should be false', function (done) {
+	test('by default, didact setting to open on startup should be false', function () {
 		const openAtStartup : boolean = getOpenAtStartupSetting();
 		console.log(`openAtStartup = ${openAtStartup}`);
-		if (openAtStartup === true) {
-			assert.fail('Open by default setting should be false by default');
-		} else {
-			assert.ok('Open by Default setting is correctly set to false by default.');
-		}
-		done();
+		expect(openAtStartup).equals(false);
 	});
 });
