@@ -13,14 +13,13 @@ suite('Extension Test Suite', () => {
 		done();
 	});
 
-	test('by default, didact setting to open on startup should be false', async function (done) {
+	test('by default, didact setting to open on startup should be false', function () {
 		const openAtStartup : boolean = getOpenAtStartupSetting();
 		console.log(`openAtStartup = ${openAtStartup}`);
-		if (openAtStartup === true) {
+		if (openAtStartup) {
 			assert.fail('Open by default setting should be false by default');
 		} else {
 			assert.ok('Open by Default setting is correctly set to false by default.');
 		}
-		done();
 	});
 });
