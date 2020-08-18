@@ -181,7 +181,7 @@
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^5.2.6",
 		"@types/node": "^10.17.21",
-		"@types/vscode": "^1.45.0",
+		"@types/vscode": "^1.48.0",
 		"chai": "^4.2.0",
 		"mocha": "^6.2.3",
 		"mocha-jenkins-reporter": "^0.4.3",
