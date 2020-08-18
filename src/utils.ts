@@ -80,8 +80,7 @@ export function getOpenAtStartupSetting() : boolean {
 }
 
 export function getRegisteredTutorials() : string[] | undefined {
-	const registered : string[] | undefined = context.workspaceState.get(DIDACT_REGISTERED_SETTING);
-	return registered;
+	return context.workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
 export async function registerTutorial(name : string, sourceUri : string, category : string ) {
