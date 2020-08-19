@@ -22,6 +22,17 @@ function () {
 	//connect to the vscode api
 	const vscode = acquireVsCodeApi();
 
+	class Window_History {  
+		Back() {
+			window.history.back();
+		}
+		Forward() {
+			window.history.forward();
+		}
+	}
+
+	var obj = new Window_History();
+
 	document.body.addEventListener('click', event => {
 		let node = event && event.target;
 		while (node) {
@@ -79,36 +90,44 @@ function () {
 				const requirementName = json.requirementName;
 				const isAvailable = json.result;
 
+				let requirementMessage = 'Not currently available';
 				let element = document.getElementById(requirementName);
 				if (element) {
-					let message = 'Not currently avaialable';
 					let green = "green";
 					let red = "red";
 					if (String(isAvailable).toLowerCase() === 'true') {
-						message = 'Available';
+						requirementMessage = 'Available';
 						element.style.color = green;
 					} else {
-						message = 'Unavailable';
+						requirementMessage = 'Unavailable';
 						element.style.color = red;
 					}
-					element.textContent = `Status: ${message}`;
+					element.textContent = `Status: ${requirementMessage}`;
 				}
 				console.log(`${requirementName} is available: ${isAvailable}`);
 				break;
 			case 'allRequirementCheck':
 				var links = collectElements("a");
 				for (let index = 0; index < links.length; index++) {
-					const element = links[index];
-					if (element.getAttribute('href')) {
-						const href = element.getAttribute('href');
+					const linkElements = links[index];
+					if (linkElements.getAttribute('href')) {
+						const href = linkElements.getAttribute('href');
 						for(let check of requirementCommandLinks) {
 							if (href.startsWith(check)) {
-								element.click();
+								linkElements.click();
 							}
 						}
 					}
 				}
 				break;
-			}
+			case 'back':
+				console.log(`Going back`);
+				obj.Back();
+				break;
+			case 'forward':
+				console.log(`Going forward`);
+				obj.Forward();
+				break;
+		}
 	});
 }());

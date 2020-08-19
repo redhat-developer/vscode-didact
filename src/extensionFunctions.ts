@@ -29,6 +29,7 @@ import { TreeNode } from './nodeProvider';
 import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as url from 'url';
 import * as download from 'download';
+import { DidactHistory } from './history';
 
 let didactOutputChannel: vscode.OutputChannel | undefined = undefined;
 
@@ -58,6 +59,8 @@ export const CLI_SUCCESS_COMMAND = 'vscode.didact.cliCommandSuccessful';
 export const VALIDATE_COMMAND_IDS = 'vscode.didact.verifyCommands';
 export const TEXT_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyToClipboardCommand';
 export const COPY_FILE_URL_TO_WORKSPACE_COMMAND = 'vscode.didact.copyFileURLtoWorkspaceCommand';
+export const HISTORY_BACK_COMMAND = 'vscode.didact.historyBack';
+export const HISTORY_FORWARD_COMMAND = 'vscode.didact.historyForward';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -78,6 +81,8 @@ export namespace extensionFunctions {
 
 	// stashed Didact URI
 	let _didactFileUri : vscode.Uri | undefined = undefined;
+
+	let historyList = new DidactHistory();
 
 	// stash the context so we have it for use by the command functions without passing it each time
 	export function setContext(inContext: vscode.ExtensionContext) {
@@ -250,6 +255,8 @@ export namespace extensionFunctions {
 		DidactWebviewPanel.setContext(context);
 		_didactFileUri = undefined;
 		DidactWebviewPanel.hardReset();
+		_didactFileUri = DidactWebviewPanel.currentPanel?.getDidactUriPath();
+		addToHistory(_didactFileUri);
 	}
 
 	export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri | undefined {
@@ -299,6 +306,13 @@ export namespace extensionFunctions {
 		return out;
 	}
 
+	function addToHistory(uri:vscode.Uri | undefined) {
+		if (uri) {
+			historyList.add(uri);
+			console.log(Array.from(historyList.getList().values()));
+		}		
+	}
+
 	// open the didact window with the didact file passed in via Uri
 	export async function startDidact(uri:vscode.Uri, viewColumn?: string) {
 		if (!uri) {
@@ -322,6 +336,7 @@ export namespace extensionFunctions {
 			_didactFileUri = out;
 		}
 		console.log(`--Retrieved file URI ${_didactFileUri}`);
+		addToHistory(_didactFileUri);
 		sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
 		const isAdoc = extensionFunctions.isAsciiDoc();
 		DidactWebviewPanel.createOrShow(context.extensionPath, _didactFileUri, actualColumn);
@@ -828,5 +843,25 @@ export namespace extensionFunctions {
 		} else {
 			sbItem.hide();
 		}
-	}	
+	}
+
+	export async function historyBack() : Promise<void> {
+		sendTextToOutputChannel(`Moving back through the Webview history one entry`);
+		if (DidactWebviewPanel.currentPanel) {
+			let value = historyList.getPrevious()?.value;
+			if (value) {
+				startDidact(value);
+			}
+		}
+	}
+
+	export async function historyForward() : Promise<void> {
+		sendTextToOutputChannel(`Moving forward through the Webview history one entry`);
+		if (DidactWebviewPanel.currentPanel) {
+			let value = historyList.getNext()?.value;
+			if (value) {
+				startDidact(value);
+			}
+		}
+	}
 }

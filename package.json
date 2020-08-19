@@ -108,6 +108,16 @@
 				"command": "vscode.didact.verifyCommands",
 				"title": "Validate Didact File",
 				"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+			},
+			{
+				"command": "vscode.didact.historyBack",
+				"title": "Move Backward One Item in the Didact History",
+				"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+			},
+			{
+				"command": "vscode.didact.historyForward",
+				"title": "Move Forward One Item in the Didact History",
+				"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
 			}
 		],
 		"keybindings": [
@@ -116,6 +126,18 @@
 				"key": "ctrl+shift+v",
 				"mac": "cmd+shift+v",
 				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+			},
+			{
+				"command": "vscode.didact.historyBack",
+				"key": "ctrl+shift+left",
+				"mac": "cmd+shift+left",
+				"when": "view == didact"
+			},
+			{
+				"command": "vscode.didact.historyForward",
+				"key": "ctrl+shift+right",
+				"mac": "cmd+shift+right",
+				"when": "activeEditor == didact"
 			}
 		],
 		"menus": {
