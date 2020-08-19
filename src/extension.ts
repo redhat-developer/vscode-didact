@@ -119,6 +119,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	if (openAtStartup) {
 		await extensionFunctions.openDidactWithDefault();
 	}
+
+	// workaround to retrieve cached Uri for last didact opened at session shutdown
+	extensionFunctions.addCachedDidactUriToHistory();
 }
 
 function createIntegrationsView(): void {

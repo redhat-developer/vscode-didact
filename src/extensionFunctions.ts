@@ -306,7 +306,17 @@ export namespace extensionFunctions {
 		return out;
 	}
 
-	function addToHistory(uri:vscode.Uri | undefined) {
+	export function addCachedDidactUriToHistory() {
+		if (DidactWebviewPanel.currentPanel) {
+			let stashedUri = DidactWebviewPanel.currentPanel.getCachedUri();
+			if (stashedUri) {
+				let realUri = vscode.Uri.parse(stashedUri);
+				extensionFunctions.addToHistory(realUri);
+			}
+		}
+	}
+
+	export function addToHistory(uri:vscode.Uri | undefined) {
 		if (uri) {
 			historyList.add(uri);
 			console.log(Array.from(historyList.getList().values()));
@@ -850,7 +860,7 @@ export namespace extensionFunctions {
 		if (DidactWebviewPanel.currentPanel) {
 			let value = historyList.getPrevious()?.value;
 			if (value) {
-				startDidact(value);
+				startDidact(vscode.Uri.parse(value));
 			}
 		}
 	}
@@ -860,7 +870,7 @@ export namespace extensionFunctions {
 		if (DidactWebviewPanel.currentPanel) {
 			let value = historyList.getNext()?.value;
 			if (value) {
-				startDidact(value);
+				startDidact(vscode.Uri.parse(value));
 			}
 		}
 	}
