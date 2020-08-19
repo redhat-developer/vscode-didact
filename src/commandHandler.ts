@@ -92,6 +92,12 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 					await handleUser(user, output, errorMessage);
 				}
 			}
+			if (query.number) {
+				const text = getValue(query.number);
+				if (text) {
+					output.push(+text);
+				}
+			}
 
 			console.log(`commandId : ${commandId}`);
 			console.log(`output : ${output.toString()}`);
