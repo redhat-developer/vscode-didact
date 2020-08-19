@@ -57,6 +57,12 @@
 						"default": "true",
 						"description": "Disable all generic Didact completion notifications",
 						"scope": "window"
+					},
+					"didact.openDefaultTutorialAtStartup": {
+						"type": "boolean",
+						"default": "false",
+						"description": "Automatically open the default Didact file at workspace startup",
+						"scope": "window"
 					}
 				}
 			}

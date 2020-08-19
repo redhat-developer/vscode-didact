@@ -25,6 +25,7 @@ export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
 export const DIDACT_NOTIFICATION_SETTING : string = 'didact.disableNotifications';
 export const DIDACT_COLUMN_SETTING : string = 'didact.lastColumnUsed';
+export const DIDACT_OPEN_AT_STARTUP : string = 'didact.openDefaultTutorialAtStartup';
 
 // stashed extension context
 let context : vscode.ExtensionContext;
@@ -74,9 +75,12 @@ export function isDefaultNotificationDisabled() : boolean | undefined {
 	return notificationSetting;
 }
 
+export function getOpenAtStartupSetting() : boolean {
+	return vscode.workspace.getConfiguration().get(DIDACT_OPEN_AT_STARTUP, false);
+}
+
 export function getRegisteredTutorials() : string[] | undefined {
-	const registered : string[] | undefined = context.workspaceState.get(DIDACT_REGISTERED_SETTING);
-	return registered;
+	return context.workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
 export async function registerTutorial(name : string, sourceUri : string, category : string ) {
