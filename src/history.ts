@@ -49,4 +49,10 @@ export class DidactHistory {
 			console.log(error);
 		}
 	}
+
+	// for testing purposes
+	public clearHistory() {
+		this.list = new DoublyLinkedList<string>();
+		this.current = undefined;
+	}
 }

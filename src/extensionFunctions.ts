@@ -316,10 +316,14 @@ export namespace extensionFunctions {
 		}
 	}
 
+	// exposed for testing
+	export function getHistory() : DidactHistory {
+		return historyList;
+	}
+
 	export function addToHistory(uri:vscode.Uri | undefined) {
 		if (uri) {
 			historyList.add(uri);
-			console.log(Array.from(historyList.getList().values()));
 		}		
 	}
 

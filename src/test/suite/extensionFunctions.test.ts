@@ -5,8 +5,13 @@ import { handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
 import { beforeEach, after } from 'mocha';
+import { expect } from 'chai';
 
 suite('Extension Functions Test Suite', () => {
+
+	const uriOne : string = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md';
+	const uriTwo : string = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/asciidoc/didact-demo.didact.adoc';
+	const uriThree : string = 'https://github.com/redhat-developer/vscode-didact/blob/master/demos/markdown/camelinaction/chapter1/cia2-chapter-1-v2.didact.md';
 
 	async function cleanFiles() {
 		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
@@ -20,7 +25,6 @@ suite('Extension Functions Test Suite', () => {
 		];
 		await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
 	}
-	
 
 	beforeEach(async () => {
 		await cleanFiles();
@@ -175,6 +179,43 @@ suite('Extension Functions Test Suite', () => {
 			await testCopyFileFromURLtoLocalURI(urlToTest, filepathUri.fsPath, newFilename, true, fileToLookFor, true);
 		}
 	});
+
+	test('test history tracking', function() {
+		console.log('clear history for test');
+		extensionFunctions.getHistory().clearHistory();
+		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(0);
+
+		let one : vscode.Uri = vscode.Uri.parse(uriOne);
+		let two : vscode.Uri = vscode.Uri.parse(uriTwo);
+		let three : vscode.Uri = vscode.Uri.parse(uriThree);
+
+		console.log(`add uri - ${uriOne}`);
+		extensionFunctions.addToHistory(one);
+		console.log(`add uri - ${uriTwo}`);
+		extensionFunctions.addToHistory(two);
+		console.log(`add uri - ${uriThree}`);
+		extensionFunctions.addToHistory(three);
+
+		console.log(`expect ${Array.from(extensionFunctions.getHistory().getList().values())} to include ${uriOne}`);
+		expect(Array.from(extensionFunctions.getHistory().getList().values())).to.contain(uriOne);
+		console.log(`expect ${Array.from(extensionFunctions.getHistory().getList().values())} to include ${uriTwo}`);
+		expect(Array.from(extensionFunctions.getHistory().getList().values())).to.contain(uriTwo);
+		console.log(`expect ${Array.from(extensionFunctions.getHistory().getList().values())} to include ${uriThree}`);
+		expect(Array.from(extensionFunctions.getHistory().getList().values())).to.contain(uriThree);
+
+		console.log(`expect ${extensionFunctions.getHistory().getCurrent()?.value} to be ${uriThree}`);
+		expect(extensionFunctions.getHistory().getCurrent()?.value).to.equal(uriThree);
+
+		console.log(`get next, to loop to head (${uriOne})`);
+		expect(extensionFunctions.getHistory().getNext()?.value).to.equal(uriOne);
+		console.log(`get previous, to loop to tail (${uriThree})`);
+		expect(extensionFunctions.getHistory().getPrevious()?.value).to.equal(uriThree);
+		console.log(`get previous, to loop to tail-1 (${uriTwo})`);
+		expect(extensionFunctions.getHistory().getPrevious()?.value).to.equal(uriTwo);
+		console.log(`get previous, to loop to tail-2 (${uriOne})`);
+		expect(extensionFunctions.getHistory().getPrevious()?.value).to.equal(uriOne);
+	});
+
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
