@@ -201,7 +201,7 @@
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.0",
 		"node-html-parser": "^1.2.20",
-		"tmp": "^0.1.0",
+		"tmp": "^0.2.1",
 		"xmldom": "^0.3.0"
 	}
 }
