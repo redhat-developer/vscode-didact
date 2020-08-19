@@ -18,13 +18,19 @@ export class DidactHistory {
 	}
 
 	public getPrevious() : DoublyLinkedListNode<Uri> | undefined {
-		const toReturn : DoublyLinkedListNode<Uri> | undefined = this.current?.prev;
+		let toReturn : DoublyLinkedListNode<Uri> | undefined = this.current?.prev;
+		// if (toReturn === this.list.head) {
+		// 	toReturn = this.list.tail;
+		// }
 		this.current = toReturn;
 		return toReturn;
 	}
 
 	public getNext() : DoublyLinkedListNode<Uri> | undefined {
-		const toReturn : DoublyLinkedListNode<Uri> | undefined = this.current?.next;
+		let toReturn : DoublyLinkedListNode<Uri> | undefined = this.current?.next;
+		// if (toReturn === this.list.tail) {
+		// 	toReturn = this.list.head;
+		// }
 		this.current = toReturn;
 		return toReturn;
 	}

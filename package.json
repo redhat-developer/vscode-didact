@@ -131,13 +131,13 @@
 				"command": "vscode.didact.historyBack",
 				"key": "ctrl+shift+left",
 				"mac": "cmd+shift+left",
-				"when": "view == didact"
+				"when": "didact.webview"
 			},
 			{
 				"command": "vscode.didact.historyForward",
 				"key": "ctrl+shift+right",
 				"mac": "cmd+shift+right",
-				"when": "activeEditor == didact"
+				"when": "didact.webview"
 			}
 		],
 		"menus": {

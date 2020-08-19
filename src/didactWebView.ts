@@ -152,15 +152,16 @@ export class DidactWebviewPanel {
 			}
 		);
 
-
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
 		if (inpath) {
 			DidactWebviewPanel.currentPanel.setDidactUriPath(inpath);
 		}
+		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
+		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
 	public static async postMessage(message: string) {
@@ -201,6 +202,10 @@ export class DidactWebviewPanel {
 
 	public static async postCollectAllCommandIdsMessage() {
 		DidactWebviewPanel.postNamedSimpleMessage("returnCommands");
+	}
+
+	public setActiveContext(value: boolean) {
+		vscode.commands.executeCommand('setContext', 'didact.webview', value);
 	}
 
 	private constructor(panel: vscode.WebviewPanel, extensionPath: string) {
