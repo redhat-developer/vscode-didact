@@ -129,14 +129,14 @@
 			},
 			{
 				"command": "vscode.didact.historyBack",
-				"key": "ctrl+shift+left",
-				"mac": "cmd+shift+left",
+				"key": "alt+down",
+				"mac": "alt+down",
 				"when": "didact.webview"
 			},
 			{
 				"command": "vscode.didact.historyForward",
-				"key": "ctrl+shift+right",
-				"mac": "cmd+shift+right",
+				"key": "alt+up",
+				"mac": "alt+up",
 				"when": "didact.webview"
 			}
 		],
