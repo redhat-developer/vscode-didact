@@ -216,6 +216,22 @@ suite('Extension Functions Test Suite', () => {
 		expect(extensionFunctions.getHistory().getPrevious()?.value).to.equal(uriOne);
 	});
 
+	test('test adding to history and clearing it', function() {
+		console.log('clear history for test');
+		extensionFunctions.getHistory().clearHistory();
+		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(0);
+
+		let one : vscode.Uri = vscode.Uri.parse(uriOne);
+		console.log(`add uri - ${uriOne}`);
+		extensionFunctions.addToHistory(one);
+		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(1);
+
+		console.log(`clear history via command function`);
+		extensionFunctions.clearHistory();
+		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(0);
+	});
+
+
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {

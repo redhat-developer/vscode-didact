@@ -112,12 +112,17 @@
 			{
 				"command": "vscode.didact.historyBack",
 				"title": "Move Backward One Item in the Didact History",
-				"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+				"when": "didact.webview"
 			},
 			{
 				"command": "vscode.didact.historyForward",
 				"title": "Move Forward One Item in the Didact History",
-				"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+				"when": "didact.webview"
+			},
+			{
+				"command": "vscode.didact.clearHistory",
+				"title": "Clears the Didact History",
+				"when": "didact.webview"
 			}
 		],
 		"keybindings": [

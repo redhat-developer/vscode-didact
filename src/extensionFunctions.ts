@@ -61,6 +61,7 @@ export const TEXT_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyToClipboardCommand';
 export const COPY_FILE_URL_TO_WORKSPACE_COMMAND = 'vscode.didact.copyFileURLtoWorkspaceCommand';
 export const HISTORY_BACK_COMMAND = 'vscode.didact.historyBack';
 export const HISTORY_FORWARD_COMMAND = 'vscode.didact.historyForward';
+export const HISTORY_CLEAR = 'vscode.didact.clearHistory';
 
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 
@@ -860,22 +861,29 @@ export namespace extensionFunctions {
 	}
 
 	export async function historyBack() : Promise<void> {
-		sendTextToOutputChannel(`Moving back through the Webview history one entry`);
+		sendTextToOutputChannel(`Moving back through the Didact history one entry`);
 		if (DidactWebviewPanel.currentPanel) {
 			let value = historyList.getPrevious()?.value;
 			if (value) {
-				startDidact(vscode.Uri.parse(value));
+				await startDidact(vscode.Uri.parse(value));
 			}
 		}
 	}
 
 	export async function historyForward() : Promise<void> {
-		sendTextToOutputChannel(`Moving forward through the Webview history one entry`);
+		sendTextToOutputChannel(`Moving forward through the Didact history one entry`);
 		if (DidactWebviewPanel.currentPanel) {
 			let value = historyList.getNext()?.value;
 			if (value) {
-				startDidact(vscode.Uri.parse(value));
+				await startDidact(vscode.Uri.parse(value));
 			}
+		}
+	}
+
+	export function clearHistory() {
+		sendTextToOutputChannel(`Clearing the Didact history`);
+		if (DidactWebviewPanel.currentPanel) {
+			historyList.clearHistory();
 		}
 	}
 }

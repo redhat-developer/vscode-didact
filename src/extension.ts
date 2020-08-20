@@ -60,6 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.COPY_FILE_URL_TO_WORKSPACE_COMMAND, extensionFunctions.copyFileFromURLtoLocalURI));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.HISTORY_BACK_COMMAND, extensionFunctions.historyBack));
 	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.HISTORY_FORWARD_COMMAND, extensionFunctions.historyForward));
+	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.HISTORY_CLEAR, extensionFunctions.clearHistory));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
