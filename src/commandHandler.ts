@@ -92,6 +92,8 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 					await handleUser(user, output, errorMessage);
 				}
 			}
+
+			// take some numerical input (i.e. "number=2")
 			if (query.number) {
 				const text = getValue(query.number);
 				if (text) {

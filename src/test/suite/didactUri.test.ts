@@ -28,4 +28,12 @@ suite("Didact URI parsing tests", function () {
 		expect(didactUri.getCommandId()).equals('test');
 	});	
 
+	test("ensure that we can get the number from the parsed didact uri", () => {
+		let ctx = extensionFunctions.getContext();
+		let didactUri = new DidactUri("didact://?commandId=testCommand&text=testText&number=2", ctx);
+		expect(didactUri.getCommandId()).equals('testCommand');
+		expect(didactUri.getText()).equals('testText');
+		expect(didactUri.getNumber()).equals('2');
+	});	
+
 });

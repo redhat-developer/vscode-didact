@@ -292,18 +292,64 @@ export namespace extensionFunctions {
 				}
 			} else if (uri.fsPath) {
 				out = uri;
+			} else {
+				out = vscode.Uri.parse(uri.toString());
 			}
 		}
 		return out;
 	}
 
 	// open the didact window with the didact file passed in via Uri
-	export async function startDidact(uri:vscode.Uri, viewColumn?: vscode.ViewColumn) {
+	export async function startDidact(uri:vscode.Uri, viewColumn?: any) {
 		if (!uri) {
 			uri = await utils.getCurrentFileSelectionPath();
 		}
 
-		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
+		// if column passed as number, convert to viewcolumn enum
+		let actualColumn : vscode.ViewColumn;
+		switch(viewColumn) { 
+			case '1': { 
+				actualColumn = vscode.ViewColumn.One;
+				break; 
+			} 
+			case '2': { 
+				actualColumn = vscode.ViewColumn.Two;
+				break; 
+			} 
+			case '3': { 
+				actualColumn = vscode.ViewColumn.Three;
+				break; 
+			} 
+			case '4': { 
+				actualColumn = vscode.ViewColumn.Four;
+				break; 
+			} 
+			case '5': { 
+				actualColumn = vscode.ViewColumn.Five;
+				break; 
+			} 
+			case '6': { 
+				actualColumn = vscode.ViewColumn.Six;
+				break; 
+			} 
+			case '7': { 
+				actualColumn = vscode.ViewColumn.Seven;
+				break; 
+			} 
+			case '8': { 
+				actualColumn = vscode.ViewColumn.Eight;
+				break; 
+			}
+			default: {
+				actualColumn = viewColumn;
+			}
+		}
+
+		if (actualColumn) {
+			sendTextToOutputChannel(`Starting Didact window with ${uri} ${actualColumn}`);
+		} else {
+			sendTextToOutputChannel(`Starting Didact window with ${uri}`);
+		}
 
 		let out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(uri);
 		if (!out) {
@@ -317,7 +363,7 @@ export namespace extensionFunctions {
 		console.log(`--Retrieved file URI ${_didactFileUri}`);
 		sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
 		const isAdoc = extensionFunctions.isAsciiDoc();
-		DidactWebviewPanel.createOrShow(context.extensionPath, _didactFileUri, viewColumn);
+		DidactWebviewPanel.createOrShow(context.extensionPath, _didactFileUri, actualColumn);
 		DidactWebviewPanel.setContext(context);
 		if (DidactWebviewPanel.currentPanel && _didactFileUri) {
 			DidactWebviewPanel.currentPanel.setIsAsciiDoc(isAdoc);
@@ -454,7 +500,7 @@ export namespace extensionFunctions {
 		} else {
 			uriToTest = _didactFileUri;
 		}
-		if (uriToTest) {
+		if (uriToTest && uriToTest.fsPath) {
 			const extname = path.extname(uriToTest.fsPath);
 			if (extname.localeCompare('.adoc') === 0) {
 				return true;

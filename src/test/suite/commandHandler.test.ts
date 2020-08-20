@@ -21,11 +21,11 @@ import { handleNumber } from '../../commandHandler';
 
 suite("Command Handler tests", function () {
 
-        test("Ensure that we can pass a number to a command", () => {
-                let output: any[] = [];
-                handleNumber(output, '2');
-                expect(output[0]).to.be.a('number');
-                expect(output[0]).to.equal(2);
-        })
+	test("Ensure that we can pass a number to a command", () => {
+		let output: any[] = [];
+		handleNumber(output, '2');
+		expect(output[0]).to.be.a('number');
+		expect(output[0]).to.equal(2);
+	})
 
 });

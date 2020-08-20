@@ -30,6 +30,7 @@ export class DidactUri {
 	private extFilePath : string | undefined;
 	private text : string | undefined;
 	private user : string | undefined;
+	private number : string | undefined;
 
 	private context: vscode.ExtensionContext;
 
@@ -70,6 +71,10 @@ export class DidactUri {
 		return this.user;
 	}
 
+	public getNumber() : string | undefined {
+		return this.number;
+	}
+
 	private parseDidactUrl(incoming: string) : void {
 		const parsedUrl = url.parse(incoming, true);
 		const query = parsedUrl.query;
@@ -100,6 +105,10 @@ export class DidactUri {
 				this.text = getValue(query.text);
 			} else if (query.user) {
 				this.user = getValue(query.user);
+			}
+
+			if (query.number) {
+				this.number = getValue(query.number);
 			}
 		}
 	}
