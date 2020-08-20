@@ -300,56 +300,17 @@ export namespace extensionFunctions {
 	}
 
 	// open the didact window with the didact file passed in via Uri
-	export async function startDidact(uri:vscode.Uri, viewColumn?: any) {
+	export async function startDidact(uri:vscode.Uri, viewColumn?: string) {
 		if (!uri) {
 			uri = await utils.getCurrentFileSelectionPath();
 		}
 
-		// if column passed as number, convert to viewcolumn enum
-		let actualColumn : vscode.ViewColumn;
-		switch(viewColumn) { 
-			case '1': { 
-				actualColumn = vscode.ViewColumn.One;
-				break; 
-			} 
-			case '2': { 
-				actualColumn = vscode.ViewColumn.Two;
-				break; 
-			} 
-			case '3': { 
-				actualColumn = vscode.ViewColumn.Three;
-				break; 
-			} 
-			case '4': { 
-				actualColumn = vscode.ViewColumn.Four;
-				break; 
-			} 
-			case '5': { 
-				actualColumn = vscode.ViewColumn.Five;
-				break; 
-			} 
-			case '6': { 
-				actualColumn = vscode.ViewColumn.Six;
-				break; 
-			} 
-			case '7': { 
-				actualColumn = vscode.ViewColumn.Seven;
-				break; 
-			} 
-			case '8': { 
-				actualColumn = vscode.ViewColumn.Eight;
-				break; 
-			}
-			default: {
-				actualColumn = viewColumn;
-			}
+		// if column passed, convert to viewcolumn enum
+		let actualColumn : vscode.ViewColumn = vscode.ViewColumn.Active;
+		if (viewColumn) {
+			actualColumn = (<any>vscode.ViewColumn)[viewColumn];
 		}
-
-		if (actualColumn) {
-			sendTextToOutputChannel(`Starting Didact window with ${uri} ${actualColumn}`);
-		} else {
-			sendTextToOutputChannel(`Starting Didact window with ${uri}`);
-		}
+		sendTextToOutputChannel(`Starting Didact window with ${uri}`);
 
 		let out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(uri);
 		if (!out) {
