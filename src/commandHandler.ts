@@ -95,7 +95,7 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 			if (query.number) {
 				const text = getValue(query.number);
 				if (text) {
-					output.push(+text);
+					handleNumber(output, text);
 				}
 			}
 
@@ -214,6 +214,11 @@ async function collectUserInput(args: string[]) : Promise<string[]> {
 		}
 	}
 	return outArgs;
+}
+
+
+export function handleNumber(output: any[], text: string) {
+	output.push(+text);
 }
 
 // actually call the command with all the various inputs collected
