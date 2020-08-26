@@ -445,7 +445,7 @@ export class DidactWebviewPanel {
 				const filePath = path.join(cachePath, filename);
 				try {
 					if (fs.existsSync(filePath)) {
-						let contents = fs.readFileSync(filePath);
+						const contents : Buffer = fs.readFileSync(filePath);
 						return contents.toLocaleString();
 					}
 				} catch (error) {
