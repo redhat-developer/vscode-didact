@@ -7,7 +7,7 @@ export class DidactHistory {
 
 	public add(uri : Uri) {
 		if (!this.uriAlreadyExists(uri.toString())) {
-			this.list.add(uri.toString());
+			this.list.push(uri.toString());
 			this.current = this.list.tail;
 		}
 	}

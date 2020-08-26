@@ -19,7 +19,7 @@ export class DoublyLinkedList<T> {
 	/**
 	* Adds an item in O(1)
 	**/
-	add(value: T) {
+	push(value: T) {
 		const node: DoublyLinkedListNode<T> = {
 			value,
 			next: undefined,
@@ -35,7 +35,7 @@ export class DoublyLinkedList<T> {
 		}
 		this.tail = node;
 	}
-  
+
 	/**
 	* FIFO removal in O(1)
 	*/
@@ -45,14 +45,13 @@ export class DoublyLinkedList<T> {
 			this.head = this.head.next;
 			if (!this.head) {
 				this.tail = undefined;
-			}
-			else {
-			this.head.prev = undefined;
+			} else {
+				this.head.prev = undefined;
 			}
 			return value;
 		}
 	}
-  
+
 	/**
 	 * LIFO removal in O(1)
 	 */
