@@ -26,6 +26,7 @@ import {DidactWebviewPanel} from '../../didactWebView';
 import * as url from 'url';
 import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
+import {removeFilesAndFolders} from '../../utils';
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
@@ -58,6 +59,12 @@ suite('Didact test suite', () => {
 
 		const extensionTestsPath = path.resolve(__dirname, './index');
 		console.log('extensionTestsPath: ' + extensionTestsPath);
+
+		const foldersAndFilesToRemove: string[] = [
+			'anotherProject', 
+			'root',
+		];
+		removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
 
 		// this should not fail because runTest is passing in a test workspace, but it is
 		if (!wsCheck) {

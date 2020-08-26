@@ -3,8 +3,26 @@ import * as vscode from 'vscode';
 import {extensionFunctions} from '../../extensionFunctions';
 import { handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
+import { expect } from 'chai';
+import {removeFilesAndFolders} from '../../utils';
+import { before } from 'mocha';
 
 suite('Extension Functions Test Suite', () => {
+
+	before(async () => {
+
+		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
+
+		const foldersAndFilesToRemove: string[] = [
+			'giphy.gif', 
+			'spongebob-exit.gif',
+			'expanded',
+			'expanded2',
+			'newfolder',
+			'newfolder2'
+		];
+		removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
+	});
 
 	test('send text to terminal', async function() {
 		const testTerminalName = 'testTerminal';
