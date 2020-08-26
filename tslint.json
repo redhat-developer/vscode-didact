@@ -9,7 +9,12 @@
 			true,
 			"always"
 		],
-		"triple-equals": true
+		"triple-equals": true,
+		"typedef": [
+			true, "call-signature", "parameter", "property-declaration", 
+			"variable-declaration", "member-variable-declaration", "object-destructuring", 
+			"array-destructuring"
+		]
 	},
 	"defaultSeverity": "warning"
 }

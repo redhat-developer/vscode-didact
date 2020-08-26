@@ -21,14 +21,15 @@ import {getValue} from './utils';
 import * as url from 'url';
 import {extensionFunctions} from './extensionFunctions';
 import {isDefaultNotificationDisabled} from './utils';
+import { ParsedUrlQuery } from 'querystring';
 
 // take the incoming didact link and allow a mix of a uri and text/user inputs
 export async function processInputs(incoming : string, extensionPath? : string) : Promise<void | undefined>  {
 	let output : any[] = [];
 	if (incoming) {
 		extensionFunctions.sendTextToOutputChannel(`Processing command inputs ${incoming} ${extensionPath}`);
-		const parsedUrl = url.parse(incoming, true);
-		const query = parsedUrl.query;
+		const parsedUrl : url.UrlWithParsedQuery = url.parse(incoming, true);
+		const query : ParsedUrlQuery = parsedUrl.query;
 
 		let commandId: string | undefined = undefined;
 		let completionMessage : string | undefined = undefined;
@@ -43,25 +44,25 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 
 			// handle either a project-based or extension/src-based file path
 			if (query.projectFilePath) {
-				const projectFilePath = getValue(query.projectFilePath);
+				const projectFilePath : string | undefined = getValue(query.projectFilePath);
 				if (projectFilePath) {
-					const addUri = handleProjectFilePath(projectFilePath);
+					const addUri : vscode.Uri | undefined = handleProjectFilePath(projectFilePath);
 					if (addUri) {
 						output.push(addUri);
 					}
 				}
 			} else if (query.srcFilePath && extensionPath) {
-				const srcFilePath = getValue(query.srcFilePath);
+				const srcFilePath : string | undefined = getValue(query.srcFilePath);
 				if (srcFilePath) {
-					let addUri = handleSrcFilePath(srcFilePath, extensionPath);
+					let addUri : vscode.Uri | undefined = handleSrcFilePath(srcFilePath, extensionPath);
 					if (addUri) {
 						output.push(addUri);
 					}
 				}
 			} else if (query.extFilePath) {
-				const extFilePath = getValue(query.extFilePath);
+				const extFilePath : string | undefined = getValue(query.extFilePath);
 				if (extFilePath) {
-					let addUri = handleExtFilePath(extFilePath);
+					let addUri : vscode.Uri | undefined = handleExtFilePath(extFilePath);
 					if (addUri) {
 						output.push(addUri);
 					}
@@ -80,20 +81,20 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 
 			// take some text input (i.e. "text=one$$two$$three")
 			if (query.text) {
-				const text = getValue(query.text);
+				const text : string | undefined = getValue(query.text);
 				if (text) {
 					handleText(text, output);
 				}
 			} else if (query.user) {
 				// take some user input (i.e. "user=one$$two$$three")
 				// prompt for inputs using the passed-in values as prompts
-				const user = getValue(query.user);
+				const user : string | undefined = getValue(query.user);
 				if (user) {
 					await handleUser(user, output, errorMessage);
 				}
 			}
 			if (query.number) {
-				const text = getValue(query.number);
+				const text : string | undefined = getValue(query.number);
 				if (text) {
 					handleNumber(output, text);
 				}
@@ -113,8 +114,8 @@ export function handleProjectFilePath(projectFilePath: string) : vscode.Uri | un
 		return undefined; 
 	}
 	var workspace : vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
-	let rootPath = workspace.uri.fsPath;
-	let fullpath = path.join(rootPath, projectFilePath);
+	let rootPath : string = workspace.uri.fsPath;
+	let fullpath : string = path.join(rootPath, projectFilePath);
 	return vscode.Uri.file(fullpath);
 }
 
@@ -133,15 +134,15 @@ function handleSrcFilePath(srcFilePath: string, extensionPath : string) : vscode
 export function handleExtFilePath(extFilePath: string) : vscode.Uri | undefined {
 	extensionFunctions.sendTextToOutputChannel(`Processing extension file path input ${extFilePath}`);
 	if (extFilePath) {
-		const separator = '/';
-		var array = extFilePath.split(separator);
+		const separator : string = '/';
+		var array : string[] = extFilePath.split(separator);
 		if (array && array.length > 0) {
-			let extId = array.shift();
+			let extId : string | undefined = array.shift();
 			if (extId) {
 				let ext : vscode.Extension<any> | undefined = vscode.extensions.getExtension(extId);
 				if (ext) {
-					let pathToAdd = array.join(separator);
-					let extensionPath = ext.extensionPath;
+					let pathToAdd : string | undefined = array.join(separator);
+					let extensionPath : string | undefined = ext.extensionPath;
 					extensionFunctions.sendTextToOutputChannel(`-- combining ${pathToAdd} ${extensionPath}`);
 					const uri : vscode.Uri = vscode.Uri.file(
 						path.join(extensionPath, pathToAdd)
@@ -155,7 +156,7 @@ export function handleExtFilePath(extFilePath: string) : vscode.Uri | undefined 
 }
 
 // parse "text=" inputs - exported for testing use
-export function handleText(text : string, outputs : string[]) {
+export function handleText(text : string, outputs : string[]) : void {
 	if (text) {
 		let inputs : string[] = [];
 		if (text.split('$$').length > 0) {
@@ -170,7 +171,7 @@ export function handleText(text : string, outputs : string[]) {
 }
 
 // parse "user=" inputs and then actually prompt for them
-async function handleUser(text : string, outputs : string[], errorMessage : string | undefined) {
+async function handleUser(text : string, outputs : string[], errorMessage : string | undefined) : Promise<void> {
 	if (text) {
 		let inputs : string[] = [];
 		if (text.split('$$').length > 0) {
@@ -206,7 +207,7 @@ async function getUserInput(prompt:string): Promise<string | undefined> {
 async function collectUserInput(args: string[]) : Promise<string[]> {
 	var outArgs : string[] = [];
 	for(let prompt of args) {
-		let result = await getUserInput(prompt);
+		let result : string | undefined = await getUserInput(prompt);
 		if (result) {
 				outArgs.push(result);
 		} else {
@@ -217,12 +218,12 @@ async function collectUserInput(args: string[]) : Promise<string[]> {
 }
 
 
-export function handleNumber(output: any[], text: string) {
+export function handleNumber(output: any[], text: string) : void {
 	output.push(+text);
 }
 
 // actually call the command with all the various inputs collected
-async function callCommand(commandId: string, args : any[], completionMessage: string | undefined, errorMessage : string | undefined) {
+async function callCommand(commandId: string, args : any[], completionMessage: string | undefined, errorMessage : string | undefined) : Promise<void> {
 	try {
 		await vscode.commands.executeCommand(commandId, ...args)
 			.then( () => {
