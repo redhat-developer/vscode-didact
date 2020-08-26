@@ -18,15 +18,11 @@
 // tslint:disable-next-line: typedef
 const asciidoctor = require('asciidoctor')();
 
-export function getADParser() : void {
-    return asciidoctor;
-}
-
 export function parseADtoHTML(content: string) : string {
-    const html : string = asciidoctor.convert(content, { 'safe': 'server',
-        'attributes': {
-            'showtitle': true,
-            'icons': 'font'
-        } });
-    return html;
+	const html : string = asciidoctor.convert(content, { 'safe': 'server',
+		'attributes': {
+			'showtitle': true,
+			'icons': 'font'
+		} });
+	return html;
 }
