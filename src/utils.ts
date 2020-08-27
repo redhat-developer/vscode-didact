@@ -223,14 +223,14 @@ export async function setLastColumnUsedSetting(column: number | undefined) {
 	await context.workspaceState.update(DIDACT_COLUMN_SETTING, column);
 }
 
-export function removeFilesAndFolders(workspacename: string, filesAndFolders : string[]) {
+export async function removeFilesAndFolders(workspacename: string, filesAndFolders : string[]) {
 	if (filesAndFolders && filesAndFolders.length > 0) {
-		filesAndFolders.forEach(async fileOrFolder => {
+		for (const fileOrFolder of filesAndFolders) {
 			const testPath = path.resolve(workspacename, fileOrFolder);
 			if (testPath && fs.existsSync(testPath)) {
 				const delUri = vscode.Uri.parse(testPath);
 				await vscode.workspace.fs.delete(delUri, {recursive:true});
 			}
-		});
+		}
 	}
 }

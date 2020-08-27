@@ -3,8 +3,7 @@ import * as vscode from 'vscode';
 import {extensionFunctions} from '../../extensionFunctions';
 import { handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
-import { expect } from 'chai';
-import {removeFilesAndFolders} from '../../utils';
+import { removeFilesAndFolders } from '../../utils';
 import { before } from 'mocha';
 
 suite('Extension Functions Test Suite', () => {
@@ -21,7 +20,7 @@ suite('Extension Functions Test Suite', () => {
 			'newfolder',
 			'newfolder2'
 		];
-		removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
+		await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
 	});
 
 	test('send text to terminal', async function() {
