@@ -228,18 +228,8 @@ export function removeFilesAndFolders(workspacename: string, filesAndFolders : s
 		filesAndFolders.forEach(fileOrFolder => {
 			const testPath = path.resolve(workspacename, fileOrFolder);
 			if (testPath && fs.existsSync(testPath)) {
-				let stats = fs.lstatSync(testPath);
-				try {
-					if (stats.isDirectory()) {
-						console.log('Removing directory : ' + testPath);
-						fs.rmdirSync(testPath, {recursive:true});
-					} else {
-						console.log('Removing file : ' + testPath);
-						fs.unlinkSync(testPath);
-					}
-				} catch (error) {
-					console.log(error);
-				}
+				const delUri = vscode.Uri.parse(testPath);
+				vscode.workspace.fs.delete(delUri, {recursive:true});
 			}
 		});
 	}
