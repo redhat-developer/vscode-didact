@@ -17,7 +17,7 @@
 'use strict';
 
 import * as assert from 'assert';
-import { before } from 'mocha';
+import { before, beforeEach, after } from 'mocha';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -40,6 +40,19 @@ const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFileP
 suite('Didact test suite', () => {
 
 	const extensionId = 'redhat.vscode-didact';
+	const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
+	const foldersAndFilesToRemove: string[] = [
+		'anotherProject', 
+		'root',
+	];
+	
+	after( async () => {
+		await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
+	});
+
+	beforeEach( async () => {
+		await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
+	});
 
 	before(async () => {
 
@@ -48,10 +61,7 @@ suite('Didact test suite', () => {
 		vscode.window.showInformationMessage('Start all Didact tests.');
 		let wsCheck : boolean = await extensionFunctions.validWorkspaceCheck('undefined');
 		console.log('Workspace has a root folder: ' + wsCheck);
-
-		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 		console.log('Test workspace: ' + testWorkspace);
-
 		console.log('Test workspace exists: ' + fs.existsSync(testWorkspace));
 
         const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
@@ -59,12 +69,6 @@ suite('Didact test suite', () => {
 
 		const extensionTestsPath = path.resolve(__dirname, './index');
 		console.log('extensionTestsPath: ' + extensionTestsPath);
-
-		const foldersAndFilesToRemove: string[] = [
-			'anotherProject', 
-			'root',
-		];
-		await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
 
 		// this should not fail because runTest is passing in a test workspace, but it is
 		if (!wsCheck) {
@@ -76,7 +80,6 @@ suite('Didact test suite', () => {
 	test('Scaffold new project', async function () {
 		try {
 			await vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
-				let testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 				let createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
 				assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
 			});
@@ -87,7 +90,6 @@ suite('Didact test suite', () => {
 
 	test('Scaffold new project with a uri', async function () {
 		await commandHandler.processInputs(testScaffold).then( () => {
-			let testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 			let createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.didact.md');
 			assert.equal(fs.existsSync(createdDidactFileInFolderStructure), true);
 		}).catch( (error) => {
