@@ -19,7 +19,7 @@ import * as vscode from 'vscode';
 import * as extension from './extension';
 import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
-
+import * as path from 'path';
 
 export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
@@ -221,4 +221,16 @@ export function getLastColumnUsedSetting() : number {
 
 export async function setLastColumnUsedSetting(column: number | undefined) {
 	await context.workspaceState.update(DIDACT_COLUMN_SETTING, column);
+}
+
+export async function removeFilesAndFolders(workspacename: string, filesAndFolders : string[]) {
+	if (filesAndFolders && filesAndFolders.length > 0) {
+		for (const fileOrFolder of filesAndFolders) {
+			const testPath = path.resolve(workspacename, fileOrFolder);
+			if (testPath && fs.existsSync(testPath)) {
+				const delUri = vscode.Uri.parse(testPath);
+				await vscode.workspace.fs.delete(delUri, {recursive:true});
+			}
+		}
+	}
 }
