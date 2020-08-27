@@ -225,11 +225,11 @@ export async function setLastColumnUsedSetting(column: number | undefined) {
 
 export function removeFilesAndFolders(workspacename: string, filesAndFolders : string[]) {
 	if (filesAndFolders && filesAndFolders.length > 0) {
-		filesAndFolders.forEach(fileOrFolder => {
+		filesAndFolders.forEach(async fileOrFolder => {
 			const testPath = path.resolve(workspacename, fileOrFolder);
 			if (testPath && fs.existsSync(testPath)) {
 				const delUri = vscode.Uri.parse(testPath);
-				vscode.workspace.fs.delete(delUri, {recursive:true});
+				await vscode.workspace.fs.delete(delUri, {recursive:true});
 			}
 		});
 	}
