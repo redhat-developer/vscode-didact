@@ -76,6 +76,8 @@ We can now even test all the requirements at once!
 
 If you created the project earlier (see ["Scaffolding projects"](#scaffolding-projects) ), ([you can actually open project-level didact files as well](vscode://redhat.vscode-didact?workspace=anotherProject/src/test.didact.md&completion=Opened%20the%20test.didact.md%20file)
 
+[You can link to other Didact tutorials and open them in a different column (corresponding to the vscode.ViewColumn enum) by calling the startDidact command directly](didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Beside "Opens the copyFileURL.example.didact.md file from GitHub and places it in a column beside the currently active one")
+
 ### Native HTML
 
 And if standard Markdown isn't enough, you can bring in native HTML to present buttons...

@@ -472,4 +472,11 @@ export class DidactWebviewPanel {
 		}
 		return undefined;
 	}
+
+	getColumn() : vscode.ViewColumn | undefined {
+		if (this._panel) {
+			return this._panel.viewColumn;
+		}
+		return undefined;
+	}
 }
