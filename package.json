@@ -38,7 +38,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*"
+		"*",
+		"onWebviewPanel:didact"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

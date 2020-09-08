@@ -22,17 +22,6 @@ function () {
 	//connect to the vscode api
 	const vscode = acquireVsCodeApi();
 
-	class Window_History {  
-		Back() {
-			window.history.back();
-		}
-		Forward() {
-			window.history.forward();
-		}
-	}
-
-	var obj = new Window_History();
-
 	document.body.addEventListener('click', event => {
 		let node = event && event.target;
 		while (node) {
@@ -119,14 +108,6 @@ function () {
 						}
 					}
 				}
-				break;
-			case 'back':
-				console.log(`Going back`);
-				obj.Back();
-				break;
-			case 'forward':
-				console.log(`Going forward`);
-				obj.Forward();
 				break;
 		}
 	});
