@@ -22,7 +22,7 @@ import * as commandHandler from './commandHandler';
 import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
 import { getLastColumnUsedSetting, setLastColumnUsedSetting, DIDACT_DEFAULT_URL } from './utils';
-import { parse } from 'node-html-parser';
+import { DOMParser } from 'xmldom';
 
 export class DidactWebviewPanel {
 	/**
@@ -458,15 +458,15 @@ export class DidactWebviewPanel {
 	getFirstHeadingText() : string | undefined {
 		const html = this.getCurrentHTML();
 		if (html) {
-			const parsed = parse(html);
+			const parsed = new DOMParser().parseFromString(html);
 			if (parsed) {
-				const h1 = parsed.querySelector('h1');
-				if (h1) {
-					return h1.text;
+				const h1 = parsed.getElementsByTagName('h1');
+				if (h1 && h1.length > 0 && h1[0].textContent) {
+					return h1[0].textContent;
 				}
-				const h2 = parsed.querySelector('h2');
-				if (h2) {
-					return h2.text;
+				const h2 = parsed.getElementsByTagName('h2');
+				if (h2 && h2.length > 0 && h2[0].textContent) {
+					return h2[0].textContent;
 				}
 			}
 		}
