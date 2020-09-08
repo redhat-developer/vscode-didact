@@ -6,6 +6,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
  - Improved webview title handling, attempting to grab the first H1 or H2 heading in the generated HTML [#118](https://github.com/redhat-developer/vscode-didact/issues/118)
  - Adding extension setting to enable opening the default Didact file at startup. [#144](https://github.com/redhat-developer/vscode-didact/issues/144)
+ - Switching to xmldom for heading parsing and better Typescript 4 support
 
 ## 0.1.16
 
