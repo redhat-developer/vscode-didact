@@ -456,15 +456,15 @@ export class DidactWebviewPanel {
 	}
 
 	getFirstHeadingText() : string | undefined {
-		const html = this.getCurrentHTML();
+		const html : string | undefined = this.getCurrentHTML();
 		if (html) {
-			const parsed = new DOMParser().parseFromString(html);
+			const parsed : Document = new DOMParser().parseFromString(html);
 			if (parsed) {
-				const h1 = parsed.getElementsByTagName('h1');
+				const h1 : HTMLCollectionOf<HTMLHeadingElement> = parsed.getElementsByTagName('h1');
 				if (h1 && h1.length > 0 && h1[0].textContent) {
 					return h1[0].textContent;
 				}
-				const h2 = parsed.getElementsByTagName('h2');
+				const h2: HTMLCollectionOf<HTMLHeadingElement> = parsed.getElementsByTagName('h2');
 				if (h2 && h2.length > 0 && h2[0].textContent) {
 					return h2[0].textContent;
 				}
