@@ -199,6 +199,7 @@
 		"@types/download": "^6.2.4",
 		"@types/markdown-it": "^10.0.2",
 		"@types/request-promise": "^4.1.46",
+		"@types/xmldom": "^0.1.30",
 		"asciidoctor": "^2.2.0",
 		"download": "^8.0.0",
 		"glob": "^7.1.6",
@@ -206,7 +207,6 @@
 		"markdown-it-attrs": "^3.0.3",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.1",
-		"node-html-parser": "^1.2.20",
 		"tmp": "^0.2.1",
 		"xmldom": "^0.3.0"
 	}
