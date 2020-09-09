@@ -31,6 +31,10 @@ export class DidactWebviewPanel {
 	public static currentPanel: DidactWebviewPanel | undefined;
 
 	public static readonly viewType = 'didact';
+	private static readonly didactCachePath = `didact/cache`;
+	private static readonly didactCacheHtmlFile = 'currentHtml.html';
+	private static readonly didactCacheTitleFile = 'currentTitle.txt';
+	private static readonly didactCacheUriFile = 'currentUri.txt';
 
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionPath: string;
@@ -152,15 +156,16 @@ export class DidactWebviewPanel {
 			}
 		);
 
-
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
 		if (inpath) {
 			DidactWebviewPanel.currentPanel.setDidactUriPath(inpath);
 		}
+		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
+		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
 	public static async postMessage(message: string) {
@@ -201,6 +206,10 @@ export class DidactWebviewPanel {
 
 	public static async postCollectAllCommandIdsMessage() {
 		DidactWebviewPanel.postNamedSimpleMessage("returnCommands");
+	}
+
+	public setActiveContext(value: boolean) {
+		vscode.commands.executeCommand('setContext', 'didact.webview', value);
 	}
 
 	private constructor(panel: vscode.WebviewPanel, extensionPath: string) {
@@ -406,16 +415,21 @@ export class DidactWebviewPanel {
 			if (!DidactWebviewPanel.context.globalStoragePath) {
 				fs.mkdirSync(DidactWebviewPanel.context.globalStoragePath, { recursive: true });
 			}
-			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`);
-			const htmlFilePath = path.join(cachePath, 'currentHtml.html');
-			const titleFilePath = path.join(cachePath, 'currentTitle.txt');
+			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath);
+			const htmlFilePath = path.join(cachePath, DidactWebviewPanel.didactCacheHtmlFile);
+			const titleFilePath = path.join(cachePath, DidactWebviewPanel.didactCacheTitleFile);
+			const uriFilePath = path.join(cachePath, DidactWebviewPanel.didactCacheUriFile);
 			try {
 				if (!fs.existsSync(cachePath)) {
-					fs.mkdirSync(path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`), { recursive: true });
+					fs.mkdirSync(path.join(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath), { recursive: true });
 				}
 				fs.writeFileSync(htmlFilePath, html, {encoding:'utf8', flag:'w'});
 				if (DidactWebviewPanel.currentPanel) {
 					fs.writeFileSync(titleFilePath, DidactWebviewPanel.currentPanel.defaultTitle, {encoding:'utf8', flag:'w'});
+
+					if (DidactWebviewPanel.currentPanel.didactUriPath) {
+						fs.writeFileSync(uriFilePath, DidactWebviewPanel.currentPanel.didactUriPath.fsPath, {encoding:'utf8', flag:'w'});
+					}
 				}
 			}
 			catch (error) {
@@ -423,36 +437,35 @@ export class DidactWebviewPanel {
 			}
 		}
 	}
-	
-	getCachedHTML() : string | undefined {
+
+	getFileContentsFromCache(filename : string) : string | undefined {
 		if (DidactWebviewPanel.context) {
-			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`);
-			const htmlFilePath = path.join(cachePath, 'currentHtml.html');
-			try {
-				if (fs.existsSync(htmlFilePath)) {
-					let contents = fs.readFileSync(htmlFilePath);
-					return contents.toLocaleString();
+			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath);
+			if (cachePath) {
+				const filePath = path.join(cachePath, filename);
+				try {
+					if (fs.existsSync(filePath)) {
+						const contents : Buffer = fs.readFileSync(filePath);
+						return contents.toLocaleString();
+					}
+				} catch (error) {
+					console.error(error);
 				}
-			} catch (error) {
-				console.error(error);
 			}
 		}
 		return undefined;
 	}
+	
+	getCachedHTML() : string | undefined {
+		return this.getFileContentsFromCache(DidactWebviewPanel.didactCacheHtmlFile);
+	}
 
 	getCachedTitle() : string | undefined {
-		if (DidactWebviewPanel.context) {
-			const cachePath : string = path.join(DidactWebviewPanel.context.globalStoragePath, `didact/cache`);
-			const titleFilePath : string = path.join(cachePath, 'currentTitle.txt');
-			try {
-				if (fs.existsSync(titleFilePath)) {
-					return fs.readFileSync(titleFilePath).toLocaleString();
-				}
-			} catch (error) {
-				console.error(error);
-			}
-		}
-		return undefined;
+		return this.getFileContentsFromCache(DidactWebviewPanel.didactCacheTitleFile);
+	}
+
+	public getCachedUri() : string | undefined {
+		return this.getFileContentsFromCache(DidactWebviewPanel.didactCacheUriFile);
 	}
 
 	getFirstHeadingText() : string | undefined {
