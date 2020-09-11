@@ -177,8 +177,9 @@ export namespace extensionFunctions {
 	async function showAndSendText(terminal: vscode.Terminal, text:string) {
 		if (terminal) {
 			terminal.show();
+			// wait a sec to prevent issue described in FUSETOOLS2-657
+			await utils.delay(1000);
 			terminal.sendText(text);
-			return;
 		}
 	}
 
@@ -186,7 +187,6 @@ export namespace extensionFunctions {
 		if (terminal) {
 			terminal.show();
 			await vscode.commands.executeCommand("workbench.action.terminal.sendSequence", { text : "\x03" });
-			return;
 		}
 	}
 
@@ -194,7 +194,6 @@ export namespace extensionFunctions {
 		if (terminal) {
 			terminal.show();
 			await vscode.commands.executeCommand("workbench.action.terminal.kill");
-			return;
 		}
 	}
 
@@ -213,10 +212,9 @@ export namespace extensionFunctions {
 
 	// send a message to a named terminal
 	export async function sendTerminalText(name:string, text:string) {
-		const terminal : vscode.Terminal | undefined = findTerminal(name);
+		let terminal : vscode.Terminal | undefined = findTerminal(name);
 		if (!terminal) {
-			const newterminal = vscode.window.createTerminal(name);
-			showAndSendText(newterminal, text);
+			terminal = vscode.window.createTerminal(name);
 		}
 		if (terminal) {
 			showAndSendText(terminal, text);
