@@ -21,9 +21,19 @@ import { handleNumber, processInputs } from '../../commandHandler';
 import { DidactWebviewPanel } from '../../didactWebView';
 import * as vscode from 'vscode';
 import { setLastColumnUsedSetting } from '../../utils';
+import * as assert from 'assert';
 
+function disposeAll(disposables: vscode.Disposable[]) {
+	vscode.Disposable.from(...disposables).dispose();
+}
 
 suite("Command Handler tests", function () {
+
+	const disposables: vscode.Disposable[] = [];
+
+	teardown(async () => {
+		disposeAll(disposables);
+	});
 
 	test("Ensure that we can pass a number to a command", () => {
 		let output: any[] = [];
@@ -33,16 +43,31 @@ suite("Command Handler tests", function () {
 	});
 
 	test('try to open a didact file in a different column with startDidact', async function() {
+		// reset the column to 1
+		await setLastColumnUsedSetting(1);
 		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Two';
-
 		await processInputs(didactUri);
 		expect(DidactWebviewPanel.currentPanel).to.not.equal(undefined);
-		if (DidactWebviewPanel.currentPanel) {
-			const column : vscode.ViewColumn | undefined = DidactWebviewPanel.currentPanel.getColumn();
 
-			// temporary fix for FUSETOOLS2-684
-			expect(column).to.equal(vscode.ViewColumn.Two + 1);
+		let changed = false;
+		if (DidactWebviewPanel.currentPanel) {
+			const panel = DidactWebviewPanel.currentPanel.getPanel();
+			if (panel) {
+				const viewStateChanged = new Promise<vscode.WebviewPanelOnDidChangeViewStateEvent>((resolve) => {
+					panel.onDidChangeViewState(e => {
+						if (changed) {
+							throw new Error('Only expected a single view state change');
+						}
+						changed = true;
+						resolve(e);
+					}, undefined, disposables);
+				});
+
+				assert.strictEqual((await viewStateChanged).webviewPanel.viewColumn, vscode.ViewColumn.Two);
+				assert.notStrictEqual((await viewStateChanged).webviewPanel.viewColumn, vscode.ViewColumn.One);
+			}
 		}
+
 		await resetAfterTest();
 	});
 

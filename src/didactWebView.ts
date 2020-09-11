@@ -492,4 +492,11 @@ export class DidactWebviewPanel {
 		}
 		return undefined;
 	}
+
+	getPanel() : vscode.WebviewPanel | undefined {
+		if (this._panel) {
+			return this._panel;
+		}
+		return undefined;
+	}
 }
