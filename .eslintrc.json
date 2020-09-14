@@ -20,10 +20,6 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/no-var-requires": "off" /** allows require statements outside of imports **/ 
-        /**
-        , "@typescript-eslint/explicit-function-return-type": "error" // required function return types
-        **/
     }
 }
