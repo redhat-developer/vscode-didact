@@ -52,6 +52,8 @@ suite("Command Handler tests", function () {
 		let changed = false;
 		if (DidactWebviewPanel.currentPanel) {
 			const panel = DidactWebviewPanel.currentPanel.getPanel();
+			expect(panel).to.not.equal(null);
+			expect(panel).to.not.equal(undefined);
 			if (panel) {
 				const viewStateChanged = new Promise<vscode.WebviewPanelOnDidChangeViewStateEvent>((resolve) => {
 					panel.onDidChangeViewState(e => {
@@ -62,12 +64,9 @@ suite("Command Handler tests", function () {
 						resolve(e);
 					}, undefined, disposables);
 				});
-
 				assert.strictEqual((await viewStateChanged).webviewPanel.viewColumn, vscode.ViewColumn.Two);
-				assert.notStrictEqual((await viewStateChanged).webviewPanel.viewColumn, vscode.ViewColumn.One);
 			}
 		}
-
 		await resetAfterTest();
 	});
 
