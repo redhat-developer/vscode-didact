@@ -45,6 +45,7 @@ export class DidactWebviewPanel {
 	private didactUriPath : vscode.Uri | undefined = undefined;
 	private defaultTitle = `Didact Tutorial`;
 	private isAsciiDoc : boolean = false;
+	private _disposed: boolean = false;
 
 	public setIsAsciiDoc(flag : boolean) {
 		this.isAsciiDoc = flag;
@@ -275,6 +276,11 @@ export class DidactWebviewPanel {
 	}
 
 	public async dispose() {
+		if (this._disposed) {
+			return;
+		}
+
+		this._disposed = true;
 		DidactWebviewPanel.cacheFile();
 		DidactWebviewPanel.currentPanel = undefined;
 
@@ -319,7 +325,7 @@ export class DidactWebviewPanel {
 	}
 
 	wrapDidactContent(didactHtml: string | undefined) : string | undefined {
-		if (!didactHtml) {
+		if (!didactHtml || this._disposed) {
 			return;
 		}
 		const nonce = this.getNonce();
@@ -328,7 +334,8 @@ export class DidactWebviewPanel {
 		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
 		
 		const didactUriPath = path.dirname(didactUri.fsPath);
-		const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+		
+		//const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
 		
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.file(
@@ -356,7 +363,6 @@ export class DidactWebviewPanel {
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';">
-			<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
 			`<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
