@@ -334,7 +334,6 @@ export class DidactWebviewPanel {
 		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
 		
 		const didactUriPath = path.dirname(didactUri.fsPath);
-		
 		const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
 		
 		// Local path to main script run in the webview
