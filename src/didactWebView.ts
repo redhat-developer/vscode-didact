@@ -45,6 +45,7 @@ export class DidactWebviewPanel {
 	private didactUriPath : vscode.Uri | undefined = undefined;
 	private defaultTitle = `Didact Tutorial`;
 	private isAsciiDoc : boolean = false;
+	private _disposed: boolean = false;
 
 	public setIsAsciiDoc(flag : boolean) {
 		this.isAsciiDoc = flag;
@@ -275,6 +276,11 @@ export class DidactWebviewPanel {
 	}
 
 	public async dispose() {
+		if (this._disposed) {
+			return;
+		}
+
+		this._disposed = true;
 		DidactWebviewPanel.cacheFile();
 		DidactWebviewPanel.currentPanel = undefined;
 
@@ -319,7 +325,7 @@ export class DidactWebviewPanel {
 	}
 
 	wrapDidactContent(didactHtml: string | undefined) : string | undefined {
-		if (!didactHtml) {
+		if (!didactHtml || this._disposed) {
 			return;
 		}
 		const nonce = this.getNonce();
