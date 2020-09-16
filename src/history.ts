@@ -5,7 +5,7 @@ export class DidactHistory {
 	private list = new DoublyLinkedList<string>();
 	private current : DoublyLinkedListNode<string> | undefined;
 
-	public add(uri : Uri) {
+	public add(uri : Uri): void {
 		if (!this.uriAlreadyExists(uri.toString())) {
 			this.list.push(uri.toString());
 			this.current = this.list.tail;
@@ -41,8 +41,8 @@ export class DidactHistory {
 	private uriAlreadyExists(uri : string | undefined) : boolean | undefined{
 		try {
 			if (uri) {
-				let vals = Array.from(this.getList().values());
-				let index = vals.indexOf(uri);
+				const vals = Array.from(this.getList().values());
+				const index = vals.indexOf(uri);
 				return index > -1;
 			}
 		} catch (error) {
@@ -51,7 +51,7 @@ export class DidactHistory {
 	}
 
 	// for testing purposes
-	public clearHistory() {
+	public clearHistory(): void {
 		this.list = new DoublyLinkedList<string>();
 		this.current = undefined;
 	}

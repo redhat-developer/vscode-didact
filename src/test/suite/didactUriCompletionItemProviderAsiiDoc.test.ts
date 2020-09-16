@@ -18,12 +18,12 @@
 
 import { expect } from 'chai';
 import { DidactUriCompletionItemProviderAsciiDoc } from "../../didactUriCompletionItemProviderAsciiDoc";
-import { extensionFunctions } from '../../extensionFunctions';
+import * as extensionFunctions from '../../extensionFunctions';
 
 suite("Didact URI completion for AsciiDoc", function () {
 
-	let emptyContent = '';
-	let notEmptyContent = 'this is text with a didact://? link stuffed inside';
+	const emptyContent = '';
+	const notEmptyContent = 'this is text with a didact://? link stuffed inside';
 	const ctx = extensionFunctions.getContext();
 	const provider = new DidactUriCompletionItemProviderAsciiDoc(ctx);
 

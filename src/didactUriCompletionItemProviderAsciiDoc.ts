@@ -24,7 +24,7 @@ import * as extensionFunctions from './extensionFunctions';
 export class DidactUriCompletionItemProviderAsciiDoc extends DidactUriCompletionItemProvider {
 
 	protected getCommandCompletionItems() : vscode.CompletionItem[] {
-		let completions : vscode.CompletionItem[] = super.getCommandCompletionItems();
+		const completions : vscode.CompletionItem[] = super.getCommandCompletionItems();
 		
 		// add some additional didact types here because we can't do HTML kinds of things in AsciiDoc
 		this.validateAllRequirementsCompletion("Validate All Didact Requirements", completions);
@@ -34,7 +34,7 @@ export class DidactUriCompletionItemProviderAsciiDoc extends DidactUriCompletion
 	}
 
 	public provideCompletionItemsOutsideDidactURI(lineToSearch: string) : vscode.CompletionItem[] {
-		let completions: vscode.CompletionItem[] = super.provideCompletionItemsOutsideDidactURI(lineToSearch);
+		const completions: vscode.CompletionItem[] = super.provideCompletionItemsOutsideDidactURI(lineToSearch);
 
 		if (lineToSearch.indexOf(didactProtocol) === -1) {
 			// add one for asciidoc 

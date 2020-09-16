@@ -19,7 +19,7 @@ async function main() {
 			extensionDevelopmentPath,
 			extensionTestsPath,
 			launchArgs: [testWorkspace, '--disable-extensions']
-		 });
+		});
 		
 	} catch (err) {
 		console.error(err);

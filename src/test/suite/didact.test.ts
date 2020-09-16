@@ -21,7 +21,7 @@ import { before, beforeEach, after } from 'mocha';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import {SCAFFOLD_PROJECT_COMMAND, START_DIDACT_COMMAND, extensionFunctions} from '../../extensionFunctions';
+import * as extensionFunctions from '../../extensionFunctions';
 import {DidactWebviewPanel} from '../../didactWebView';
 import * as url from 'url';
 import {getValue} from '../../utils';
@@ -59,7 +59,7 @@ suite('Didact test suite', () => {
 		assert.ok(vscode.extensions.getExtension(extensionId));
 
 		vscode.window.showInformationMessage('Start all Didact tests.');
-		let wsCheck : boolean = await extensionFunctions.validWorkspaceCheck('undefined');
+		const wsCheck : boolean = await extensionFunctions.validWorkspaceCheck('undefined');
 		console.log('Workspace has a root folder: ' + wsCheck);
 		console.log('Test workspace: ' + testWorkspace);
 		console.log('Test workspace exists: ' + fs.existsSync(testWorkspace));
@@ -79,9 +79,9 @@ suite('Didact test suite', () => {
 
 	test('Scaffold new project', async function () {
 		try {
-			await vscode.commands.executeCommand(SCAFFOLD_PROJECT_COMMAND).then( () => {
-				let createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
-				assert.equal(fs.existsSync(createdGroovyFileInFolderStructure), true);
+			await vscode.commands.executeCommand(extensionFunctions.SCAFFOLD_PROJECT_COMMAND).then( () => {
+				const createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
+				assert.strictEqual(fs.existsSync(createdGroovyFileInFolderStructure), true);
 			});
 		} catch (error) {
 			assert.fail(error);
@@ -90,8 +90,8 @@ suite('Didact test suite', () => {
 
 	test('Scaffold new project with a uri', async function () {
 		await commandHandler.processInputs(testScaffold).then( () => {
-			let createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.didact.md');
-			assert.equal(fs.existsSync(createdDidactFileInFolderStructure), true);
+			const createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.didact.md');
+			assert.strictEqual(fs.existsSync(createdDidactFileInFolderStructure), true);
 		}).catch( (error) => {
 			assert.fail(error);
 		});
@@ -101,10 +101,10 @@ suite('Didact test suite', () => {
 		const href = testExt;
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
-		assert.notEqual(query.commandId, undefined);
+		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
 			const commandId = getValue(query.commandId);
-			let output : any[] = [];
+			const output : any[] = [];
 			if (query.text) {
 				const text = getValue(query.text);
 				if (text) {
@@ -112,9 +112,9 @@ suite('Didact test suite', () => {
 				}
 			}
 
-			assert.equal(output.length, 2); // 3 arguments
+			assert.strictEqual(output.length, 2); // 3 arguments
 			const extAvailable : boolean = await extensionFunctions.extensionCheck(output[0], output[1]);
-			assert.equal(extAvailable, true, `Found command ${commandId} in Didact file but extension test is not found: ${href}`);
+			assert.strictEqual(extAvailable, true, `Found command ${commandId} in Didact file but extension test is not found: ${href}`);
 		}
 	});
 
@@ -122,19 +122,19 @@ suite('Didact test suite', () => {
 		const href = testReqCli;
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
-		assert.notEqual(query.commandId, undefined);
+		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
 			const commandId = getValue(query.commandId);
-			let output : any[] = [];
+			const output : any[] = [];
 			if (query.text) {
 				const text = getValue(query.text);
 				if (text) {
 					commandHandler.handleText(text, output);
 				}
 			}
-			assert.equal(output.length, 2); // 2 arguments
+			assert.strictEqual(output.length, 2); // 2 arguments
 			const reqAvailable : boolean = await extensionFunctions.cliExecutionCheck(output[0], output[1]);
-			assert.equal(reqAvailable, true, `Found command ${commandId} in Didact file but did not receive 0 as return code: ${href}`);
+			assert.strictEqual(reqAvailable, true, `Found command ${commandId} in Didact file but did not receive 0 as return code: ${href}`);
 		}
 	});
 
@@ -142,19 +142,19 @@ suite('Didact test suite', () => {
 		const href = testReq;
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
-		assert.notEqual(query.commandId, undefined);
+		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
 			const commandId = getValue(query.commandId);
-			let output : any[] = [];
+			const output : any[] = [];
 			if (query.text) {
 				const text = getValue(query.text);
 				if (text) {
 					commandHandler.handleText(text, output);
 				}
 			}
-			assert.equal(output.length, 3); // 3 arguments
+			assert.strictEqual(output.length, 3); // 3 arguments
 			const reqAvailable : boolean = await extensionFunctions.requirementCheck(output[0], output[1], output[2]);
-			assert.equal(reqAvailable, true, `Found command ${commandId} in Didact file but requirement test is not found: ${href}`);
+			assert.strictEqual(reqAvailable, true, `Found command ${commandId} in Didact file but requirement test is not found: ${href}`);
 		}
 	});
 
@@ -163,25 +163,25 @@ suite('Didact test suite', () => {
 		const href = testWS.toString();
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
-		assert.notEqual(query.commandId, undefined);
+		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
 			const commandId = getValue(query.commandId);
-			let output : any[] = [];
+			const output : any[] = [];
 			if (query.text) {
 				const text = getValue(query.text);
 				if (text) {
 					commandHandler.handleText(text, output);
 				}
 			}
-			assert.equal(output.length, 1); // 1 argument
+			assert.strictEqual(output.length, 1); // 1 argument
 			const wsAvailable : boolean = await extensionFunctions.validWorkspaceCheck(output[0]);
 			// assume that we're in valid workspace when this test runs
-			assert.equal(wsAvailable, true, `Found command ${commandId} in Didact file but workspace test failed: ${href}`);
+			assert.strictEqual(wsAvailable, true, `Found command ${commandId} in Didact file but workspace test failed: ${href}`);
 		}
 	});
 
 	test('Walk through the demo didact file to ensure that all commands exist in the VS Code system', async () => {
-		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
+		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD).then( async () => {
 			if (DidactWebviewPanel.currentPanel) {
 				const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 				assert.strictEqual(commands && commands.length > 0, true);
@@ -190,8 +190,8 @@ suite('Didact test suite', () => {
 				// if we failed the above, we can do a deeper dive to figure out what command is missing
 				if (!isOk) {
 					const vsCommands : string[] = await vscode.commands.getCommands(true);
-					for (let command of commands) {
-						let commandOk = extensionFunctions.validateCommand(command, vsCommands);
+					for (const command of commands) {
+						const commandOk = extensionFunctions.validateCommand(command, vsCommands);
 						if (!commandOk) {
 							console.log(`--Missing Command ID ${command}`);
 						}
@@ -203,7 +203,7 @@ suite('Didact test suite', () => {
 	});
 
 	test('Verify that validation fails when given a negative case', async () => {
-		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD3).then( async () => {
+		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD3).then( async () => {
 			if (DidactWebviewPanel.currentPanel) {
 				const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 				assert.strictEqual(commands && commands.length > 0, true);
@@ -214,27 +214,27 @@ suite('Didact test suite', () => {
 	});	
 
 	test('Walk through the demo didact file to ensure that we get all the requirements commands successfully', async () => {
-		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
+		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD).then( async () => {
 			if (DidactWebviewPanel.currentPanel) {
 				const hrefs : any[] = extensionFunctions.gatherAllRequirementsLinks();
 				console.log('Gathered these requirements URIs: ' + hrefs);
 				// currently there are 5 requirements links in the test 
-				assert.equal(hrefs && hrefs.length === 5, true);
+				assert.strictEqual(hrefs && hrefs.length === 5, true);
 			}			
 		});
 	});
 
 	test('open one didact, then open another to make sure it refreshes properly', async () => {
-		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
+		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD).then( async () => {
 			if (DidactWebviewPanel.currentPanel) {
 				// grab the html that we generate from the first didact file
 				// this should be cached
-				let firstHtml = DidactWebviewPanel.currentPanel.getCurrentHTML();
-				await vscode.commands.executeCommand(START_DIDACT_COMMAND, testMD2).then( async () => {
+				const firstHtml = DidactWebviewPanel.currentPanel.getCurrentHTML();
+				await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD2).then( async () => {
 					if (DidactWebviewPanel.currentPanel) {
 						// make sure that when we start a new tutorial, the cache updates
-						let secondHtml = DidactWebviewPanel.currentPanel.getCachedHTML();
-						assert.notEqual(firstHtml, secondHtml);
+						const secondHtml = DidactWebviewPanel.currentPanel.getCachedHTML();
+						assert.notStrictEqual(firstHtml, secondHtml);
 					}
 				});		
 			} else {
