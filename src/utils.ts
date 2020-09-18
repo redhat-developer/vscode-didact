@@ -28,6 +28,34 @@ export const DIDACT_NOTIFICATION_SETTING = 'didact.disableNotifications';
 export const DIDACT_COLUMN_SETTING = 'didact.lastColumnUsed';
 export const DIDACT_OPEN_AT_STARTUP = 'didact.openDefaultTutorialAtStartup';
 
+const CACHED_OUTPUT_CHANNELS: vscode.OutputChannel[] = new Array<vscode.OutputChannel>();
+
+export function getCachedOutputChannels(): vscode.OutputChannel[] {
+	return CACHED_OUTPUT_CHANNELS;
+}
+
+export function getCachedOutputChannel(name: string): vscode.OutputChannel | undefined {
+	for (const channel of CACHED_OUTPUT_CHANNELS) {
+		if (channel.name === name) {
+			return channel;
+		}
+	}
+	return undefined;
+}
+
+export function rememberOutputChannel(channel: vscode.OutputChannel): void {
+	if (!getCachedOutputChannel(channel.name)) {
+		CACHED_OUTPUT_CHANNELS.push(channel);
+	}
+}
+
+export function clearOutputChannels(): void {
+	for (const channel of CACHED_OUTPUT_CHANNELS) {
+		channel.dispose();
+	}
+	CACHED_OUTPUT_CHANNELS.length = 0;
+}
+
 // simple file path comparison
 export function pathEquals(path1: string, path2: string): boolean {
 	if (process.platform !== 'linux') {

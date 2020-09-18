@@ -19,7 +19,7 @@ import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
-import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting } from './utils';
+import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
 import * as path from 'path';
 import {DidactUriCompletionItemProviderMarkdown} from './didactUriCompletionItemProviderMarkdown';
 import {DidactUriCompletionItemProviderAsciiDoc} from './didactUriCompletionItemProviderAsciiDoc';
@@ -60,6 +60,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_BACK_COMMAND, extensionFunctions.historyBack));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_FORWARD_COMMAND, extensionFunctions.historyForward));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_CLEAR, extensionFunctions.clearHistory));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.openNamedOutputChannel));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
@@ -138,6 +139,7 @@ function createIntegrationsView(): void {
 export async function deactivate(): Promise<void> {
 	await DidactWebviewPanel.cacheFile();
 	await clearRegisteredTutorials();
+	clearOutputChannels();
 }
 
 export function refreshTreeview(): void {

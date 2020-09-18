@@ -48,7 +48,9 @@ link:didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectw
 
 * link:didact://?commandId=vscode.didact.startTerminalWithName&completion=Opened%20a%20new%20terminal.[You can open integrated terminals.]
 
-* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerm$$echo%20Hello%20Didact!&completion=Opened%20a%20new%20terminal.[You can can even open a terminal, name it, and send it some text.]
+* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerm$$echo%20Hello%20Didact!&completion=Opened%20a%20new%20terminal.[You can even open a terminal, name it, and send it some text.]
+
+* link:didact://?commandId=vscode.didact.openNamedOutputChannel&name=newOutputChannel&text=Hello%20from%20Didact!&completion=Opened%20a%20new%20output%20channel.[You can also open an output channel, name it, and send it some text.]
 
 * link:didact://?commandId=vscode.didact.sendNamedTerminalAString&user=terminal-name$$terminal-command-to-execute&completion=Opened%20a%20new%20terminal.[And if you want to have certain inputs be user-specified, you can now do that too.]
 

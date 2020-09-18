@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as extensionFunctions from '../../extensionFunctions';
 import { handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
-import { removeFilesAndFolders } from '../../utils';
+import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels } from '../../utils';
 import { beforeEach, after } from 'mocha';
 import { expect } from 'chai';
 
@@ -28,10 +28,40 @@ suite('Extension Functions Test Suite', () => {
 
 	beforeEach(async () => {
 		await cleanFiles();
+		getCachedOutputChannels().length = 0;
 	});
 
 	after(async () => {
 		await cleanFiles();
+		getCachedOutputChannels().length = 0;
+	});
+
+	test('open a named output channel and send text', () => {
+		const channelName = 'testOutputChannel';
+		let channel: vscode.OutputChannel | undefined = getCachedOutputChannel(channelName);
+		assert.strictEqual(channel, undefined);
+
+		extensionFunctions.openNamedOutputChannel(channelName, 'someText');
+		channel = getCachedOutputChannel(channelName);
+		assert.notStrictEqual(channel, undefined);
+		assert.strictEqual(channel?.name, channelName);
+	});
+
+	test('open a named output channel several times and check only one instance is created', () => {
+		const channelName = 'testOutputChannel2';
+		let channel: vscode.OutputChannel | undefined = getCachedOutputChannel(channelName);
+		assert.strictEqual(channel, undefined);
+
+		extensionFunctions.openNamedOutputChannel(channelName);
+		channel = getCachedOutputChannel(channelName);
+		assert.notStrictEqual(channel, undefined);
+		assert.strictEqual(channel?.name, channelName);
+
+		extensionFunctions.openNamedOutputChannel(channelName);
+		extensionFunctions.openNamedOutputChannel(channelName);
+		extensionFunctions.openNamedOutputChannel(channelName);
+		extensionFunctions.openNamedOutputChannel(channelName);
+		assert.strictEqual(getCachedOutputChannels().length, 1);
 	});
 
 	test('send text to terminal', async function() {
