@@ -1,5 +1,3 @@
-import { DidactWebviewPanel } from "./didactWebView";
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -19,11 +17,11 @@ import { DidactWebviewPanel } from "./didactWebView";
 
 const asciidoctor = require('asciidoctor')();
 
-export function getADParser() {
+export function getADParser(): any {
     return asciidoctor;
 }
 
-export function parseADtoHTML(content: string) {
+export function parseADtoHTML(content: string): any {
     const html = asciidoctor.convert(content, { 'safe': 'server',
         'attributes': {
             'showtitle': true,

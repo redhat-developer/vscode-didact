@@ -18,19 +18,19 @@
 
 import { expect } from 'chai';
 import { DidactUri } from '../../didactUri';
-import { extensionFunctions } from '../../extensionFunctions';
+import * as extensionFunctions from '../../extensionFunctions';
 
 suite("Didact URI parsing tests", function () {
 
 	test("ensure that we can get the command Id from the parsed didact uri", () => {
-		let ctx = extensionFunctions.getContext();
-		let didactUri = new DidactUri("didact://?commandId=test", ctx);
+		const ctx = extensionFunctions.getContext();
+		const didactUri = new DidactUri("didact://?commandId=test", ctx);
 		expect(didactUri.getCommandId()).equals('test');
 	});	
 
 	test("ensure that we can get the number from the parsed didact uri", () => {
-		let ctx = extensionFunctions.getContext();
-		let didactUri = new DidactUri("didact://?commandId=testCommand&text=testText&number=2", ctx);
+		const ctx = extensionFunctions.getContext();
+		const didactUri = new DidactUri("didact://?commandId=testCommand&text=testText&number=2", ctx);
 		expect(didactUri.getCommandId()).equals('testCommand');
 		expect(didactUri.getText()).equals('testText');
 		expect(didactUri.getNumber()).equals('2');

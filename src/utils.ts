@@ -17,18 +17,16 @@
 
 import * as vscode from 'vscode';
 import * as extension from './extension';
+import * as extensionFunctions from './extensionFunctions';
 import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
 import * as path from 'path';
 
-export const DIDACT_DEFAULT_URL : string = 'didact.defaultUrl';
-export const DIDACT_REGISTERED_SETTING : string = 'didact.registered';
-export const DIDACT_NOTIFICATION_SETTING : string = 'didact.disableNotifications';
-export const DIDACT_COLUMN_SETTING : string = 'didact.lastColumnUsed';
-export const DIDACT_OPEN_AT_STARTUP : string = 'didact.openDefaultTutorialAtStartup';
-
-// stashed extension context
-let context : vscode.ExtensionContext;
+export const DIDACT_DEFAULT_URL = 'didact.defaultUrl';
+export const DIDACT_REGISTERED_SETTING = 'didact.registered';
+export const DIDACT_NOTIFICATION_SETTING = 'didact.disableNotifications';
+export const DIDACT_COLUMN_SETTING = 'didact.lastColumnUsed';
+export const DIDACT_OPEN_AT_STARTUP = 'didact.openDefaultTutorialAtStartup';
 
 // simple file path comparison
 export function pathEquals(path1: string, path2: string): boolean {
@@ -61,7 +59,7 @@ export function getValue(input : string | string[]) : string | undefined {
 }
 
 // utility method to do a simple delay of a few ms
-export function delay(ms: number) {
+export function delay(ms: number): Promise<unknown> {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
@@ -80,10 +78,10 @@ export function getOpenAtStartupSetting() : boolean {
 }
 
 export function getRegisteredTutorials() : string[] | undefined {
-	return context.workspaceState.get(DIDACT_REGISTERED_SETTING);
+	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
-export async function registerTutorial(name : string, sourceUri : string, category : string ) {
+export async function registerTutorial(name : string, sourceUri : string, category : string ): Promise<void> {
 	const newDidact:JSON = <JSON><unknown>{
 		"name" : `${name}`,
 		"category" : `${category}`,
@@ -96,12 +94,12 @@ export async function registerTutorial(name : string, sourceUri : string, catego
 		existingRegistry = [newDidactAsString];
 	} else {
 		// check to see if a tutorial doesn't already exist with the name/category combination
-		let match : boolean = false;
-		for (var entry of existingRegistry) {
-			let jsonObj : any = JSON.parse(entry);
+		let match = false;
+		for (const entry of existingRegistry) {
+			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.name && jsonObj.category) {
-				let testName = jsonObj.name.toLowerCase() === name;
-				let testCategory = jsonObj.category.toLowerCase() === category;
+				const testName = jsonObj.name.toLowerCase() === name;
+				const testCategory = jsonObj.category.toLowerCase() === category;
 				match = testName && testCategory;
 				if (match) {
 					break;
@@ -115,20 +113,19 @@ export async function registerTutorial(name : string, sourceUri : string, catego
 		}
 	}
 
-	await context.workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
+	await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
 
 	// refresh view
 	extension.refreshTreeview();
 }
 
 export function getDidactCategories() : string[] {
-	let existingRegistry : string[] | undefined = getRegisteredTutorials();
-	let didactCategories : string[] = [];
+	const existingRegistry : string[] | undefined = getRegisteredTutorials();
+	const didactCategories : string[] = [];
 	if(existingRegistry) {
 		// check to see if a tutorial doesn't already exist with the name/category combination
-		let match : boolean = false;
-		for (var entry of existingRegistry) {
-			let jsonObj : any = JSON.parse(entry);
+		for (const entry of existingRegistry) {
+			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.category) {
 				didactCategories.push(jsonObj.category);
 			}
@@ -138,15 +135,14 @@ export function getDidactCategories() : string[] {
 }
 
 export function getTutorialsForCategory( category : string ) : string[] {
-	let existingRegistry : string[] | undefined = getRegisteredTutorials();
-	let didactTutorials : string[] = [];
+	const existingRegistry : string[] | undefined = getRegisteredTutorials();
+	const didactTutorials : string[] = [];
 	if(existingRegistry) {
 		// check to see if a tutorial doesn't already exist with the name/category combination
-		let match : boolean = false;
-		for (var entry of existingRegistry) {
-			let jsonObj : any = JSON.parse(entry);
+		for (const entry of existingRegistry) {
+			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name) {
-				let testCategory = jsonObj.category === category;
+				const testCategory = jsonObj.category === category;
 				if (testCategory) {
 					didactTutorials.push(jsonObj.name);
 				}
@@ -157,14 +153,14 @@ export function getTutorialsForCategory( category : string ) : string[] {
 }
 
 export function getUriForDidactNameAndCategory(name : string, category : string ) : string | undefined {
-	let existingRegistry : string[] | undefined = getRegisteredTutorials();
+	const existingRegistry : string[] | undefined = getRegisteredTutorials();
 	if(existingRegistry) {
 		// check to see if a tutorial doesn't already exist with the name/category combination
-		for (var entry of existingRegistry) {
-			let jsonObj : any = JSON.parse(entry);
+		for (const entry of existingRegistry) {
+			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name && jsonObj.sourceUri) {
-				let testName = jsonObj.name === name;
-				let testCategory = jsonObj.category === category;
+				const testName = jsonObj.name === name;
+				const testCategory = jsonObj.category === category;
 				if (testName && testCategory) {
 					return jsonObj.sourceUri;
 				}
@@ -174,9 +170,9 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 	return undefined;
 }
 
-export async function clearRegisteredTutorials() {
+export async function clearRegisteredTutorials(): Promise<void>{
 	if (vscode.workspace.getConfiguration()) {
-		await context.workspaceState.update(DIDACT_REGISTERED_SETTING, undefined);
+		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, undefined);
 		console.log('Didact configuration cleared');
 	}
 }
@@ -199,13 +195,8 @@ export async function getCurrentFileSelectionPath(): Promise<vscode.Uri> {
   throw new Error("Can not determine current file selection");
 }
 
-// stash the context so we have it for use by the command functions without passing it each time
-export function setContext(inContext: vscode.ExtensionContext) {
-	context = inContext;
-}
-
 export function getLastColumnUsedSetting() : number {
-	let lastColumn : number | undefined = context.workspaceState.get(DIDACT_COLUMN_SETTING);
+	let lastColumn : number | undefined = extensionFunctions.getContext().workspaceState.get(DIDACT_COLUMN_SETTING);
 	if (lastColumn === undefined) {
 		// if we can, grab the current column from the active text editor
 		if (vscode.window.activeTextEditor) {
@@ -219,11 +210,11 @@ export function getLastColumnUsedSetting() : number {
 	return lastColumn;
 }
 
-export async function setLastColumnUsedSetting(column: number | undefined) {
-	await context.workspaceState.update(DIDACT_COLUMN_SETTING, column);
+export async function setLastColumnUsedSetting(column: number | undefined): Promise<void> {
+	await extensionFunctions.getContext().workspaceState.update(DIDACT_COLUMN_SETTING, column);
 }
 
-export async function removeFilesAndFolders(workspacename: string, filesAndFolders : string[]) {
+export async function removeFilesAndFolders(workspacename: string, filesAndFolders : string[]): Promise<void> {
 	if (filesAndFolders && filesAndFolders.length > 0) {
 		for (const fileOrFolder of filesAndFolders) {
 			const testPath = path.resolve(workspacename, fileOrFolder);

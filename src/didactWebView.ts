@@ -16,7 +16,7 @@
  */
 
 import * as vscode from 'vscode';
-import {extensionFunctions} from './extensionFunctions';
+import * as extensionFunctions from './extensionFunctions';
 import * as path from 'path';
 import * as commandHandler from './commandHandler';
 import * as fs from 'fs';
@@ -44,22 +44,22 @@ export class DidactWebviewPanel {
 	private didactStr : string | undefined = undefined;
 	private didactUriPath : vscode.Uri | undefined = undefined;
 	private defaultTitle = `Didact Tutorial`;
-	private isAsciiDoc : boolean = false;
-	private _disposed: boolean = false;
+	private isAsciiDoc = false;
+	private _disposed = false;
 
-	public setIsAsciiDoc(flag : boolean) {
+	public setIsAsciiDoc(flag : boolean): void {
 		this.isAsciiDoc = flag;
 	}
 
-	public static setContext(ctxt : vscode.ExtensionContext) {
+	public static setContext(ctxt : vscode.ExtensionContext): void {
 		DidactWebviewPanel.context = ctxt;
 	}
 
-	public getDidactUriPath() {
+	public getDidactUriPath(): vscode.Uri | undefined {
 		return this.didactUriPath;
 	}
 
-	public setDidactStr(value: string | undefined) {
+	public setDidactStr(value: string | undefined): void {
 		this.didactStr = value;
 	}
 
@@ -67,7 +67,7 @@ export class DidactWebviewPanel {
 		return this.currentHtml;
 	}
 
-	getDidactStr() {
+	getDidactStr(): string | undefined {
 		return this.didactStr;
 	}
 
@@ -79,10 +79,10 @@ export class DidactWebviewPanel {
 		return undefined;
 	}
 
-	public setDidactUriPath(inpath : vscode.Uri | undefined) {
+	public setDidactUriPath(inpath : vscode.Uri | undefined): void {
 		this.didactUriPath = inpath;
 		if (inpath) {
-			let tempFilename = path.basename(inpath.fsPath);
+			const tempFilename = path.basename(inpath.fsPath);
 			if (DidactWebviewPanel.currentPanel) {
 				DidactWebviewPanel.currentPanel.defaultTitle = tempFilename;
 			}
@@ -107,7 +107,7 @@ export class DidactWebviewPanel {
 		}
 	}
 
-	public static hardReset() {
+	public static hardReset(): void {
 		if (DidactWebviewPanel.currentPanel) {
 			DidactWebviewPanel.currentPanel.setDidactStr(undefined);
 			const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
@@ -119,7 +119,7 @@ export class DidactWebviewPanel {
 		}
 	}
 
-	public static createOrShow(extensionPath: string, inpath?: vscode.Uri | undefined, column?: ViewColumn) {
+	public static createOrShow(extensionPath: string, inpath?: vscode.Uri | undefined, column?: ViewColumn): void {
 		if (!column) {
 			// if we weren't passed a column, use the last column setting
 			column = getLastColumnUsedSetting();
@@ -164,52 +164,51 @@ export class DidactWebviewPanel {
 		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
-	public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
+	public static revive(panel: vscode.WebviewPanel, extensionPath: string): void {
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
 		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
-	public static async postMessage(message: string) {
+	public static async postMessage(message: string): Promise<void> {
 		if (!DidactWebviewPanel.currentPanel) {
 			return;
 		}
-		let jsonMsg:string = "{ \"command\": \"sendMessage\", \"data\": \"" + message + "\"}";
+		const jsonMsg:string = "{ \"command\": \"sendMessage\", \"data\": \"" + message + "\"}";
 		console.log("outgoing message being posted: " + jsonMsg);
 		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
 	}
 
-	public static async postRequirementsResponseMessage(requirementName: string, result: boolean) {
+	public static async postRequirementsResponseMessage(requirementName: string, result: boolean): Promise<void> {
 		if (!DidactWebviewPanel.currentPanel) {
 			return;
 		}
-		let jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
+		const jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
 		console.log("outgoing message being posted: " + jsonMsg);
 		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
 	}
 
-	static async postNamedSimpleMessage(msg: string) {
+	static async postNamedSimpleMessage(msg: string): Promise<void> {
 		if (!DidactWebviewPanel.currentPanel) {
 			return;
 		}
-		let jsonMsg:string = 
-			`{ "command" : "${msg}"}`;
+		const jsonMsg = `{ "command" : "${msg}"}`;
 		console.log("outgoing message being posted: " + jsonMsg);
 		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);		
 	}
 
-	public static async postTestAllRequirementsMessage() {
+	public static async postTestAllRequirementsMessage(): Promise<void> {
 		DidactWebviewPanel.postNamedSimpleMessage("allRequirementCheck");
 	}
 
-	public static async postCollectAllRequirementsMessage() {
+	public static async postCollectAllRequirementsMessage(): Promise<void> {
 		DidactWebviewPanel.postNamedSimpleMessage("returnRequirements");
 	}
 
-	public static async postCollectAllCommandIdsMessage() {
+	public static async postCollectAllCommandIdsMessage(): Promise<void> {
 		DidactWebviewPanel.postNamedSimpleMessage("returnCommands");
 	}
 
-	public setActiveContext(value: boolean) {
+	public setActiveContext(value: boolean): void {
 		vscode.commands.executeCommand('setContext', 'didact.webview', value);
 	}
 
@@ -228,7 +227,7 @@ export class DidactWebviewPanel {
 
 		// Update the content based on view changes
 		this._panel.onDidChangeViewState(
-			e => {
+			() => {
 				if (this._panel.visible) {
 					this._update();
 				} else if (!this._panel.visible) {
@@ -265,9 +264,9 @@ export class DidactWebviewPanel {
 		);
 	}
 
-	public static async cacheFile() {
+	public static async cacheFile(): Promise<void> {
 		if (DidactWebviewPanel.currentPanel && DidactWebviewPanel.currentPanel.getCurrentHTML()) {
-			let html = DidactWebviewPanel.currentPanel.getCurrentHTML();
+			const html = DidactWebviewPanel.currentPanel.getCurrentHTML();
 			if (html) {
 				await this.createHTMLCacheFile(html);
 				console.log('Didact content cached');
@@ -275,7 +274,7 @@ export class DidactWebviewPanel {
 		}
 	}
 
-	public async dispose() {
+	public async dispose(): Promise<void> {
 		if (this._disposed) {
 			return;
 		}
@@ -354,7 +353,7 @@ export class DidactWebviewPanel {
 		const cssUriHtml = `<link rel="stylesheet" href="${cssUri}"/>`;
 
 		// process the stylesheet details for asciidoc or markdown-based didact files
-		let stylesheetHtml = this.produceStylesheetHTML(cssUriHtml);
+		const stylesheetHtml = this.produceStylesheetHTML(cssUriHtml);
 
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
@@ -382,10 +381,10 @@ export class DidactWebviewPanel {
 				this.currentHtml = this.wrapDidactContent(content);
 			}
 		} else {
-			let cachedHtml = this.getCachedHTML();
+			const cachedHtml = this.getCachedHTML();
 			if (cachedHtml) {
 				this.currentHtml = cachedHtml;
-				let cachedTitle = this.getCachedTitle();
+				const cachedTitle = this.getCachedTitle();
 				if (cachedTitle) {
 					if (DidactWebviewPanel.currentPanel) {
 						DidactWebviewPanel.currentPanel.defaultTitle = cachedTitle;

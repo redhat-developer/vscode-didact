@@ -4,7 +4,6 @@ import {before} from 'mocha';
 import * as vscode from 'vscode';
 import { REGISTER_TUTORIAL } from '../../extensionFunctions';
 
-
 const name = 'new-tutorial';
 const category = 'some-category';
 const source = 'my-uri';
@@ -36,8 +35,8 @@ suite('Didact registry test suite', () => {
 	});
 
 	test('make sure we get the registry', async() => {
-		let registry = getRegisteredTutorials();
-		assert.notEqual(registry, undefined);
+		const registry = getRegisteredTutorials();
+		assert.notStrictEqual(registry, undefined);
 	});
 
 	test('verify can get categories', async () => {
@@ -49,18 +48,18 @@ suite('Didact registry test suite', () => {
 		}
 
 		const cats : string[] = getDidactCategories();
-		assert.notEqual(cats.indexOf(category), -1);
-		assert.notEqual(cats.indexOf(category2), -1);
+		assert.notStrictEqual(cats.indexOf(category), -1);
+		assert.notStrictEqual(cats.indexOf(category2), -1);
 	});
 
 	test('verify can get tutorials for category', async () => {
 		const tuts : string[] = getTutorialsForCategory(category2);
-		assert.notEqual(tuts.indexOf(name2), -1);
+		assert.notStrictEqual(tuts.indexOf(name2), -1);
 	});
 
 	test('verify can get uri for name/category pair', async () => {
 		const rtnUri : string | undefined = getUriForDidactNameAndCategory(name, category);
-		assert.equal(rtnUri, source);
+		assert.strictEqual(rtnUri, source);
 	});
 
 	test('call command to register tutorial', async() => {
@@ -79,12 +78,12 @@ suite('Didact registry test suite', () => {
 	});
 
 	test('Clear all the tutorials', async() => {
-		let registry = getRegisteredTutorials();
-		assert.notEqual(registry, undefined);
+		const registry = getRegisteredTutorials();
+		assert.notStrictEqual(registry, undefined);
 
 		await clearRegisteredTutorials();
 
-		let afterregistry = getRegisteredTutorials();
-		assert.deepEqual(afterregistry, undefined);
+		const afterregistry = getRegisteredTutorials();
+		assert.deepStrictEqual(afterregistry, undefined);
 	});
 });

@@ -18,12 +18,12 @@
 
 import { expect } from 'chai';
 import { DidactUriCompletionItemProviderMarkdown } from "../../didactUriCompletionItemProviderMarkdown";
-import { extensionFunctions } from '../../extensionFunctions';
+import * as extensionFunctions from '../../extensionFunctions';
 
 suite("Didact URI completion for Markdown", function () {
 
-	let emptyContent = '';
-	let notEmptyContent = 'this is text with a didact://? link stuffed inside';
+	const emptyContent = '';
+	const notEmptyContent = 'this is text with a didact://? link stuffed inside';
 	const ctx = extensionFunctions.getContext();
 	const provider = new DidactUriCompletionItemProviderMarkdown(ctx);
 

@@ -19,7 +19,7 @@ export class DoublyLinkedList<T> {
 	/**
 	* Adds an item in O(1)
 	**/
-	push(value: T) {
+	push(value: T): void {
 		const node: DoublyLinkedListNode<T> = {
 			value,
 			next: undefined,
@@ -72,7 +72,7 @@ export class DoublyLinkedList<T> {
 	/**
 	 * Returns an iterator over the values
 	 */
-	*values() {
+	*values(): Generator<T, void, unknown> {
 		let current = this.head;
 		while (current) {
 			yield current.value;

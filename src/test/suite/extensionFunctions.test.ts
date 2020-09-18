@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import {extensionFunctions} from '../../extensionFunctions';
+import * as extensionFunctions from '../../extensionFunctions';
 import { handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
@@ -9,9 +9,9 @@ import { expect } from 'chai';
 
 suite('Extension Functions Test Suite', () => {
 
-	const uriOne : string = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md';
-	const uriTwo : string = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/asciidoc/didact-demo.didact.adoc';
-	const uriThree : string = 'https://github.com/redhat-developer/vscode-didact/blob/master/demos/markdown/camelinaction/chapter1/cia2-chapter-1-v2.didact.md';
+	const uriOne = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md';
+	const uriTwo = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/asciidoc/didact-demo.didact.adoc';
+	const uriThree = 'https://github.com/redhat-developer/vscode-didact/blob/master/demos/markdown/camelinaction/chapter1/cia2-chapter-1-v2.didact.md';
 
 	async function cleanFiles() {
 		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
@@ -36,12 +36,12 @@ suite('Extension Functions Test Suite', () => {
 
 	test('send text to terminal', async function() {
 		const testTerminalName = 'testTerminal';
-		var terminal : vscode.Terminal | undefined = extensionFunctions.findTerminal(testTerminalName);
-		assert.equal(terminal, undefined);
+		let terminal : vscode.Terminal | undefined = extensionFunctions.findTerminal(testTerminalName);
+		assert.strictEqual(terminal, undefined);
 
 		await extensionFunctions.sendTerminalText(testTerminalName, "testText");
 		terminal = extensionFunctions.findTerminal(testTerminalName);
-		assert.notEqual(terminal, undefined);
+		assert.notStrictEqual(terminal, undefined);
 
 		// open to ideas on how to check to see that a message was actually committed to the terminal
 		// but at least we can check to see if the terminal was created as part of the sendTerminalText call
@@ -49,43 +49,43 @@ suite('Extension Functions Test Suite', () => {
 
 	test('send ctrl+c to terminal', async function() {
 		const testTerminalName = 'testTerminalCtrlC';
-		var terminalC : vscode.Terminal | undefined = extensionFunctions.findTerminal(testTerminalName);
-		assert.equal(terminalC, undefined);
+		let terminalC : vscode.Terminal | undefined = extensionFunctions.findTerminal(testTerminalName);
+		assert.strictEqual(terminalC, undefined);
 
 		// if it can't find the terminal, it will error out
 		await extensionFunctions.sendTerminalCtrlC(testTerminalName).catch( (error) => {
-			assert.notEqual(error, undefined);
+			assert.notStrictEqual(error, undefined);
 		});
 
 		// terminal should not have been created as part of the method call
 		terminalC = extensionFunctions.findTerminal(testTerminalName);
-		assert.equal(terminalC, undefined);
+		assert.strictEqual(terminalC, undefined);
 
 		await extensionFunctions.startTerminal(testTerminalName);
 		// terminal should have been created as part of the method call
 		terminalC = extensionFunctions.findTerminal(testTerminalName);
-		assert.notEqual(terminalC, undefined);
+		assert.notStrictEqual(terminalC, undefined);
 
 		// again, open to ideas on how to check to see if the terminal text was sent to the active terminal
 		await extensionFunctions.sendTerminalCtrlC(testTerminalName);
 
 		// we can test to see if the terminal still exists at least
-		assert.notEqual(terminalC, undefined);
+		assert.notStrictEqual(terminalC, undefined);
 	});
 
 	test('open new terminal and then close it', async function() {
 		const terminalNameToClose = 'terminalToKill';
-		var terminal : vscode.Terminal | undefined = extensionFunctions.findTerminal(terminalNameToClose);
-		assert.equal(terminal, undefined);
+		let terminal : vscode.Terminal | undefined = extensionFunctions.findTerminal(terminalNameToClose);
+		assert.strictEqual(terminal, undefined);
 
 		// if it can't find the terminal, it will error out
 		await extensionFunctions.closeTerminal(terminalNameToClose).catch( (error) => {
-			assert.notEqual(error, undefined);
+			assert.notStrictEqual(error, undefined);
 		});
 
 		await extensionFunctions.startTerminal(terminalNameToClose);
 		terminal = extensionFunctions.findTerminal(terminalNameToClose);
-		assert.notEqual(terminal, undefined);
+		assert.notStrictEqual(terminal, undefined);
 
 		await extensionFunctions.closeTerminal(terminalNameToClose).finally( async () => {
 			terminal = extensionFunctions.findTerminal(terminalNameToClose);
@@ -96,13 +96,13 @@ suite('Extension Functions Test Suite', () => {
 
 	test('try executing a valid command', async function() {
 		await extensionFunctions.cliExecutionCheck('test-pwd','pwd').then( (returnBool) => {
-			assert.equal(returnBool, true);
+			assert.strictEqual(returnBool, true);
 		});
 	});
 
 	test('try executing an invalid command', async function() {
 		await extensionFunctions.cliExecutionCheck('test-bogus','doesnotexist').then( (returnBool) => {
-			assert.equal(returnBool, false);
+			assert.strictEqual(returnBool, false);
 		});
 	});
 
@@ -185,9 +185,9 @@ suite('Extension Functions Test Suite', () => {
 		extensionFunctions.getHistory().clearHistory();
 		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(0);
 
-		let one : vscode.Uri = vscode.Uri.parse(uriOne);
-		let two : vscode.Uri = vscode.Uri.parse(uriTwo);
-		let three : vscode.Uri = vscode.Uri.parse(uriThree);
+		const one : vscode.Uri = vscode.Uri.parse(uriOne);
+		const two : vscode.Uri = vscode.Uri.parse(uriTwo);
+		const three : vscode.Uri = vscode.Uri.parse(uriThree);
 
 		console.log(`add uri - ${uriOne}`);
 		extensionFunctions.addToHistory(one);
@@ -221,7 +221,7 @@ suite('Extension Functions Test Suite', () => {
 		extensionFunctions.getHistory().clearHistory();
 		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(0);
 
-		let one : vscode.Uri = vscode.Uri.parse(uriOne);
+		const one : vscode.Uri = vscode.Uri.parse(uriOne);
 		console.log(`add uri - ${uriOne}`);
 		extensionFunctions.addToHistory(one);
 		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(1);
@@ -236,16 +236,16 @@ suite('Extension Functions Test Suite', () => {
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
 	console.log(`Testing ${urlValue} to ensure that it resolves to ${endToCheck}`);
-	var textUri = vscode.Uri.parse(urlValue);
-	var rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
+	const textUri = vscode.Uri.parse(urlValue);
+	const rtnUri = extensionFunctions.handleVSCodeDidactUriParsingForPath(textUri);
 	assert.notStrictEqual(rtnUri, undefined);
 	if (rtnUri) {
 		console.log(`-- resolved path1 = ${rtnUri.fsPath}`);
-		var checkEnd1 = rtnUri.fsPath.endsWith(endToCheck);
+		const checkEnd1 = rtnUri.fsPath.endsWith(endToCheck);
 		console.log(`-- does it resolve? ${checkEnd1}`);
-		var checkEnd2 = rtnUri.fsPath.endsWith(alternateEnd);
+		const checkEnd2 = rtnUri.fsPath.endsWith(alternateEnd);
 		console.log(`-- does it resolve? ${checkEnd2}`);
-		var checkEnds = checkEnd1 || checkEnd2;
+		const checkEnds = checkEnd1 || checkEnd2;
 		assert.strictEqual(checkEnds, true);
 	}
 }
@@ -254,7 +254,7 @@ async function checkCanFindCopiedFile(filepath : string) {
 	console.log(`Testing ${filepath} to ensure that it exists after a copyFileFromURLtoLocalURI call`);
 	assert.notStrictEqual(filepath, null);
 	assert.notStrictEqual(filepath, undefined);
-	let pathUri = vscode.Uri.parse(filepath);
+	const pathUri = vscode.Uri.parse(filepath);
 	await vscode.workspace.fs.readFile(pathUri).then( (rtnUri) => {
 		assert.notStrictEqual(rtnUri, undefined);
 	});	
@@ -264,8 +264,8 @@ async function testCopyFileFromURLtoLocalURI( fileURL : string, workspaceLocatio
 	await extensionFunctions.downloadAndUnzipFile(fileURL, workspaceLocation, newfilename, unzip, ignoreOverwrite)
 		.then( async (returnedFilePath) => {
 			if (testFileInFolder) {
-				let folder = path.dirname(returnedFilePath);
-				let testFile = path.join(folder, testFileInFolder);
+				const folder = path.dirname(returnedFilePath);
+				const testFile = path.join(folder, testFileInFolder);
 				await checkCanFindCopiedFile(testFile);
 			} else {
 				await checkCanFindCopiedFile(returnedFilePath);

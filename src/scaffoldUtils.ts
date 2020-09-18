@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
 // prototypical sample project with a few folders and a file with text content provided
 export function createSampleProject(): JSON {
-	let project: any = {
+	const project: any = {
 		"folders": [
 			{
 				"name": "root",
@@ -75,7 +74,7 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 		if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) {
 			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.');
 		}
-		var rootPath: string | undefined;
+		let rootPath: string | undefined;
 		await vscode.commands.executeCommand('workbench.view.explorer').then ( async () => {
 			await vscode.commands.executeCommand('copyFilePath').then ( async () => {
 				await vscode.env.clipboard.readText().then((copyPath) => {
@@ -95,7 +94,7 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 		});
 		if (!rootPath) {
 			if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]) {
-				var workspace: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
+				const workspace: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
 				rootPath = workspace.uri.fsPath;
 			}
 		}
@@ -103,7 +102,7 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 			throw new Error('Operation(s) failed - selected file/folder or workspace root folder not found');
 		}
 		if (rootPath && isJson(json)) {
-			var folders = json.folders;
+			const folders = json.folders;
 			if (folders) {
 				try {
 					return await createSubFolders(rootPath, folders, jsonpath);
@@ -111,7 +110,7 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 					throw new Error(`Operation(s) failed - ${error}`);
 				}
 			} else {
-				var files = json.files;
+				const files = json.files;
 				if (files) {
 					try {
 						return await createFiles(rootPath, files, jsonpath)
@@ -137,15 +136,15 @@ async function createFiles(folderNode: any, files: any, jsonpath: vscode.Uri): P
 	try {
 		if (files) {
 			files.forEach((file: any) => {
-				let newFileName = file.name;
-				let completeFilePath = `${folderNode}/${newFileName}`;
+				const newFileName = file.name;
+				const completeFilePath = `${folderNode}/${newFileName}`;
 				let newFileContent = undefined;
 				console.log(`Creating ${completeFilePath}`);
 				if (file.content) {
 					newFileContent = file.content;
 				} else if (file.copy && jsonpath) {
-					let relative = path.dirname(jsonpath.fsPath);
-					let filetocopy = path.join(relative, file.copy);
+					const relative = path.dirname(jsonpath.fsPath);
+					const filetocopy = path.join(relative, file.copy);
 					newFileContent = fs.readFileSync(filetocopy, 'utf8');
 				}
 				if (newFileContent) {
@@ -166,8 +165,8 @@ async function createFiles(folderNode: any, files: any, jsonpath: vscode.Uri): P
 async function createSubFolders(folderNode: any, folders: any, jsonpath: vscode.Uri): Promise<any> {
 	try {
 		folders.forEach(async (folder: any) => {
-			let newFolderName = folder.name;
-			let newFolder = `${folderNode}/${newFolderName}`;
+			const newFolderName = folder.name;
+			const newFolder = `${folderNode}/${newFolderName}`;
 			console.log(`Creating ${newFolder}`);
 			if (!fs.existsSync(newFolder)) {
 				fs.mkdirSync(newFolder);

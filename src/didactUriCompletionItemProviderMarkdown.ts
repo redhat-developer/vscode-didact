@@ -23,12 +23,11 @@ import {didactProtocol, DidactUriCompletionItemProvider} from './didactUriComple
 export class DidactUriCompletionItemProviderMarkdown extends DidactUriCompletionItemProvider {
 
 	protected getCommandCompletionItems() : vscode.CompletionItem[] {
-		let completions = super.getCommandCompletionItems();
-		return completions;
+		return super.getCommandCompletionItems();
 	}
 
 	public provideCompletionItemsOutsideDidactURI(lineToSearch: string) : vscode.CompletionItem[] {
-		let completions: vscode.CompletionItem[] = super.provideCompletionItemsOutsideDidactURI(lineToSearch);
+		const completions: vscode.CompletionItem[] = super.provideCompletionItemsOutsideDidactURI(lineToSearch);
 
 		if (lineToSearch.indexOf(didactProtocol) === -1) {
 			// add these for markdown

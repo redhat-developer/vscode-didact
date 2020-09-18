@@ -33,10 +33,10 @@ suite("Didact Web View tests", function () {
 			const defaultUri = vscode.Uri.parse(configuredUri);
 			await vscode.commands.executeCommand(START_DIDACT_COMMAND, testUri);
 			if (DidactWebviewPanel.currentPanel) {
-				let oldPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
+				const oldPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
 				DidactWebviewPanel.hardReset();
 
-				let newPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
+				const newPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
 				expect(oldPath).not.equals(newPath);
 				expect(newPath).equals(defaultUri.toString());
 			} else {
@@ -51,7 +51,7 @@ suite("Didact Web View tests", function () {
 		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithH1.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
 		if (DidactWebviewPanel.currentPanel) {
-			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading: ${firstheading}`);
 				expect(firstheading).equals('This should be the H1 heading');
@@ -68,7 +68,7 @@ suite("Didact Web View tests", function () {
 		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithMultipleH1.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
 		if (DidactWebviewPanel.currentPanel) {
-			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading: ${firstheading}`);
 				expect(firstheading).equals('This should be the first H1 heading');
@@ -85,7 +85,7 @@ suite("Didact Web View tests", function () {
 		const testOneH2Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithH2.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH2Uri);
 		if (DidactWebviewPanel.currentPanel) {
-			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading: ${firstheading}`);
 				expect(firstheading).equals('This should be the H2 heading');
@@ -102,13 +102,13 @@ suite("Didact Web View tests", function () {
 		const testOneH2Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithNoHeadings.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH2Uri);
 		if (DidactWebviewPanel.currentPanel) {
-			let firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading, though we should not have: ${firstheading}`);
 				fail(`DidactWebviewPanel found a heading when no heading should be present.`);
 			} else {
 				ok(`DidactWebviewPanel did not find a heading when there was no heading to find.`);
-				let defaultTitle : string | undefined = DidactWebviewPanel.currentPanel.getDidactDefaultTitle();
+				const defaultTitle : string | undefined = DidactWebviewPanel.currentPanel.getDidactDefaultTitle();
 				console.log(`Retrieved default heading: ${defaultTitle}`);
 				expect(defaultTitle).equals('didactWithNoHeadings.didact.md');
 			}

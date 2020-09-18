@@ -23,9 +23,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	readonly onDidChangeTreeData: vscode.Event<TreeNode | undefined> = this._onDidChangeTreeData.event;
 
 	protected treeNodes: TreeNode[] = [];
-	protected retrieveTutorials : boolean = true;
-
-	constructor() {}
+	protected retrieveTutorials = true;
 
 	// clear the tree
 	public resetList(): void {
@@ -51,47 +49,37 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
 	// add a child to the list of nodes
-	public addChild(oldNodes: TreeNode[] = this.treeNodes, newNode: TreeNode, disableRefresh : boolean = false ): Promise<TreeNode[]> {
-		return new Promise<TreeNode[]>( async (resolve, reject) => {
-			if (oldNodes) {
-				oldNodes.push(newNode);
-				if (!disableRefresh) {
-					await this.refresh().catch(err => reject(err));
-				}
-				resolve(oldNodes);
+	public addChild(oldNodes: TreeNode[] = this.treeNodes, newNode: TreeNode, disableRefresh = false ): TreeNode[] {
+		if (oldNodes) {
+			oldNodes.push(newNode);
+			if (!disableRefresh) {
+				this.refresh();
 			}
-			reject(new Error("Internal problem. TreeView is not initialized correctly."));
-		});
+		}
+		return oldNodes;		
 	}
 
 	// This method isn't used by the view currently, but is here to facilitate testing
-	public removeChild(oldNodes: TreeNode[] = this.treeNodes, oldNode: TreeNode, disableRefresh : boolean = false ): Promise<TreeNode[]> {
-		return new Promise<TreeNode[]>( async (resolve, reject) => {
-			if (oldNodes) {
-				const index = oldNodes.indexOf(oldNode);
-				if (index !== -1) {
-					oldNodes.splice(index, 1);
-					if (!disableRefresh) {
-						await this.refresh().catch(err => reject(err));
-					}
+	public removeChild(oldNodes: TreeNode[] = this.treeNodes, oldNode: TreeNode, disableRefresh = false ): TreeNode[] {
+		if (oldNodes) {
+			const index = oldNodes.indexOf(oldNode);
+			if (index !== -1) {
+				oldNodes.splice(index, 1);
+				if (!disableRefresh) {
+					this.refresh();
 				}
-				resolve(oldNodes);
 			}
-			reject(new Error("Internal problem. TreeView is not initialized correctly."));
-		});
+		}
+		return oldNodes;
 	}
 
 	// trigger a refresh event in VSCode
-	public refresh(): Promise<void> {
-		return new Promise<void>( async (resolve, reject) => {
-			this.resetList();
-			let inaccessible = false;
-			if (this.retrieveTutorials) {
-                this.processRegisteredTutorials();
-			}
-			this._onDidChangeTreeData.fire(undefined);
-			resolve();
-		});
+	public refresh(): void {
+		this.resetList();
+		if (this.retrieveTutorials) {
+			this.processRegisteredTutorials();
+		}
+		this._onDidChangeTreeData.fire(undefined);
 	}
 
 	getTreeItem(node: TreeNode): vscode.TreeItem {
@@ -99,7 +87,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
 	doesNodeExist(oldNodes: TreeNode[], newNode: TreeNode): boolean {
-		for (let node of oldNodes) {
+		for (const node of oldNodes) {
 			if (node.label === newNode.label) {
 				return true;
 			}
@@ -109,10 +97,10 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 
 	// process the list of registered tutorials 
 	processRegisteredTutorials(): void {
-        let categories : string[] | undefined = utils.getDidactCategories();
+        const categories : string[] | undefined = utils.getDidactCategories();
         if (categories) {
-            for (var category of categories) {
-                let newNode = new TreeNode("string", category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
+            for (const category of categories) {
+                const newNode = new TreeNode("string", category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
                 if (!this.doesNodeExist(this.treeNodes, newNode)) {
                     this.addChild(this.treeNodes, newNode, true);
                 }
@@ -121,23 +109,22 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
     }
 
     processTutorialsForCategory(category: string | undefined) : TreeNode[] {
-		let children : TutorialNode[] = [];
+		const children : TutorialNode[] = [];
 		if (category) {
-        	let tutorials : string[] | undefined = utils.getTutorialsForCategory(category);
-        	if (tutorials) {
-	            for (var tutorial of tutorials) {
-					let tutUri : string | undefined = utils.getUriForDidactNameAndCategory(tutorial, category);
-					let newNode = new TutorialNode("string", tutorial, tutUri, vscode.TreeItemCollapsibleState.None);
+			const tutorials : string[] | undefined = utils.getTutorialsForCategory(category);
+			if (tutorials) {
+				for (const tutorial of tutorials) {
+					const tutUri : string | undefined = utils.getUriForDidactNameAndCategory(tutorial, category);
+					const newNode = new TutorialNode("string", tutorial, tutUri, vscode.TreeItemCollapsibleState.None);
 					newNode.contextValue = 'TutorialNode';
-                	if (!this.doesNodeExist(children, newNode)) {
-	                    this.addChild(children, newNode, true);
-                	}
-            	}
+					if (!this.doesNodeExist(children, newNode)) {
+						this.addChild(children, newNode, true);
+					}
+				}
 			}
 		}
         return children;
-    }    
-  
+    }
 }
 
 // simple tree node for our tutorials view

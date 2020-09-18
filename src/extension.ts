@@ -16,8 +16,7 @@
  */
 
 import * as vscode from 'vscode';
-import { extensionFunctions, initializeContext } from './extensionFunctions';
-import * as commandConstants from './extensionFunctions';
+import * as extensionFunctions from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting } from './utils';
@@ -30,58 +29,58 @@ const DIDACT_VIEW = 'didact.tutorials';
 const DEFAULT_TUTORIAL_CATEGORY = "Didact";
 const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
-let didactTutorialsProvider = new DidactNodeProvider();
+const didactTutorialsProvider = new DidactNodeProvider();
 let didactTreeView : vscode.TreeView<TreeNode>;
 
-export async function activate(context: vscode.ExtensionContext) {
-
-	initializeContext(context); // stash context for command use
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
+	
+	extensionFunctions.initialize(context);
 
 	// register all the various commands we provide
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.SCAFFOLD_PROJECT_COMMAND, extensionFunctions.scaffoldProjectFromJson));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.CREATE_WORKSPACE_FOLDER_COMMAND, extensionFunctions.createTemporaryFolderAsWorkspaceRoot));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.OPEN_TUTORIAL_COMMAND, extensionFunctions.openDidactWithDefault));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.START_DIDACT_COMMAND, extensionFunctions.startDidact));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.START_TERMINAL_COMMAND, extensionFunctions.startTerminal));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.SEND_TERMINAL_SOME_TEXT_COMMAND, extensionFunctions.sendTerminalText));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.REQUIREMENT_CHECK_COMMAND, extensionFunctions.requirementCheck));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.EXTENSION_REQUIREMENT_CHECK_COMMAND, extensionFunctions.extensionCheck));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND, extensionFunctions.validWorkspaceCheck));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.RELOAD_DIDACT_COMMAND, extensionFunctions.reloadDidact));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VALIDATE_ALL_REQS_COMMAND, extensionFunctions.validateAllRequirements));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VIEW_OPEN_TUTORIAL_MENU, extensionFunctions.openTutorialFromView));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.REGISTER_TUTORIAL, extensionFunctions.registerTutorial));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.REFRESH_DIDACT_VIEW, refreshTreeview));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.SEND_TERMINAL_KEY_SEQUENCE, extensionFunctions.sendTerminalCtrlC));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.CLOSE_TERMINAL, extensionFunctions.closeTerminal));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.CLI_SUCCESS_COMMAND, extensionFunctions.cliExecutionCheck));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.VALIDATE_COMMAND_IDS, extensionFunctions.validateCommandIDsInSelectedFile));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.TEXT_TO_CLIPBOARD_COMMAND, extensionFunctions.placeTextOnClipboard));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.COPY_FILE_URL_TO_WORKSPACE_COMMAND, extensionFunctions.copyFileFromURLtoLocalURI));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.HISTORY_BACK_COMMAND, extensionFunctions.historyBack));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.HISTORY_FORWARD_COMMAND, extensionFunctions.historyForward));
-	context.subscriptions.push(vscode.commands.registerCommand(commandConstants.HISTORY_CLEAR, extensionFunctions.clearHistory));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SCAFFOLD_PROJECT_COMMAND, extensionFunctions.scaffoldProjectFromJson));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CREATE_WORKSPACE_FOLDER_COMMAND, extensionFunctions.createTemporaryFolderAsWorkspaceRoot));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_TUTORIAL_COMMAND, extensionFunctions.openDidactWithDefault));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.START_DIDACT_COMMAND, extensionFunctions.startDidact));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.START_TERMINAL_COMMAND, extensionFunctions.startTerminal));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TERMINAL_SOME_TEXT_COMMAND, extensionFunctions.sendTerminalText));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REQUIREMENT_CHECK_COMMAND, extensionFunctions.requirementCheck));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.EXTENSION_REQUIREMENT_CHECK_COMMAND, extensionFunctions.extensionCheck));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND, extensionFunctions.validWorkspaceCheck));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.RELOAD_DIDACT_COMMAND, extensionFunctions.reloadDidact));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.VALIDATE_ALL_REQS_COMMAND, extensionFunctions.validateAllRequirements));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.VIEW_OPEN_TUTORIAL_MENU, extensionFunctions.openTutorialFromView));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REGISTER_TUTORIAL, extensionFunctions.registerTutorial));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REFRESH_DIDACT_VIEW, refreshTreeview));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TERMINAL_KEY_SEQUENCE, extensionFunctions.sendTerminalCtrlC));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CLOSE_TERMINAL, extensionFunctions.closeTerminal));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CLI_SUCCESS_COMMAND, extensionFunctions.cliExecutionCheck));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.VALIDATE_COMMAND_IDS, extensionFunctions.validateCommandIDsInSelectedFile));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.TEXT_TO_CLIPBOARD_COMMAND, extensionFunctions.placeTextOnClipboard));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.COPY_FILE_URL_TO_WORKSPACE_COMMAND, extensionFunctions.copyFileFromURLtoLocalURI));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_BACK_COMMAND, extensionFunctions.historyBack));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_FORWARD_COMMAND, extensionFunctions.historyForward));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_CLEAR, extensionFunctions.clearHistory));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
 		async handleUri(uri:vscode.Uri) {
-			await vscode.commands.executeCommand(commandConstants.START_DIDACT_COMMAND, uri);
+			await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, uri);
 		}
 	});
 
 	// set up our completion providers
-	let markdown:vscode.DocumentSelector = { scheme: 'file', language: 'markdown', pattern: '**/**.didact.md' };
-	let markdownProvider = new DidactUriCompletionItemProviderMarkdown(context);
+	const markdown:vscode.DocumentSelector = { scheme: 'file', language: 'markdown', pattern: '**/**.didact.md' };
+	const markdownProvider = new DidactUriCompletionItemProviderMarkdown(context);
 	vscode.languages.registerCompletionItemProvider(markdown, markdownProvider);
 
-	let asciidoc:vscode.DocumentSelector = { scheme: 'file', language: 'asciidoc', pattern: '**/**.didact.adoc' };
-	let asciidocProvider = new DidactUriCompletionItemProviderAsciiDoc(context);
+	const asciidoc:vscode.DocumentSelector = { scheme: 'file', language: 'asciidoc', pattern: '**/**.didact.adoc' };
+	const asciidocProvider = new DidactUriCompletionItemProviderAsciiDoc(context);
 	vscode.languages.registerCompletionItemProvider(asciidoc, asciidocProvider);
 
 	// if there are changes in the workspace (i.e. a new root folder being added), refresh the didact window
- 	vscode.workspace.onDidChangeWorkspaceFolders( async () => {
-		 await vscode.commands.executeCommand(commandConstants.RELOAD_DIDACT_COMMAND);
- 	});
+	vscode.workspace.onDidChangeWorkspaceFolders( async () => {
+		await vscode.commands.executeCommand(extensionFunctions.RELOAD_DIDACT_COMMAND);
+	});
 
 	// set up so we don't lose the webview contents each time it goes 'invisible' 
 	if (vscode.window.registerWebviewPanelSerializer) {
@@ -129,20 +128,20 @@ function createIntegrationsView(): void {
 	didactTreeView = vscode.window.createTreeView(DIDACT_VIEW, {
 		treeDataProvider: didactTutorialsProvider
 	});
-	didactTreeView.onDidChangeVisibility(async () => {
+	didactTreeView.onDidChangeVisibility(() => {
 		if (didactTreeView.visible === true) {
-			await didactTutorialsProvider.refresh().catch(err => console.log(err));
+			didactTutorialsProvider.refresh();
 		}
 	});
 }
 
-export async function deactivate() {
+export async function deactivate(): Promise<void> {
 	await DidactWebviewPanel.cacheFile();
 	await clearRegisteredTutorials();
 }
 
-export async function refreshTreeview() {
+export function refreshTreeview(): void {
 	if (didactTreeView && didactTreeView.visible === true) {
-		await didactTutorialsProvider.refresh().catch(err => console.log(err));
+		didactTutorialsProvider.refresh();
 	}
 }
