@@ -5,6 +5,7 @@ import { handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
 import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels } from '../../utils';
 import { beforeEach, after } from 'mocha';
+import * as sinon from 'sinon';
 import { expect } from 'chai';
 
 suite('Extension Functions Test Suite', () => {
@@ -56,12 +57,15 @@ suite('Extension Functions Test Suite', () => {
 		channel = getCachedOutputChannel(channelName);
 		assert.notStrictEqual(channel, undefined);
 		assert.strictEqual(channel?.name, channelName);
-
-		extensionFunctions.openNamedOutputChannel(channelName);
+		const txt = 'dummy output';
+		const outputSpy = sinon.spy(channel, 'append');
+		extensionFunctions.openNamedOutputChannel(channelName, txt);
+		assert.strictEqual(outputSpy.calledOnceWithExactly(`${txt} \n`), true);
 		extensionFunctions.openNamedOutputChannel(channelName);
 		extensionFunctions.openNamedOutputChannel(channelName);
 		extensionFunctions.openNamedOutputChannel(channelName);
 		assert.strictEqual(getCachedOutputChannels().length, 1);
+		outputSpy.restore();
 	});
 
 	test('send text to terminal', async function() {
