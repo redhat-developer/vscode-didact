@@ -37,19 +37,27 @@ suite('Extension Functions Test Suite', () => {
 		getCachedOutputChannels().length = 0;
 	});
 
-	test('open a named output channel and send text', () => {
+	test('open a named output channel', () => {
 		const channelName = 'testOutputChannel';
 		let channel: vscode.OutputChannel | undefined = getCachedOutputChannel(channelName);
 		assert.strictEqual(channel, undefined);
 
-		extensionFunctions.openNamedOutputChannel(channelName, 'someText');
+		extensionFunctions.openNamedOutputChannel(channelName);
 		channel = getCachedOutputChannel(channelName);
 		assert.notStrictEqual(channel, undefined);
 		assert.strictEqual(channel?.name, channelName);
 	});
 
-	test('open a named output channel several times and check only one instance is created', () => {
-		const channelName = 'testOutputChannel2';
+	test('open the default didact ouput channel if no channel name is provided', () => {
+		const outputSpy = sinon.spy(extensionFunctions.didactOutputChannel, 'show');
+		extensionFunctions.openNamedOutputChannel();
+		assert.strictEqual(outputSpy.calledOnce, true);
+		outputSpy.restore();
+	});
+
+	test('open a named output channel and send some text to it', () => {
+		const channelName = 'testCustomChannel';
+		const txt = 'this is some test';
 		let channel: vscode.OutputChannel | undefined = getCachedOutputChannel(channelName);
 		assert.strictEqual(channel, undefined);
 
@@ -57,15 +65,25 @@ suite('Extension Functions Test Suite', () => {
 		channel = getCachedOutputChannel(channelName);
 		assert.notStrictEqual(channel, undefined);
 		assert.strictEqual(channel?.name, channelName);
-		const txt = 'dummy output';
+
 		const outputSpy = sinon.spy(channel, 'append');
-		extensionFunctions.openNamedOutputChannel(channelName, txt);
+		extensionFunctions.sendTextToOutputChannel(txt, channel);
 		assert.strictEqual(outputSpy.calledOnceWithExactly(`${txt} \n`), true);
-		extensionFunctions.openNamedOutputChannel(channelName);
-		extensionFunctions.openNamedOutputChannel(channelName);
-		extensionFunctions.openNamedOutputChannel(channelName);
-		assert.strictEqual(getCachedOutputChannels().length, 1);
 		outputSpy.restore();
+	});
+
+	test('open the default output channel and send some text to it', () => {
+		const txt = 'this is some test';
+		const outputSpyShow = sinon.spy(extensionFunctions.didactOutputChannel, 'show');
+		extensionFunctions.openNamedOutputChannel();
+		assert.strictEqual(outputSpyShow.calledOnce, true);
+		
+		const outputSpyAppend = sinon.spy(extensionFunctions.didactOutputChannel, 'append');
+		extensionFunctions.sendTextToOutputChannel(txt);
+		assert.strictEqual(outputSpyAppend.calledOnceWithExactly(`${txt} \n`), true);
+		
+		outputSpyShow.restore();
+		outputSpyAppend.restore();
 	});
 
 	test('send text to terminal', async function() {

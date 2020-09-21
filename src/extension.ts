@@ -61,6 +61,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_FORWARD_COMMAND, extensionFunctions.historyForward));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_CLEAR, extensionFunctions.clearHistory));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.openNamedOutputChannel));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.sendTextToNamedOutputChannel));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({

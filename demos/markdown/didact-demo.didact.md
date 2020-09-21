@@ -68,7 +68,11 @@ We can now even test all the requirements at once!
 
 [And if you want to have certain inputs be user-specified, you can now do that too.](didact://?commandId=vscode.didact.sendNamedTerminalAString&user=terminal-name$$terminal-command-to-execute&completion=Opened%20a%20new%20terminal. "Opens a new terminal and sends some text"){.didact}
 
-[You can also open an output channel, name it, and send it some text.](didact://?commandId=vscode.didact.openNamedOutputChannel&name=newOutputChannel&text=newChannel$$Hello%20from%20Didact!&completion=Opened%20a%20new%20output%20channel. "Opens a new output channel and sends some text"){.didact}
+[You can also open an output channel and name it.](didact://?commandId=vscode.didact.openNamedOutputChannel&text=newOutputChannel&completion=Opened%20a%20new%20output%20channel. "Opens a new output channel and sends some text"){.didact}
+
+[You can also send some text to an output channel you created.](didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!$$newOutputChannel&completion=Sent%20a%20text%20to%20the%20output%20channel. "Opens a new output channel and sends some text"){.didact}
+
+[You can also send some text to the Didact Activity channel.](didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!&completion=Sent%20a%20text%20to%20Didact%20Activity%20channel. "Opens the Didact Activity channel and sends some text"){.didact}
 
 
 ### Linking to other Didact files
