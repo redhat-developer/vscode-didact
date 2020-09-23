@@ -55,6 +55,8 @@ export const REFRESH_DIDACT_VIEW = 'vscode.didact.view.refresh';
 export const SEND_TERMINAL_KEY_SEQUENCE = 'vscode.didact.sendNamedTerminalCtrlC';
 export const CLOSE_TERMINAL = 'vscode.didact.closeNamedTerminal';
 export const CLI_SUCCESS_COMMAND = 'vscode.didact.cliCommandSuccessful';
+export const OPEN_NAMED_OUTPUTCHANNEL_COMMAND = 'vscode.didact.openNamedOutputChannel';
+export const SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND = 'vscode.didact.sendTextToNamedOutputChannel';
 export const VALIDATE_COMMAND_IDS = 'vscode.didact.verifyCommands';
 export const TEXT_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyToClipboardCommand';
 export const COPY_FILE_URL_TO_WORKSPACE_COMMAND = 'vscode.didact.copyFileURLtoWorkspaceCommand';
@@ -75,7 +77,7 @@ const requirementCommandLinks = [
 // stashed extension context
 let extContext : vscode.ExtensionContext;
 
-let didactOutputChannel: vscode.OutputChannel | undefined = undefined;
+export let didactOutputChannel: vscode.OutputChannel;
 
 // stashed Didact URI
 let _didactFileUri : vscode.Uri | undefined = undefined;
@@ -859,5 +861,39 @@ export function clearHistory(): void {
 	sendTextToOutputChannel(`Clearing the Didact history`);
 	if (DidactWebviewPanel.currentPanel) {
 		historyList.clearHistory();
+	}
+}
+
+export function openNamedOutputChannel(name?: string | undefined): vscode.OutputChannel | undefined {
+	let channel: vscode.OutputChannel | undefined;
+	if (!name || name === DIDACT_OUTPUT_CHANNEL) {
+		if (!didactOutputChannel) {
+			didactOutputChannel = vscode.window.createOutputChannel(DIDACT_OUTPUT_CHANNEL);
+		}
+		channel = didactOutputChannel;
+	} else {
+		channel = utils.getCachedOutputChannel(name);
+		if (!channel) {
+			channel = vscode.window.createOutputChannel(name);
+			utils.rememberOutputChannel(channel);
+		}
+	}	
+	if (channel) {
+		channel.show();
+	}
+	return channel;
+}
+
+export function sendTextToNamedOutputChannel(message: string, channelName?: string): void {
+	if (!message){
+		throw new Error('There was no text given for the output channel.');
+	}
+	let channel: vscode.OutputChannel | undefined = didactOutputChannel;
+	if (channelName) {
+		channel = openNamedOutputChannel(channelName);
+	}
+	sendTextToOutputChannel(message, channel);
+	if (!channelName || channelName === DIDACT_OUTPUT_CHANNEL) {
+		didactOutputChannel.show();
 	}
 }
