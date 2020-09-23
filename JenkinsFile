@@ -13,7 +13,7 @@ node('rhel8'){
 	}
 
 	stage('Build') {
-		sh "npm install"
+		sh "npm ci"
 		sh "npm run vscode:prepublish"
 	}
 
