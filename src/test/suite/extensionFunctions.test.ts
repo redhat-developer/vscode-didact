@@ -7,6 +7,7 @@ import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels 
 import { beforeEach, after } from 'mocha';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
+import * as URL from 'url';
 
 suite('Extension Functions Test Suite', () => {
 
@@ -283,7 +284,20 @@ suite('Extension Functions Test Suite', () => {
 		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(0);
 	});
 
+	test('test copy text to clipboard command', async function() {
+		const textForClipboard = 'The fox jumped over the lazy dog.';
+		await extensionFunctions.placeTextOnClipboard(textForClipboard);
+		const clipboard_content = await vscode.env.clipboard.readText();
+		expect(clipboard_content).to.equal("The fox jumped over the lazy dog.");
+	});
 
+	test('test copy file text to clipboard command', async function() {
+		const filePathForClipboard = vscode.Uri.parse('didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&extension=src/test/data/textForClipboard.txt');
+		await vscode.env.clipboard.writeText('');
+		await extensionFunctions.copyFileTextToClipboard(filePathForClipboard);
+		const clipboard_content2 = await vscode.env.clipboard.readText();
+		expect(clipboard_content2).to.equal("The fox jumped over the lazy dog again.");
+	});
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {

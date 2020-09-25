@@ -64,6 +64,7 @@ export const HISTORY_BACK_COMMAND = 'vscode.didact.historyBack';
 export const HISTORY_FORWARD_COMMAND = 'vscode.didact.historyForward';
 export const HISTORY_CLEAR = 'vscode.didact.clearHistory';
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
+export const FILE_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyFileTextToClipboardCommand';
 
 const commandPrefix = 'didact://?commandId';
 // note that this MUST be also updated in the main.js file 
@@ -510,6 +511,8 @@ async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined> {
 			const parser = getMDParser();
 			result = parser.render(content);
 			return result;
+		} else {
+			return content;
 		}
 	} catch (error) {
 		throw new Error(error);
@@ -895,5 +898,42 @@ export function sendTextToNamedOutputChannel(message: string, channelName?: stri
 	sendTextToOutputChannel(message, channel);
 	if (!channelName || channelName === DIDACT_OUTPUT_CHANNEL) {
 		didactOutputChannel.show();
+	}
+}
+
+export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
+	let testForPrefix : string = uri.toString();
+	let testUri : vscode.Uri = uri;
+	if (testForPrefix && !testForPrefix.startsWith('didact://?')) {
+		testForPrefix = 'didact://?&' + testForPrefix; // preface so we can use the existing method to parse for path
+		testUri = vscode.Uri.parse(testForPrefix);
+	}
+	const out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(testUri);
+	if (!out) {
+		const errmsg = `ERROR: No file found when parsing path ${uri}`;
+		sendTextToOutputChannel(errmsg);
+		vscode.window.showErrorMessage(errmsg);
+		throw new Error(errmsg);
+	} else {
+		let content : string | undefined = undefined;
+		if (out.scheme === 'file') {
+			await getDataFromFile(out)
+				.then(async fileContent => {
+					content = fileContent;
+				}).catch( (error) => {
+					showFileUnavailable(error);
+				});
+		} else if (out.scheme === 'http' || out.scheme === 'https'){
+			const urlToFetch = out.toString();
+			await getDataFromUrl(urlToFetch)
+				.then(async fileContent => {
+					content = fileContent;
+				}).catch( (error) => {
+					showFileUnavailable(error);
+				});
+		}
+		if (content) {
+			await placeTextOnClipboard(content);
+		}
 	}
 }

@@ -62,6 +62,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_CLEAR, extensionFunctions.clearHistory));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.openNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.sendTextToNamedOutputChannel));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.FILE_TO_CLIPBOARD_COMMAND, extensionFunctions.copyFileTextToClipboard));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
@@ -88,6 +89,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	if (vscode.window.registerWebviewPanelSerializer) {
 		// Make sure we register a serializer in activation event
 		vscode.window.registerWebviewPanelSerializer(DidactWebviewPanel.viewType, {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
 				DidactWebviewPanel.setContext(context);
 				DidactWebviewPanel.revive(webviewPanel, context.extensionPath);
