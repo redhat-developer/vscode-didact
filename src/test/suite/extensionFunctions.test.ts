@@ -179,7 +179,7 @@ suite('Extension Functions Test Suite', () => {
 			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
 	});
 
-	test('try to copy a file to workspace root with no change to filename', async function() {extensionFunctions.placeTextOnClipboard
+	test('try to copy a file to workspace root with no change to filename', async function() {
 		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
 		const filepathUri = handleProjectFilePath(''); // get workspace root
 		if (filepathUri) {
@@ -247,7 +247,6 @@ suite('Extension Functions Test Suite', () => {
 		extensionFunctions.addToHistory(two);
 		console.log(`add uri - ${uriThree}`);
 		extensionFunctions.addToHistory(three);
-		extensionFunctions.placeTextOnClipboard
 		console.log(`expect ${Array.from(extensionFunctions.getHistory().getList().values())} to include ${uriOne}`);
 		expect(Array.from(extensionFunctions.getHistory().getList().values())).to.contain(uriOne);
 		console.log(`expect ${Array.from(extensionFunctions.getHistory().getList().values())} to include ${uriTwo}`);
@@ -290,9 +289,9 @@ suite('Extension Functions Test Suite', () => {
 	});
 	
 	test('test copy to clipboard with %', async() => {
-		await extensionFunctions.placeTextOnClipboard('a test with a % percentage inside');
+		await extensionFunctions.placeTextOnClipboard('a test with a %24 percentage inside');
 		const textInClipBoard: string = await vscode.env.clipboard.readText();
-		expect(textInClipBoard).to.be.equal('a test with a % percentage inside');
+		expect(textInClipBoard).to.be.equal('a test with a %24 percentage inside');
 	});
 	
 	test('test copy to clipboard with reported failed string', async() => {
