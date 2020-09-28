@@ -179,7 +179,7 @@ suite('Extension Functions Test Suite', () => {
 			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
 	});
 
-	test('try to copy a file to workspace root with no change to filename', async function() {
+	test('try to copy a file to workspace root with no change to filename', async function() {extensionFunctions.placeTextOnClipboard
 		const urlToTest = 'https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif';
 		const filepathUri = handleProjectFilePath(''); // get workspace root
 		if (filepathUri) {
@@ -247,7 +247,7 @@ suite('Extension Functions Test Suite', () => {
 		extensionFunctions.addToHistory(two);
 		console.log(`add uri - ${uriThree}`);
 		extensionFunctions.addToHistory(three);
-
+		extensionFunctions.placeTextOnClipboard
 		console.log(`expect ${Array.from(extensionFunctions.getHistory().getList().values())} to include ${uriOne}`);
 		expect(Array.from(extensionFunctions.getHistory().getList().values())).to.contain(uriOne);
 		console.log(`expect ${Array.from(extensionFunctions.getHistory().getList().values())} to include ${uriTwo}`);
@@ -282,8 +282,25 @@ suite('Extension Functions Test Suite', () => {
 		extensionFunctions.clearHistory();
 		expect(Array.from(extensionFunctions.getHistory().getList().values()).length).to.equal(0);
 	});
-
-
+	
+	test('test copy to clipboard', async() => {
+		await extensionFunctions.placeTextOnClipboard('a test');
+		const textInClipBoard: string = await vscode.env.clipboard.readText();
+		expect(textInClipBoard).to.be.equal('a test');
+	});
+	
+	test('test copy to clipboard with %', async() => {
+		await extensionFunctions.placeTextOnClipboard('a test with a % percentage inside');
+		const textInClipBoard: string = await vscode.env.clipboard.readText();
+		expect(textInClipBoard).to.be.equal('a test with a % percentage inside');
+	});
+	
+	test('test copy to clipboard with reported failed string', async() => {
+		const reportedFailedString = '%5BSend%20some%20fantastic%20text%20to%20a%20Terminal%20window%21%5D%28didact%3A%2F%2F%3FcommandId%3Dvscode.didact.sendNamedTerminalAString%26text%3DTerminalName%24%24echo%2BDidact%2Bis%2Bfantastic%2521%29';
+		await extensionFunctions.placeTextOnClipboard(reportedFailedString);
+		const textInClipBoard: string = await vscode.env.clipboard.readText();
+		expect(textInClipBoard).to.be.equal(reportedFailedString);
+	});
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
