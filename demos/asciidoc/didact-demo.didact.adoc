@@ -50,7 +50,7 @@ link:didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectw
 
 * link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerm$$echo%20Hello%20Didact!&completion=Opened%20a%20new%20terminal.[You can even open a terminal, name it, and send it some text.]
 
-* link:didact://?commandId=vscode.didact.openNamedOutputChannel&text=newOutputChannel&completion=Opened%20a%20new%20output%20channel.[You can also open an output channel and name it.]
+* link:didact://?commandId=vscode.didact.openNamedOutputChannel&text=newOutputChannel&completion=Opened%20a%20new%20output%20channel.[You can also create/open an output channel. (This only works for channels you created or the Didact Activities channel!)]
 
 * link:didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!$$newOutputChannel&completion=Sent%20a%20text%20to%20the%20new%20output%20channel.[You can also send text to an output channel you created.]
 
