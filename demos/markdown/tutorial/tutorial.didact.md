@@ -54,7 +54,7 @@ So your Didact link might look like:
 [Send some fantastic text to a Terminal window!](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=TerminalName$$echo+Didact+is+fantastic%21)
 ```
 
-Try it and if you get stuck, [click here](didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&text=extension=demos/markdown/tutorial/clipboardTextToTerminal.txt) to put the above text on the clipboard and then you can paste it into your Markdown file.
+Try it and if you get stuck, [click here](didact://?commandId=vscode.didact.copyToClipboardCommand&text=%5BSend%20some%20fantastic%20text%20to%20a%20Terminal%20window%21%5D%28didact%3A%2F%2F%3FcommandId%3Dvscode.didact.sendNamedTerminalAString%26text%3DTerminalName%2524%2524echo%2BDidact%2Bis%2Bfantastic%2521%29) to put the text above on the clipboard and paste it into your Markdown file.
 
 ![Adding Requirements Checking](images/requirements-checking-header.png){.imageCenter}
 
