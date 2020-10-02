@@ -10,6 +10,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
  - Adding ability to open a Didact file in a different column by default
  - Adding simple history to enable stepping forward/back through last few Didact tutorials [#102](https://github.com/redhat-developer/vscode-didact/issues/102)
  - Adding new tutorial helping new users create their first Didact file [FUSETOOLS2-634](https://issues.redhat.com/browse/FUSETOOLS2-634)
+ - Added ability to copy file contents onto the clipboard with the new `vscode.didact.copyFileTextToClipboardCommand` [(FUSETOOLS2-706)](https://issues.redhat.com/browse/FUSETOOLS2-706)
 
 ## 0.1.16
 
