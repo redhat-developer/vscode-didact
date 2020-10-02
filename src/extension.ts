@@ -26,10 +26,10 @@ import {DidactUriCompletionItemProviderAsciiDoc} from './didactUriCompletionItem
 
 const DIDACT_VIEW = 'didact.tutorials';
 
-const DEFAULT_TUTORIAL_CATEGORY = "Didact";
+export const DEFAULT_TUTORIAL_CATEGORY = "Didact";
 const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
-const didactTutorialsProvider = new DidactNodeProvider();
+export const didactTutorialsProvider = new DidactNodeProvider();
 let didactTreeView : vscode.TreeView<TreeNode>;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
