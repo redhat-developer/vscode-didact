@@ -1,0 +1,1 @@
+[Send some fantastic text to a Terminal window!](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=TerminalName$$echo+Didact+is+fantastic%21)
