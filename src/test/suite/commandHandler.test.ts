@@ -101,6 +101,13 @@ suite("Command Handler tests", function () {
 		}
 		await resetAfterTest();
 	});
+
+	test.skip('Reproducer FUSETOOLS-706 - $$ in URI', async() => {
+		const didactUri = 'didact://?commandId=vscode.didact.copyToClipboardCommand&text=%5BSend%20some%20fantastic%20text%20to%20a%20Terminal%20window%21%5D%28didact%3A%2F%2F%3FcommandId%3Dvscode.didact.sendNamedTerminalAString%26text%3DTerminalName%24%24echo%2BDidact%2Bis%2Bfantastic%2521%29';
+		await processInputs(didactUri);
+		const textInClipBoard: string = await vscode.env.clipboard.readText();
+		expect(textInClipBoard).to.be.equal('[Send some fantastic text to a Terminal window!](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=TerminalName$$echo+Didact+is+fantastic%21)');
+	});	
 });
 
 async function resetAfterTest() {
