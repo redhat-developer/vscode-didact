@@ -16,7 +16,7 @@ Didact gives you a way of writing those same files but gives them a way to lever
 
 1. Install Microsoft Visual Studio Code (you already have this!) [Visual Studio Code website](https://code.visualstudio.com/)
 2. Add the [vscode-didact extension](vscode:extension/redhat.vscode-didact) (you already have this too if you're seeing the tutorial in the `Didact Tutorials` view!)
-3. Create a new AsciiDoc or Markdown file and add “didact” to the file extension (`myfile.didact.adoc`, `myotherfile.didact.md`) [(Click here to create your first Didact markdown file.)](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/markdown/tutorial/didactmdfile.json)
+3. Create a new AsciiDoc or Markdown file and add “didact” to the file extension (`myfile.didact.adoc`, `myotherfile.didact.md`) [(Click here to create your first Didact markdown file named `myfirst.didact.md`.)](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/markdown/tutorial/didactmdfile.json)
 4. Start writing!
 5. When you get to a point where you want the user to click on a link to do something active, write a Didact link (we'll cover that in the next section).
 6. Repeat steps 4 and 5 until you’re done!
@@ -39,7 +39,9 @@ For instance, if we want to do something like `echo Didact is fantastic!`, we co
 
 > Note: If your new Didact file and this tutorial are overlapping, move this tutorial somewhere (above/below, left/right) in the VS Code IDE so you can keep it somewhere easy to see while you edit your other file.
 
-In your editor where you want to put the link, hit Ctrl+Space, select `Start a new Didact link`, and choose `Send Named Terminal Some Text`. You are given some templated text you can quickly modify for your use.
+> Also Note: Links in Markdown files appear in the format `[link text](url)`, so if you're unsure how to start your link, you might type `[Send some fantastic text to a Terminal window!]()`.
+
+In your editor where you want to put the link (between the parentheses, for example), hit Ctrl+Space, select `Start a new Didact link`, and choose `Send Named Terminal Some Text`. You are given some templated text you can quickly modify for your use.
 
 * The terminal name defaults to `TerminalName`.
 * And you see a field named `URLEncodedTextToSendTerminal`
