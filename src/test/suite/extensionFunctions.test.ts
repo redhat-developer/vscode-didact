@@ -4,7 +4,7 @@ import * as extensionFunctions from '../../extensionFunctions';
 import { handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
 import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels } from '../../utils';
-import { beforeEach, after } from 'mocha';
+import { beforeEach, after, afterEach } from 'mocha';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -30,6 +30,10 @@ suite('Extension Functions Test Suite', () => {
 	beforeEach(async () => {
 		await cleanFiles();
 		getCachedOutputChannels().length = 0;
+	});
+
+	afterEach(async () => {
+		await vscode.env.clipboard.writeText('');
 	});
 
 	after(async () => {
@@ -286,35 +290,29 @@ suite('Extension Functions Test Suite', () => {
 	test('test copy text to clipboard command', async function() {
 		const textForClipboard = 'The fox jumped over the lazy dog.';
 		await extensionFunctions.placeTextOnClipboard(textForClipboard);
-		const clipboard_content = await vscode.env.clipboard.readText();
-		expect(clipboard_content).to.equal("The fox jumped over the lazy dog.");
+		const clipboardContent = await vscode.env.clipboard.readText();
+		expect(clipboardContent).to.equal(textForClipboard);
 	});
 
 	test('test copy file text to clipboard command', async function() {
 		const filePathForClipboard = vscode.Uri.parse('didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&extension=src/test/data/textForClipboard.txt');
-		await vscode.env.clipboard.writeText('');
 		await extensionFunctions.copyFileTextToClipboard(filePathForClipboard);
-		const clipboard_content2 = await vscode.env.clipboard.readText();
-		expect(clipboard_content2).to.equal("The fox jumped over the lazy dog again.");
-	});
-
-	test('test copy to clipboard', async() => {
-		await extensionFunctions.placeTextOnClipboard('a test');
-		const textInClipBoard: string = await vscode.env.clipboard.readText();
-		expect(textInClipBoard).to.be.equal('a test');
+		const clipboardContent2 = await vscode.env.clipboard.readText();
+		expect(clipboardContent2).to.equal("The fox jumped over the lazy dog again.");
 	});
 
 	test('test copy to clipboard with %', async() => {
-		await extensionFunctions.placeTextOnClipboard('a test with a %24 percentage inside');
+		const percentTextForClipboard = 'a test with a %24 percentage inside';
+		await extensionFunctions.placeTextOnClipboard(percentTextForClipboard);
 		const textInClipBoard: string = await vscode.env.clipboard.readText();
-		expect(textInClipBoard).to.be.equal('a test with a %24 percentage inside');
+		expect(textInClipBoard).to.be.equal(percentTextForClipboard);
 	});
 
-	test('test copy to clipboard with reported failed string', async() => {
-		const reportedFailedString = '%5BSend%20some%20fantastic%20text%20to%20a%20Terminal%20window%21%5D%28didact%3A%2F%2F%3FcommandId%3Dvscode.didact.sendNamedTerminalAString%26text%3DTerminalName%24%24echo%2BDidact%2Bis%2Bfantastic%2521%29';
-		await extensionFunctions.placeTextOnClipboard(reportedFailedString);
+	test('test copy to clipboard with doubly url encoded text for long didact link', async() => {
+		const doublyEncodedString = '%5BSend%20some%20fantastic%20text%20to%20a%20Terminal%20window%21%5D%28didact%3A%2F%2F%3FcommandId%3Dvscode.didact.sendNamedTerminalAString%26text%3DTerminalName%24%24echo%2BDidact%2Bis%2Bfantastic%2521%29';
+		await extensionFunctions.placeTextOnClipboard(doublyEncodedString);
 		const textInClipBoard: string = await vscode.env.clipboard.readText();
-		expect(textInClipBoard).to.be.equal(reportedFailedString);
+		expect(textInClipBoard).to.be.equal(doublyEncodedString);
 	});
 
 });

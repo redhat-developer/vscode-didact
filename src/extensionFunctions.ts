@@ -917,20 +917,18 @@ export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
 	} else {
 		let content : string | undefined = undefined;
 		if (out.scheme === 'file') {
-			await getDataFromFile(out)
-				.then(async fileContent => {
-					content = fileContent;
-				}).catch( (error) => {
-					showFileUnavailable(error);
-				});
+			try {
+				content = fs.readFileSync(out.fsPath, 'utf8');
+			} catch(error) {
+				showFileUnavailable(error);
+			}
 		} else if (out.scheme === 'http' || out.scheme === 'https'){
 			const urlToFetch = out.toString();
-			await getDataFromUrl(urlToFetch)
-				.then(async fileContent => {
-					content = fileContent;
-				}).catch( (error) => {
-					showFileUnavailable(error);
-				});
+			try {
+				content = await getDataFromUrl(urlToFetch);
+			} catch(error) {
+				showFileUnavailable(error);
+			}
 		}
 		if (content) {
 			await placeTextOnClipboard(content);
