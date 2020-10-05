@@ -16,10 +16,11 @@ Didact gives you a way of writing those same files but gives them a way to lever
 
 1. Install Microsoft Visual Studio Code (you already have this!) [Visual Studio Code website](https://code.visualstudio.com/)
 2. Add the [vscode-didact extension](vscode:extension/redhat.vscode-didact) (you already have this too if you're seeing the tutorial in the `Didact Tutorials` view!)
-3. Create a new AsciiDoc or Markdown file and add “didact” to the file extension (`myfile.didact.adoc`, `myotherfile.didact.md`) [(Click here to create your first Didact markdown file named `myfirst.didact.md`.)](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/markdown/tutorial/didactmdfile.json)
+3. Create a new AsciiDoc or Markdown file and add “didact” to the file extension (`myfile.didact.adoc`, `myotherfile.didact.md`) [(Click here to create your first Didact markdown file named `myfirst.didact.md`.)](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/markdown/tutorial/didactmdfile.json) [(Then click here to open the new `myfirst.didact.md` file.)](didact://?commandId=vscode.open&projectFilePath=didactmdfile.json)
 4. Start writing!
 5. When you get to a point where you want the user to click on a link to do something active, write a Didact link (we'll cover that in the next section).
-6. Repeat steps 4 and 5 until you’re done!
+6. To open and test your Didact file, right-click on the file and select `Start Didact Tutorial from File` from the context menu or launch the Didact window while editing the file with `Ctrl+Shift+V` or `Cmd+Shift+V`.
+6. Repeat steps 4-6 until you’re done!
 
 ## The Basics of Didact
 
@@ -75,37 +76,43 @@ Whatever we're checking, Didact likely has a way to make it work. And there's a 
 1. Create a label for the requirements result pass/fail
 2. Do the check and tie it to the label
 
+An easy way to structure these status lines and requirements checks places all requirements checking in a section of the document and each requirement as a subsection. The example below tests to see if a command (`kubectl`) exists on the command line. 
+
+```
+## Requirements
+
+<a href='didact://?commandId=vscode.didact.validateAllRequirements' title='Validate all requirements!'><button>Validate all Requirements at Once!</button></a>
+
+**Kubectl CLI**
+
+The Kubernetes `kubectl` CLI tool will be used to interact with the Kubernetes cluster.
+
+[Check if the Kubectl CLI is installed](didact://?commandId=vscode.didact.cliCommandSuccessful&text=kubectl-requirements-status$$kubectl%20help "Tests to see if `kubectl help` returns a 0 return code"){.didact}
+
+*Status: unknown*{#kubectl-requirements-status}
+```
+
+Let's walk through the parts of this example.
+
 ### Adding a Requirements Label
 
-Essentially the label is a textual placeholder for a success or failure message based on the requirement status. We have another type-ahead helper to help you create one.
+Essentially the *Status* label is a textual placeholder for a success or failure message based on the requirement status. We have another type-ahead helper to help you create one.
 
 * Ctrl+Space, select `Insert Requirements label` and then make the hashtag label specific for your requirement.
 * Example: `*Status: unknown*{#requirement-name}`
 
 Then you have to decide what kind of requirement it is you’re checking and how specific you want to get.
 
-### Command-line Resource Checking
+### Simple Command-line Resource Checking
 
-If it’s a really simple command-line check and you just want to make sure it executes without errors (return code 0), you need the requirement label and the command line to try with `vscode.didact.cliCommandSuccessful`.
+Like with all Didact links (and links in general), the requirement check itself is in the format `[link text](link url)`. If it’s a really simple command-line check and you just want to make sure it executes without errors (return code 0), you need the requirement label and the command line to try with `vscode.didact.cliCommandSuccessful` as we did with the `kubectl` example above.
 
 * Ctrl+Space, select `Start a new Didact link`, and `Check CLI for Success (No Text)`, update the requirements label to use and the URL-encoded CLI text
 * Example to see if `mvn` is available in the system path: `didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-requirements-status$$mvn%20--version`
 
-Or you could do a more complex check and actually compare the first bit of text returned from the command execution with `vscode.didact.requirementCheck`.
-
-* Ctrl+Space, select `Start a new Didact link`, and `Check CLI for Returned Text`, update the requirements label to use, the URL-encoded CLI text, and whatever URL-encoded text you want to validate
-* Example that checks the text returned: `didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven`
-
-### VS Code Extension Checking
-
-If you want to check to see if a particular extension exists in VS Code, you can use `vscode.didact.extensionRequirementCheck`.
-
-* Ctrl+Space, select `Start a new Didact link`, and `Check for Required Extension`, update the requirements label to use and the ID for the extension
-* Example to check for the Red Hat Camel Extension Pack: `didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack`
-
 ### Checking all your requirements at once
 
-You can even add a button easily to validate ALL requirements check Didact finds in a particular document. Like with inserting a requirement label, we’ve created a shortcut for you:
+As you saw in the example above, you can even add a button to validate ALL requirements check Didact finds in a particular document at once. Like with inserting a requirement label, we’ve created a shortcut for you:
 
 * Ctrl+Space, select `Insert Validate All button` and then change the label for your button if you need to.
 * Example button: `<a href='didact://?commandId=vscode.didact.validateAllRequirements' title='Validate all requirements!'><button>Validate all Requirements at Once!</button></a>`
@@ -115,6 +122,8 @@ You can even add a button easily to validate ALL requirements check Didact finds
 ## But wait, there's more!
 
 Here are a few ideas for you to explore what else Didact has to offer:
+
+* Use one of the other types of requirements checks. You can see an example [here](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/requirements.example.didact.md) that walks through all the current options.
 
 * Put all your requirements in a table for easier parsing. You can see an example [here](https://github.com/redhat-developer/vscode-didact/blob/master/demos/markdown/dep-table.didact.md).
 
