@@ -26,10 +26,10 @@ import {DidactUriCompletionItemProviderAsciiDoc} from './didactUriCompletionItem
 
 const DIDACT_VIEW = 'didact.tutorials';
 
-const DEFAULT_TUTORIAL_CATEGORY = "Didact";
+export const DEFAULT_TUTORIAL_CATEGORY = "Didact";
 const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
-const didactTutorialsProvider = new DidactNodeProvider();
+export const didactTutorialsProvider = new DidactNodeProvider();
 let didactTreeView : vscode.TreeView<TreeNode>;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -112,6 +112,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	const tutorial3Path = path.join(context.extensionPath, './demos/markdown/helloJS/helloJS.didact.md');
 	const tutorial3Uri = vscode.Uri.parse(`file://${tutorial3Path}`);
 	await registerTutorial("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+
+	// register the didact tutorial
+	const tutorial4Path = path.join(context.extensionPath, './demos/markdown/tutorial/tutorial.didact.md');
+	const tutorial4Uri = vscode.Uri.parse(`file://${tutorial4Path}`);
+	await registerTutorial("Writing Your First Didact Tutorial", tutorial4Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// create the view
 	createIntegrationsView();
