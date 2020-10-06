@@ -519,8 +519,6 @@ async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined> {
 			const parser = getMDParser();
 			result = parser.render(content);
 			return result;
-		} else {
-			return content;
 		}
 	} catch (error) {
 		throw new Error(error);
