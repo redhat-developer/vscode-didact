@@ -108,6 +108,14 @@ suite("Command Handler tests", function () {
 		const textInClipBoard: string = await vscode.env.clipboard.readText();
 		expect(textInClipBoard).to.be.equal('[Send some fantastic text to a Terminal window!](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=TerminalName$$echo+Didact+is+fantastic%21)');
 	});	
+
+	test('Test copy to clipboard from file via full copyFileTextToClipboardCommand call', async() => {
+		await vscode.env.clipboard.writeText('');
+		const filePathForClipboard = 'didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&extFilePath=redhat.vscode-didact/examples/clipboardTextToTerminal.txt';
+		await processInputs(filePathForClipboard);
+		const textInClipBoard: string = await vscode.env.clipboard.readText();
+		expect(textInClipBoard).to.be.equal('How vexingly quick daft zebras jump!');
+	});	
 });
 
 async function resetAfterTest() {

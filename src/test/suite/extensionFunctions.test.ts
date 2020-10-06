@@ -295,7 +295,7 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('test copy file text to clipboard command', async function() {
-		const filePathForClipboard = vscode.Uri.parse('didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&extension=src/test/data/textForClipboard.txt');
+		const filePathForClipboard = vscode.Uri.parse('didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&extFilePath=src/test/data/textForClipboard.txt');
 		await extensionFunctions.copyFileTextToClipboard(filePathForClipboard);
 		const clipboardContent2 = await vscode.env.clipboard.readText();
 		expect(clipboardContent2).to.equal("The fox jumped over the lazy dog again.");

@@ -258,25 +258,33 @@ export async function openDidactWithDefault(): Promise<void>{
 	addToHistory(_didactFileUri);
 }
 
+function processExtensionFilePath(value: string | undefined) : vscode.Uri | undefined {
+	if (value) {
+		const extUri = handleExtFilePath(value);
+		if (extUri) {
+			return extUri;
+		} else if (extContext.extensionPath === undefined) {
+			return undefined;
+		}
+		return vscode.Uri.file(
+			path.join(extContext.extensionPath, value)
+		);
+	}
+	return undefined;
+}
+
 export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri | undefined {
 	let out : vscode.Uri | undefined = undefined;
 
-	// handle extension, workspace, https, and http
+	// handle extension/extFilePath, workspace, https, and http
 	if (uri) {
 		const query = querystring.parse(uri.query);
 		if (query.extension) {
 			const value = utils.getValue(query.extension);
-			if (value) {
-				const extUri = handleExtFilePath(value);
-				if (extUri) {
-					return extUri;
-				} else if (extContext.extensionPath === undefined) {
-					return undefined;
-				}
-				out = vscode.Uri.file(
-					path.join(extContext.extensionPath, value)
-				);
-			}
+			out = processExtensionFilePath(value);
+		} else if (query.extFilePath) {
+			const value = utils.getValue(query.extFilePath);
+			out = processExtensionFilePath(value);
 		} else if (query.workspace) {
 			const value = utils.getValue(query.workspace);
 			if (value) {
@@ -902,12 +910,7 @@ export function sendTextToNamedOutputChannel(message: string, channelName?: stri
 }
 
 export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
-	let testForPrefix : string = uri.toString();
-	let testUri : vscode.Uri = uri;
-	if (testForPrefix && !testForPrefix.startsWith('didact://?')) {
-		testForPrefix = 'didact://?&' + testForPrefix; // preface so we can use the existing method to parse for path
-		testUri = vscode.Uri.parse(testForPrefix);
-	}
+	const testUri : vscode.Uri = uri;
 	const out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(testUri);
 	if (!out) {
 		const errmsg = `ERROR: No file found when parsing path ${uri}`;
