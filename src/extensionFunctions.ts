@@ -928,7 +928,8 @@ export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
 		} else if (out.scheme === 'http' || out.scheme === 'https'){
 			const urlToFetch = out.toString();
 			try {
-				content = await getDataFromUrl(urlToFetch);
+				const response = await fetch(urlToFetch);
+				content = await response.text();
 			} catch(error) {
 				showFileUnavailable(error);
 			}
