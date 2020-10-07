@@ -907,13 +907,17 @@ export function sendTextToNamedOutputChannel(message: string, channelName?: stri
 	}
 }
 
+function showErrorMessage(msg : string) : void {
+	sendTextToOutputChannel(msg);
+	vscode.window.showErrorMessage(msg);
+}
+
 export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
 	const testUri : vscode.Uri = uri;
 	const out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(testUri);
 	if (!out) {
 		const errmsg = `ERROR: No file found when parsing path ${uri}`;
-		sendTextToOutputChannel(errmsg);
-		vscode.window.showErrorMessage(errmsg);
+		showErrorMessage(errmsg);
 		throw new Error(errmsg);
 	} else {
 		let content : string | undefined = undefined;
@@ -931,6 +935,10 @@ export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
 			} catch(error) {
 				showFileUnavailable(error);
 			}
+		} else {
+			const errmsg = `ERROR: Unsupported scheme/protocol when parsing path ${uri}`;
+			showErrorMessage(errmsg);
+			throw new Error(errmsg);
 		}
 		if (content) {
 			await placeTextOnClipboard(content);
