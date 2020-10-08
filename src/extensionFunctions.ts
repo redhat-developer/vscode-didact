@@ -64,6 +64,7 @@ export const HISTORY_BACK_COMMAND = 'vscode.didact.historyBack';
 export const HISTORY_FORWARD_COMMAND = 'vscode.didact.historyForward';
 export const HISTORY_CLEAR = 'vscode.didact.clearHistory';
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
+export const FILE_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyFileTextToClipboardCommand';
 
 const commandPrefix = 'didact://?commandId';
 // note that this MUST be also updated in the main.js file 
@@ -257,25 +258,33 @@ export async function openDidactWithDefault(): Promise<void>{
 	addToHistory(_didactFileUri);
 }
 
+function processExtensionFilePath(value: string | undefined) : vscode.Uri | undefined {
+	if (value) {
+		const extUri = handleExtFilePath(value);
+		if (extUri) {
+			return extUri;
+		} else if (extContext.extensionPath === undefined) {
+			return undefined;
+		}
+		return vscode.Uri.file(
+			path.join(extContext.extensionPath, value)
+		);
+	}
+	return undefined;
+}
+
 export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri | undefined {
 	let out : vscode.Uri | undefined = undefined;
 
-	// handle extension, workspace, https, and http
+	// handle extension/extFilePath, workspace, https, and http
 	if (uri) {
 		const query = querystring.parse(uri.query);
 		if (query.extension) {
 			const value = utils.getValue(query.extension);
-			if (value) {
-				const extUri = handleExtFilePath(value);
-				if (extUri) {
-					return extUri;
-				} else if (extContext.extensionPath === undefined) {
-					return undefined;
-				}
-				out = vscode.Uri.file(
-					path.join(extContext.extensionPath, value)
-				);
-			}
+			out = processExtensionFilePath(value);
+		} else if (query.extFilePath) {
+			const value = utils.getValue(query.extFilePath);
+			out = processExtensionFilePath(value);
 		} else if (query.workspace) {
 			const value = utils.getValue(query.workspace);
 			if (value) {
@@ -897,3 +906,42 @@ export function sendTextToNamedOutputChannel(message: string, channelName?: stri
 		didactOutputChannel.show();
 	}
 }
+
+function showErrorMessage(msg : string) : void {
+	sendTextToOutputChannel(msg);
+	vscode.window.showErrorMessage(msg);
+}
+
+export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
+	const testUri : vscode.Uri = uri;
+	const out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(testUri);
+	if (!out) {
+		const errmsg = `ERROR: No file found when parsing path ${uri}`;
+		showErrorMessage(errmsg);
+		throw new Error(errmsg);
+	} else {
+		let content : string | undefined = undefined;
+		if (out.scheme === 'file') {
+			try {
+				content = fs.readFileSync(out.fsPath, 'utf8');
+			} catch(error) {
+				showFileUnavailable(error);
+			}
+		} else if (out.scheme === 'http' || out.scheme === 'https'){
+			const urlToFetch = out.toString();
+			try {
+				const response = await fetch(urlToFetch);
+				content = await response.text();
+			} catch(error) {
+				showFileUnavailable(error);
+			}
+		} else {
+			const errmsg = `ERROR: Unsupported scheme/protocol when parsing path ${uri}`;
+			showErrorMessage(errmsg);
+			throw new Error(errmsg);
+		}
+		if (content) {
+			await placeTextOnClipboard(content);
+		}
+	}
+} 
