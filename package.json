@@ -32,7 +32,7 @@
 		"Framework"
 	],
 	"engines": {
-		"vscode": "^1.49.0"
+		"vscode": "^1.50.0"
 	},
 	"categories": [
 		"Other"
@@ -216,7 +216,7 @@
 		"@types/mocha": "^8.0.3",
 		"@types/node": "^14.11.8",
 		"@types/sinon": "^9.0.8",
-		"@types/vscode": "^1.49.0",
+		"@types/vscode": "^1.50.0",
 		"@typescript-eslint/eslint-plugin": "^4.4.0",
 		"@typescript-eslint/parser": "^4.4.0",
 		"async-wait-until": "^1.2.6",
