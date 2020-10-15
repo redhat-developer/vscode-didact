@@ -3,7 +3,7 @@
 node('rhel8'){
 	stage('Checkout repo') {
 		deleteDir()
-		git url: 'https://github.com/redhat-developer/vscode-didact'
+		git url: 'https://github.com/redhat-developer/vscode-didact.git'
 	}
 
 	stage('Install requirements') {
