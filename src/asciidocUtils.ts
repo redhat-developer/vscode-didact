@@ -18,14 +18,29 @@
 const asciidoctor = require('asciidoctor')();
 
 export function getADParser(): any {
-    return asciidoctor;
+	return asciidoctor;
 }
 
-export function parseADtoHTML(content: string): any {
-    const html = asciidoctor.convert(content, { 'safe': 'server',
-        'attributes': {
-            'showtitle': true,
-            'icons': 'font'
-        } });
-    return html;
+export function parseADtoHTML(content: string, baseDir?: string): any {
+	// note: base_dir is required to handle adoc includes
+	const opts1 = { 
+		safe: 'safe',
+		'base_dir': baseDir,
+		'attributes': {
+			'showtitle': true,
+			'icons': 'font'
+	}};
+	const opts2 = { 
+		safe: 'safe',
+		'attributes': {
+			'showtitle': true,
+			'icons': 'font'
+	}};
+	if (baseDir) {
+		const html = asciidoctor.convert(content, opts1);
+		return html;
+	} else {
+		const html = asciidoctor.convert(content, opts2);
+		return html;
+	}
 }
