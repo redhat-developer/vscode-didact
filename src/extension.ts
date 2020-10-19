@@ -23,6 +23,7 @@ import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting, cl
 import * as path from 'path';
 import {DidactUriCompletionItemProviderMarkdown} from './didactUriCompletionItemProviderMarkdown';
 import {DidactUriCompletionItemProviderAsciiDoc} from './didactUriCompletionItemProviderAsciiDoc';
+import {startDidactLink} from './didactPalette';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -63,6 +64,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.openNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.sendTextToNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.FILE_TO_CLIPBOARD_COMMAND, extensionFunctions.copyFileTextToClipboard));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.DIDACT_START_LINK, startDidactLink));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({

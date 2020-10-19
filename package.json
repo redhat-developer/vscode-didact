@@ -124,6 +124,10 @@
 				"command": "vscode.didact.clearHistory",
 				"title": "Didact: Clear History",
 				"when": "didact.webview"
+			},
+			{
+				"command": "vscode.didact.startLink",
+				"title": "Didact: Start Didact Link"
 			}
 		],
 		"keybindings": [
@@ -144,6 +148,12 @@
 				"key": "alt+up",
 				"mac": "alt+up",
 				"when": "didact.webview"
+			},
+			{
+				"command": "vscode.didact.startLink",
+				"key": "ctrl+shift+d",
+				"mac": "cmd+shift+d",
+				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
 			}
 		],
 		"menus": {
@@ -241,6 +251,7 @@
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.1",
 		"tmp": "^0.2.1",
+		"urlencode": "^1.1.0",
 		"xmldom": "^0.3.0"
 	}
 }
