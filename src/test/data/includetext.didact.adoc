@@ -1,0 +1,5 @@
+### Include Test
+
+Here's some text in the main file. 
+
+include::include.asciidoc.txt[]

@@ -1,0 +1,6 @@
+== Included Section
+
+And here's some text from the included file. 
+
+The quick brown fox jumps over the lazy dog.
+ 

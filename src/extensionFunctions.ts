@@ -506,19 +506,25 @@ export function isAsciiDoc() : boolean {
 	return false;
 }
 
-// retrieve didact text from a file
-async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined> {
+// retrieve didact text from a file - exported for test
+export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined> {
 	try {
 		const content = fs.readFileSync(uri.fsPath, 'utf8');
 		const extname = path.extname(uri.fsPath);
 		let result : string;
 		if (extname.localeCompare('.adoc') === 0) {
-			result = parseADtoHTML(content);
+			let baseDir : string | undefined = undefined;
+			if (uri.scheme.trim().startsWith('file')) {
+				baseDir = path.dirname(uri.fsPath);
+			}
+			result = parseADtoHTML(content, baseDir);
 			return result;
 		} else if (extname.localeCompare('.md') === 0) {
 			const parser = getMDParser();
 			result = parser.render(content);
 			return result;
+		} else {
+			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
 	} catch (error) {
 		throw new Error(error);
