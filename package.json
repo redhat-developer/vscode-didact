@@ -222,7 +222,7 @@
 		"async-wait-until": "^1.2.6",
 		"chai": "^4.2.0",
 		"eslint": "^7.11.0",
-		"mocha": "^8.1.3",
+		"mocha": "^8.2.0",
 		"mocha-jenkins-reporter": "^0.4.4",
 		"sinon": "9.2.0",
 		"typescript": "^4.0.3",
