@@ -3,13 +3,13 @@
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
 [![Gitter](https://img.shields.io/gitter/room/redhat-developer/home.js.svg)](https://gitter.im/redhat-developer/home)
 
-# vscode-didact README  
+# Didact
 
-The **vscode-didact** extension does a few things, but mainly it shows what's possible through a combination of a simple Markdown or AsciiDoc file, the VS Code Webview, and calling easily accessible commands in VS Code.
+The **Didact** extension does a few things, but mainly it shows what's possible through a combination of a simple Markdown or AsciiDoc file, the VS Code Webview, and calling easily accessible commands in VS Code.
 
 For a demo file of what functionality is currently available, check out [the didact-demo.](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md)
 
-## VSCode-Didact In Action
+## Didact In Action
 
 We have created a tutorial that walks through creating a simple Hello World in JavaScript. This tutorial, though simple, shows several of Didact's features in action, including:
 
