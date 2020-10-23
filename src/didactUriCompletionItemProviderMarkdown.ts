@@ -20,23 +20,24 @@
 import * as vscode from 'vscode';
 import {didactProtocol, DidactUriCompletionItemProvider} from './didactUriCompletionItemProvider';
 
+// TODO: Figure out how to redo these options
 export class DidactUriCompletionItemProviderMarkdown extends DidactUriCompletionItemProvider {
 
-	protected getCommandCompletionItems() : vscode.CompletionItem[] {
-		return super.getCommandCompletionItems();
-	}
+	// protected getCommandCompletionItems() : vscode.CompletionItem[] {
+	// 	return super.getCommandCompletionItems();
+	// }
 
-	public provideCompletionItemsOutsideDidactURI(lineToSearch: string) : vscode.CompletionItem[] {
-		const completions: vscode.CompletionItem[] = super.provideCompletionItemsOutsideDidactURI(lineToSearch);
+	// public provideCompletionItemsOutsideDidactURI(lineToSearch: string) : vscode.CompletionItem[] {
+	// 	const completions: vscode.CompletionItem[] = super.provideCompletionItemsOutsideDidactURI(lineToSearch);
 
-		if (lineToSearch.indexOf(didactProtocol) === -1) {
-			// add these for markdown
-			super.insertValidateAllButtonCompletion("Insert Validate All Button", completions);
-			super.insertNamedStatusLabelForRequirementCompletion("Insert Requirements Label", completions);
-			super.insertInstallExtensionLinkCompletion("Insert link to install required VS Code extension", completions);
-			super.insertAddWorkspaceFolderLinkCompletion("Insert link to create a temporary folder as WS root", completions);
-		}
+	// 	if (lineToSearch.indexOf(didactProtocol) === -1) {
+	// 		// add these for markdown
+	// 		super.insertValidateAllButtonCompletion("Insert Validate All Button", completions);
+	// 		super.insertNamedStatusLabelForRequirementCompletion("Insert Requirements Label", completions);
+	// 		super.insertInstallExtensionLinkCompletion("Insert link to install required VS Code extension", completions);
+	// 		super.insertAddWorkspaceFolderLinkCompletion("Insert link to create a temporary folder as WS root", completions);
+	// 	}
 
-		return completions;
-	}
+	// 	return completions;
+	// }
 }

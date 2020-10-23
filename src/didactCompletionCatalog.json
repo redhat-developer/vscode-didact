@@ -1,0 +1,141 @@
+{
+	"completions": [
+		{
+			"fullCommandId":"didact.tutorials.focus",
+			"documentation": "Focuses VS Code on the Didact Tutorials view"
+		},
+		{
+			"fullCommandId":"vscode.didact.clearHistory",
+			"documentation": "Clears the Didact tutorial history"
+		},
+		{
+			"fullCommandId":"vscode.didact.cliCommandSuccessful",
+			"parms": ["Requirement-Label", "URLEncoded-Command-to-Execute"],
+			"documentation": "Simple command-line check. If command executes with no errors (returns 0), it passes"
+		},
+		{
+			"fullCommandId":"vscode.didact.closeNamedTerminal",
+			"parms": ["Terminal-Name"],
+			"documentation": "Terminate a named terminal and dispose of it"
+		},
+		{
+			"fullCommandId":"vscode.didact.copyFileTextToClipboardCommand",
+			"parms": ["File-Path-in-Format-projectFilePath/srcFilePath/extFilePath=file/path"],
+			"documentation": "Copies text from a file to the system clipboard"
+		},
+		{
+			"fullCommandId":"vscode.didact.copyFileURLtoWorkspaceCommand",
+			"documentation": "Handles two cases: downloading a file into the workspace, and downloading and unzipping an archive file into the workspace"
+		},
+		{
+			"fullCommandId":"vscode.didact.copyToClipboardCommand",
+			"parms": ["URLEncoded-Text-for-Clipboard"],
+			"documentation": "Copies text to the system clipboard"
+		},
+		{
+			"fullCommandId":"vscode.didact.createWorkspaceFolder",
+			"documentation": "Creates a temporary folder as workspace root"
+		},
+		{
+			"fullCommandId":"vscode.didact.extensionRequirementCheck",
+			"parms": ["Requirement-Label", "Full-Extension-ID"],
+			"documentation": "Simple check to see if the extension Id is installed in the user workspace"
+		},
+		{
+			"fullCommandId":"vscode.didact.historyBack",
+			"documentation": "Move back one entry in the Didact tutorial history"
+		},
+		{
+			"fullCommandId":"vscode.didact.historyForward",
+			"documentation": "Move forward one entry in the Didact tutorial history"
+		},
+		{
+			"fullCommandId":"vscode.didact.openNamedOutputChannel",
+			"parms": ["Output-Channel-Name"],
+			"documentation": "Creates and opens an output channel with the given name"
+		},
+		{
+			"fullCommandId":"vscode.didact.openTutorial",
+			"documentation": "Opens the Didact editor with the default didact URI set in the user settings"
+		},
+		{
+			"fullCommandId":"vscode.didact.register",
+			"parms": ["Tutorial-Name", "File-Path-in-Format-projectFilePath/srcFilePath/extFilePath=file/path", "Category-Name" ],
+			"documentation": "Register a new tutorial so it appears in the Didact Tutorias view"
+		},
+		{
+			"fullCommandId":"vscode.didact.reload",
+			"documentation": "Forces the Didact window to reload with the default Didact file specified in VS Code settings"
+		},
+		{
+			"fullCommandId":"vscode.didact.refresh",
+			"documentation": "Refreshes the Didact Tutorials view"
+		},
+		{
+			"fullCommandId":"vscode.didact.requirementCheck",
+			"parms": ["Requirement-Label", "URLEncoded-Command-to-Execute", "URLEncoded-Text-to-Compare-to-Result"],
+			"documentation": "Simple command-line check for system capabilities. Takes three parameters - the id of the HTML element to update with the results, the test command (such as mvn --version, and a string to search for in the resulting text, such as Apache Maven if the mvn command works successfully)"
+		},
+		{
+			"fullCommandId":"vscode.didact.scaffoldProject",
+			"parms": ["JSON-File-Path-in-Format-projectFilePath/srcFilePath/extFilePath=file/path"],
+			"documentation": "Create new project in user workspace from json file provided"
+		},
+		{
+			"fullCommandId":"vscode.didact.sendNamedTerminalAString",
+			"parms": ["Output-Channel-Name", "URLEncoded-Text-for-Terminal"],
+			"documentation": "Send a text string to a named terminal. If the terminal doesn't exist, create it. Pass text as is. Does not automatically add a NL/CR at the end"
+		},
+		{
+			"fullCommandId":"vscode.didact.sendNamedTerminalCtrlC",
+			"parms": ["Output-Channel-Name"],
+			"documentation": "Send a Ctrl+C key combination to a named terminal to stop a long-running process"
+		},
+		{
+			"fullCommandId":"vscode.didact.sendTextToNamedOutputChannel",
+			"parms": ["URLEncoded-Text-for-Output-Channel", "Output-Channel-Name"],
+			"documentation": "Sends a text to the output channel with the given name. If no name is provided it will use the Didact Activity channel"
+		},
+		{
+			"fullCommandId":"vscode.didact.startDidact",
+			"parms": ["Path-to-Didact-File-in-Format-https/projectFilePath/srcFilePath/extFilePath=file/path", "Optional-Column-Active-Beside-One-to-Nine"],
+			"documentation": "Opens the Didact file specified. The column is optional but can be Active, Beside, or One through Nine spelled out"
+		},
+		{
+			"fullCommandId":"vscode.didact.startTerminalWithName",
+			"parms": ["Terminal-Name"],
+			"documentation": "Start a named terminal so we have a handle to it. If passed a string, use that as the name for the terminal that can be referenced later. If passed a file URI, pass that as the current working directory"
+		},
+		{
+			"fullCommandId":"vscode.didact.validateAllRequirements",
+			"documentation": "Gathers all requirements in the Didact file and invokes the requirement checks one at a time. Useful if you have a long list of requirements to check"
+		},
+		{
+			"fullCommandId":"vscode.didact.verifyCommands",
+			"documentation": "Verifies that all commands listed in the currently open Didact file are available in the VS Code environment."
+		},
+		{
+			"fullCommandId":"vscode.didact.view.refresh",
+			"documentation": "Refreshes the Didact Tutorials view"
+		},
+		{
+			"fullCommandId":"vscode.didact.view.tutorial.open",
+			"documentation": "Opens the tutorial currently selected in the Didact Tutorials view"
+		},
+		{
+			"fullCommandId":"vscode.didact.workspaceFolderExistsCheck",
+			"parms": ["Requirement-Label"],
+			"documentation": "Checks to see if the workspace has at least one root folder"
+		},
+		{
+			"fullCommandId":"vscode.open",
+			"parms": ["File-Path-to-Open-in-Format-projectFilePath/srcFilePath/extFilePath=file/path"],
+			"documentation": "Opens the file in the project workspace"
+		},
+		{
+			"fullCommandId":"workbench.action.tasks.runTask",
+			"parms": ["Name-of-Task-to-Start"],
+			"documentation": "Starts a named task defined in the project workspace"
+		}
+	]
+}
