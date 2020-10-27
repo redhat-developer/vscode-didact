@@ -68,10 +68,6 @@
 			"documentation": "Forces the Didact window to reload with the default Didact file specified in VS Code settings"
 		},
 		{
-			"fullCommandId":"vscode.didact.refresh",
-			"documentation": "Refreshes the Didact Tutorials view"
-		},
-		{
 			"fullCommandId":"vscode.didact.requirementCheck",
 			"parms": ["Requirement-Label", "URLEncoded-Command-to-Execute", "URLEncoded-Text-to-Compare-to-Result"],
 			"documentation": "Simple command-line check for system capabilities. Takes three parameters - the id of the HTML element to update with the results, the test command (such as mvn --version, and a string to search for in the resulting text, such as Apache Maven if the mvn command works successfully)"

@@ -20,11 +20,23 @@ import { expect } from 'chai';
 import { SnippetString } from 'vscode';
 import { DidactUriCompletionItemProvider, DIDACT_COMMAND_PREFIX } from "../../didactUriCompletionItemProvider";
 import { getContext } from '../../extensionFunctions';
+import { commands } from 'vscode';
 
 suite("Didact URI completion provider tests", function () {
 
 	const ctx = getContext();
 	const provider = new DidactUriCompletionItemProvider(ctx);
+
+	test("that all commands in the didactCompletionCatalog.json are available", async () => {
+		const catalog : any = provider.getCompletionCatalog(ctx);
+		const vsCommands : string[] = await commands.getCommands(true);
+		for (let index = 0; index < catalog.length; index++) {
+			const completion = catalog[index];
+			const fullCommandId = completion.fullCommandId;
+			console.log(`-- ${fullCommandId} is ${vsCommands.includes(fullCommandId)}`);
+			expect(vsCommands.includes(fullCommandId)).to.be.true;
+		}		
+	});
 
 	test("that the didact protocol completion returns with didact://?commandId=", () => {
 		const completionItem = provider.didactProtocolCompletion();

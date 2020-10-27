@@ -34,12 +34,13 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	public constructor(ctxt: vscode.ExtensionContext) {
 		this.extContext = ctxt;
-		this.completionCatalog = this.getCompletionCatalog();
+		this.completionCatalog = this.getCompletionCatalog(this.extContext);
 	}
 
-	private getCompletionCatalog() : JSON {
+	// public for testing
+	public getCompletionCatalog(context: vscode.ExtensionContext) : JSON {
 		const uri : vscode.Uri = vscode.Uri.file(
-			path.join(this.extContext.extensionPath, 'src/didactCompletionCatalog.json')
+			path.join(context.extensionPath, 'src/didactCompletionCatalog.json')
 		);
 		const jsoncontent = fs.readFileSync(uri.fsPath, 'utf8');
 		return JSON.parse(jsoncontent).completions;
