@@ -196,6 +196,17 @@
 				"language": "markdown",
 				"path": "./snippets/mdsnippets.json"
 			}
+		],
+		"languages": [
+			{
+				"id": "asciidoc",
+				"aliases": [
+					"AsciiDoc"
+				],
+				"extensions": [
+					".didact.adoc"
+				]
+			}
 		]
 	},
 	"files.associations": {

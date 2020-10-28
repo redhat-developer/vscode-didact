@@ -84,4 +84,35 @@ suite("Didact URI completion provider tests", function () {
 		expect((includeText as SnippetString).value).to.include('${2:URLEncoded-Command-to-Execute}');
 	});
 
+	test("that the didact protocol matcher returns some expected results", () => {
+		const validValues : Array<string> = [
+			"(didact://?commandId=mycommand)",
+			"(didact)",
+			"(didact://)",
+			"(didact:)",
+			"(didact:/",
+			"(didact://?",
+			"[my link](didact://?comma)",
+			"link:didact://?commandId=someCommand",
+			"link:didact",
+			"(didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-name$$echo%20text)"
+		];
+		const invalidValues : Array<string> = [
+			"[dooby](did://?",
+			"The man was a didact whiz"
+		];
+		console.log('testing didact protocol matching against positive results');
+		for (let index = 0; index < validValues.length; index++) {
+			const match = provider.findMatchForDidactPrefix(validValues[index]);
+			expect(match).to.not.be.null;
+			expect(match?.length).to.be.equal(1);
+		}		
+		console.log('testing didact protocol matching against negative results');
+		for (let index = 0; index < invalidValues.length; index++) {
+			const match = provider.findMatchForDidactPrefix(invalidValues[index]);
+			expect(match).to.be.null;
+			expect(match?.length).to.be.undefined;
+		}
+	});
+
 });

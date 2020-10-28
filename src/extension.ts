@@ -72,12 +72,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 	// set up our completion providers
 	const markdown:vscode.DocumentSelector = { scheme: 'file', language: 'markdown', pattern: '**/**.didact.md' };
-	const markdownProvider = new DidactUriCompletionItemProvider(context);
-	vscode.languages.registerCompletionItemProvider(markdown, markdownProvider);
-
 	const asciidoc:vscode.DocumentSelector = { scheme: 'file', language: 'asciidoc', pattern: '**/**.didact.adoc' };
-	const asciidocProvider = new DidactUriCompletionItemProvider(context);
-	vscode.languages.registerCompletionItemProvider(asciidoc, asciidocProvider);
+	const completionProvider = new DidactUriCompletionItemProvider(context);
+	vscode.languages.registerCompletionItemProvider(markdown, completionProvider);
+	vscode.languages.registerCompletionItemProvider(asciidoc, completionProvider);
 
 	// if there are changes in the workspace (i.e. a new root folder being added), refresh the didact window
 	vscode.workspace.onDidChangeWorkspaceFolders( async () => {

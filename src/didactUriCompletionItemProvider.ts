@@ -49,15 +49,24 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	async provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, 
 		token: vscode.CancellationToken, context: vscode.CompletionContext) : Promise<vscode.CompletionItem[]> {
 		let completions: vscode.CompletionItem[] = [];
-		const PAREN_REGEX = /(?<=\()[^)]+/g;
-		const searchInput: string = document.getText(document.getWordRangeAtPosition(position, PAREN_REGEX));
-		console.log(searchInput);
-		if (searchInput === DIDACT) {
+		const searchInput: string = document.lineAt(position).text;
+		const prefixMatch = this.findMatchForDidactPrefix(searchInput);
+		const commandMatch = this.findMatchForCommandVariable(searchInput);
+		if (prefixMatch && prefixMatch[0] && !commandMatch) {
 			completions.push(this.didactProtocolCompletion());
 		}
-		if (completions.length === 0 && searchInput.startsWith(DIDACT_COMMAND_PREFIX)) {
+		if (commandMatch) {
 			const commandCompletions = await this.didactCommandCompletion(document, position);
 			completions = completions.concat(commandCompletions.items);
+		} else {
+			if (this.isDidactAsciiDocFile(document.fileName)) {
+				completions.push(this.insertNamedStatusLabelAdoc());
+				completions.push(this.insertInstallExtensionLinkAsciiDoc());
+			} else if (this.isDidactMarkdownFile(document.fileName)) {
+				completions.push(this.insertNamedStatusLabelMarkdown());
+				completions.push(this.insertValidateAllButtonMarkdown());
+				completions.push(this.insertInstallExtensionLinkMarkdown());
+			}
 		}
 		return completions;
 	}
@@ -65,21 +74,47 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	didactProtocolCompletion() : vscode.CompletionItem {
 		const completionItem:vscode.CompletionItem = new vscode.CompletionItem("Start new Didact command link");
 		completionItem.documentation = "Completes the didact link start to insert a command id";
-		completionItem.filterText = DIDACT;
 		completionItem.insertText = DIDACT_COMMAND_PREFIX;
 		completionItem.kind = vscode.CompletionItemKind.Snippet;
 		completionItem.command = { command: 'editor.action.triggerSuggest', title: 'Autocomplete' };
 		return completionItem;
 	}
 
-	// public for testing
-	public findMatchForCommandVariable(input: string): RegExpMatchArray | null {
-		if (input) {
-			// TODO: Find a way to make this a compiled regex, but nothing so far has worked for me
-			const regex = '[?]' + COMMAND_ID + '=([^&)]+)';
-			return input.match(regex);
-		}
-		return null;
+	insertNamedStatusLabelAdoc() : vscode.CompletionItem {
+		const labelText = "Insert Didact Requirements Label";
+		const snippetString = "[[${1:requirement-name}]]\n_Status: unknown_";
+		const docs = "Inserts a snippet for a Didact requirement validation label";
+		return this.processSimplerLink(labelText, snippetString, docs);
+	}
+
+	insertNamedStatusLabelMarkdown() : vscode.CompletionItem {
+		const labelText = "Insert Didact Requirements Label";
+		const snippetString = "*Status: unknown*{#${1:requirement-name}}";
+		const docs = "Inserts a snippet for a Didact requirement validation label";
+		return this.processSimplerLink(labelText, snippetString, docs);
+	}
+
+	insertValidateAllButtonMarkdown() : vscode.CompletionItem {
+		const labelText = "Insert Validate All Button";
+		const snippetString = 
+		"<a href='didact://?commandId=vscode.didact.validateAllRequirements' title='${1:Validate all requirements!}'>" +
+		"<button>${2:Validate all Requirements at Once!}</button></a>";
+		const docs = "Inserts a snippet for a Validate All Requirements button";
+		return this.processSimplerLink(labelText, snippetString, docs);
+	}
+
+	insertInstallExtensionLinkMarkdown() : vscode.CompletionItem {
+		const labelText = "Insert link to install required VS Code extension";
+		const snippetString = "[Click here to install the ${1:ExtensionPackName}.](vscode:extension/${2:ExtensionPackID})";
+		const docs = "Inserts a snippet for a link to install a particular required VS Code extension";
+		return this.processSimplerLink(labelText, snippetString, docs);
+	}
+
+	insertInstallExtensionLinkAsciiDoc() : vscode.CompletionItem {
+		const labelText = "Insert link to install required VS Code extension";
+		const snippetString = "link:vscode:extension/${2:ExtensionPackID}[Click here to install the ${1:ExtensionPackName}.]";
+		const docs = "Inserts a snippet for a link to install a particular required VS Code extension";
+		return this.processSimplerLink(labelText, snippetString, docs);
 	}
 
 	// public for testing
@@ -101,7 +136,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 			this.completionCatalog.forEach((completion:any) => {
 				const fullCommandId = completion.fullCommandId;
 				if (cmd === fullCommandId) {
-					snip.documentation = completion.documentation;
+					snip.documentation = new vscode.MarkdownString(completion.documentation);
 					const parms = completion.parms;
 					if (parms) {
 						cmd += `${this.createTextParameterSnippetStringFromArray(parms)}`;
@@ -125,8 +160,11 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 		const match = this.findMatchForCommandVariable(textForRange);
 		let rangeToReplace : vscode.Range | undefined = undefined;
-		if (match && match[0]) {
-			const startPosToReplace : number = rangeAtLine.start.character + textForRange.indexOf(match[1]);
+		if (match && match[1]) {
+			const stringToFind = `=${match[1]}`;
+			// find the string, then add one to account for the equals sign
+			const indexOfStringToFind = textForRange.indexOf(stringToFind) + 1; 
+			const startPosToReplace : number = rangeAtLine.start.character + indexOfStringToFind;
 			rangeToReplace = new vscode.Range(new vscode.Position(line, startPosToReplace), 
 				new vscode.Position(line, startPosToReplace + match[1].length));
 		}
@@ -159,5 +197,50 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		}
 		returnString += '${' + `${num}:${param}` + '}';
 		return returnString;
+	}
+
+	// public for testing
+	public findMatchForCommandVariable(input: string): RegExpMatchArray | null {
+		if (input) {
+			const regex = /(?:\?commandId=*)([^&)]*)/g;
+			return regex.exec(input);
+		}
+		return null;
+	}
+
+	public findMatchForDidactPrefix(input: string): RegExpMatchArray | null {
+		if (input) {
+			const regex = /(?:link:|\()(didact[?:\\/\\?]*)([^/)]*)/g;
+			try {
+				const rtn = input.match(regex);
+				return rtn;
+			} catch (error) {
+				console.log('regex err: ' + error);
+			}
+		}
+		return null;
+	}
+
+	private processSimplerLink(labelText: string, snippetString : string, docs : string) : vscode.CompletionItem {
+		const snippetCompletion = new vscode.CompletionItem(labelText);
+		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
+		snippetCompletion.documentation = new vscode.MarkdownString(docs);
+		return snippetCompletion;
+	}
+
+	private checkFileExtension(fspath : string, extension : string) : boolean {
+		const ext = path.extname(fspath);
+		if (ext) {
+			return (ext === extension);
+		}
+		return false;
+	}
+
+	private isDidactMarkdownFile(fspath : string) : boolean {
+		return this.checkFileExtension(fspath, '.md');
+	}
+
+	private isDidactAsciiDocFile(fspath : string) : boolean {
+		return this.checkFileExtension(fspath, '.adoc');
 	}
 }
