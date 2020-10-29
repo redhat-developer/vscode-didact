@@ -20,7 +20,8 @@ import { expect } from 'chai';
 import { SnippetString } from 'vscode';
 import { DidactUriCompletionItemProvider, DIDACT_COMMAND_PREFIX } from "../../didactUriCompletionItemProvider";
 import { getContext } from '../../extensionFunctions';
-import { commands } from 'vscode';
+import * as vscode from 'vscode';
+import * as path from 'path'
 
 suite("Didact URI completion provider tests", function () {
 
@@ -29,7 +30,7 @@ suite("Didact URI completion provider tests", function () {
 
 	test("that all commands in the didactCompletionCatalog.json are available", async () => {
 		const catalog : any = provider.getCompletionCatalog(ctx);
-		const vsCommands : string[] = await commands.getCommands(true);
+		const vsCommands : string[] = await vscode.commands.getCommands(true);
 		for (let index = 0; index < catalog.length; index++) {
 			const completion = catalog[index];
 			const fullCommandId = completion.fullCommandId;
@@ -84,7 +85,7 @@ suite("Didact URI completion provider tests", function () {
 		expect((includeText as SnippetString).value).to.include('${2:URLEncoded-Command-to-Execute}');
 	});
 
-	test("that the didact protocol matcher returns some expected results", () => {
+	test("that the didact protocol matcher returns some expected results for valid values", () => {
 		const validValues : Array<string> = [
 			"(didact://?commandId=mycommand)",
 			"(didact)",
@@ -97,16 +98,19 @@ suite("Didact URI completion provider tests", function () {
 			"link:didact",
 			"(didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-name$$echo%20text)"
 		];
-		const invalidValues : Array<string> = [
-			"[dooby](did://?",
-			"The man was a didact whiz"
-		];
 		console.log('testing didact protocol matching against positive results');
 		for (let index = 0; index < validValues.length; index++) {
 			const match = provider.findMatchForDidactPrefix(validValues[index]);
 			expect(match).to.not.be.null;
 			expect(match?.length).to.be.equal(1);
 		}		
+	});
+
+	test("that the didact protocol matcher returns some expected results for invalid values", () => {
+		const invalidValues : Array<string> = [
+			"[dooby](did://?",
+			"The man was a didact whiz"
+		];
 		console.log('testing didact protocol matching against negative results');
 		for (let index = 0; index < invalidValues.length; index++) {
 			const match = provider.findMatchForDidactPrefix(invalidValues[index]);
@@ -115,4 +119,55 @@ suite("Didact URI completion provider tests", function () {
 		}
 	});
 
+	test("that we show only non-command completions outside of links for adoc documents", async () => {
+		const testFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/completion.didact.adoc');
+		const document = await vscode.workspace.openTextDocument(testFile);
+		const position = new vscode.Position(0, 0);
+		const actualItems = await getCompletionItems(provider, document, position);
+		expect(actualItems).to.not.be.null;
+		expect(actualItems.length).to.be.equal(2);
+		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+	});
+
+	test("that we show only command completions for didact links for adoc documents", async () => {
+		const testFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/completion.didact.adoc');
+		const asciidocFileUri = vscode.Uri.parse(testFile);
+		const document = await vscode.workspace.openTextDocument(asciidocFileUri);
+		const position = new vscode.Position(2, 26);
+		const actualItems = await getCompletionItems(provider, document, position);
+		expect(actualItems).to.not.be.null;
+		expect(actualItems.length).to.be.at.least(3);
+		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+	});
+
+	test("that we show only non-command completions outside of links for markdown documents", async () => {
+		const testFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/completion.didact.md');
+		const document = await vscode.workspace.openTextDocument(testFile);
+		const position = new vscode.Position(0, 0);
+		const actualItems = await getCompletionItems(provider, document, position);
+		expect(actualItems).to.not.be.null;
+		expect(actualItems.length).to.be.equal(3);
+		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+	});
+
+	test("that we show only command completions for didact links for markdown documents", async () => {
+		const markdownFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/completion.didact.md');
+		const markdownFileUri = vscode.Uri.parse(markdownFile);
+		const document = await vscode.workspace.openTextDocument(markdownFileUri);
+		const position = new vscode.Position(2, 30);
+		const actualItems = await getCompletionItems(provider, document, position);
+		expect(actualItems).to.not.be.null;
+		expect(actualItems.length).to.be.at.least(4);
+		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+	});
 });
+
+async function getCompletionItems(provider: DidactUriCompletionItemProvider, 
+	document: vscode.TextDocument, position: vscode.Position): Promise<vscode.CompletionItem[]> {
+	
+	return await provider.provideCompletionItems(
+		document, position,
+		({} as any) as vscode.CancellationToken,
+		({} as any) as vscode.CompletionContext
+	);
+}

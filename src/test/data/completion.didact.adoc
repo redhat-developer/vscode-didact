@@ -1,0 +1,3 @@
+### Completion Test
+
+link:didact://?commandId=
