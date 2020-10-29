@@ -25,6 +25,7 @@
 		},
 		{
 			"fullCommandId":"vscode.didact.copyFileURLtoWorkspaceCommand",
+			"parms": ["File-URL"],
 			"documentation": "Handles two cases: downloading a file into the workspace, and downloading and unzipping an archive file into the workspace"
 		},
 		{

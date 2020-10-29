@@ -48,13 +48,18 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	async provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, 
 		token: vscode.CancellationToken, context: vscode.CompletionContext) : Promise<vscode.CompletionItem[]> {
+
 		let completions: vscode.CompletionItem[] = [];
+		
 		const searchInput: string = document.lineAt(position).text;
+		const linkMatch = this.findMatchForLinkPrefix(searchInput);
 		const prefixMatch = this.findMatchForDidactPrefix(searchInput);
 		const commandMatch = this.findMatchForCommandVariable(searchInput);
-		if (prefixMatch && prefixMatch[0] && !commandMatch) {
+
+		if (((prefixMatch && prefixMatch[0]) || linkMatch) && !commandMatch) {
 			completions.push(this.didactProtocolCompletion());
 		}
+
 		if (commandMatch) {
 			const commandCompletions = await this.didactCommandCompletion(document, position);
 			completions = completions.concat(commandCompletions.items);
@@ -68,51 +73,56 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 				completions.push(this.insertInstallExtensionLinkMarkdown());
 			}
 		}
+
 		return completions;
 	}
 
 	didactProtocolCompletion() : vscode.CompletionItem {
-		const completionItem:vscode.CompletionItem = new vscode.CompletionItem("Start new Didact command link");
-		completionItem.documentation = "Completes the didact link start to insert a command id";
-		completionItem.insertText = DIDACT_COMMAND_PREFIX;
-		completionItem.kind = vscode.CompletionItemKind.Snippet;
-		completionItem.command = { command: 'editor.action.triggerSuggest', title: 'Autocomplete' };
-		return completionItem;
+		const labelText = "Start new Didact command link";
+		const snippetString = DIDACT_COMMAND_PREFIX;
+		const docs = "Completes the didact link start to insert a command id";
+		const command = { command: 'editor.action.triggerSuggest', title: 'Autocomplete' };
+		return this.processSimplerLink(labelText, snippetString, docs, command);
 	}
 
 	insertNamedStatusLabelAdoc() : vscode.CompletionItem {
 		const labelText = "Insert Didact Requirements Label";
-		const snippetString = "[[${1:requirement-name}]]\n_Status: unknown_";
+		const snippetText = "[[${1:requirement-name}]]\n_Status: unknown_";
+		const snippetString = new vscode.SnippetString(snippetText);
 		const docs = "Inserts a snippet for a Didact requirement validation label";
 		return this.processSimplerLink(labelText, snippetString, docs);
 	}
 
 	insertNamedStatusLabelMarkdown() : vscode.CompletionItem {
 		const labelText = "Insert Didact Requirements Label";
-		const snippetString = "*Status: unknown*{#${1:requirement-name}}";
+		const snippetText = "*Status: unknown*{#${1:requirement-name}}";
+		const snippetString = new vscode.SnippetString(snippetText);
 		const docs = "Inserts a snippet for a Didact requirement validation label";
 		return this.processSimplerLink(labelText, snippetString, docs);
 	}
 
 	insertValidateAllButtonMarkdown() : vscode.CompletionItem {
 		const labelText = "Insert Validate All Button";
-		const snippetString = 
+		const snippetText = 
 		"<a href='didact://?commandId=vscode.didact.validateAllRequirements' title='${1:Validate all requirements!}'>" +
 		"<button>${2:Validate all Requirements at Once!}</button></a>";
+		const snippetString = new vscode.SnippetString(snippetText);
 		const docs = "Inserts a snippet for a Validate All Requirements button";
 		return this.processSimplerLink(labelText, snippetString, docs);
 	}
 
 	insertInstallExtensionLinkMarkdown() : vscode.CompletionItem {
 		const labelText = "Insert link to install required VS Code extension";
-		const snippetString = "[Click here to install the ${1:ExtensionPackName}.](vscode:extension/${2:ExtensionPackID})";
+		const snippetText = "[Click here to install the ${1:ExtensionPackName}.](vscode:extension/${2:ExtensionPackID})";
+		const snippetString = new vscode.SnippetString(snippetText);
 		const docs = "Inserts a snippet for a link to install a particular required VS Code extension";
 		return this.processSimplerLink(labelText, snippetString, docs);
 	}
 
 	insertInstallExtensionLinkAsciiDoc() : vscode.CompletionItem {
 		const labelText = "Insert link to install required VS Code extension";
-		const snippetString = "link:vscode:extension/${2:ExtensionPackID}[Click here to install the ${1:ExtensionPackName}.]";
+		const snippetText = "link:vscode:extension/${2:ExtensionPackID}[Click here to install the ${1:ExtensionPackName}.]";
+		const snippetString = new vscode.SnippetString(snippetText);
 		const docs = "Inserts a snippet for a link to install a particular required VS Code extension";
 		return this.processSimplerLink(labelText, snippetString, docs);
 	}
@@ -136,7 +146,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 			this.completionCatalog.forEach((completion:any) => {
 				const fullCommandId = completion.fullCommandId;
 				if (cmd === fullCommandId) {
-					snip.documentation = new vscode.MarkdownString(completion.documentation);
+					snip.documentation = completion.documentation;
 					const parms = completion.parms;
 					if (parms) {
 						cmd += `${this.createTextParameterSnippetStringFromArray(parms)}`;
@@ -221,10 +231,26 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		return null;
 	}
 
-	private processSimplerLink(labelText: string, snippetString : string, docs : string) : vscode.CompletionItem {
+	public findMatchForLinkPrefix(input: string): RegExpMatchArray | null {
+		if (input) {
+			const regex = /(?:link:|\()/g;
+			try {
+				const rtn = input.match(regex);
+				return rtn;
+			} catch (error) {
+				console.log('regex err: ' + error);
+			}
+		}
+		return null;
+	}
+
+	private processSimplerLink(labelText: string, snippetString : string | vscode.SnippetString, docs : string, command? : vscode.Command) : vscode.CompletionItem {
 		const snippetCompletion = new vscode.CompletionItem(labelText);
-		snippetCompletion.insertText = new vscode.SnippetString(snippetString);
+		snippetCompletion.insertText = snippetString;
 		snippetCompletion.documentation = new vscode.MarkdownString(docs);
+		if (command) {
+			snippetCompletion.command = command;
+		}
 		return snippetCompletion;
 	}
 

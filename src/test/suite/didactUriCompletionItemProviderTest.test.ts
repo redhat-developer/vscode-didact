@@ -126,6 +126,10 @@ suite("Didact URI completion provider tests", function () {
 		const actualItems = await getCompletionItems(provider, document, position);
 		expect(actualItems).to.not.be.null;
 		expect(actualItems.length).to.be.equal(2);
+
+		expect(await checkForCommandInList(actualItems, 'Insert Didact Requirements Label')).to.be.true;
+		expect(await checkForCommandInList(actualItems, 'Insert link to install required VS Code extension')).to.be.true;
+
 		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	});
 
@@ -147,6 +151,11 @@ suite("Didact URI completion provider tests", function () {
 		const actualItems = await getCompletionItems(provider, document, position);
 		expect(actualItems).to.not.be.null;
 		expect(actualItems.length).to.be.equal(3);
+
+		expect(await checkForCommandInList(actualItems, 'Insert Didact Requirements Label')).to.be.true;
+		expect(await checkForCommandInList(actualItems, 'Insert Validate All Button')).to.be.true;
+		expect(await checkForCommandInList(actualItems, 'Insert link to install required VS Code extension')).to.be.true;
+
 		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	});
 
@@ -170,4 +179,14 @@ async function getCompletionItems(provider: DidactUriCompletionItemProvider,
 		({} as any) as vscode.CancellationToken,
 		({} as any) as vscode.CompletionContext
 	);
+}
+
+async function checkForCommandInList(completions: vscode.CompletionItem[], labelToCheck: string): Promise<boolean> {
+	for (let index = 0; index < completions.length; index++) {
+		const completionItem = completions[index];
+		if (completionItem.label === labelToCheck) {
+			return true;
+		}
+	}
+	return false;
 }
