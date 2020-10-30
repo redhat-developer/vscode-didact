@@ -532,13 +532,22 @@ export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined
 }
 
 // retrieve didact text from a url
-async function getDataFromUrl(inurl:string) : Promise<string> {
+export async function getDataFromUrl(inurl:string) : Promise<string> {
 	try {
 		const response = await fetch(inurl);
 		const content = await response.text();
-		const parser = getMDParser();
-		const result = parser.render(content);
-		return result;
+		const tempVSUri = vscode.Uri.parse(inurl);
+		const extname = path.extname(tempVSUri.fsPath);
+		if (extname.localeCompare('.adoc') === 0) {
+			const result = parseADtoHTML(content);
+			return result;
+		} else if (extname.localeCompare('.md') === 0) {
+			const parser = getMDParser();
+			const result = parser.render(content);
+			return result;
+		} else {
+			throw new Error(`Unknown file type encountered: ${extname}`);
+		}
 	} catch (error) {
 		throw new Error(error);
 	}
