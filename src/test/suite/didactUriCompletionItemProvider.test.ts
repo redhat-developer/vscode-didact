@@ -27,16 +27,19 @@ suite("Didact URI completion provider tests", function () {
 
 	const ctx = getContext();
 	const provider = new DidactUriCompletionItemProvider(ctx);
-
+	
 	test("that all commands in the didactCompletionCatalog.json are available", async () => {
 		const catalog : any = provider.getCompletionCatalog(ctx);
 		const vsCommands : string[] = await vscode.commands.getCommands(true);
-		for (let index = 0; index < catalog.length; index++) {
-			const completion = catalog[index];
-			const fullCommandId = completion.fullCommandId;
-			console.log(`-- ${fullCommandId} is ${vsCommands.includes(fullCommandId)}`);
-			expect(vsCommands.includes(fullCommandId)).to.be.true;
-		}		
+
+		suite('walk through each provided completion', () => {
+			catalog.forEach(function(completion: { fullCommandId: string; }){
+				const fullCommandId = completion.fullCommandId;
+				test(`the command ${fullCommandId} should exist in the vscode commands list`, () => {
+					expect(vsCommands.includes(fullCommandId)).to.be.true;
+				});
+			});
+		});
 	});
 
 	test("that the didact protocol completion returns with didact://?commandId=", () => {
@@ -94,12 +97,15 @@ suite("Didact URI completion provider tests", function () {
 			"link:didact",
 			"(didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-name$$echo%20text)"
 		];
-		console.log('testing didact protocol matching against positive results');
-		for (let index = 0; index < validValues.length; index++) {
-			const match = provider.findMatchForDidactPrefix(validValues[index]);
-			expect(match).to.not.be.null;
-			expect(match?.length).to.be.equal(1);
-		}		
+		suite('testing didact protocol matching against positive results', () => {
+			validValues.forEach(function(value:string){
+				test(`matched a didact protocol in ${value}`, () => {
+					const match = provider.findMatchForDidactPrefix(value);
+					expect(match).to.not.be.null;
+					expect(match?.length).to.be.equal(1);
+				});
+			});
+		});
 	});
 
 	test("that the didact protocol matcher returns some expected results for invalid values", () => {
@@ -107,12 +113,15 @@ suite("Didact URI completion provider tests", function () {
 			"[dooby](did://?",
 			"The man was a didact whiz"
 		];
-		console.log('testing didact protocol matching against negative results');
-		for (let index = 0; index < invalidValues.length; index++) {
-			const match = provider.findMatchForDidactPrefix(invalidValues[index]);
-			expect(match).to.be.null;
-			expect(match?.length).to.be.undefined;
-		}
+		suite('testing didact protocol matching against negative results', () => {
+			invalidValues.forEach(function(value:string){
+				test(`did not match a didact protocol in ${value}`, () => {
+					const match = provider.findMatchForDidactPrefix(value);
+					expect(match).to.be.null;
+					expect(match?.length).to.be.undefined;
+				});
+			});
+		});
 	});
 
 	test("that we show only non-command completions outside of links for adoc documents", async () => {
