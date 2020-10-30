@@ -224,7 +224,7 @@
 		"eslint": "^7.12.1",
 		"mocha": "^8.2.0",
 		"mocha-jenkins-reporter": "^0.4.4",
-		"sinon": "9.2.0",
+		"sinon": "9.2.1",
 		"typescript": "^4.0.5",
 		"vscode-test": "^1.4.1"
 	},
