@@ -50,9 +50,7 @@ suite("Didact URI completion provider tests", function () {
 		const match = provider.findMatchForCommandVariable('didact://?commandId=vscode.didact.');
 		expect(match).to.not.be.null;
 		if (match) {
-			expect(match[0]).to.not.be.undefined;
 			expect(match[0]).to.be.equal('?commandId=vscode.didact.');
-			expect(match[1]).to.not.be.undefined;
 			expect(match[1]).to.be.equal('vscode.didact.');
 		}
 	});
@@ -61,9 +59,7 @@ suite("Didact URI completion provider tests", function () {
 		const match = provider.findMatchForCommandVariable('didact://?commandId=vscode.didact.closeNamedTerminal&text=NamedTerminal');
 		expect(match).to.not.be.null;
 		if (match) {
-			expect(match[0]).to.not.be.undefined;
 			expect(match[0]).to.be.equal('?commandId=vscode.didact.closeNamedTerminal');
-			expect(match[1]).to.not.be.undefined;
 			expect(match[1]).to.be.equal('vscode.didact.closeNamedTerminal');
 		}
 	});
@@ -77,7 +73,7 @@ suite("Didact URI completion provider tests", function () {
 	test("that the command processing for one command returns one expected result", async () => {
 		const match = provider.findMatchForCommandVariable('didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-name$$echo%20text');
 		const completionList = await provider.processCommands(match);
-		expect(completionList.items.length).to.be.equal(1);
+		expect(completionList.items).to.have.lengthOf(1);
 
 		const includeText:string | SnippetString | undefined = completionList.items[0].insertText;
 		expect(includeText).to.not.be.undefined;

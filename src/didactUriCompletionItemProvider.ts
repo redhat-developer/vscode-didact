@@ -40,7 +40,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	// public for testing
 	public getCompletionCatalog(context: vscode.ExtensionContext) : JSON {
 		const uri : vscode.Uri = vscode.Uri.file(
-			path.join(context.extensionPath, 'src/didactCompletionCatalog.json')
+			path.join(context.extensionPath, 'resources/didactCompletionCatalog.json')
 		);
 		const jsoncontent = fs.readFileSync(uri.fsPath, 'utf8');
 		return JSON.parse(jsoncontent).completions;
@@ -179,7 +179,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 				new vscode.Position(line, startPosToReplace + match[1].length));
 		}
 
-		await this.processCommands(match, rangeToReplace, completionList);	
+		await this.processCommands(match, rangeToReplace, completionList);
 		return completionList;
 	}
 
@@ -222,8 +222,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		if (input) {
 			const regex = /(?:link:|\()(didact[?:\\/\\?]*)([^/)]*)/g;
 			try {
-				const rtn = input.match(regex);
-				return rtn;
+				return input.match(regex);
 			} catch (error) {
 				console.log('regex err: ' + error);
 			}
@@ -235,8 +234,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		if (input) {
 			const regex = /(?:link:|\()/g;
 			try {
-				const rtn = input.match(regex);
-				return rtn;
+				return input.match(regex);
 			} catch (error) {
 				console.log('regex err: ' + error);
 			}
