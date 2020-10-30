@@ -100,6 +100,13 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 					handleNumber(output, text);
 				}
 			}
+			
+			if (query.json) {
+				const text = getValue(query.json);
+				if (text) {
+					output.push(JSON.parse(text));
+				}
+			}
 
 			console.log(`commandId : ${commandId}`);
 			console.log(`output : ${output.toString()}`);

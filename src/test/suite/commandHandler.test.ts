@@ -22,6 +22,8 @@ import { DidactWebviewPanel } from '../../didactWebView';
 import * as vscode from 'vscode';
 import { setLastColumnUsedSetting } from '../../utils';
 import * as assert from 'assert';
+import sinon = require('sinon');
+const waitUntil = require('async-wait-until');
 
 function disposeAll(disposables: vscode.Disposable[]) {
 	vscode.Disposable.from(...disposables).dispose();
@@ -115,7 +117,44 @@ suite("Command Handler tests", function () {
 		await processInputs(filePathForClipboard);
 		const textInClipBoard: string = await vscode.env.clipboard.readText();
 		expect(textInClipBoard).to.be.equal('How vexingly quick daft zebras jump!');
-	});	
+	});
+	
+	test('test command using a json parameter: rename terminal', async() => {
+		const initialTerminalName = 'terminal before rename';
+		vscode.window.createTerminal(initialTerminalName).show();
+		await waitUntil(() => vscode.window.activeTerminal?.name == initialTerminalName);
+		
+		await processInputs('didact://?commandId=workbench.action.terminal.renameWithArg&json={"name":"terminal%20renamed"}');
+		
+		expect(vscode.window.activeTerminal?.name).to.be.equal('terminal renamed');
+	});
+	
+	suite('Check command called with specified arguments', function() {
+		
+		let sandbox: sinon.SinonSandbox;
+		let executeCommandStub: sinon.SinonStub;
+		
+		setup(() => {
+			sandbox = sinon.createSandbox();
+			executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+		});
+		
+		teardown(() => {
+			executeCommandStub.restore();
+			sandbox.reset();
+		});
+		
+		test('with single json argument', async() => {
+			await processInputs('didact://?commandId=test&json={"name":"test"}');
+			sinon.assert.calledWith(executeCommandStub, 'test', {"name":"test"});
+		});
+		
+		test('with a text and then a json argument', async() => {
+			await processInputs('didact://?commandId=test&text=myText&json={"name":"test"}');
+			sinon.assert.calledWith(executeCommandStub, 'test', "myText", {"name":"test"});
+		});
+	});
+	
 });
 
 async function resetAfterTest() {
