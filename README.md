@@ -1,5 +1,5 @@
 [![GitHub tag](https://img.shields.io/github/tag/redhat-developer/vscode-didact.svg?style=plastic)]()
-[![Build Status](https://travis-ci.org/redhat-developer/vscode-didact.svg?branch=master)](https://travis-ci.org/redhat-developer/vscode-didact)
+[![Build Status](https://travis-ci.com/redhat-developer/vscode-didact.svg?branch=master)](https://travis-ci.com/redhat-developer/vscode-didact)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
 [![Gitter](https://img.shields.io/gitter/room/redhat-developer/home.js.svg)](https://gitter.im/redhat-developer/home)
 
