@@ -476,7 +476,16 @@ export class DidactWebviewPanel {
 	getFirstHeadingText() : string | undefined {
 		const html : string | undefined = this.getCurrentHTML();
 		if (html) {
-			const parsed : Document = new DOMParser().parseFromString(html);
+			const parsed = new DOMParser({
+				locator: {},
+				errorHandler: { warning: function () { 
+					// empty 
+				}, 
+				error: function () {
+					// empty
+				}, 
+				fatalError: function (e) { console.error(e) } }
+			}).parseFromString(html);
 			if (parsed) {
 				const h1 : HTMLCollectionOf<HTMLHeadingElement> = parsed.getElementsByTagName('h1');
 				if (h1 && h1.length > 0 && h1[0].textContent) {
