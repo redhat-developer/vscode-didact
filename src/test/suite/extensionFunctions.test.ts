@@ -13,6 +13,7 @@ suite('Extension Functions Test Suite', () => {
 	const uriOne = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md';
 	const uriTwo = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/asciidoc/didact-demo.didact.adoc';
 	const uriThree = 'https://github.com/redhat-developer/vscode-didact/blob/master/demos/markdown/camelinaction/chapter1/cia2-chapter-1-v2.didact.md';
+	const uriToRemoteDidactAdoc = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/asciidoc/simple-example.didact.adoc';
 
 	async function cleanFiles() {
 		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
@@ -315,6 +316,12 @@ suite('Extension Functions Test Suite', () => {
 		expect(textInClipBoard).to.be.equal(doublyEncodedString);
 	});
 
+	test('open a remote asciidoc file', async () => {
+		const content = await extensionFunctions.getDataFromUrl(uriToRemoteDidactAdoc);
+		expect(content).to.not.equal(null);
+		expect(content).to.include('How do you access this amazing functionality? The Command Palette!');
+	});
+		
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
