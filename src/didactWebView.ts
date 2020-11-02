@@ -316,7 +316,7 @@ export class DidactWebviewPanel {
 			stylesheetHtml = `${adUriHtml}\n ${cssUriHtml}\n`;
 		} else {
 			// use bulma.min.css as the default stylesheet for markdown from https://bulma.io/
-			const bulmaCssHtml = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">`;
+			const bulmaCssHtml = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"/>`;
 			stylesheetHtml = `${bulmaCssHtml}\n ${cssUriHtml}\n`;
 		}
 
@@ -358,9 +358,9 @@ export class DidactWebviewPanel {
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';">
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';"/>
 			<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
