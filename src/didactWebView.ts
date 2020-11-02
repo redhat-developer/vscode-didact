@@ -371,7 +371,6 @@ export class DidactWebviewPanel {
 		</body>
 		</html>`;
 
-		console.log(completedHtml);
 		return completedHtml;
 	}
 
