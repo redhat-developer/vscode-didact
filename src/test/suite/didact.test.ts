@@ -28,6 +28,10 @@ import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import { removeFilesAndFolders } from '../../utils';
 
+import waitUntil = require('async-wait-until');
+
+const EDITOR_OPENED_TIMEOUT = 5000;
+
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
@@ -79,9 +83,19 @@ suite('Didact test suite', () => {
 
 	test('Scaffold new project', async function () {
 		try {
+			const groovyFile = `simple.groovy`;
 			await vscode.commands.executeCommand(extensionFunctions.SCAFFOLD_PROJECT_COMMAND).then( () => {
 				const createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
 				assert.strictEqual(fs.existsSync(createdGroovyFileInFolderStructure), true);
+			}).then ( async () => {
+				// test to make sure the groovy file, set to open: true in json, actually opens
+				try {
+					await waitUntil(() => {
+						return findEditorForFile(groovyFile);
+					}, EDITOR_OPENED_TIMEOUT, 1000);
+				} catch (error) {
+					assert.fail(`${groovyFile} has not been opened in editor`);
+				}
 			});
 		} catch (error) {
 			assert.fail(error);
@@ -243,3 +257,15 @@ suite('Didact test suite', () => {
 		});
 	});
 });
+
+function findEditorForFile(filename: string) : vscode.TextEditor | undefined {
+	if (vscode.window.visibleTextEditors && vscode.window.visibleTextEditors.length > 0) {
+		for (let index = 0; index < vscode.window.visibleTextEditors.length; index++) {
+			const textEditor = vscode.window.visibleTextEditors[index];
+			if (textEditor.document.fileName.endsWith(`${filename}`)){
+				return textEditor;
+			}
+		}
+	}
+	return undefined;
+}
