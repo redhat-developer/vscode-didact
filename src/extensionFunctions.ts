@@ -539,12 +539,10 @@ export async function getDataFromUrl(inurl:string) : Promise<string> {
 		const tempVSUri = vscode.Uri.parse(inurl);
 		const extname = path.extname(tempVSUri.fsPath);
 		if (extname.localeCompare('.adoc') === 0) {
-			const result = parseADtoHTML(content);
-			return result;
+			return parseADtoHTML(content);
 		} else if (extname.localeCompare('.md') === 0) {
 			const parser = getMDParser();
-			const result = parser.render(content);
-			return result;
+			return parser.render(content);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
