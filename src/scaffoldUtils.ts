@@ -69,7 +69,7 @@ function isJson(item: any) {
 }
 
 // create the folder structure from the json project file
-export async function createFoldersFromJSON(json: any, jsonpath?: vscode.Uri): Promise<any> {
+export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Promise<any> {
 	try {
 		if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) {
 			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.');
@@ -132,7 +132,7 @@ export async function createFoldersFromJSON(json: any, jsonpath?: vscode.Uri): P
 }
 
 // create any files specified in the project json file
-async function createFiles(folderNode: any, files: any, jsonpath?: vscode.Uri): Promise<any> {
+async function createFiles(folderNode: any, files: any, jsonpath: vscode.Uri): Promise<any> {
 	try {
 		if (files) {
 			files.forEach(async (file: any) => {
@@ -153,7 +153,7 @@ async function createFiles(folderNode: any, files: any, jsonpath?: vscode.Uri): 
 				} else {
 					throw new Error(`Unable to retrieve file content for ${completeFilePath}.`);
 				}
-				if (file.open) {
+				if (file.open && file.open as boolean === true) {
 					const fileUri = vscode.Uri.parse(completeFilePath);
 					await vscode.commands.executeCommand('vscode.open', fileUri, vscode.ViewColumn.Beside);
 				}
@@ -166,7 +166,7 @@ async function createFiles(folderNode: any, files: any, jsonpath?: vscode.Uri): 
 }
 
 // create any sub folders 
-async function createSubFolders(folderNode: any, folders: any, jsonpath?: vscode.Uri): Promise<any> {
+async function createSubFolders(folderNode: any, folders: any, jsonpath: vscode.Uri): Promise<any> {
 	try {
 		folders.forEach(async (folder: any) => {
 			const newFolderName = folder.name;

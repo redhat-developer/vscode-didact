@@ -40,7 +40,7 @@ const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requ
 const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/projectwithdidactfile.json';
-const testScaffoldOpen = 'didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=redhat.vscode-didact/src/test/data/scaffoldOpen.json';
+const testScaffoldOpen = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/src/test/data/scaffoldOpen.json';
 
 suite('Didact test suite', () => {
 
