@@ -70,7 +70,7 @@ suite("Didact URI completion provider tests", function () {
 	test("that the command processing for a command prefix returns expected results", async () => {
 		const match = provider.findMatchForCommandVariable('didact://?commandId=vscode.didact.');
 		const completionList = await provider.processCommands(match);
-		expect(completionList.items.length).to.be.equal(26);
+		expect(completionList.items).to.have.lengthOf(26)
 	});
 
 	test("that the command processing for one command returns one expected result", async () => {
@@ -102,7 +102,7 @@ suite("Didact URI completion provider tests", function () {
 				test(`matched a didact protocol in ${value}`, () => {
 					const match = provider.findMatchForDidactPrefix(value);
 					expect(match).to.not.be.null;
-					expect(match?.length).to.be.equal(1);
+					expect(match).to.have.lengthOf(1)
 				});
 			});
 		});
@@ -118,7 +118,6 @@ suite("Didact URI completion provider tests", function () {
 				test(`did not match a didact protocol in ${value}`, () => {
 					const match = provider.findMatchForDidactPrefix(value);
 					expect(match).to.be.null;
-					expect(match?.length).to.be.undefined;
 				});
 			});
 		});
@@ -130,7 +129,7 @@ suite("Didact URI completion provider tests", function () {
 		const position = new vscode.Position(0, 0);
 		const actualItems = await getCompletionItems(provider, document, position);
 		expect(actualItems).to.not.be.null;
-		expect(actualItems.length).to.be.equal(2);
+		expect(actualItems).to.have.lengthOf(2)
 
 		expect(await checkForCommandInList(actualItems, 'Insert Didact Requirements Label')).to.be.true;
 		expect(await checkForCommandInList(actualItems, 'Insert link to install required VS Code extension')).to.be.true;
@@ -155,7 +154,7 @@ suite("Didact URI completion provider tests", function () {
 		const position = new vscode.Position(0, 0);
 		const actualItems = await getCompletionItems(provider, document, position);
 		expect(actualItems).to.not.be.null;
-		expect(actualItems.length).to.be.equal(3);
+		expect(actualItems).to.have.lengthOf(3)
 
 		expect(await checkForCommandInList(actualItems, 'Insert Didact Requirements Label')).to.be.true;
 		expect(await checkForCommandInList(actualItems, 'Insert Validate All Button')).to.be.true;
