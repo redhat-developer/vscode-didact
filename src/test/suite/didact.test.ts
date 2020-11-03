@@ -96,7 +96,6 @@ suite('Didact test suite', () => {
 	test('Scaffold new project, test for open: true file', async function () {
 		try {
 			await commandHandler.processInputs(testScaffoldOpen).then( async () => {
-				// test to make sure the groovy file, set to open: true in json, actually opens
 				try {
 					await waitUntil(() => {
 						return findEditorForFile(`simple.groovy`);
