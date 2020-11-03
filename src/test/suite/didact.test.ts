@@ -111,41 +111,11 @@ suite('Didact test suite', () => {
 	});
 
 	test('Scaffold new project, test for standard file (no open)', async function () {
-		try {
-			await commandHandler.processInputs(testScaffoldOpen).then( async () => {
-				// test to make sure the other file, set to open: false in json, does not open
-				try {
-					await waitUntil(() => {
-						return findEditorForFile(`aThirdFile.txt`);
-					}, EDITOR_OPENED_TIMEOUT, 1000).then(() => {
-						assert.fail(`aThirdFile.txt was found opened in editor when it should not have been`);	
-					});
-				} catch (error) {
-					assert.ok(error);
-				}
-			});
-		} catch (error) {
-			assert.fail(error);
-		}
+		await testScaffoldProjectDoesNotOpenFile(`aThirdFile.txt`);
 	});
 
 	test('Scaffold new project, test for open: false file', async function () {
-		try {
-			await commandHandler.processInputs(testScaffoldOpen).then( async () => {
-				// test to make sure the other file, set to open: false in json, does not open
-				try {
-					await waitUntil(() => {
-						return findEditorForFile(`anotherFile.txt`);
-					}, EDITOR_OPENED_TIMEOUT, 1000).then(() => {
-						assert.fail(`anotherFile.txt was found opened in editor when it should not have been`);	
-					});
-				} catch (error) {
-					assert.ok(error);
-				}
-			});
-		} catch (error) {
-			assert.fail(error);
-		}
+		await testScaffoldProjectDoesNotOpenFile(`anotherFile.txt`);
 	});
 
 	test('Scaffold new project with a uri', async function () {
@@ -303,6 +273,24 @@ suite('Didact test suite', () => {
 		});
 	});
 });
+
+async function testScaffoldProjectDoesNotOpenFile(fileName: string) {
+	try {
+		await commandHandler.processInputs(testScaffoldOpen).then(async () => {
+			try {
+				await waitUntil(() => {
+					return findEditorForFile(fileName);
+				}, EDITOR_OPENED_TIMEOUT, 1000).then(() => {
+					assert.fail(`${fileName} was found opened in editor when it should not have been`);
+				});
+			} catch (error) {
+				assert.ok(error);
+			}
+		});
+	} catch (error) {
+		assert.fail(error);
+	}
+}
 
 function findEditorForFile(filename: string) : vscode.TextEditor | undefined {
 	if (vscode.window.visibleTextEditors && vscode.window.visibleTextEditors.length > 0) {
