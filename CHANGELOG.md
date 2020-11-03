@@ -6,6 +6,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
  - Improved Didact code completion support. [FUSETOOLS2-811](https://issues.redhat.com/browse/FUSETOOLS2-811)
  - Added fix to support AsciiDoc include statements. Any adoc include files must be in a location relative to the file in which they are included. [FUSETOOLS2-804](https://issues.redhat.com/browse/FUSETOOLS2-804)
+ - Support json parameter for commands [FUSETOOLS2-832](https://issues.redhat.com/browse/FUSETOOLS2-832)
 
 ## 0.1.17
 
