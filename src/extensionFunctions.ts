@@ -97,7 +97,7 @@ export function initialize(inContext: vscode.ExtensionContext): void {
 }
 
 // use the json to model the folder/file structure to be created in the vscode workspace
-export async function scaffoldProjectFromJson(jsonpath:vscode.Uri | undefined): Promise<void> {
+export async function scaffoldProjectFromJson(jsonpath:vscode.Uri): Promise<void> {
 	sendTextToOutputChannel(`Scaffolding project from json: ${jsonpath}`);
 	if (utils.getWorkspacePath()) {
 		let testJson : any;

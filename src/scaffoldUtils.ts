@@ -41,13 +41,7 @@ export function createSampleProject(): JSON {
 						"files": [
 							{
 								"name": "simple.groovy",
-								"content": "from('timer:groovy?period=1s')\n\t.routeId('groovy')\n\t.setBody()\n\t.simple('Hello Camel K from ${routeId}')\n\t.to('log:info?showAll=false')\n",
-								"open" : true
-							},
-							{
-								"name": "anotherFile.txt",
-								"content": "some content\n",
-								"open" : true
+								"content": "from('timer:groovy?period=1s')\n\t.routeId('groovy')\n\t.setBody()\n\t.simple('Hello Camel K from ${routeId}')\n\t.to('log:info?showAll=false')\n"
 							}
 						]
 					}
@@ -146,7 +140,6 @@ async function createFiles(folderNode: any, files: any, jsonpath?: vscode.Uri): 
 				const completeFilePath = `${folderNode}/${newFileName}`;
 				let newFileContent = undefined;
 				console.log(`Creating ${completeFilePath}`);
-				let openFileByDefault = false;
 				if (file.content) {
 					newFileContent = file.content;
 				} else if (file.copy && jsonpath) {
@@ -154,16 +147,13 @@ async function createFiles(folderNode: any, files: any, jsonpath?: vscode.Uri): 
 					const filetocopy = path.join(relative, file.copy);
 					newFileContent = fs.readFileSync(filetocopy, 'utf8');
 				}
-				if (file.open) {
-					openFileByDefault = file.open;
-				}
 				if (newFileContent) {
 					// write to a new file
 					fs.writeFileSync(completeFilePath, newFileContent);
 				} else {
 					throw new Error(`Unable to retrieve file content for ${completeFilePath}.`);
 				}
-				if (openFileByDefault) {
+				if (file.open) {
 					const fileUri = vscode.Uri.parse(completeFilePath);
 					await vscode.commands.executeCommand('vscode.open', fileUri, vscode.ViewColumn.Beside);
 				}
