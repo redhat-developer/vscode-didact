@@ -135,7 +135,7 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 async function createFiles(folderNode: any, files: any, jsonpath: vscode.Uri): Promise<any> {
 	try {
 		if (files) {
-			files.forEach((file: any) => {
+			files.forEach(async (file: any) => {
 				const newFileName = file.name;
 				const completeFilePath = `${folderNode}/${newFileName}`;
 				let newFileContent = undefined;
@@ -152,6 +152,10 @@ async function createFiles(folderNode: any, files: any, jsonpath: vscode.Uri): P
 					fs.writeFileSync(completeFilePath, newFileContent);
 				} else {
 					throw new Error(`Unable to retrieve file content for ${completeFilePath}.`);
+				}
+				if (file.open && file.open as boolean === true) {
+					const fileUri = vscode.Uri.parse(completeFilePath);
+					await vscode.commands.executeCommand('vscode.open', fileUri, vscode.ViewColumn.Beside);
 				}
 			});
 		}

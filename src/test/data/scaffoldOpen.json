@@ -1,0 +1,28 @@
+{
+	"folders" : [
+	{
+		"name": "root",
+		"folders": [
+			{
+				"name": "src",
+				"files": [
+					{
+						"name": "simple.groovy",
+						"content": "from('timer:groovy?period=1s')\n\t.routeId('groovy')\n\t.setBody()\n\t.simple('Hello Camel K from ${routeId}')\n\t.to('log:info?showAll=false')\n",
+						"open" : true
+					},
+					{
+						"name": "anotherFile.txt",
+						"content": "some content\n",
+						"open" : false
+					},
+					{
+						"name": "aThirdFile.txt",
+						"content": "some additional content\n"
+					}
+				]
+			}
+		]
+	}
+]
+}

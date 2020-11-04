@@ -28,6 +28,10 @@ import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import { removeFilesAndFolders } from '../../utils';
 
+import waitUntil = require('async-wait-until');
+
+const EDITOR_OPENED_TIMEOUT = 5000;
+
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
@@ -36,6 +40,7 @@ const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requ
 const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/projectwithdidactfile.json';
+const testScaffoldOpen = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/src/test/data/scaffoldOpen.json';
 
 suite('Didact test suite', () => {
 
@@ -86,6 +91,30 @@ suite('Didact test suite', () => {
 		} catch (error) {
 			assert.fail(error);
 		}
+	});
+
+	test('Scaffold new project, test for open: true file', async function () {
+		try {
+			await commandHandler.processInputs(testScaffoldOpen).then( async () => {
+				try {
+					await waitUntil(() => {
+						return findEditorForFile(`simple.groovy`);
+					}, EDITOR_OPENED_TIMEOUT, 1000);
+				} catch (error) {
+					assert.fail(`simple.groovy has not been opened in editor`);
+				}
+			});
+		} catch (error) {
+			assert.fail(error);
+		}
+	});
+
+	test('Scaffold new project, test for standard file (no open)', async function () {
+		await testScaffoldProjectDoesNotOpenFile(`aThirdFile.txt`);
+	});
+
+	test('Scaffold new project, test for open: false file', async function () {
+		await testScaffoldProjectDoesNotOpenFile(`anotherFile.txt`);
 	});
 
 	test('Scaffold new project with a uri', async function () {
@@ -243,3 +272,33 @@ suite('Didact test suite', () => {
 		});
 	});
 });
+
+async function testScaffoldProjectDoesNotOpenFile(fileName: string) {
+	try {
+		await commandHandler.processInputs(testScaffoldOpen).then(async () => {
+			try {
+				await waitUntil(() => {
+					return findEditorForFile(fileName);
+				}, EDITOR_OPENED_TIMEOUT, 1000).then(() => {
+					assert.fail(`${fileName} was found opened in editor when it should not have been`);
+				});
+			} catch (error) {
+				assert.ok(error);
+			}
+		});
+	} catch (error) {
+		assert.fail(error);
+	}
+}
+
+function findEditorForFile(filename: string) : vscode.TextEditor | undefined {
+	if (vscode.window.visibleTextEditors && vscode.window.visibleTextEditors.length > 0) {
+		for (let index = 0; index < vscode.window.visibleTextEditors.length; index++) {
+			const textEditor = vscode.window.visibleTextEditors[index];
+			if (textEditor?.document?.fileName.endsWith(`${filename}`)){
+				return textEditor;
+			}
+		}
+	}
+	return undefined;
+}
