@@ -18,7 +18,7 @@ First, we need to make sure you have Node.js available.
 
 Create a new file called `index.js`.  [(Execute^)](didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demos/markdown/helloJS/project.json)
 
-Open your new file. [(Execute^)](didact://?commandId=vscode.open&projectFilePath=index.js)
+Open your new file. [(Execute^)](didact://?commandId=vscode.open&projectFilePath=index.js&json={"viewColumn":-2})
 
 Check out these two lines of code:
 
