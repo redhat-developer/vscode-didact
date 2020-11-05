@@ -1,110 +1,46 @@
-[![GitHub tag](https://img.shields.io/github/tag/redhat-developer/vscode-didact.svg?style=plastic)]()
-[![Build Status](https://travis-ci.com/redhat-developer/vscode-didact.svg?branch=master)](https://travis-ci.com/redhat-developer/vscode-didact)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
-[![Gitter](https://img.shields.io/gitter/room/redhat-developer/home.js.svg)](https://gitter.im/redhat-developer/home)
+<p align="center">
+  <img width="100" height="100" src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/logo.png">
+</p><br/>
 
-# Didact
+<h1 align="center">Didact</h1><br/>
+<h2 align="center">Easy interactive tutorials for VS Code.</h2><br/>
+<p align="justify">The <b>Didact</b> framework is designed to instruct users in a useful way regarding how to complete tasks through a combination of text (Markdown- or AsciiDoc-formatted), images, and active links that show VS Code functionality in action. Those links are paired with VS Code’s simple command framework to interact with the IDE directly -- and that provides one-click access to nearly all the functionality VS Code and its extensions have to offer.</p><br/>
 
-The **Didact** extension does a few things, but mainly it shows what's possible through a combination of a simple Markdown or AsciiDoc file, the VS Code Webview, and calling easily accessible commands in VS Code.
+<p align="center">
+<a href="https://github.com/redhat-developer/vscode-didact/tree/master"><img src="https://img.shields.io/github/tag/redhat-developer/vscode-didact.svg?style=plastic" alt="GitHub tag"/></a>
+<a href="https://travis-ci.com/redhat-developer/vscode-didact"><img src="https://travis-ci.com/redhat-developer/vscode-didact.svg?branch=master" alt="Build Status"/></a>
+<img src="https://img.shields.io/badge/license-Apache%202-blue.svg" alt="License"/>
+<a href="https://gitter.im/redhat-developer/vscode-didact"><img src="https://img.shields.io/gitter/room/redhat-developer/home.js.sv" alt="Gitter"/></a>
+</p><br/>
 
-For a demo file of what functionality is currently available, check out [the didact-demo.](vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md)
+<p align="center"><img src="./images/open-new-terminal-example.gif" alt="Three Step Didact Tutorial Example" width="100%"/></p><br/>
 
-## Didact In Action
+# Didact offers two avenues to success
 
-We have created a tutorial that walks through creating a simple Hello World in JavaScript. This tutorial, though simple, shows several of Didact's features in action, including:
+1. Published tutorials that walk users through easy-to-follow tutorials to accomplish their goals in an interactive manner.
+2. Developer tools to make writing and publishing such tutorials an easy process.
 
-* Using a Didact command to test to see if Node is available in the user's system.
-* Using a Didact command to create a file in the user workspace.
-* Using a built-in command from VS Code to open the file we create in the user workspace.
-* Using Didact commands to not only open a named terminal window, but call a command in that same window at the command line.
+## Starting the JavaScript Didact Tutorial
 
-You can find the source for the HelloJS tutorial in [this MarkDown file](./demos/markdown/helloJS/helloJS.didact.md).
+1. Open the `Didact Tutorials` view in the Explorer activity sidebar.
+2. Expand the tree and find `HelloWorld with JavaScript in Three Steps`.
+3. Click the triangle at the end of the line or select `Start Didact tutorial` from the right-click menu.
+4. When the tutorial opens, work through the various steps.
 
-![Three Step Didact Tutorial Example](./images/helloJS-didact-demo-APR-2020.gif)
+![Run the HelloWorld Example](./images/run-js-example.gif)
 
-## Accessing Didact in the workspace. 
+## Writing your first Didact tutorial
 
-With Didact installed, there are three ways to open a Didact window.
+1. Create a new Markdown or AsciiDoc file with the extension `.didact.md` or `.didact.adoc`.
+2. Write some text about the action your user will accomplish. 
+3. Start a new Didact link:
+* In Markdown, type `[Open a new terminal]()`, put the cursor between the parentheses `()` and press `Ctrl+Space`. 
+* In AsciiDoc, type `link:[Open a new terminal]`, put the cursor after `link:`, and press `Ctrl+Space`.
+4. Select `Start new Didact command link`.
+5. Choose a command from the hundreds VS Code has available (like `workbench.action.terminal.new`) and press `Enter`.
+6. Press `Ctrl+Alt+V` to view your new Didact tutorial and click the link you created! Done!
 
-* To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact file specified in the Settings.
-* To open a local Didact file in the workspace directly, Right-click on the Didact file (`*.didact.md` or `*.didact.adoc`) and select **Start Didact Tutorial from File** from the context menu.
-
-In addition, you now have the `Didact Tutorials` view. 
-
-![Didact Tutorials View](./images/didact-view-with-popup.png)
-
-If you right-click on a tutorial (such as "Didact Demo"), you see a `Start Didact Tutorial` menu, which opens the Didact window or changes the current Didact window to the selected tutorial. These entries are provided by registering new tutorial name/tutorial uri/category combinations with Didact's tutorial registry.
-
-*NEW!* You can also simply mouse over a registered tutorial and hit the 'play' button (triangle) to launch it in the Didact window.
-
-![One Click Open a Didact Tutorial](./images/didact-tutorial-start-button.gif)
-
-## Didact Settings 
-
-To change the default Didact file, access the settings (`File->Preferences->Settings`), type **Didact** and set the `Didact: Default Url`. This can be any valid URL to a Didact formatted Markdown file, including `http://`, `https://`, or `file://` URLs.
-
-To turn on generic Didact completion notifications (off by default), access the settings (`File->Preferences->Settings`), type **Didact** and set the `Didact: Disable Notifications` checkbox. If unchecked, additional notifications will occur when Didact actions are activated in the IDE.
-
-To have Didact open a window with the default Didact file on startup, access the settings (`File->Preferences->Settings`), type **Didact** and set the `Didact: Open Default Tutorial At Startup` checkbox.
-
-![Didact Settings](./images/settings.jpg)
-
-## Auto-complete for Didact in Markdown files
-
-To help you set up Didact tutorials, we've added a number of auto-completions (accessible by pressing `Ctrl+Space` while editing a Markdown file) to provide most of the basic things you'll need.
-
-![Didact Auto-Completion Demo](./images/didact-uri-completion-demo.gif)
-
-Included completions:
-
-* Insert Validate All button
-* Insert Requirements label
-* Insert link to install required VS Code extension
-* Insert link to create temporary folder as WS root
-* Insert link to start didact from File in Extension folder
-* Start a new didact link (inserts `didact://?` and then offers additional completions
-
-From a `didact://?` start, you also get:
-
-* Start terminal with name
-* Send named terminal some text
-* Send named terminal a Ctrl+C
-* Close terminal with name
-* Non-didact command
-* Check CLI for some returned text
-* Check CLI for some success (no text)
-* Check for required extension
-* Check for root folder in the WS
-* Scaffold project
-* Start Didact from Currently Selected File
-
-## A Note about Auto-complete for Didact in AsciiDoc files
-
-This functionality requires an AsciiDoc extension to be installed in your Workspace. We have seem intermittent issues with these extensions, including this [popular AsciiDoc extension.](vscode:extension/joaompinto.asciidoctor-vscode). We have noticed that the Didact extension does not always start when this extension is installed.
-
-When it works, we should have access to the following completions.
-
-Outside a didact link, you get:
-
-* Start a new didact link (inserts `didact://?` and then offers additional completions
-* Insert Link to Start Didact from File in Extension folder
-* Insert Link to Install Required VS Code extension
-
-From a `didact://?` start, you get:
-
-* Start terminal with name
-* Send named terminal some text
-* Send named terminal a Ctrl+C
-* Close terminal with name
-* Non-didact command
-* Check CLI for some returned text
-* Check CLI for some success (no text)
-* Check for required extension
-* Check for root folder in the WS
-* Scaffold project
-* Start Didact from Currently Selected File
-* Validate All Didact Requirements
-* Add Temporary Folder as WS Root
+![Open New Terminal Example](./images/open-new-terminal-example.gif)
 
 ## Additional Details
 
@@ -120,4 +56,8 @@ Check out [the project on Github](https://github.com/redhat-developer/vscode-did
 
 And feel free to [add issues, submit feature requests, log bugs, etc](https://github.com/redhat-developer/vscode-didact/issues)!
 
-**Enjoy!**
+## A big thank you to these folks for following our progress!
+
+[![Stargazers repo roster for @redhat-developer/vscode-didact](https://reporoster.com/stars/redhat-developer/vscode-didact)](https://github.com/redhat-developer/vscode-didact/stargazers)
+
+[![Forkers repo roster for @redhat-developer/vscode-didact](https://reporoster.com/forks/redhat-developer/vscode-didact)](https://github.com/redhat-developer/vscode-didact/network/members)
