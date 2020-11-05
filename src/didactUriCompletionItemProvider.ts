@@ -212,7 +212,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	// public for testing
 	public findMatchForCommandVariable(input: string): RegExpMatchArray | null {
 		if (input) {
-			const regex = /(?:\?commandId=*)([^&)]*)/g;
+			const regex = /(?:\?commandId=*)([^&[)]*)/g;
 			return regex.exec(input);
 		}
 		return null;
@@ -232,7 +232,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	public findMatchForLinkPrefix(input: string): RegExpMatchArray | null {
 		if (input) {
-			const regex = /(?:link:|\()/g;
+			const regex = /(?:link:|\()(\[)?/g;
 			try {
 				return input.match(regex);
 			} catch (error) {

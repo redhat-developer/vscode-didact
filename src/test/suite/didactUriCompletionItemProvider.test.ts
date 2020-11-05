@@ -95,12 +95,33 @@ suite("Didact URI completion provider tests", function () {
 			"[my link](didact://?comma)",
 			"link:didact://?commandId=someCommand",
 			"link:didact",
-			"(didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-name$$echo%20text)"
+			"(didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-name$$echo%20text)",
+			"link:didact://?",
+			"link:didact://?commandId=",
 		];
 		suite('testing didact protocol matching against positive results', () => {
 			validValues.forEach(function(value:string){
 				test(`matched a didact protocol in ${value}`, () => {
 					const match = provider.findMatchForDidactPrefix(value);
+					expect(match).to.not.be.null;
+					expect(match).to.have.lengthOf(1)
+				});
+			});
+		});
+	});
+
+	test("that the link matcher returns some expected results for valid asciidoc link values", () => {
+		const validValues : Array<string> = [
+			"link:didact://?commandId=someCommand[Some text]",
+			"link:didact://?commandId=someCommand",
+			"link:didact",
+			"link:",
+			"link:[some text]"
+		];
+		suite('testing link matching against positive results', () => {
+			validValues.forEach(function(value:string){
+				test(`matched a didact protocol in link ${value}`, () => {
+					const match = provider.findMatchForLinkPrefix(value);
 					expect(match).to.not.be.null;
 					expect(match).to.have.lengthOf(1)
 				});
