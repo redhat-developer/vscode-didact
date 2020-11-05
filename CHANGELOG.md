@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.1.19
+
+- TBD
+
 ## 0.1.18
 
  - Improved Didact code completion support. [FUSETOOLS2-811](https://issues.redhat.com/browse/FUSETOOLS2-811)

@@ -3,7 +3,7 @@
 	"displayName": "Didact",
 	"description": "Didact Tutorial Tools for Visual Studio Code",
 	"license": "Apache-2.0",
-	"version": "0.1.18",
+	"version": "0.2.0",
 	"icon": "icon/logo.png",
 	"publisher": "redhat",
 	"preview": true,
