@@ -2,7 +2,7 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
-## 0.1.19
+## 0.2.0
 
 - TBD
 
