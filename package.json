@@ -232,7 +232,7 @@
 		"@typescript-eslint/parser": "^4.6.1",
 		"async-wait-until": "^1.2.6",
 		"chai": "^4.2.0",
-		"eslint": "^7.12.1",
+		"eslint": "^7.13.0",
 		"mocha": "^8.2.1",
 		"mocha-jenkins-reporter": "^0.4.4",
 		"sinon": "9.2.1",
