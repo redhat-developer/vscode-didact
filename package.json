@@ -241,7 +241,7 @@
 	},
 	"dependencies": {
 		"@types/download": "^6.2.4",
-		"@types/markdown-it": "^10.0.2",
+		"@types/markdown-it": "^10.0.3",
 		"@types/request-promise": "^4.1.46",
 		"@types/xmldom": "^0.1.30",
 		"asciidoctor": "^2.2.0",
