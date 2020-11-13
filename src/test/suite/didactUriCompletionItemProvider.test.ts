@@ -25,15 +25,18 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
 
+const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
+const foldersAndFilesToRemove: string[] = [
+	'testmy.didact.md'
+];
+const testFolder = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
+const testFilename = path.resolve(testFolder, 'testmy.didact.md');
+const testFileUri = vscode.Uri.parse(testFilename);
+
 suite("Didact URI completion provider tests", function () {
 
 	const ctx = getContext();
 	const provider = new DidactUriCompletionItemProvider(ctx);
-	
-	const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
-	const foldersAndFilesToRemove: string[] = [
-		'testmy.didact.md'
-	];
 	
 	test("that all commands in the didactCompletionCatalog.json are available", async () => {
 		const catalog : any = provider.getCompletionCatalog(ctx);
@@ -271,11 +274,8 @@ function delay(ms: number) {
 }
 
 async function executeCompletionTest(input: string, expected: string, selectLastSuggestion? : boolean) {
-	const testFolder = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
-	const filename = path.resolve(testFolder, 'testmy.didact.md');
-	const uri = vscode.Uri.parse(filename);
-	await vscode.workspace.fs.writeFile(uri, Buffer.from(input));
-	const document = await vscode.workspace.openTextDocument(uri);
+	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
+	const document = await vscode.workspace.openTextDocument(testFileUri);
 	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
 	await delay(500);
 
@@ -295,11 +295,7 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	const startCommandCompletionExists = await checkForCommandInList(actualCompletionList.items, "vscode.didact.startDidact");
 
 	// if either is complete, we have expected completions showing up
-	try {
-		expect(startCompletionExists).to.be.true;
-	} catch (e) {
-		expect(startCommandCompletionExists ).to.be.true;		
-	}
+	expect(startCompletionExists || startCommandCompletionExists).to.be.true;
 
 	await vscode.commands.executeCommand("editor.action.triggerSuggest");
 	await delay(1000);
@@ -315,5 +311,5 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	expect(editor.document.getText()).to.be.equal(expected);
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
-	await vscode.workspace.fs.delete(uri);
+	await vscode.workspace.fs.delete(testFileUri);
 }

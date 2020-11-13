@@ -256,41 +256,15 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	}
 
 	public findMatchForDidactPrefix(input: string): RegExpMatchArray | null {
-		if (input) {
-			const regex = /(?:link:|\()(didact(:?)(\/?)(\/?)(\?)?)/g
-			//const regex = /(didact[?:\\/\\?]*)([^/)]*)/g;
-			//const regex = /(didact)+(:)?(\/)*(\\?)?([^)])/gm;
-			try {
-				return input.match(regex);
-			} catch (error) {
-				console.log('regex err: ' + error);
-			}
-		}
-		return null;
+		return this.findMatch(input, /(?:link:|\()(didact(:?)(\/?)(\/?)(\?)?)/g );
 	}
 
 	public findMatchForWholeDidactLink(input: string): RegExpMatchArray | null {
-		if (input) {
-			const regex = /didact(:?)(\/)*(\\?)(.*)/g;
-			try {
-				return input.match(regex);
-			} catch (error) {
-				console.log('regex err: ' + error);
-			}
-		}
-		return null;
+		return this.findMatch(input, /didact(:?)(\/)*(\\?)(.*)/g);
 	}
 
 	public findMatchForLinkPrefix(input: string): RegExpMatchArray | null {
-		if (input) {
-			const regex = /(?:link:|\()(\[)?/g;
-			try {
-				return input.match(regex);
-			} catch (error) {
-				console.log('regex err: ' + error);
-			}
-		}
-		return null;
+		return this.findMatch(input, /(?:link:|\()(\[)?/g);
 	}
 
 	private processSimplerLink(labelText: string, snippetString : string | vscode.SnippetString, docs : string, command? : vscode.Command) : vscode.CompletionItem {
@@ -317,5 +291,16 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	private isDidactAsciiDocFile(fspath : string) : boolean {
 		return this.checkFileExtension(fspath, '.adoc');
+	}
+
+	private findMatch(input: string, regex: RegExp): RegExpMatchArray | null {
+		if (input) {
+			try {
+				return input.match(regex);
+			} catch (error) {
+				console.log('regex err: ' + error);
+			}
+		}
+		return null;
 	}
 }
