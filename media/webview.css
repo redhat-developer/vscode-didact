@@ -6,7 +6,6 @@ FIELDSET, FORM,
 FRAME, FRAMESET,
 H1, H2, H3, H4,
 H5, H6, IFRAME,
-NOFRAMES,
 OBJECT, OL, P,
 UL, APPLET,
 CENTER, DIR,
@@ -76,7 +75,7 @@ BDO[DIR="rtl"]  { direction: rtl; unicode-bidi: bidi-override }
 /* Elements that are block-level in HTML4 */
 ADDRESS, BLOCKQUOTE, BODY, DD, DIV, DL, DT, FIELDSET,
 FORM, FRAME, FRAMESET, H1, H2, H3, H4, H5, H6, IFRAME,
-NOSCRIPT, NOFRAMES, OBJECT, OL, P, UL, APPLET, CENTER,
+NOSCRIPT, OBJECT, OL, P, UL, APPLET, CENTER,
 DIR, HR, MENU, PRE, LI, TABLE, TR, THEAD, TBODY, TFOOT,
 COL, COLGROUP, TD, TH, CAPTION
                 { unicode-bidi: embed }
