@@ -17,7 +17,7 @@
 'use strict';
 
 import { expect } from 'chai';
-import { afterEach } from 'mocha';
+import { before, afterEach } from 'mocha';
 import { SnippetString } from 'vscode';
 import { DidactUriCompletionItemProvider, DIDACT_COMMAND_PREFIX } from "../../didactUriCompletionItemProvider";
 import { getContext } from '../../extensionFunctions';
@@ -60,7 +60,6 @@ suite("Didact URI completion provider tests", function () {
 
 	test("that completions work the way they should", async () => {
 		const listOfCompletions : string[] = [
-			'[My Link](didact',
 			'[My Link](didact:',
 			'[My Link](didact:/',
 			'[My Link](didact://',
@@ -69,10 +68,14 @@ suite("Didact URI completion provider tests", function () {
 			'[My Link](didact://?co',
 			'[My Link](didact://?com'
 		];
+		const expected = "[My Link](didact://?commandId=";
 
 		suite('walk through each provided completion', () => {
-			const expected = "[My Link](didact://?commandId=";
 			listOfCompletions.forEach(function(stringToTest: string){
+				before( async () => {
+					await delay(2000);
+				});
+
 				afterEach( async () => {
 					await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
 				});
@@ -80,6 +83,18 @@ suite("Didact URI completion provider tests", function () {
 				test(`test provided completion "${stringToTest}"`, async () => {
 					await executeCompletionTest(stringToTest, expected);
 				});
+			});
+		});
+
+		suite("test that completion works with even simpler partial didact link [my link](didact)", async () => {
+			const stringToTest = '[My Link](didact';
+
+			afterEach( async () => {
+				await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
+			});
+		
+			test(`test provided completion "${stringToTest}" with a nudge to get the one we want`, async () => {
+				await executeCompletionTest(stringToTest, expected, 2);
 			});
 		});
 	});
@@ -139,8 +154,7 @@ suite("Didact URI completion provider tests", function () {
 				test(`matched a didact protocol in ${value}`, () => {
 					const match = provider.findMatchForDidactPrefix(value);
 					expect(match).to.not.be.null;
-					expect(match?.length).to.be.at.least(1);					
-//					expect(match).to.have.lengthOf(1)
+					expect(match?.length).to.be.at.least(1);
 				});
 			});
 		});
@@ -256,7 +270,7 @@ function delay(ms: number) {
 	return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-async function executeCompletionTest(input: string, expected: string) {
+async function executeCompletionTest(input: string, expected: string, nudge? : number) {
 	const testFolder = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 	const filename = path.resolve(testFolder, 'testmy.didact.md');
 	const uri = vscode.Uri.parse(filename);
@@ -289,6 +303,14 @@ async function executeCompletionTest(input: string, expected: string) {
 
 	await vscode.commands.executeCommand("editor.action.triggerSuggest");
 	await delay(1000);
+
+	// the "nudge" will bump the selection down to the next suggestion as many times as needed
+	if (nudge) {
+		for (let index = 0; index < nudge; index++) {
+			await vscode.commands.executeCommand("selectNextSuggestion");
+			await delay(500);
+		}
+	}
 	await vscode.commands.executeCommand("acceptSelectedSuggestion");
 	await delay(1000);
 	await vscode.commands.executeCommand('editor.action.selectAll');

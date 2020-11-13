@@ -95,8 +95,6 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 			}
 			end = new vscode.Position(line, start.character + lengthOfString);
 		}
-		console.log(`Start = ${start.character}`);
-		console.log(`End = ${end.character}`);
 
 		const rangeToReturn = new vscode.Range(start, end);
 		const testForRange : string = document.getText(rangeToReturn);
@@ -104,7 +102,6 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		if (!matchFinal) {
 			return undefined;
 		}
-		console.log(testForRange);
 
 		return rangeToReturn;
 	}
@@ -119,14 +116,9 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		completionItem.insertText = DIDACT_COMMAND_PREFIX;
 		completionItem.documentation = new vscode.MarkdownString(docs);
 		completionItem.command = command;
-		completionItem.filterText
-		
-		const range = this.getWholeDidactString(document, position);
-		if (range) {
-			completionItem.additionalTextEdits = [
-				vscode.TextEdit.delete(range)
-			];
-		}
+		completionItem.filterText = DIDACT_COMMAND_PREFIX;
+		completionItem.range = this.getWholeDidactString(document, position);
+
 		return completionItem;
 	}
 
