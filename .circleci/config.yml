@@ -1,0 +1,70 @@
+version: 2.1
+
+job_default: &job_defaults
+  working_directory: ~/vscode-didact
+  docker:
+    - image: circleci/node:lts-browsers
+  
+jobs:
+  build:
+    <<: *job_defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: install-typescript
+          command: sudo npm install -g typescript
+      - run:
+          name: install-vsce
+          command: sudo npm install -g vsce
+      - run:
+          name: npm-ci
+          command: npm ci
+      - run:
+          name: npm-vscode:prepublish
+          command: npm run vscode:prepublish
+      - run:
+          name: vsce-package
+          command: vsce package
+      - run:
+          name: test
+          command: npm test
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+  sonar:
+    <<: *job_defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: install-typescript
+          command: sudo npm install -g typescript
+      - run:
+          name: npm-ci
+          command: npm ci
+      - sonarcloud/scan
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.2
+
+workflows:
+  version: 2
+  vscode-didact:
+    jobs:
+      - build
+      - sonar:
+          context: sonarcloud
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
