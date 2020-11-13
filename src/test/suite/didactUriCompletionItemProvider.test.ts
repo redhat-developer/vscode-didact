@@ -29,8 +29,7 @@ const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture 
 const foldersAndFilesToRemove: string[] = [
 	'testmy.didact.md'
 ];
-const testFolder = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
-const testFilename = path.resolve(testFolder, 'testmy.didact.md');
+const testFilename = path.resolve(testWorkspace, 'testmy.didact.md');
 const testFileUri = vscode.Uri.parse(testFilename);
 
 suite("Didact URI completion provider tests", function () {
