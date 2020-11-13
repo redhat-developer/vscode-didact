@@ -93,7 +93,7 @@ suite("Didact URI completion provider tests", function () {
 				await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
 			});
 		
-			test(`test provided completion "${stringToTest}" with a nudge to get the one we want`, async () => {
+			test(`test provided completion "${stringToTest}" with the last suggestion to get the one we want`, async () => {
 				await executeCompletionTest(stringToTest, expected, true);
 			});
 		});
