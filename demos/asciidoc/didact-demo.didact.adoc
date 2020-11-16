@@ -1,3 +1,6 @@
+//attributes
+:ValidateAllButton: pass:[<a href='didact://?commandId=vscode.didact.validateAllRequirements' title='Validate all requirements!'><button>Validate all Requirements at Once!</button></a>]
+
 image:images/welcome-to-didact-header.png[Welcome to Didact,role="center"]
 
 # Welcome to Didact!
@@ -36,19 +39,21 @@ _Status: unknown_
 [[nonexistent-requirements-status]]
 _Status: unknown_
 
-* You can check for other extensions to already be installed in the user's VS Code instance... link:didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirements-status%24%24redhat.apache-camel-extension-pack&completion=Camel%20extension%20pack%20available.[Click here to make sure the VS Code Extension Pack for Apache Camel by Red Hat is installed]
+* You can check for other extensions to already be installed in the user's VS Code instance... link:didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirements-status%24%24redhat.apache-camel-extension-pack[Click here to make sure the VS Code Extension Pack for Apache Camel by Red Hat is installed]
 
 [[extension-requirements-status]]
 _Status: unknown_
 
 NOTE: link:vscode:extension/redhat.apache-camel-extension-pack[And if it's not installed, you can use built-in VS Code functionality to display the page for the extension and allow the user to install it.]
 
-* link:didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status&completion=A%20valid%20folder%20exists%20in%20the%20workspace.[We can even check to ensure that at least one folder exists in the workspace.]
+* link:didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status[We can even check to ensure that at least one folder exists in the workspace.]
 
 [[workspace-folder-status]]
 _Status: unknown_
 
-* We can now even test all the requirements at once! link:didact://?commandId=vscode.didact.validateAllRequirements[Validate all requirements!]
+* We can now even test all the requirements at once! 
+
+{ValidateAllButton}
 
 ### Scaffolding projects [[scaffolding]]
 
