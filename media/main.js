@@ -81,6 +81,15 @@ function () {
 
 				let requirementMessage = 'Not currently available';
 				let element = document.getElementById(requirementName);
+
+				// add check for adoc div/p requirement label
+				if (element.tagName.toLowerCase() === 'div' && element.childNodes.length > 0) {
+					let list = element.getElementsByTagName('em');
+					if (list.length > 0) {
+						element = list[0];
+					}
+				}
+				
 				if (element) {
 					let green = "green";
 					let red = "red";
