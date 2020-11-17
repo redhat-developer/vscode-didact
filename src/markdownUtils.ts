@@ -32,3 +32,16 @@ export function getMDParser() : MarkdownIt {
 		.use(markdownItAttrs, {});
 	return parser;
 }
+
+export function parseMDtoHTML(content: string) : string {
+	const htmlContent = getMDParser().render(content);
+	const cleanedContent = cleanupTaskListItemCheckbox(htmlContent);
+	return cleanedContent;
+}
+
+// brute force approach to handling https://issues.redhat.com/browse/FUSETOOLS2-879
+function cleanupTaskListItemCheckbox(content: string) : string {
+	const strToReplace = /<input class="task-list-item-checkbox"type="checkbox">/g;
+	const replaceString = `<input class="task-list-item-checkbox" type="checkbox">`;
+	return content.replace(strToReplace, replaceString);
+}
