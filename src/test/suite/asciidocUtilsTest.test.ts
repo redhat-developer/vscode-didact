@@ -57,10 +57,11 @@ suite('AsciiDoc Utils Test Suite', () => {
 		const htmlOutput = adocutils.parseADtoHTML(BASIC_EXAMPLE);
 		expect(htmlOutput).to.include(`<h1>Document Title</h1>`);
 		expect(htmlOutput).to.include(`<p>That&#8217;s all, folks!</p>`);
+	});
 
-		// this is tested more effectively with 'open an asciidoc file with an include' above
-		const htmlOutputWithBaseDir = adocutils.parseADtoHTML(BASIC_EXAMPLE, '');
-		expect(htmlOutput).to.include(`<h1>Document Title</h1>`);
-		expect(htmlOutputWithBaseDir).to.include(`<p>That&#8217;s all, folks!</p>`);
+	test('that we can parse adoc to html with an include', async () => {
+		const testFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/includetext.didact.adoc');
+		const content = await extensionFunctions.getDataFromFile(vscode.Uri.parse(testFile));
+		expect(content).to.include(`The quick brown fox jumps over the lazy dog.`);
 	});
 });
