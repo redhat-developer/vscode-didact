@@ -307,12 +307,9 @@ export class DidactWebviewPanel {
 		let stylesheetHtml = '';
 
 		if (this.isAsciiDoc) {
-			// use asciidoctor.css from https://github.com/darshandsoni/asciidoctor-skins/blob/gh-pages/css/asciidoctor.css 
-			const adCssPathOnDisk = vscode.Uri.file(
-				path.join(this._extensionPath, 'media', 'asciidoctor.css')
-			);
-			const adCssUri = adCssPathOnDisk.with({ scheme: 'vscode-resource' });
-			const adUriHtml = `<link rel="stylesheet" href="${adCssUri}"/>`;
+			// use asciidoctor-default.css with import from 
+			// https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@v2.0.10/data/stylesheets/asciidoctor-default.css
+			const adUriHtml = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@v2.0.10/data/stylesheets/asciidoctor-default.css"/>`;
 			stylesheetHtml = `${adUriHtml}\n ${cssUriHtml}\n`;
 		} else {
 			// use bulma.min.css as the default stylesheet for markdown from https://bulma.io/
