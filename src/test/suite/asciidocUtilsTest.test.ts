@@ -21,6 +21,11 @@ import * as extensionFunctions from '../../extensionFunctions';
 import * as path from 'path';
 import { expect } from 'chai';
 import * as Utils from './Utils';
+import * as adocutils from '../../asciidocUtils';
+
+const BASIC_EXAMPLE = `= Document Title
+An example of a basic http://asciidoc.org[AsciiDoc] document.
+That's all, folks!`;
 
 suite('AsciiDoc Utils Test Suite', () => {
 
@@ -42,4 +47,16 @@ suite('AsciiDoc Utils Test Suite', () => {
 		expect(content).to.include('The quick brown fox jumps over the lazy dog.');
 	});
 
+	test('get the adoc parser', () => {
+		expect(adocutils.getADParser()).to.not.be.null;
+	});
+
+	test('that we can parse adoc to html', () => {
+		const htmlOutput = adocutils.parseADtoHTML(BASIC_EXAMPLE);
+		expect(htmlOutput).to.include(`<p>That&#8217;s all, folks!</p>`);
+
+		// this is tested more effectively with 'open an asciidoc file with an include' above
+		const htmlOutputWithBaseDir = adocutils.parseADtoHTML(BASIC_EXAMPLE, '');
+		expect(htmlOutputWithBaseDir).to.include(`<p>That&#8217;s all, folks!</p>`);
+	});
 });
