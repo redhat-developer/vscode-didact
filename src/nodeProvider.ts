@@ -49,7 +49,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
 	// add a child to the list of nodes
-	public addChild(oldNodes: TreeNode[] = this.treeNodes, newNode: TreeNode, disableRefresh = false ): TreeNode[] {
+	public addChild(newNode: TreeNode, disableRefresh = false, oldNodes: TreeNode[] = this.treeNodes ): TreeNode[] {
 		if (oldNodes) {
 			oldNodes.push(newNode);
 			if (!disableRefresh) {
@@ -60,7 +60,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
 	// This method isn't used by the view currently, but is here to facilitate testing
-	public removeChild(oldNodes: TreeNode[] = this.treeNodes, oldNode: TreeNode, disableRefresh = false ): TreeNode[] {
+	public removeChild(oldNode: TreeNode, disableRefresh = false, oldNodes: TreeNode[] = this.treeNodes ): TreeNode[] {
 		if (oldNodes) {
 			const index = oldNodes.indexOf(oldNode);
 			if (index !== -1) {
@@ -102,7 +102,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
             for (const category of categories) {
                 const newNode = new TreeNode("string", category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
                 if (!this.doesNodeExist(this.treeNodes, newNode)) {
-                    this.addChild(this.treeNodes, newNode, true);
+                    this.addChild(newNode, true, this.treeNodes);
                 }
             }
         }
@@ -118,7 +118,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 					const newNode = new TutorialNode("string", tutorial, tutUri, vscode.TreeItemCollapsibleState.None);
 					newNode.contextValue = 'TutorialNode';
 					if (!this.doesNodeExist(children, newNode)) {
-						this.addChild(children, newNode, true);
+						this.addChild(newNode, true, children);
 					}
 				}
 			}
