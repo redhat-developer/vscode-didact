@@ -40,7 +40,11 @@ export function parseMDtoHTML(content: string) : string {
 
 // brute force approach to handling https://issues.redhat.com/browse/FUSETOOLS2-879
 function cleanupTaskListItemCheckbox(content: string) : string {
-	const strToReplace = /<input class="task-list-item-checkbox"type="checkbox">/g;
-	const replaceString = `<input class="task-list-item-checkbox" type="checkbox">`;
-	return content.replace(strToReplace, replaceString);
+	const firstStrToReplace = /<input class="task-list-item-checkbox"type="checkbox">/g;
+	const firstReplaceString = `<input class="task-list-item-checkbox" type="checkbox">`;
+	const cleanedContent = content.replace(firstStrToReplace, firstReplaceString);
+
+	const secondStrToReplace = /<input class="task-list-item-checkbox" checked=""type="checkbox">/g;
+	const secondReplaceString = `<input class="task-list-item-checkbox" checked="" type="checkbox">`;
+	return cleanedContent.replace(secondStrToReplace, secondReplaceString);
 }
