@@ -219,8 +219,29 @@
 		"clean": "rm -rf out || rmdir out /s /q",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
-		"test": "npm run compile && nyc node ./out/test/runTest.js --reporter=text-lcov",
-		"coverage": "nyc report --reporter=text-lcov | coveralls"
+		"test": "node ./out/test/runTest.js",
+		"coverage": "nyc npm test report"
+	},
+	"nyc": {
+		"extends": "@istanbuljs/nyc-config-typescript",
+		"require": [
+			"ts-node/register",
+			"source-map-support/register"
+		],
+		"include": [
+			"src/**/*.ts",
+			"out/**/*.js"
+		],
+		"exclude": [
+			"src/test/*"
+		],
+		"reporter": [
+			"text-summary",
+			"html",
+			"lcov",
+			"coveralls"
+		],
+		"report-dir": "out/coverage"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.14",
@@ -237,10 +258,12 @@
 		"mocha": "^8.2.1",
 		"nyc": "^15.1.0",
 		"sinon": "9.2.1",
+		"ts-node": "^9.0.0",
 		"typescript": "^4.0.5",
 		"vscode-test": "^1.4.1"
 	},
 	"dependencies": {
+		"@istanbuljs/nyc-config-typescript": "^1.0.1",
 		"@types/download": "^6.2.4",
 		"@types/markdown-it": "^10.0.3",
 		"@types/request-promise": "^4.1.46",
