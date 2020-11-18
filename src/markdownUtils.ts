@@ -35,8 +35,7 @@ export function getMDParser() : MarkdownIt {
 
 export function parseMDtoHTML(content: string) : string {
 	const htmlContent = getMDParser().render(content);
-	const cleanedContent = cleanupTaskListItemCheckbox(htmlContent);
-	return cleanedContent;
+	return cleanupTaskListItemCheckbox(htmlContent);
 }
 
 // brute force approach to handling https://issues.redhat.com/browse/FUSETOOLS2-879
