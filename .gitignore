@@ -1,5 +1,6 @@
 out
 node_modules
+.nyc_output
 .vscode-test/
 *.vsix
 /example/**/.project

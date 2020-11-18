@@ -34,6 +34,15 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ~/.npm
+      - run:
+          name: "Install Jest (just on Circle-ci)"
+          command: npm install jest
+      - run:
+          name: "Run Jest and Collect Coverage Reports"
+          command: jest --collectCoverage=true
+      - store_artifacts:
+          path: coverage
+
   sonar:
     <<: *job_defaults
     steps:
