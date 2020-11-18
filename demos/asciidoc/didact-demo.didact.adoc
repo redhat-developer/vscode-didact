@@ -1,3 +1,6 @@
+//attributes
+:ValidateAllButton: pass:[<a href='didact://?commandId=vscode.didact.validateAllRequirements' title='Validate all requirements!'><button>Validate all Requirements at Once!</button></a>]
+
 image:images/welcome-to-didact-header.png[Welcome to Didact,role="center"]
 
 # Welcome to Didact!
@@ -26,17 +29,31 @@ But beyond that, we add a number of nice features that should be useful to those
 
 You can check for requirements on the user's machine...
 
-* link:didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status$$mvn%20--version$$Apache%20Maven&completion=Apache%20Maven%20is%20available%20on%20this%20system.[For example, you could check to see if Apache Maven is accessible at the command line]
+* link:didact://?commandId=vscode.didact.requirementCheck&text=maven-requirements-status%24%24mvn%20--version%24%24Apache%20Maven[For example, you could check to see if Apache Maven is accessible at the command line]
 
-* link:didact://?commandId=vscode.didact.requirementCheck&text=nonexistent-requirements-status$$something$$wicked%20this%20way%20comes&error=something%20wicked%20this%20way%20comes.[We'll make sure that this one is NOT accessible so you can see the difference.]
+[[maven-requirements-status]]
+_Status: unknown_
 
-* You can check for other extensions to already be installed in the user's VS Code instance... link:didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack&completion=Camel%20extension%20pack%20available.[Click here to make sure the VS Code Extension Pack for Apache Camel by Red Hat is installed]
+* link:didact://?commandId=vscode.didact.requirementCheck&text=nonexistent-requirements-status%24%24something%24%24wicked%20this%20way%20comes&error=something%20wicked%20this%20way%20comes.[We'll make sure that this one is NOT accessible so you can see the difference.]
+
+[[nonexistent-requirements-status]]
+_Status: unknown_
+
+* You can check for other extensions to already be installed in the user's VS Code instance... link:didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirements-status%24%24redhat.apache-camel-extension-pack[Click here to make sure the VS Code Extension Pack for Apache Camel by Red Hat is installed]
+
+[[extension-requirements-status]]
+_Status: unknown_
 
 NOTE: link:vscode:extension/redhat.apache-camel-extension-pack[And if it's not installed, you can use built-in VS Code functionality to display the page for the extension and allow the user to install it.]
 
-* link:didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status&completion=A%20valid%20folder%20exists%20in%20the%20workspace.[We can even check to ensure that at least one folder exists in the workspace.]
+* link:didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status[We can even check to ensure that at least one folder exists in the workspace.]
 
-* We can now even test all the requirements at once! link:didact://?commandId=vscode.didact.validateAllRequirements'[Validate all requirements!]
+[[workspace-folder-status]]
+_Status: unknown_
+
+* We can now even test all the requirements at once! 
+
+{ValidateAllButton}
 
 ### Scaffolding projects [[scaffolding]]
 
@@ -48,15 +65,15 @@ link:didact://?commandId=vscode.didact.scaffoldProject&srcFilePath=demo/projectw
 
 * link:didact://?commandId=vscode.didact.startTerminalWithName&completion=Opened%20a%20new%20terminal.[You can open integrated terminals.]
 
-* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerm$$echo%20Hello%20Didact!&completion=Opened%20a%20new%20terminal.[You can even open a terminal, name it, and send it some text.]
+* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerm%24%24echo%20Hello%20Didact!&completion=Opened%20a%20new%20terminal.[You can even open a terminal, name it, and send it some text.]
 
 * link:didact://?commandId=vscode.didact.openNamedOutputChannel&text=newOutputChannel&completion=Opened%20a%20new%20output%20channel.[You can also create/open an output channel. (This only works for channels you created or the Didact Activities channel!)]
 
-* link:didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!$$newOutputChannel&completion=Sent%20a%20text%20to%20the%20new%20output%20channel.[You can also send text to an output channel you created.]
+* link:didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!%24%24newOutputChannel&completion=Sent%20a%20text%20to%20the%20new%20output%20channel.[You can also send text to an output channel you created.]
 
 * link:didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!&completion=Sent%20a%20text%20to%20Didact%20Activity%20channel.[You can also send text to the Didact Activity output channel.]
 
-* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&user=terminal-name$$terminal-command-to-execute&completion=Opened%20a%20new%20terminal.[And if you want to have certain inputs be user-specified, you can now do that too.]
+* link:didact://?commandId=vscode.didact.sendNamedTerminalAString&user=terminal-name%24%24terminal-command-to-execute&completion=Opened%20a%20new%20terminal.[And if you want to have certain inputs be user-specified, you can now do that too.]
 
 ### Linking to other Didact files
 
