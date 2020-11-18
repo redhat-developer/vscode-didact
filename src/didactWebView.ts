@@ -364,7 +364,7 @@ export class DidactWebviewPanel {
 			<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
-			`<script defer="defer" src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+			`<script defer="true" src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 			</head>
 		<body class="content">` + didactHtml + 
 		`<script nonce="${nonce}" src="${scriptUri}"/>
