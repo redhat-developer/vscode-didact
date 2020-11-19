@@ -17,13 +17,16 @@
 'use strict';
 
 import { expect } from 'chai';
-import { before, afterEach } from 'mocha';
+import { afterEach } from 'mocha';
 import { SnippetString } from 'vscode';
 import { DidactUriCompletionItemProvider, DIDACT_COMMAND_PREFIX } from "../../didactUriCompletionItemProvider";
 import { getContext } from '../../extensionFunctions';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
+
+const waitUntil = require('async-wait-until');
+const COMPLETION_TIMEOUT = 3000;
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 const foldersAndFilesToRemove: string[] = [
@@ -74,17 +77,14 @@ suite("Didact URI completion provider tests", function () {
 
 		suite('walk through each provided completion', () => {
 			listOfCompletions.forEach(function(stringToTest: string){
-				before( async () => {
-					await delay(2000);
-				});
-
 				afterEach( async () => {
 					await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
 				});
-			
+
 				test(`test provided completion "${stringToTest}"`, async () => {
 					await executeCompletionTest(stringToTest, expected);
-				});
+					}).timeout(COMPLETION_TIMEOUT);
+
 			});
 		});
 
@@ -97,8 +97,9 @@ suite("Didact URI completion provider tests", function () {
 		
 			test(`test provided completion "${stringToTest}" with the last suggestion to get the one we want`, async () => {
 				await executeCompletionTest(stringToTest, expected, true);
+				}).timeout(COMPLETION_TIMEOUT);
+
 			});
-		});
 	});
 
 	test("that the match utility returns expected results for simple didact uri", () => {
@@ -276,7 +277,9 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
 	const document = await vscode.workspace.openTextDocument(testFileUri);
 	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
-	await delay(500);
+	waitUntil( () => {
+		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
+	}, 500);
 
 	const newCursorPosition = new vscode.Position(0, input.length);
 	editor.selection = new vscode.Selection(newCursorPosition, newCursorPosition);
