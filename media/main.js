@@ -79,7 +79,6 @@ function () {
 				const requirementName = json.requirementName;
 				const isAvailable = json.result;
 
-				let requirementMessage = 'Not currently available';
 				let element = document.getElementById(requirementName);
 
 				// add check for adoc div/p requirement label
@@ -94,13 +93,12 @@ function () {
 					let green = "green";
 					let red = "red";
 					if (String(isAvailable).toLowerCase() === 'true') {
-						requirementMessage = 'Available';
 						element.style.color = green;
+						element.textContent = `Status: Available`;
 					} else {
-						requirementMessage = 'Unavailable';
 						element.style.color = red;
+						element.textContent = `Status: Unavailable`;
 					}
-					element.textContent = `Status: ${requirementMessage}`;
 				}
 				console.log(`${requirementName} is available: ${isAvailable}`);
 				break;
