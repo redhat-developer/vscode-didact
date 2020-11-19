@@ -279,7 +279,7 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
 	waitUntil( () => {
 		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
-	});
+	}, 500);
 
 	const newCursorPosition = new vscode.Position(0, input.length);
 	editor.selection = new vscode.Selection(newCursorPosition, newCursorPosition);
