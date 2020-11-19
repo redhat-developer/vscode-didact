@@ -57,13 +57,13 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		const commandMatch = this.findMatchForCommandVariable(searchInput);
 
 		if (((prefixMatch && prefixMatch[0]) || linkMatch) && !commandMatch) {
-			completions.push(this.didactProtocolCompletion());
+			completions.push(this.didactProtocolCompletion(document, position));
 		}
 
 		if (commandMatch) {
 			const commandCompletions = await this.didactCommandCompletion(document, position);
 			completions = completions.concat(commandCompletions.items);
-		} else {
+		} else if (!(prefixMatch && prefixMatch[0]) && !linkMatch) {
 			if (this.isDidactAsciiDocFile(document.fileName)) {
 				completions.push(this.insertNamedStatusLabelAdoc());
 				completions.push(this.insertInstallExtensionLinkAsciiDoc());
@@ -77,12 +77,49 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		return completions;
 	}
 
-	didactProtocolCompletion() : vscode.CompletionItem {
+	private getWholeDidactString(document: vscode.TextDocument, position: vscode.Position) : vscode.Range | undefined {
+		const line = position.line;
+		const rangeAtLine : vscode.Range = document.lineAt(line).range;
+		const textForRange : string = document.getText(rangeAtLine);
+
+		const match = this.findMatchForWholeDidactLink(textForRange);
+		let start = rangeAtLine.start;
+		let end = rangeAtLine.end;
+		if (match && match[0]) {
+			const indexOfStringToFind = textForRange.indexOf(match[0]);
+			start = new vscode.Position(line, indexOfStringToFind);
+
+			let lengthOfString = match[0].length;
+			if (match[0].endsWith(')')) {
+				lengthOfString -= 1;
+			}
+			end = new vscode.Position(line, start.character + lengthOfString);
+		}
+
+		const rangeToReturn = new vscode.Range(start, end);
+		const testForRange : string = document.getText(rangeToReturn);
+		const matchFinal = this.findMatchForDidactPrefix(textForRange);
+		if (!matchFinal) {
+			return undefined;
+		}
+
+		return rangeToReturn;
+	}
+
+	didactProtocolCompletion(document: vscode.TextDocument, position: vscode.Position) : vscode.CompletionItem {
 		const labelText = "Start new Didact command link";
-		const snippetString = DIDACT_COMMAND_PREFIX;
 		const docs = "Completes the didact link start to insert a command id";
 		const command = { command: 'editor.action.triggerSuggest', title: 'Autocomplete' };
-		return this.processSimplerLink(labelText, snippetString, docs, command);
+
+		const completionItem = new vscode.CompletionItem(labelText, vscode.CompletionItemKind.Value);
+		completionItem.detail = labelText;
+		completionItem.insertText = DIDACT_COMMAND_PREFIX;
+		completionItem.documentation = new vscode.MarkdownString(docs);
+		completionItem.command = command;
+		completionItem.filterText = DIDACT_COMMAND_PREFIX;
+		completionItem.range = this.getWholeDidactString(document, position);
+
+		return completionItem;
 	}
 
 	insertNamedStatusLabelAdoc() : vscode.CompletionItem {
@@ -219,27 +256,15 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	}
 
 	public findMatchForDidactPrefix(input: string): RegExpMatchArray | null {
-		if (input) {
-			const regex = /(?:link:|\()(didact[?:\\/\\?]*)([^/)]*)/g;
-			try {
-				return input.match(regex);
-			} catch (error) {
-				console.log('regex err: ' + error);
-			}
-		}
-		return null;
+		return this.findMatch(input, /(?:link:|\()(didact(:?)(\/?)(\/?)(\?)?)/g );
+	}
+
+	public findMatchForWholeDidactLink(input: string): RegExpMatchArray | null {
+		return this.findMatch(input, /didact(:?)(\/)*(\\?)(.*)/g);
 	}
 
 	public findMatchForLinkPrefix(input: string): RegExpMatchArray | null {
-		if (input) {
-			const regex = /(?:link:|\()(\[)?/g;
-			try {
-				return input.match(regex);
-			} catch (error) {
-				console.log('regex err: ' + error);
-			}
-		}
-		return null;
+		return this.findMatch(input, /(?:link:|\()(\[)?/g);
 	}
 
 	private processSimplerLink(labelText: string, snippetString : string | vscode.SnippetString, docs : string, command? : vscode.Command) : vscode.CompletionItem {
@@ -266,5 +291,16 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 
 	private isDidactAsciiDocFile(fspath : string) : boolean {
 		return this.checkFileExtension(fspath, '.adoc');
+	}
+
+	private findMatch(input: string, regex: RegExp): RegExpMatchArray | null {
+		if (input) {
+			try {
+				return input.match(regex);
+			} catch (error) {
+				console.log('regex err: ' + error);
+			}
+		}
+		return null;
 	}
 }

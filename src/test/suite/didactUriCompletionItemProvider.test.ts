@@ -17,11 +17,20 @@
 'use strict';
 
 import { expect } from 'chai';
+import { before, afterEach } from 'mocha';
 import { SnippetString } from 'vscode';
 import { DidactUriCompletionItemProvider, DIDACT_COMMAND_PREFIX } from "../../didactUriCompletionItemProvider";
 import { getContext } from '../../extensionFunctions';
 import * as vscode from 'vscode';
-import * as path from 'path'
+import * as path from 'path';
+import { removeFilesAndFolders } from '../../utils';
+
+const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
+const foldersAndFilesToRemove: string[] = [
+	'testmy.didact.md'
+];
+const testFilename = path.resolve(testWorkspace, 'testmy.didact.md');
+const testFileUri = vscode.Uri.parse(testFilename);
 
 suite("Didact URI completion provider tests", function () {
 
@@ -42,11 +51,54 @@ suite("Didact URI completion provider tests", function () {
 		});
 	});
 
-	test("that the didact protocol completion returns with didact://?commandId=", () => {
-		const completionItem = provider.didactProtocolCompletion();
+	test("that the didact protocol completion returns with didact://?commandId=", async () => {
+		const textDocument: vscode.TextDocument | undefined = await vscode.workspace.openTextDocument();
+		const position = new vscode.Position(0,0);
+		const completionItem = provider.didactProtocolCompletion(textDocument, position);
 		expect(completionItem).to.not.be.null;
 		expect(completionItem).to.not.be.undefined;
 		expect(completionItem.insertText).to.be.equal(DIDACT_COMMAND_PREFIX);
+	});
+
+	test("that completions work the way they should", async () => {
+		const listOfCompletions : string[] = [
+			'[My Link](didact:',
+			'[My Link](didact:/',
+			'[My Link](didact://',
+			'[My Link](didact://?',
+			'[My Link](didact://?c',
+			'[My Link](didact://?co',
+			'[My Link](didact://?com'
+		];
+		const expected = "[My Link](didact://?commandId=";
+
+		suite('walk through each provided completion', () => {
+			listOfCompletions.forEach(function(stringToTest: string){
+				before( async () => {
+					await delay(2000);
+				});
+
+				afterEach( async () => {
+					await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
+				});
+			
+				test(`test provided completion "${stringToTest}"`, async () => {
+					await executeCompletionTest(stringToTest, expected);
+				});
+			});
+		});
+
+		suite("test that completion works with even simpler partial didact link [my link](didact)", async () => {
+			const stringToTest = '[My Link](didact';
+
+			afterEach( async () => {
+				await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
+			});
+		
+			test(`test provided completion "${stringToTest}" with the last suggestion to get the one we want`, async () => {
+				await executeCompletionTest(stringToTest, expected, true);
+			});
+		});
 	});
 
 	test("that the match utility returns expected results for simple didact uri", () => {
@@ -104,7 +156,7 @@ suite("Didact URI completion provider tests", function () {
 				test(`matched a didact protocol in ${value}`, () => {
 					const match = provider.findMatchForDidactPrefix(value);
 					expect(match).to.not.be.null;
-					expect(match).to.have.lengthOf(1)
+					expect(match?.length).to.be.at.least(1);
 				});
 			});
 		});
@@ -214,4 +266,49 @@ async function checkForCommandInList(completions: vscode.CompletionItem[], label
 		}
 	}
 	return false;
+}
+
+function delay(ms: number) {
+	return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
+async function executeCompletionTest(input: string, expected: string, selectLastSuggestion? : boolean) {
+	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
+	const document = await vscode.workspace.openTextDocument(testFileUri);
+	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
+	await delay(500);
+
+	const newCursorPosition = new vscode.Position(0, input.length);
+	editor.selection = new vscode.Selection(newCursorPosition, newCursorPosition);
+
+	const actualCompletionList = (await vscode.commands.executeCommand(
+		'vscode.executeCompletionItemProvider',
+		document.uri, newCursorPosition)) as vscode.CompletionList;
+	expect(actualCompletionList).to.not.be.null;
+	expect(actualCompletionList.items.length).to.be.at.least(1);
+
+	// if this is available, we have completed the didact://?commandId= part of the completion
+	const startCompletionExists = await checkForCommandInList(actualCompletionList.items, "Start new Didact command link");
+
+	// if this is available we have populated the command list
+	const startCommandCompletionExists = await checkForCommandInList(actualCompletionList.items, "vscode.didact.startDidact");
+
+	// if either is complete, we have expected completions showing up
+	expect(startCompletionExists || startCommandCompletionExists).to.be.true;
+
+	await vscode.commands.executeCommand("editor.action.triggerSuggest");
+	await delay(1000);
+
+	// bump the selection down to the last suggestion
+	if (selectLastSuggestion) {
+		await vscode.commands.executeCommand("selectLastSuggestion");
+		await delay(500);
+	}
+	await vscode.commands.executeCommand("acceptSelectedSuggestion");
+	await delay(1000);
+	await vscode.commands.executeCommand('editor.action.selectAll');
+	expect(editor.document.getText()).to.be.equal(expected);
+
+	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+	await vscode.workspace.fs.delete(testFileUri);
 }
