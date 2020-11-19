@@ -511,17 +511,14 @@ export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined
 	try {
 		const content = fs.readFileSync(uri.fsPath, 'utf8');
 		const extname = path.extname(uri.fsPath);
-		let result : string;
 		if (extname.localeCompare('.adoc') === 0) {
 			let baseDir : string | undefined = undefined;
 			if (uri.scheme.trim().startsWith('file')) {
 				baseDir = path.dirname(uri.fsPath);
 			}
-			result = parseADtoHTML(content, baseDir);
-			return result;
+			return parseADtoHTML(content, baseDir);
 		} else if (extname.localeCompare('.md') === 0) {
-			result = parseMDtoHTML(content);
-			return result;
+			return parseMDtoHTML(content);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
