@@ -19,10 +19,34 @@
 import { expect } from 'chai';
 import * as mdUtils from '../../markdownUtils';
 
+const BASIC_EXAMPLE = `# Document Title
+
+An example of a basic http://asciidoc.org[AsciiDoc] document.
+
+abracadabra`;
+
+const TASKLIST_EXAMPLE = `1. [x] checked ordered 1
+2. [ ] unchecked ordered 2
+3. [x] checked ordered 3
+4. [ ] unchecked ordered 4`;
+
 suite('Markdown Utils Test Suite', () => {
 
 	test('get the markdown parser', () => {
+		// this should never be null
 		expect(mdUtils.getMDParser()).to.not.be.null;
+	});
+
+	test('that we can parse md to html', () => {
+		const htmlOutput = mdUtils.parseMDtoHTML(BASIC_EXAMPLE);
+		expect(htmlOutput).to.include(`<h1>Document Title</h1>`);
+		expect(htmlOutput).to.include(`<p>abracadabra</p>`);
+	});
+
+	test('that we can parse md with tasklist to html and cleaned up input tags', () => {
+		const htmlOutput = mdUtils.parseMDtoHTML(TASKLIST_EXAMPLE);
+		expect(htmlOutput).to.include(`<input class="task-list-item-checkbox" type="checkbox">`);
+		expect(htmlOutput).to.include(`<input class="task-list-item-checkbox" checked="" type="checkbox">`);
 	});
 
 });

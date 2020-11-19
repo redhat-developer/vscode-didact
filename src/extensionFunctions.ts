@@ -22,7 +22,7 @@ import {DidactWebviewPanel} from './didactWebView';
 import * as querystring from 'querystring';
 import * as path from 'path';
 import * as child_process from 'child_process';
-import {getMDParser} from './markdownUtils';
+import {parseMDtoHTML} from './markdownUtils';
 import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
@@ -511,18 +511,14 @@ export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined
 	try {
 		const content = fs.readFileSync(uri.fsPath, 'utf8');
 		const extname = path.extname(uri.fsPath);
-		let result : string;
 		if (extname.localeCompare('.adoc') === 0) {
 			let baseDir : string | undefined = undefined;
 			if (uri.scheme.trim().startsWith('file')) {
 				baseDir = path.dirname(uri.fsPath);
 			}
-			result = parseADtoHTML(content, baseDir);
-			return result;
+			return parseADtoHTML(content, baseDir);
 		} else if (extname.localeCompare('.md') === 0) {
-			const parser = getMDParser();
-			result = parser.render(content);
-			return result;
+			return parseMDtoHTML(content);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
@@ -541,8 +537,7 @@ export async function getDataFromUrl(inurl:string) : Promise<string> {
 		if (extname.localeCompare('.adoc') === 0) {
 			return parseADtoHTML(content);
 		} else if (extname.localeCompare('.md') === 0) {
-			const parser = getMDParser();
-			return parser.render(content);
+			return parseMDtoHTML(content);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
