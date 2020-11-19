@@ -278,7 +278,7 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	const document = await vscode.workspace.openTextDocument(testFileUri);
 	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
 	waitUntil( () => {
-		return editor != null;
+		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
 	});
 
 	const newCursorPosition = new vscode.Position(0, input.length);
