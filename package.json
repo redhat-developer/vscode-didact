@@ -220,28 +220,7 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
 		"test": "node ./out/test/runTest.js",
-		"coverage": "nyc npm test report"
-	},
-	"nyc": {
-		"extends": "@istanbuljs/nyc-config-typescript",
-		"require": [
-			"ts-node/register",
-			"source-map-support/register"
-		],
-		"include": [
-			"src/**/*.ts",
-			"out/**/*.js"
-		],
-		"exclude": [
-			"src/test/*"
-		],
-		"reporter": [
-			"text-summary",
-			"html",
-			"lcov",
-			"coveralls"
-		],
-		"report-dir": "out/coverage"
+		"coverage": "COVERAGE=1 npm run test"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.14",
@@ -272,6 +251,7 @@
 		"coveralls": "^3.1.0",
 		"download": "^8.0.0",
 		"glob": "^7.1.6",
+		"jest-sonar-reporter": "^2.0.0",
 		"markdown-it": "^11.0.1",
 		"markdown-it-attrs": "^3.0.3",
 		"markdown-it-task-lists": "^2.1.1",
