@@ -123,7 +123,7 @@ export function handleProjectFilePath(projectFilePath: string) : vscode.Uri | un
 	}
 	const workspace : vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
 	const rootPath = workspace.uri.fsPath;
-	const fullpath = path.join(rootPath, projectFilePath);
+	const fullpath = path.resolve(rootPath, projectFilePath);
 	return vscode.Uri.file(fullpath);
 }
 
@@ -133,7 +133,7 @@ function handleSrcFilePath(srcFilePath: string, extensionPath : string) : vscode
 		return undefined; 
 	}
 	const uri : vscode.Uri = vscode.Uri.file(
-		path.join(extensionPath, srcFilePath)
+		path.resolve(extensionPath, srcFilePath)
 	);
 	return uri;
 }
@@ -153,7 +153,7 @@ export function handleExtFilePath(extFilePath: string) : vscode.Uri | undefined 
 					const extensionPath = ext.extensionPath;
 					extensionFunctions.sendTextToOutputChannel(`-- combining ${pathToAdd} ${extensionPath}`);
 					const uri : vscode.Uri = vscode.Uri.file(
-						path.join(extensionPath, pathToAdd)
+						path.resolve(extensionPath, pathToAdd)
 					);
 					return uri;
 				}

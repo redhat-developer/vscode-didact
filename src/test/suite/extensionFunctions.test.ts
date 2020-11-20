@@ -152,7 +152,7 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('try executing a valid command', async function() {
-		await extensionFunctions.cliExecutionCheck('test-pwd','pwd').then( (returnBool) => {
+		await extensionFunctions.cliExecutionCheck('test-pwd','echo').then( (returnBool) => {
 			assert.strictEqual(returnBool, true);
 		});
 	});
@@ -164,24 +164,27 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('try parsing didact url with extension path - extension id in url', async function() {
+		const pathToCheck = path.join('vscode-didact', 'examples', 'requirements.example.didact.md');
+		const pathToCheckOnJenkins = path.join('vscode-didact-release', 'examples', 'requirements.example.didact.md');
 		checkCanParseDidactUriForPath(
 			'vscode://redhat.vscode-didact?extension=redhat.vscode-didact/examples/requirements.example.didact.md', 
-			'vscode-didact/examples/requirements.example.didact.md',
-			'vscode-didact-release/examples/requirements.example.didact.md'); // jenkins
+			pathToCheck, pathToCheckOnJenkins);
 	});
 
 	test('try parsing didact url with extension path - no extension id in url', async function() {
+		const pathToCheck = path.join('vscode-didact', 'demos', 'markdown', 'didact-demo.didact.md');
+		const pathToCheckOnJenkins = path.join('vscode-didact-release', 'demos', 'markdown', 'didact-demo.didact.md');
 		checkCanParseDidactUriForPath(
 			'vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md', 
-			'vscode-didact/demos/markdown/didact-demo.didact.md',
-			'vscode-didact-release/demos/markdown/didact-demo.didact.md'); // jenkins
+			pathToCheck, pathToCheckOnJenkins);
 	});
 
 	test('try parsing didact url with http link in url', async function() {
+		const pathToCheck = path.join('vscode-didact', 'master', 'demos', 'markdown', 'didact-demo.didact.md');
+		const pathToCheckOnJenkins = path.join('vscode-didact-release', 'master', 'demos', 'markdown', 'didact-demo.didact.md');
 		checkCanParseDidactUriForPath(
 			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md', 
-			'vscode-didact/master/demos/markdown/didact-demo.didact.md',
-			'vscode-didact-release/master/demos/markdown/didact-demo.didact.md'); // jenkins
+			pathToCheck, pathToCheckOnJenkins);
 	});
 
 	test('try to copy a file to workspace root with no change to filename', async function() {
@@ -344,7 +347,7 @@ async function checkCanFindCopiedFile(filepath : string) {
 	console.log(`Testing ${filepath} to ensure that it exists after a copyFileFromURLtoLocalURI call`);
 	assert.notStrictEqual(filepath, null);
 	assert.notStrictEqual(filepath, undefined);
-	const pathUri = vscode.Uri.parse(filepath);
+	const pathUri = vscode.Uri.file(filepath);
 	await vscode.workspace.fs.readFile(pathUri).then( (rtnUri) => {
 		assert.notStrictEqual(rtnUri, undefined);
 	});	
@@ -355,7 +358,7 @@ async function testCopyFileFromURLtoLocalURI( fileURL : string, workspaceLocatio
 		.then( async (returnedFilePath) => {
 			if (testFileInFolder) {
 				const folder = path.dirname(returnedFilePath);
-				const testFile = path.join(folder, testFileInFolder);
+				const testFile = path.resolve(folder, testFileInFolder);
 				await checkCanFindCopiedFile(testFile);
 			} else {
 				await checkCanFindCopiedFile(returnedFilePath);
