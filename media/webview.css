@@ -20,9 +20,8 @@ TFOOT           { display: table-footer-group }
 COL             { display: table-column }
 COLGROUP        { display: table-column-group }
 TD, TH          { display: table-cell }
-CAPTION         { display: table-caption }
+CAPTION         { display: table-caption; text-align: center }
 TH              { font-weight: bolder; text-align: center }
-CAPTION         { text-align: center }
 BODY            { padding: 8px; line-height: 1.33; font-size: 1em }
 H1              { font-size: 2em; margin: .67em 0 }
 H2              { font-size: 1.5em; margin: .83em 0 }

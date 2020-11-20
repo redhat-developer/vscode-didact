@@ -97,7 +97,6 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 		}
 
 		const rangeToReturn = new vscode.Range(start, end);
-		const testForRange : string = document.getText(rangeToReturn);
 		const matchFinal = this.findMatchForDidactPrefix(textForRange);
 		if (!matchFinal) {
 			return undefined;
