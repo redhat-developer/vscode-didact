@@ -9,6 +9,7 @@
 <p align="center">
 <a href="https://github.com/redhat-developer/vscode-didact/tree/master"><img src="https://img.shields.io/github/tag/redhat-developer/vscode-didact.svg?style=plastic" alt="GitHub tag"/></a>
 <a href="https://travis-ci.com/redhat-developer/vscode-didact"><img src="https://travis-ci.com/redhat-developer/vscode-didact.svg?branch=master" alt="Build Status"/></a>
+<a href="https://circleci.com/gh/redhat-developer/vscode-didact"><img src="https://circleci.com/gh/redhat-developer/vscode-didact.svg?style=shield"></a>
 <img src="https://img.shields.io/badge/license-Apache%202-blue.svg" alt="License"/>
 <a href="https://gitter.im/redhat-developer/vscode-didact"><img src="https://img.shields.io/gitter/room/redhat-developer/home.js.sv" alt="Gitter"/></a>
 </p><br/>
