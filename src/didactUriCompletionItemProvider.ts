@@ -40,7 +40,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	// public for testing
 	public getCompletionCatalog(context: vscode.ExtensionContext) : JSON {
 		const uri : vscode.Uri = vscode.Uri.file(
-			path.join(context.extensionPath, 'resources/didactCompletionCatalog.json')
+			path.resolve(context.extensionPath, 'resources/didactCompletionCatalog.json')
 		);
 		const jsoncontent = fs.readFileSync(uri.fsPath, 'utf8');
 		return JSON.parse(jsoncontent).completions;

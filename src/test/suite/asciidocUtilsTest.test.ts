@@ -63,7 +63,7 @@ suite('AsciiDoc Utils Test Suite', () => {
 
 	test('that we can parse adoc to html with an include', async () => {
 		const testFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/includetext.didact.adoc');
-		const content = await extensionFunctions.getDataFromFile(vscode.Uri.parse(testFile));
+		const content = await extensionFunctions.getDataFromFile(vscode.Uri.file(testFile));
 		expect(content).to.include(`The quick brown fox jumps over the lazy dog.`);
 	});
 });

@@ -144,7 +144,7 @@ async function createFiles(folderNode: any, files: any, jsonpath: vscode.Uri): P
 					newFileContent = file.content;
 				} else if (file.copy && jsonpath) {
 					const relative = path.dirname(jsonpath.fsPath);
-					const filetocopy = path.join(relative, file.copy);
+					const filetocopy = path.resolve(relative, file.copy);
 					newFileContent = fs.readFileSync(filetocopy, 'utf8');
 				}
 				if (newFileContent) {
@@ -154,7 +154,7 @@ async function createFiles(folderNode: any, files: any, jsonpath: vscode.Uri): P
 					throw new Error(`Unable to retrieve file content for ${completeFilePath}.`);
 				}
 				if (file.open && file.open as boolean === true) {
-					const fileUri = vscode.Uri.parse(completeFilePath);
+					const fileUri = vscode.Uri.file(completeFilePath);
 					await vscode.commands.executeCommand('vscode.open', fileUri, vscode.ViewColumn.Beside);
 				}
 			});
