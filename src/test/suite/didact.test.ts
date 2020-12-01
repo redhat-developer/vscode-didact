@@ -37,10 +37,15 @@ const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$uname$$Linux&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
+const testReqWin = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$echo%20test$$test&completion=Didact%20is%20running%20on%20a%20Windows%20machine.';
 const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
+const testReqCliWin = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$echo%20test&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/projectwithdidactfile.json';
 const testScaffoldOpen = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/src/test/data/scaffoldOpen.json';
+
+const OS_WINDOWS = "win32";
+const OS_LINUX = "linux";
 
 suite('Didact test suite', () => {
 
@@ -66,8 +71,8 @@ suite('Didact test suite', () => {
 		vscode.window.showInformationMessage('Start all Didact tests.');
 		const wsCheck : boolean = await extensionFunctions.validWorkspaceCheck('undefined');
 		console.log('Workspace has a root folder: ' + wsCheck);
-		console.log('Test workspace: ' + testWorkspace);
-		console.log('Test workspace exists: ' + fs.existsSync(testWorkspace));
+		console.log(`Test workspace: ' + "${testWorkspace}"`);
+		console.log('Test workspace exists: ' + fs.existsSync(`"${testWorkspace}"`));
 
         const extensionDevelopmentPath = path.resolve(__dirname, '../../../');
 		console.log('extensionDevelopmentPath: ' + extensionDevelopmentPath);
@@ -85,7 +90,7 @@ suite('Didact test suite', () => {
 	test('Scaffold new project', async function () {
 		try {
 			await vscode.commands.executeCommand(extensionFunctions.SCAFFOLD_PROJECT_COMMAND).then( () => {
-				const createdGroovyFileInFolderStructure = path.join(testWorkspace, './root/src/simple.groovy');
+				const createdGroovyFileInFolderStructure = path.resolve(testWorkspace, './root/src/simple.groovy');
 				assert.strictEqual(fs.existsSync(createdGroovyFileInFolderStructure), true);
 			});
 		} catch (error) {
@@ -119,7 +124,7 @@ suite('Didact test suite', () => {
 
 	test('Scaffold new project with a uri', async function () {
 		await commandHandler.processInputs(testScaffold).then( () => {
-			const createdDidactFileInFolderStructure = path.join(testWorkspace, './anotherProject/src/test.didact.md');
+			const createdDidactFileInFolderStructure = path.resolve(testWorkspace, './anotherProject/src/test.didact.md');
 			assert.strictEqual(fs.existsSync(createdDidactFileInFolderStructure), true);
 		}).catch( (error) => {
 			assert.fail(error);
@@ -148,7 +153,13 @@ suite('Didact test suite', () => {
 	});
 
 	test('test the command line requirements checking', async () => {
-		const href = testReqCli;
+		let href = '';
+		const osName = process.platform;
+		if (osName.startsWith(OS_WINDOWS)) {
+			href = testReqCliWin;
+		} else if (osName.startsWith(OS_LINUX)) {
+			href = testReqCli;
+		}
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
 		assert.notStrictEqual(query.commandId, undefined);
@@ -168,7 +179,13 @@ suite('Didact test suite', () => {
 	});
 
 	test('test the command line requirement return checking', async () => {
-		const href = testReq;
+		let href = '';
+		const osName = process.platform;
+		if (osName.startsWith(OS_WINDOWS)) {
+			href = testReqWin;
+		} else if (osName.startsWith(OS_LINUX)) {
+			href = testReq;
+		}
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
 		assert.notStrictEqual(query.commandId, undefined);

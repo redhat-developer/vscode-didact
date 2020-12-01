@@ -122,7 +122,7 @@ export async function createTemporaryFolderAsWorkspaceRoot(requirement: string |
 	
 	// if the workspace is empty, we will create a temporary one for the user
 	const tmpobj = tmp.dirSync();
-	const rootUri : vscode.Uri = vscode.Uri.parse(`file://${tmpobj.name}`);
+	const rootUri : vscode.Uri = vscode.Uri.file(`${tmpobj.name}`);
 	vscode.workspace.updateWorkspaceFolders(0,undefined, {uri: rootUri});
 	sendTextToOutputChannel(`-- created ${tmpobj.name}`);
 	if (requirement) {
@@ -267,7 +267,7 @@ function processExtensionFilePath(value: string | undefined) : vscode.Uri | unde
 			return undefined;
 		}
 		return vscode.Uri.file(
-			path.join(extContext.extensionPath, value)
+			path.resolve(extContext.extensionPath, value)
 		);
 	}
 	return undefined;
@@ -291,7 +291,7 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 				if (vscode.workspace.workspaceFolders) {
 					const workspace = vscode.workspace.workspaceFolders[0];
 					const rootPath = workspace.uri.fsPath;
-					out = vscode.Uri.file(path.join(rootPath, value));
+					out = vscode.Uri.file(path.resolve(rootPath, value));
 				}
 			}
 		} else if (query.https) {
@@ -728,7 +728,7 @@ export async function downloadAndUnzipFile(httpFileUrl : string, installFolder :
 		filename = dlFilename;
 	}
 
-	const downloadFile : string = path.join(installFolder, filename);
+	const downloadFile : string = path.resolve(installFolder, filename);
 	let overwriteFile = false;
 	if (extractFlag && !ignoreOverwrite) {
 		const answer = await vscode.window.showQuickPick([
@@ -747,7 +747,7 @@ export async function downloadAndUnzipFile(httpFileUrl : string, installFolder :
 		}
 	} else if (!extractFlag && !ignoreOverwrite) {
 		try {
-			const pathUri = vscode.Uri.parse(downloadFile);
+			const pathUri = vscode.Uri.file(downloadFile);
 			try {
 				const contents = await vscode.workspace.fs.readFile(pathUri);
 				if (contents) {
