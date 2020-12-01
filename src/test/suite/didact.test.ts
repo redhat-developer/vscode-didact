@@ -36,10 +36,9 @@ const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/m
 const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
-const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$uname$$Linux&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
-const testReqWin = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$echo%20test$$test&completion=Didact%20is%20running%20on%20a%20Windows%20machine.';
-const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$uname&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
-const testReqCliWin = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=maven-cli-return-status$$echo%20test&completion=Didact%20is%20running%20on%20a%20Linux%20machine.';
+const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=os-requirements-status$$echo%20test$$test';
+const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=uname-cli-return-status$$uname';
+const testReqCliWin = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=echo-cli-return-status$$echo%20test';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
 const testScaffold = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/projectwithdidactfile.json';
 const testScaffoldOpen = 'didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/src/test/data/scaffoldOpen.json';
@@ -179,13 +178,7 @@ suite('Didact test suite', () => {
 	});
 
 	test('test the command line requirement return checking', async () => {
-		let href = '';
-		const osName = process.platform;
-		if (osName.startsWith(OS_WINDOWS)) {
-			href = testReqWin;
-		} else if (osName.startsWith(OS_LINUX)) {
-			href = testReq;
-		}
+		const href = testReq;
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
 		assert.notStrictEqual(query.commandId, undefined);
