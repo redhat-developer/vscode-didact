@@ -97,23 +97,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	await clearRegisteredTutorials();
 
 	// register the default tutorial
-	const tutorialPath = path.join(context.extensionPath, './demos/markdown/didact-demo.didact.md');
-	const tutorialUri = vscode.Uri.parse(`file://${tutorialPath}`);
+	const tutorialUri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
 	await registerTutorial(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// register the tutorial for creating a new extension with a didact file
-	const tutorial2Path = path.join(context.extensionPath, './create_extension/create-new-tutorial-with-extension.didact.md');
-	const tutorial2Uri = vscode.Uri.parse(`file://${tutorial2Path}`);
+	const tutorial2Uri = vscode.Uri.file(context.asAbsolutePath('./create_extension/create-new-tutorial-with-extension.didact.md'));
 	await registerTutorial("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// register the javascript tutorial
-	const tutorial3Path = path.join(context.extensionPath, './demos/markdown/helloJS/helloJS.didact.md');
-	const tutorial3Uri = vscode.Uri.parse(`file://${tutorial3Path}`);
+	const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
 	await registerTutorial("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// register the didact tutorial
-	const tutorial4Path = path.join(context.extensionPath, './demos/markdown/tutorial/tutorial.didact.md');
-	const tutorial4Uri = vscode.Uri.parse(`file://${tutorial4Path}`);
+	const tutorial4Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/tutorial/tutorial.didact.md'));
 	await registerTutorial("Writing Your First Didact Tutorial", tutorial4Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// create the view

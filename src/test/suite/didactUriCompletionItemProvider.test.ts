@@ -33,7 +33,7 @@ const foldersAndFilesToRemove: string[] = [
 	'testmy.didact.md'
 ];
 const testFilename = path.resolve(testWorkspace, 'testmy.didact.md');
-const testFileUri = vscode.Uri.parse(testFilename);
+const testFileUri = vscode.Uri.file(testFilename);
 
 suite("Didact URI completion provider tests", function () {
 
@@ -213,7 +213,7 @@ suite("Didact URI completion provider tests", function () {
 
 	test("that we show only command completions for didact links for adoc documents", async () => {
 		const testFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/completion.didact.adoc');
-		const asciidocFileUri = vscode.Uri.parse(testFile);
+		const asciidocFileUri = vscode.Uri.file(testFile);
 		const document = await vscode.workspace.openTextDocument(asciidocFileUri);
 		const position = new vscode.Position(2, 26);
 		const actualItems = await getCompletionItems(provider, document, position);
@@ -239,7 +239,7 @@ suite("Didact URI completion provider tests", function () {
 
 	test("that we show only command completions for didact links for markdown documents", async () => {
 		const markdownFile = path.resolve(__dirname, '..', '..', '..', './src/test/data/completion.didact.md');
-		const markdownFileUri = vscode.Uri.parse(markdownFile);
+		const markdownFileUri = vscode.Uri.file(markdownFile);
 		const document = await vscode.workspace.openTextDocument(markdownFileUri);
 		const position = new vscode.Position(2, 30);
 		const actualItems = await getCompletionItems(provider, document, position);

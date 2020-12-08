@@ -136,7 +136,7 @@ export class DidactWebviewPanel {
 		}
 
 		// Otherwise, create a new panel.
-		const localResourceRoots = [vscode.Uri.file(path.join(extensionPath, 'media'))];
+		const localResourceRoots = [vscode.Uri.file(path.resolve(extensionPath, 'media'))];
 		if (inpath) {
 			const dirName = path.dirname(inpath.fsPath);
 			localResourceRoots.push(vscode.Uri.file(dirName));
@@ -334,7 +334,7 @@ export class DidactWebviewPanel {
 		
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.file(
-			path.join(this._extensionPath, 'media', 'main.js')
+			path.resolve(this._extensionPath, 'media', 'main.js')
 		);
 
 		// And the uri we use to load this script in the webview
@@ -342,7 +342,7 @@ export class DidactWebviewPanel {
 
 		// the cssUri is our path to the stylesheet included in the security policy
 		const cssPathOnDisk = vscode.Uri.file(
-			path.join(this._extensionPath, 'media', 'webviewslim.css')
+			path.resolve(this._extensionPath, 'media', 'webviewslim.css')
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
 
@@ -417,13 +417,13 @@ export class DidactWebviewPanel {
 			if (!DidactWebviewPanel.context.globalStoragePath) {
 				fs.mkdirSync(DidactWebviewPanel.context.globalStoragePath, { recursive: true });
 			}
-			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath);
-			const htmlFilePath = path.join(cachePath, DidactWebviewPanel.didactCacheHtmlFile);
-			const titleFilePath = path.join(cachePath, DidactWebviewPanel.didactCacheTitleFile);
-			const uriFilePath = path.join(cachePath, DidactWebviewPanel.didactCacheUriFile);
+			const cachePath = path.resolve(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath);
+			const htmlFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheHtmlFile);
+			const titleFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheTitleFile);
+			const uriFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheUriFile);
 			try {
-				if (!fs.existsSync(cachePath)) {
-					fs.mkdirSync(path.join(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath), { recursive: true });
+				if (!fs.existsSync(`"${cachePath}"`)) {
+					fs.mkdirSync(path.resolve(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath), { recursive: true });
 				}
 				fs.writeFileSync(htmlFilePath, html, {encoding:'utf8', flag:'w'});
 				if (DidactWebviewPanel.currentPanel) {
@@ -442,12 +442,12 @@ export class DidactWebviewPanel {
 
 	getFileContentsFromCache(filename : string) : string | undefined {
 		if (DidactWebviewPanel.context) {
-			const cachePath = path.join(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath);
+			const cachePath = path.resolve(DidactWebviewPanel.context.globalStorageUri.fsPath, DidactWebviewPanel.didactCachePath);
 			if (cachePath) {
-				const filePath = path.join(cachePath, filename);
+				const filePath = path.resolve(cachePath, filename);
 				try {
-					if (fs.existsSync(filePath)) {
-						const contents : Buffer = fs.readFileSync(filePath);
+					if (fs.existsSync(`"${filePath}"`)) {
+						const contents : Buffer = fs.readFileSync(`"${filePath}"`);
 						return contents.toLocaleString();
 					}
 				} catch (error) {

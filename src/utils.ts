@@ -216,8 +216,8 @@ export async function getCurrentFileSelectionPath(): Promise<vscode.Uri> {
     // then get the resource with focus
     await vscode.commands.executeCommand('copyFilePath');
     const copyPath = await vscode.env.clipboard.readText();
-    if (fs.existsSync(copyPath) && fs.lstatSync(copyPath).isFile() ) {
-      return vscode.Uri.file(copyPath);
+    if (fs.existsSync(`"${copyPath}"`) && fs.lstatSync(`"${copyPath}"`).isFile() ) {
+      return vscode.Uri.file(`"${copyPath}"`);
     }
   }
   throw new Error("Can not determine current file selection");
@@ -247,7 +247,7 @@ export async function removeFilesAndFolders(workspacename: string, filesAndFolde
 		for (const fileOrFolder of filesAndFolders) {
 			const testPath = path.resolve(workspacename, fileOrFolder);
 			if (testPath && fs.existsSync(testPath)) {
-				const delUri = vscode.Uri.parse(testPath);
+				const delUri = vscode.Uri.file(testPath);
 				await vscode.workspace.fs.delete(delUri, {recursive:true});
 			}
 		}
