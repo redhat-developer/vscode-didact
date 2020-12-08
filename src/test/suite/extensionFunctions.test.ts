@@ -152,7 +152,7 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('try executing a valid command', async function() {
-		await extensionFunctions.cliExecutionCheck('test-pwd','echo').then( (returnBool) => {
+		await extensionFunctions.cliExecutionCheck('test-echo','echo').then( (returnBool) => {
 			assert.strictEqual(returnBool, true);
 		});
 	});
