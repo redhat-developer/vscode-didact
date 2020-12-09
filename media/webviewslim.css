@@ -1,7 +1,3 @@
-.didact {
-  cursor:crosshair;
-}
-
 .imageRight {
   float: right;
   width:33%;
@@ -101,4 +97,101 @@ code{
   .listingblock pre.CodeRay, .listingblock pre.prettyprint {
   background: var(--vscode-editor-selectionHighlightBackground);
   color:var(--vscode-editor-selectionForeground);
+}
+
+.didactbutton {
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.didactbutton span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.didactbutton span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.didactbutton:hover span {
+  padding-right: 25px;
+}
+
+.didactbutton:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.didact {
+  position: relative;
+  text-decoration: none;
+  display: inline-block;
+  color: var (--vscode-textlink-foreground);
+  transition: all .2s ease;
+  background-color: transparent;
+  text-decoration: none;
+  padding: .1em;
+  position: relative;
+  z-index: 10;  
+}
+
+.didact:hover {
+  color: var (--vscode-textlink-foreground);
+  text-decoration: none;
+}
+
+.didact:hover::before {
+  height: 100%;
+  background-color: var (--vscode-textlink-foreground);
+}
+
+.didact::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 1%;
+  border-bottom: 1px dotted var (--vscode-textlink-foreground);
+  background-color: transparent;
+  transition: all .3s ease;
+  z-index: -1;
+}
+
+.didact:hover::before {
+  visibility: visible;
+  transform: scaleX(1);
+}
+
+.didact::after {
+  content: '[Performs a Didact Action]';
+  position: absolute;
+  top: 100%;
+  font-style: italic;
+  left: 0;
+  transform: translateY(-100%);
+  background: var (--vscode-textlink-foreground);
+  width: 100%;
+  text-align: center;
+  height: 16px;
+  font-size: 11px;
+  line-height: 12px;
+  transition: all .2s ease-out;
+  color: fade(var (--vscode-textlink-foreground), 85%);
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.didact:hover::after {
+  transform: translateY(0);
+  opacity: 1;
 }
