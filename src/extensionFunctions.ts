@@ -66,6 +66,8 @@ export const HISTORY_CLEAR = 'vscode.didact.clearHistory';
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 export const FILE_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyFileTextToClipboardCommand';
 
+export const EXTENSION_ID = "redhat.vscode-didact";
+
 const commandPrefix = 'didact://?commandId';
 // note that this MUST be also updated in the main.js file 
 const requirementCommandLinks = [

@@ -352,6 +352,15 @@ export class DidactWebviewPanel {
 		// process the stylesheet details for asciidoc or markdown-based didact files
 		const stylesheetHtml = this.produceStylesheetHTML(cssUriHtml);
 
+		const extensionHandle = vscode.extensions.getExtension(extensionFunctions.EXTENSION_ID);
+		let didactVersionLabel = 'Didact';
+		if (extensionHandle) {
+			const didactVersion = extensionHandle.packageJSON.version;
+			if (didactVersion) {
+				didactVersionLabel += ` ${didactVersion}`;
+			}
+		}
+
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
@@ -363,8 +372,14 @@ export class DidactWebviewPanel {
 			stylesheetHtml + 
 			`<script defer="true" src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 			</head>
-		<body class="content">` + didactHtml + 
-		`<script nonce="${nonce}" src="${scriptUri}"/>
+		<body class="content">
+			<div class="theader">
+			<img class="timage" src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/logo.png"/></div>
+			<div class="tcontent">`
+			+ didactHtml + 
+			`</div> 
+			<div class="tfooter">${didactVersionLabel}</div>
+			<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
 		</html>`;
 

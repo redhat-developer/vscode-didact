@@ -102,3 +102,43 @@ code{
   background: var(--vscode-editor-selectionHighlightBackground);
   color:var(--vscode-editor-selectionForeground);
 }
+
+/* Page content */
+.content {
+  padding: 20px;
+  padding-bottom: 50px;  
+  width: 90%;
+}
+
+.theader {
+  height: 50px;
+  background-color:var(--vscode-editor-background);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  overflow: hide;
+  text-align: right;
+}
+
+.timage {
+  padding: 10px 25px;
+}
+
+.tcontent {
+  margin: 0 auto;
+  margin-bottom: 100px;
+  margin-top: 50px;
+  overflow: auto;
+  width: 90%;
+}
+
+.tfooter {
+  position: fixed;
+  bottom: 0px;
+  overflow: hide;
+  width: 100%;
+  text-align: right;
+  padding: 10px 25px;
+  background-color:var(--vscode-editor-background);
+  font-size: 10px;
+}
