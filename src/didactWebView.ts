@@ -382,19 +382,18 @@ export class DidactWebviewPanel {
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';"/>
 			${metaHeader}
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
 			`<script defer="true" src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-		</head>
+			</head>
 		<body class="content">
-			<div class="tutorialContent">`
+			<div class="theader">
+			<img class="timage" src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/logo.png"/></div>
+			<div class="tcontent">`
 			+ didactHtml + 
 			`</div> 
-			<div class="didactFooter">${didactVersionLabel}</div>
+			<div class="tfooter">${didactVersionLabel}</div>
 			<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
 		</html>`;

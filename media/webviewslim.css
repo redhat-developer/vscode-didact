@@ -109,21 +109,7 @@ code{
   padding-bottom: 10px;  
   width: 90%;
 }
-/*
-.didactHeader {
-  height: 50px;
-  background-color:var(--vscode-editor-background);
-  position: fixed;
-  top: 0;
-  width: 100%;
-  overflow: hide;
-  text-align: right;
-}
 
-.didactHeaderImage {
-  padding: 10px 25px;
-}
-*/
 .tutorialContent {
   margin: 0 auto;
   margin-bottom: 20px;
