@@ -110,7 +110,7 @@ code{
   width: 90%;
 }
 
-.theader {
+.didactHeader {
   height: 50px;
   background-color:var(--vscode-editor-background);
   position: fixed;
@@ -120,11 +120,11 @@ code{
   text-align: right;
 }
 
-.timage {
+.didactHeaderImage {
   padding: 10px 25px;
 }
 
-.tcontent {
+.tutorialContent {
   margin: 0 auto;
   margin-bottom: 100px;
   margin-top: 50px;
@@ -132,7 +132,7 @@ code{
   width: 90%;
 }
 
-.tfooter {
+.didactFooter {
   position: fixed;
   bottom: 0px;
   overflow: hide;
