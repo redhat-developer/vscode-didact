@@ -16,6 +16,8 @@
  */
 import * as vscode from 'vscode';
 import * as utils from './utils';
+import * as extensionFunctions from './extensionFunctions';
+import * as path from 'path';
 
 export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 
@@ -147,7 +149,16 @@ export class TreeNode extends vscode.TreeItem {
 }
 
 export class TutorialNode extends TreeNode {
-	// empty
+	constructor(
+		type: string,
+		label: string,
+		uri: string | undefined,
+		collapsibleState: vscode.TreeItemCollapsibleState
+	) {
+		super(type, label, uri, collapsibleState);
+		const localIconPath = vscode.Uri.file(path.resolve(extensionFunctions.getContext().extensionPath, 'icon/logo.svg'));
+		this.iconPath = localIconPath;
+	}
 }
 
 function retrieveTreeItemName(selection: TreeNode) {
