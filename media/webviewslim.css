@@ -106,10 +106,10 @@ code{
 /* Page content */
 .content {
   padding: 20px;
-  padding-bottom: 50px;  
+  padding-bottom: 10px;  
   width: 90%;
 }
-
+/*
 .didactHeader {
   height: 50px;
   background-color:var(--vscode-editor-background);
@@ -123,11 +123,10 @@ code{
 .didactHeaderImage {
   padding: 10px 25px;
 }
-
+*/
 .tutorialContent {
   margin: 0 auto;
-  margin-bottom: 100px;
-  margin-top: 50px;
+  margin-bottom: 20px;
   overflow: auto;
   width: 90%;
 }

@@ -142,6 +142,10 @@ export class DidactWebviewPanel {
 			localResourceRoots.push(vscode.Uri.file(dirName));
 		}
 
+		const localIconPath = vscode.Uri.file(path.resolve(extensionPath, 'icon/logo.svg'));
+		const iconDirPath = path.dirname(localIconPath.fsPath);
+		localResourceRoots.push(vscode.Uri.file(iconDirPath));
+
 		const panel = vscode.window.createWebviewPanel(
 			DidactWebviewPanel.viewType, 'didact',
 			column,
@@ -156,6 +160,7 @@ export class DidactWebviewPanel {
 				retainContextWhenHidden: true
 			}
 		);
+		panel.iconPath = localIconPath;
 
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
 		if (inpath) {
@@ -329,8 +334,14 @@ export class DidactWebviewPanel {
 		// Base uri to support images
 		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
 		
-		const didactUriPath = path.dirname(didactUri.fsPath);
-		const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+		let uriBaseHref = undefined;
+		try {
+			const didactUriPath = path.dirname(didactUri.fsPath);
+			const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+			uriBaseHref = `<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>`;
+		} catch (error) {
+			console.error(error);
+		}
 		
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.file(
@@ -361,20 +372,25 @@ export class DidactWebviewPanel {
 			}
 		}
 
+		let metaHeader = `<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';"/>`;
+		if (uriBaseHref) {
+			metaHeader += `\n${uriBaseHref}\n`;
+		}
+		
 		const completedHtml = `<!DOCTYPE html>
 		<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https: http: blob: ${this._panel.webview.cspSource}; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}' https:; style-src 'unsafe-inline' ${this._panel.webview.cspSource} https: data:; font-src ${this._panel.webview.cspSource} https: data:; object-src 'none';"/>
-			<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>
+			${metaHeader}
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
 			`<script defer="true" src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-			</head>
+		</head>
 		<body class="content">
-			<div class="didactHeader">
-			<img class="didactHeaderImage" src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/logo.png"/></div>
 			<div class="tutorialContent">`
 			+ didactHtml + 
 			`</div> 
