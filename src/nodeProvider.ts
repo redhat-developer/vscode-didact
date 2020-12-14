@@ -42,7 +42,8 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
         } else {
             // assume it's a category
             if (element.label && !(element instanceof TutorialNode)) {
-                return this.processTutorialsForCategory(element.label);
+				const tutorialCategory = retrieveTreeItemName(element);
+                return this.processTutorialsForCategory(tutorialCategory);
             }   
         }
         return [];
@@ -124,7 +125,8 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 			}
 		}
         return children;
-    }
+	}
+	
 }
 
 // simple tree node for our tutorials view
@@ -146,4 +148,15 @@ export class TreeNode extends vscode.TreeItem {
 
 export class TutorialNode extends TreeNode {
 	// empty
+}
+
+function retrieveTreeItemName(selection: TreeNode) {
+	const treeItemName: string | vscode.TreeItemLabel | undefined = selection.label;
+	if (treeItemName === undefined) {
+		return "";
+	} else if(typeof treeItemName === "string") {
+		return treeItemName;
+	} else {
+		return treeItemName.label;
+	}
 }
