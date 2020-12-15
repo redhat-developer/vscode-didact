@@ -102,3 +102,28 @@ code{
   background: var(--vscode-editor-selectionHighlightBackground);
   color:var(--vscode-editor-selectionForeground);
 }
+
+/* Page content */
+.content {
+  padding: 20px;
+  padding-bottom: 10px;  
+  width: 90%;
+}
+
+.tutorialContent {
+  margin: 0 auto;
+  margin-bottom: 20px;
+  overflow: auto;
+  width: 90%;
+}
+
+.didactFooter {
+  position: fixed;
+  bottom: 0px;
+  overflow: hide;
+  width: 100%;
+  text-align: right;
+  padding: 10px 25px;
+  background-color:var(--vscode-editor-background);
+  font-size: 10px;
+}
