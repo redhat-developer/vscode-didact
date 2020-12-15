@@ -386,10 +386,8 @@ export class DidactWebviewPanel {
 			<title>Didact Tutorial</title>` + 
 			stylesheetHtml + 
 			`<script defer="true" src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-			</head>
+		</head>
 		<body class="content">
-			<div class="didactHeader">
-			<img class="didactHeaderImage" src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/logo.png"/></div>
 			<div class="tutorialContent">`
 			+ didactHtml + 
 			`</div> 
