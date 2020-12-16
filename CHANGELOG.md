@@ -4,7 +4,12 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.2.0
 
-- TBD
+- Updated AsciiDoc demo with better requirements label example. [FUSETOOLS2-800](https://issues.redhat.com/browse/FUSETOOLS2-800)
+- Addressed issue where inner label on adoc was updating incorrectly. [FUSETOOLS2-877](https://issues.redhat.com/browse/FUSETOOLS2-877)
+- Removed local copy of asciidoctor.css in favor of using upstream version directly. [FUSETOOLS2-874](https://issues.redhat.com/browse/FUSETOOLS2-874)
+- Fixed issue with platform neutral paths preventing successful operation on Windows. [FUSETOOLS-887](https://issues.redhat.com/browse/FUSETOOLS2-887)
+- Added Didact icon to Didact view tab and Didact version to footer. [FUSETOOLS2-919](https://issues.redhat.com/browse/FUSETOOLS2-919)
+- Added Didact icon to tutorials in tutorials view. [FUSETOOLS2-920](https://issues.redhat.com/browse/FUSETOOLS2-920)
 
 ## 0.1.18
 
