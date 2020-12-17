@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.2.1
+
+- TBD
+
 ## 0.2.0
 
 - Updated AsciiDoc demo with better requirements label example. [FUSETOOLS2-800](https://issues.redhat.com/browse/FUSETOOLS2-800)
