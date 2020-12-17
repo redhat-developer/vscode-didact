@@ -335,12 +335,14 @@ export class DidactWebviewPanel {
 		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
 		
 		let uriBaseHref = undefined;
-		try {
-			const didactUriPath = path.dirname(didactUri.fsPath);
-			const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
-			uriBaseHref = `<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>`;
-		} catch (error) {
-			console.error(error);
+		if (didactUri && didactUri.fsPath) {
+			try {
+				const didactUriPath = path.dirname(didactUri.fsPath);
+				const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+				uriBaseHref = `<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>`;
+			} catch (error) {
+				console.error(error);
+			}
 		}
 		
 		// Local path to main script run in the webview
@@ -441,17 +443,15 @@ export class DidactWebviewPanel {
 	}
 
 	static async createHTMLCacheFile(html : string) {
-		if (DidactWebviewPanel.context) {
-			if (!DidactWebviewPanel.context.globalStoragePath) {
-				fs.mkdirSync(DidactWebviewPanel.context.globalStoragePath, { recursive: true });
-			}
-			const cachePath = path.resolve(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath);
+		const rootCachePath = this.getCachePath();
+		if (rootCachePath) {
+			const cachePath = path.resolve(rootCachePath, DidactWebviewPanel.didactCachePath);
 			const htmlFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheHtmlFile);
 			const titleFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheTitleFile);
 			const uriFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheUriFile);
 			try {
 				if (!fs.existsSync(`"${cachePath}"`)) {
-					fs.mkdirSync(path.resolve(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath), { recursive: true });
+					fs.mkdirSync(path.resolve(rootCachePath, DidactWebviewPanel.didactCachePath), { recursive: true });
 				}
 				fs.writeFileSync(htmlFilePath, html, {encoding:'utf8', flag:'w'});
 				if (DidactWebviewPanel.currentPanel) {
@@ -465,12 +465,30 @@ export class DidactWebviewPanel {
 			catch (error) {
 				return console.error(error);
 			}
+		} else {
+			return console.error(`Cache path ${rootCachePath} not found in system`);
 		}
 	}
 
-	getFileContentsFromCache(filename : string) : string | undefined {
+	static getCachePath() : string | undefined {
 		if (DidactWebviewPanel.context) {
-			const cachePath = path.resolve(DidactWebviewPanel.context.globalStorageUri.fsPath, DidactWebviewPanel.didactCachePath);
+			const globalUri = DidactWebviewPanel.context.globalStorageUri;
+			const workspaceUri = DidactWebviewPanel.context.storageUri;
+			let rootPath = undefined;
+			if (globalUri) {
+				rootPath = globalUri.fsPath;
+			} else if (workspaceUri) {
+				rootPath = workspaceUri.fsPath;
+			}
+			return rootPath;
+		}
+		return undefined;
+	}
+
+	getFileContentsFromCache(filename : string) : string | undefined {
+		const rootPath = DidactWebviewPanel.getCachePath();
+		if (rootPath) {
+			const cachePath = path.resolve(rootPath, DidactWebviewPanel.didactCachePath);
 			if (cachePath) {
 				const filePath = path.resolve(cachePath, filename);
 				try {
