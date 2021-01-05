@@ -132,7 +132,7 @@ export class DidactWebviewPanel {
 		// we assume that all images are in the same directory as the didact file or a 
 		// folder under the directory the didact file is in
 		if (DidactWebviewPanel.currentPanel) {
-			DidactWebviewPanel.currentPanel._panel.dispose();
+			//DidactWebviewPanel.currentPanel._panel.dispose();
 		}
 
 		// Otherwise, create a new panel.
@@ -335,12 +335,14 @@ export class DidactWebviewPanel {
 		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
 		
 		let uriBaseHref = undefined;
-		try {
-			const didactUriPath = path.dirname(didactUri.fsPath);
-			const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
-			uriBaseHref = `<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>`;
-		} catch (error) {
-			console.error(error);
+		if (didactUri) {
+			try {
+				const didactUriPath = path.dirname(didactUri.fsPath);
+				const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+				uriBaseHref = `<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>`;
+			} catch (error) {
+				console.error(error);
+			}
 		}
 		
 		// Local path to main script run in the webview
