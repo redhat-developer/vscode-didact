@@ -5,10 +5,6 @@
 			"documentation": "Focuses VS Code on the Didact Tutorials view"
 		},
 		{
-			"fullCommandId":"vscode.didact.clearHistory",
-			"documentation": "Clears the Didact tutorial history"
-		},
-		{
 			"fullCommandId":"vscode.didact.cliCommandSuccessful",
 			"parms": ["Requirement-Label", "URLEncoded-Command-to-Execute"],
 			"documentation": "Simple command-line check. If command executes with no errors (returns 0), it passes"
@@ -41,14 +37,6 @@
 			"fullCommandId":"vscode.didact.extensionRequirementCheck",
 			"parms": ["Requirement-Label", "Full-Extension-ID"],
 			"documentation": "Simple check to see if the extension Id is installed in the user workspace"
-		},
-		{
-			"fullCommandId":"vscode.didact.historyBack",
-			"documentation": "Move back one entry in the Didact tutorial history"
-		},
-		{
-			"fullCommandId":"vscode.didact.historyForward",
-			"documentation": "Move forward one entry in the Didact tutorial history"
 		},
 		{
 			"fullCommandId":"vscode.didact.openNamedOutputChannel",

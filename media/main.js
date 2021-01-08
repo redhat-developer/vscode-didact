@@ -22,6 +22,12 @@ function () {
 	//connect to the vscode api
 	const vscode = acquireVsCodeApi();
 
+	const oldState = vscode.getState();
+	let oldBody = oldState ? oldState.oldbody : '';
+	if (oldBody) {
+		document.body = oldBody;
+	}
+
 	document.body.addEventListener('click', event => {
 		let node = event && event.target;
 		while (node) {
@@ -70,10 +76,16 @@ function () {
 		return elements;
 	}
 
+	function updateState() {
+		const textToCache = '<!DOCTYPE HTML>' + '\n' + document.documentElement.outerHTML;
+		vscode.setState( { oldBody: textToCache});
+	}
+
 	// Handle messages sent from the extension to the webview
 	window.addEventListener('message', event => {
 		const message = event.data; // The json data that the extension sent
 		const json = JSON.parse(message);
+		
 		switch (json.command) {
 			case 'requirementCheck':
 				const requirementName = json.requirementName;
@@ -101,7 +113,9 @@ function () {
 					}
 				}
 				console.log(`${requirementName} is available: ${isAvailable}`);
+				updateState();
 				break;
+
 			case 'allRequirementCheck':
 				var links = collectElements("a");
 				for (let index = 0; index < links.length; index++) {
@@ -115,6 +129,11 @@ function () {
 						}
 					}
 				}
+				updateState();
+				break;
+
+			case 'setState':
+				updateState();
 				break;
 		}
 	});

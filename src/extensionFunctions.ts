@@ -60,9 +60,6 @@ export const SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND = 'vscode.didact.sendTextToName
 export const VALIDATE_COMMAND_IDS = 'vscode.didact.verifyCommands';
 export const TEXT_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyToClipboardCommand';
 export const COPY_FILE_URL_TO_WORKSPACE_COMMAND = 'vscode.didact.copyFileURLtoWorkspaceCommand';
-export const HISTORY_BACK_COMMAND = 'vscode.didact.historyBack';
-export const HISTORY_FORWARD_COMMAND = 'vscode.didact.historyForward';
-export const HISTORY_CLEAR = 'vscode.didact.clearHistory';
 export const DIDACT_OUTPUT_CHANNEL = 'Didact Activity';
 export const FILE_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyFileTextToClipboardCommand';
 
@@ -316,13 +313,13 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 }
 
 export function addCachedDidactUriToHistory(): void {
-	if (DidactWebviewPanel.currentPanel) {
-		const stashedUri = DidactWebviewPanel.currentPanel.getCachedUri();
-		if (stashedUri) {
-			const realUri = vscode.Uri.parse(stashedUri);
-			addToHistory(realUri);
-		}
-	}
+	// if (DidactWebviewPanel.currentPanel) {
+	// 	const stashedUri = DidactWebviewPanel.currentPanel.getCachedUri();
+	// 	if (stashedUri) {
+	// 		const realUri = vscode.Uri.parse(stashedUri);
+	// 		addToHistory(realUri);
+	// 	}
+	// }
 }
 
 // exposed for testing
@@ -853,33 +850,6 @@ function updateStatusBarItem(sbItem : vscode.StatusBarItem, text: string, toolti
 		sbItem.show();
 	} else {
 		sbItem.hide();
-	}
-}
-
-export async function historyBack() : Promise<void> {
-	sendTextToOutputChannel(`Moving back through the Didact history one entry`);
-	if (DidactWebviewPanel.currentPanel) {
-		const value = historyList.getPrevious()?.value;
-		if (value) {
-			await startDidact(vscode.Uri.parse(value));
-		}
-	}
-}
-
-export async function historyForward() : Promise<void> {
-	sendTextToOutputChannel(`Moving forward through the Didact history one entry`);
-	if (DidactWebviewPanel.currentPanel) {
-		const value = historyList.getNext()?.value;
-		if (value) {
-			await startDidact(vscode.Uri.parse(value));
-		}
-	}
-}
-
-export function clearHistory(): void {
-	sendTextToOutputChannel(`Clearing the Didact history`);
-	if (DidactWebviewPanel.currentPanel) {
-		historyList.clearHistory();
 	}
 }
 

@@ -33,7 +33,6 @@ import waitUntil = require('async-wait-until');
 const EDITOR_OPENED_TIMEOUT = 5000;
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
-const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Linux';
@@ -260,25 +259,6 @@ suite('Didact test suite', () => {
 				// currently there are 5 requirements links in the test 
 				assert.strictEqual(hrefs && hrefs.length === 5, true);
 			}			
-		});
-	});
-
-	test('open one didact, then open another to make sure it refreshes properly', async () => {
-		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD).then( async () => {
-			if (DidactWebviewPanel.currentPanel) {
-				// grab the html that we generate from the first didact file
-				// this should be cached
-				const firstHtml = DidactWebviewPanel.currentPanel.getCurrentHTML();
-				await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD2).then( async () => {
-					if (DidactWebviewPanel.currentPanel) {
-						// make sure that when we start a new tutorial, the cache updates
-						const secondHtml = DidactWebviewPanel.currentPanel.getCachedHTML();
-						assert.notStrictEqual(firstHtml, secondHtml);
-					}
-				});		
-			} else {
-				assert.fail('Unable to get initial html for first didact to test');
-			}
 		});
 	});
 });

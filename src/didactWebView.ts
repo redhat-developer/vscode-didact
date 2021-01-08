@@ -19,7 +19,6 @@ import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
 import * as path from 'path';
 import * as commandHandler from './commandHandler';
-import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
 import { getLastColumnUsedSetting, setLastColumnUsedSetting, DIDACT_DEFAULT_URL } from './utils';
 
@@ -43,7 +42,8 @@ export class DidactWebviewPanel {
 	private currentHtml : string | undefined = undefined;
 	private didactStr : string | undefined = undefined;
 	private didactUriPath : vscode.Uri | undefined = undefined;
-	private defaultTitle = `Didact Tutorial`;
+	private DEFAULT_TITLE_VALUE = `Didact Tutorial`;
+	private defaultTitle = this.DEFAULT_TITLE_VALUE;
 	private isAsciiDoc = false;
 	private _disposed = false;
 
@@ -128,14 +128,7 @@ export class DidactWebviewPanel {
 			setLastColumnUsedSetting(column);
 		}
 
-		// If we already have a panel, dispose it to reset the resource roots
-		// we assume that all images are in the same directory as the didact file or a 
-		// folder under the directory the didact file is in
-		if (DidactWebviewPanel.currentPanel) {
-			//DidactWebviewPanel.currentPanel._panel.dispose();
-		}
-
-		// Otherwise, create a new panel.
+		// Create a new panel.
 		const localResourceRoots = [vscode.Uri.file(path.resolve(extensionPath, 'media'))];
 		if (inpath) {
 			const dirName = path.dirname(inpath.fsPath);
@@ -169,8 +162,8 @@ export class DidactWebviewPanel {
 		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
-	public static revive(panel: vscode.WebviewPanel, extensionPath: string): void {
-		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath);
+	public static revive(panel: vscode.WebviewPanel, extensionPath: string, content: string | undefined): void {
+		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath, content);
 		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
@@ -213,22 +206,34 @@ export class DidactWebviewPanel {
 		DidactWebviewPanel.postNamedSimpleMessage("returnCommands");
 	}
 
+	public static async sendSetStateMessage() : Promise<void> {
+		if (!DidactWebviewPanel.currentPanel || DidactWebviewPanel.currentPanel._disposed) {
+			return;
+		}
+		const jsonMsg = "{ \"command\": \"setState\" }";
+		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
+	}	
+
 	public setActiveContext(value: boolean): void {
 		vscode.commands.executeCommand('setContext', 'didact.webview', value);
 	}
 
-	private constructor(panel: vscode.WebviewPanel, extensionPath: string) {
+	private constructor(panel: vscode.WebviewPanel, extensionPath: string, initialHtml? : string) {
 		this._panel = panel;
 		this._extensionPath = extensionPath;
 
-		// Set the webview's initial html content
-		this._update();
+		if (initialHtml) {
+			this.currentHtml = initialHtml;
+		}
 
 		// Listen for when the panel is disposed
 		// This happens when the user closes the panel or when the panel is closed programatically
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
-		this._panel.onDidChangeViewState(async () => await setLastColumnUsedSetting(panel.viewColumn));
+		this._panel.onDidChangeViewState(async () => {
+			await DidactWebviewPanel.sendSetStateMessage();
+			await setLastColumnUsedSetting(panel.viewColumn);
+		});
 
 		// Update the content based on view changes
 		this._panel.onDidChangeViewState(
@@ -236,7 +241,7 @@ export class DidactWebviewPanel {
 				if (this._panel.visible) {
 					this._update();
 				} else if (!this._panel.visible) {
-					DidactWebviewPanel.cacheFile();
+					DidactWebviewPanel.sendSetStateMessage();
 				}
 			},
 			null,
@@ -267,15 +272,14 @@ export class DidactWebviewPanel {
 			null,
 			this._disposables
 		);
+
+		// Set the webview's initial html content
+		this._update();
 	}
 
 	public static async cacheFile(): Promise<void> {
 		if (DidactWebviewPanel.currentPanel && DidactWebviewPanel.currentPanel.getCurrentHTML()) {
-			const html = DidactWebviewPanel.currentPanel.getCurrentHTML();
-			if (html) {
-				await this.createHTMLCacheFile(html);
-				console.log('Didact content cached');
-			}
+			await this.sendSetStateMessage();
 		}
 	}
 
@@ -407,97 +411,17 @@ export class DidactWebviewPanel {
 			if (content) {
 				this.currentHtml = this.wrapDidactContent(content);
 			}
-		} else {
-			const cachedHtml = this.getCachedHTML();
-			if (cachedHtml) {
-				this.currentHtml = cachedHtml;
-				const cachedTitle = this.getCachedTitle();
-				if (cachedTitle) {
-					if (DidactWebviewPanel.currentPanel) {
-						DidactWebviewPanel.currentPanel.defaultTitle = cachedTitle;
-					}
-				}
-				console.log('Retrieved cached Didact content');
-			} else if (!this.currentHtml) {
-				if (this.getDidactStr()) {
-					this.currentHtml = this.wrapDidactContent(this.getDidactStr());
-				} else {
-					const isAdoc = extensionFunctions.isAsciiDoc();
-					const content = await extensionFunctions.getWebviewContent();
-					if (content) {
-						this.currentHtml = this.wrapDidactContent(content);
-						this.setIsAsciiDoc(isAdoc);
-					}
-				}
-			}
 		}
 		if (this.currentHtml) {
-			DidactWebviewPanel.cacheFile(); // update the cache with the new content
-			this._panel.webview.html = this.currentHtml;
+			if (this._panel && this._panel.webview && this._panel.active) {
+				this._panel.webview.html = this.currentHtml;
+			}
 		}
 		if (DidactWebviewPanel.currentPanel) {
 			// try to get a better title from the html if we can
 			this.updateDefaultTitle();
 			DidactWebviewPanel.currentPanel.updateWebViewTitle();
 		}
-	}
-
-	static async createHTMLCacheFile(html : string) {
-		if (DidactWebviewPanel.context) {
-			if (!DidactWebviewPanel.context.globalStoragePath) {
-				fs.mkdirSync(DidactWebviewPanel.context.globalStoragePath, { recursive: true });
-			}
-			const cachePath = path.resolve(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath);
-			const htmlFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheHtmlFile);
-			const titleFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheTitleFile);
-			const uriFilePath = path.resolve(cachePath, DidactWebviewPanel.didactCacheUriFile);
-			try {
-				if (!fs.existsSync(`"${cachePath}"`)) {
-					fs.mkdirSync(path.resolve(DidactWebviewPanel.context.globalStoragePath, DidactWebviewPanel.didactCachePath), { recursive: true });
-				}
-				fs.writeFileSync(htmlFilePath, html, {encoding:'utf8', flag:'w'});
-				if (DidactWebviewPanel.currentPanel) {
-					fs.writeFileSync(titleFilePath, DidactWebviewPanel.currentPanel.defaultTitle, {encoding:'utf8', flag:'w'});
-
-					if (DidactWebviewPanel.currentPanel.didactUriPath) {
-						fs.writeFileSync(uriFilePath, DidactWebviewPanel.currentPanel.didactUriPath.fsPath, {encoding:'utf8', flag:'w'});
-					}
-				}
-			}
-			catch (error) {
-				return console.error(error);
-			}
-		}
-	}
-
-	getFileContentsFromCache(filename : string) : string | undefined {
-		if (DidactWebviewPanel.context) {
-			const cachePath = path.resolve(DidactWebviewPanel.context.globalStorageUri.fsPath, DidactWebviewPanel.didactCachePath);
-			if (cachePath) {
-				const filePath = path.resolve(cachePath, filename);
-				try {
-					if (fs.existsSync(`"${filePath}"`)) {
-						const contents : Buffer = fs.readFileSync(`"${filePath}"`);
-						return contents.toLocaleString();
-					}
-				} catch (error) {
-					console.error(error);
-				}
-			}
-		}
-		return undefined;
-	}
-	
-	getCachedHTML() : string | undefined {
-		return this.getFileContentsFromCache(DidactWebviewPanel.didactCacheHtmlFile);
-	}
-
-	getCachedTitle() : string | undefined {
-		return this.getFileContentsFromCache(DidactWebviewPanel.didactCacheTitleFile);
-	}
-
-	public getCachedUri() : string | undefined {
-		return this.getFileContentsFromCache(DidactWebviewPanel.didactCacheUriFile);
 	}
 
 	getFirstHeadingText() : string | undefined {

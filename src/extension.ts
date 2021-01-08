@@ -55,9 +55,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.VALIDATE_COMMAND_IDS, extensionFunctions.validateCommandIDsInSelectedFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.TEXT_TO_CLIPBOARD_COMMAND, extensionFunctions.placeTextOnClipboard));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.COPY_FILE_URL_TO_WORKSPACE_COMMAND, extensionFunctions.copyFileFromURLtoLocalURI));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_BACK_COMMAND, extensionFunctions.historyBack));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_FORWARD_COMMAND, extensionFunctions.historyForward));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_CLEAR, extensionFunctions.clearHistory));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.openNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.sendTextToNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.FILE_TO_CLIPBOARD_COMMAND, extensionFunctions.copyFileTextToClipboard));
@@ -87,7 +84,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 		vscode.window.registerWebviewPanelSerializer(DidactWebviewPanel.viewType, {
 			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
 				DidactWebviewPanel.setContext(context);
-				DidactWebviewPanel.revive(webviewPanel, context.extensionPath);
+				DidactWebviewPanel.revive(webviewPanel, context.extensionPath, state.oldBody);
 			}
 		});
 	}
