@@ -247,7 +247,7 @@
 		"asciidoctor": "^2.2.1",
 		"download": "^8.0.0",
 		"glob": "^7.1.6",
-		"markdown-it": "^11.0.1",
+		"markdown-it": "^12.0.4",
 		"markdown-it-attrs": "^4.0.0",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.1",
