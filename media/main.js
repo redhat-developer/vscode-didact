@@ -85,14 +85,12 @@ function () {
 	window.addEventListener('message', event => {
 		const message = event.data; // The json data that the extension sent
 		const json = JSON.parse(message);
-		
+		const requirementName = json.requirementName;
+		const isAvailable = json.result;
+		let element = document.getElementById(requirementName);
+
 		switch (json.command) {
 			case 'requirementCheck':
-				const requirementName = json.requirementName;
-				const isAvailable = json.result;
-
-				let element = document.getElementById(requirementName);
-
 				// add check for adoc div/p requirement label
 				if (element.tagName.toLowerCase() === 'div' && element.childNodes.length > 0) {
 					let list = element.getElementsByTagName('em');

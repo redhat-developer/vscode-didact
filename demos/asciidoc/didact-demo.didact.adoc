@@ -98,8 +98,7 @@ Asciidoc doesn't seem to support bringing in native HTML. But you can bring in t
 
 ## Limitations
 
-* We can only open one Didact file at a time at the moment and there isn't the concept of a tutorial "history" to step forward or back through yet.
-* Didact, because it utilizes the VS Code Webview, is limited to what files it can access. For example, local image files must exist in the same folder as the didact file or in a child folder.
+* Didact, beacause it utilizes the VS Code Webview, is limited to what files it can access. For example, local image files must exist in the same folder as the didact file or in a child folder.
 
 # Ideas or want to contribute?
 

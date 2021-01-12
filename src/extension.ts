@@ -84,7 +84,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 		vscode.window.registerWebviewPanelSerializer(DidactWebviewPanel.viewType, {
 			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
 				DidactWebviewPanel.setContext(context);
-				DidactWebviewPanel.revive(webviewPanel, context.extensionPath, state.oldBody);
+				if (state && state.oldBody) {
+					DidactWebviewPanel.revive(webviewPanel, context.extensionPath, state.oldBody);
+				} else {
+					DidactWebviewPanel.revive(webviewPanel, context.extensionPath);
+				}
 			}
 		});
 	}

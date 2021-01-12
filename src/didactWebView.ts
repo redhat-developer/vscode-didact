@@ -30,10 +30,6 @@ export class DidactWebviewPanel {
 	public static currentPanel: DidactWebviewPanel | undefined;
 
 	public static readonly viewType = 'didact';
-	private static readonly didactCachePath = `didact/cache`;
-	private static readonly didactCacheHtmlFile = 'currentHtml.html';
-	private static readonly didactCacheTitleFile = 'currentTitle.txt';
-	private static readonly didactCacheUriFile = 'currentUri.txt';
 
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionPath: string;
@@ -88,23 +84,6 @@ export class DidactWebviewPanel {
 			}
 		}
 		this._update(true);
-	}
-
-	private updateDefaultTitle() {
-		if (DidactWebviewPanel.currentPanel) {
-			if (DidactWebviewPanel.currentPanel.currentHtml) {
-				const firstHeading : string | undefined = this.getFirstHeadingText();
-				if (firstHeading && firstHeading.trim().length > 0) {
-					this.defaultTitle = firstHeading;
-				}
-			}
-		}
-	}
-
-	private updateWebViewTitle() {
-		if (DidactWebviewPanel.currentPanel) {
-			DidactWebviewPanel.currentPanel._panel.title = this.defaultTitle;
-		}
 	}
 
 	public static hardReset(): void {
@@ -162,7 +141,7 @@ export class DidactWebviewPanel {
 		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
 
-	public static revive(panel: vscode.WebviewPanel, extensionPath: string, content: string | undefined): void {
+	public static revive(panel: vscode.WebviewPanel, extensionPath: string, content?: string | undefined): void {
 		DidactWebviewPanel.currentPanel = new DidactWebviewPanel(panel, extensionPath, content);
 		DidactWebviewPanel.currentPanel.setActiveContext(true);
 	}
@@ -211,6 +190,7 @@ export class DidactWebviewPanel {
 			return;
 		}
 		const jsonMsg = "{ \"command\": \"setState\" }";
+		console.log("outgoing message being posted: " + jsonMsg);
 		DidactWebviewPanel.currentPanel._panel.webview.postMessage(jsonMsg);
 	}	
 
@@ -222,9 +202,12 @@ export class DidactWebviewPanel {
 		this._panel = panel;
 		this._extensionPath = extensionPath;
 
-		if (initialHtml) {
+		if (initialHtml && initialHtml.length > 0) {
 			this.currentHtml = initialHtml;
 		}
+
+		// Set the webview's initial html content
+		this._update();
 
 		// Listen for when the panel is disposed
 		// This happens when the user closes the panel or when the panel is closed programatically
@@ -272,9 +255,6 @@ export class DidactWebviewPanel {
 			null,
 			this._disposables
 		);
-
-		// Set the webview's initial html content
-		this._update();
 	}
 
 	public static async cacheFile(): Promise<void> {
@@ -415,12 +395,12 @@ export class DidactWebviewPanel {
 		if (this.currentHtml) {
 			if (this._panel && this._panel.webview && this._panel.active) {
 				this._panel.webview.html = this.currentHtml;
+				const firstHeading : string | undefined = this.getFirstHeadingText();
+				if (firstHeading && firstHeading.trim().length > 0) {
+					this.defaultTitle = firstHeading;
+				}
+				this._panel.title = this.defaultTitle;
 			}
-		}
-		if (DidactWebviewPanel.currentPanel) {
-			// try to get a better title from the html if we can
-			this.updateDefaultTitle();
-			DidactWebviewPanel.currentPanel.updateWebViewTitle();
 		}
 	}
 
