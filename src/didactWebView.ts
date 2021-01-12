@@ -214,8 +214,10 @@ export class DidactWebviewPanel {
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
 		this._panel.onDidChangeViewState(async () => {
-			await DidactWebviewPanel.sendSetStateMessage();
-			await setLastColumnUsedSetting(panel.viewColumn);
+			if (DidactWebviewPanel.currentPanel && !DidactWebviewPanel.currentPanel._disposed) {
+				await DidactWebviewPanel.sendSetStateMessage();
+				await setLastColumnUsedSetting(panel.viewColumn);
+			}
 		});
 
 		// Update the content based on view changes
