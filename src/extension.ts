@@ -21,6 +21,8 @@ import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
+import { DidactPanelSerializer } from './didactPanelSerializer';
+import { VIEW_TYPE } from './didactManager';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -92,6 +94,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 			}
 		});
 	}
+
+	vscode.window.registerWebviewPanelSerializer(VIEW_TYPE, new DidactPanelSerializer(context));
 
 	// always clear the registry and let the extensions register as they are activated
 	await clearRegisteredTutorials();

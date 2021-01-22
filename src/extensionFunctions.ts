@@ -31,6 +31,8 @@ import * as url from 'url';
 import * as download from 'download';
 import { DidactHistory } from './history';
 import { parse } from 'node-html-parser';
+import { didactManager } from './didactManager';
+import { DidactPanel } from './didactPanel';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -248,13 +250,20 @@ export async function closeTerminal(name:string): Promise<void>{
 // reset the didact window to use the default set in the settings
 export async function openDidactWithDefault(): Promise<void>{
 	sendTextToOutputChannel(`Starting Didact window with default`);
-	// TODO: add Didact document path here?
-	DidactWebviewPanel.createOrShow(extContext.extensionPath);
-	DidactWebviewPanel.setContext(extContext);
-	_didactFileUri = undefined;
-	DidactWebviewPanel.hardReset();
-	_didactFileUri = DidactWebviewPanel.currentPanel?.getDidactUriPath();
-	addToHistory(_didactFileUri);
+
+	didactManager.setContext(extContext);
+	const panel = new DidactPanel();
+	panel.initWebviewPanel(vscode.ViewColumn.Active);
+	panel.handleEvents();
+	panel.configure();
+	_didactFileUri = panel.getDidactUriPath();
+	// // TODO: add Didact document path here?
+	// DidactWebviewPanel.createOrShow(extContext.extensionPath);
+	// DidactWebviewPanel.setContext(extContext);
+	// _didactFileUri = undefined;
+	// DidactWebviewPanel.hardReset();
+	// _didactFileUri = DidactWebviewPanel.currentPanel?.getDidactUriPath();
+	// addToHistory(_didactFileUri);
 }
 
 function processExtensionFilePath(value: string | undefined) : vscode.Uri | undefined {
