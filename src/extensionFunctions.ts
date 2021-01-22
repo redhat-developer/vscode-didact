@@ -30,10 +30,10 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as url from 'url';
 import * as download from 'download';
 import { DidactHistory } from './history';
+import { parse } from 'node-html-parser';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
-const DOMParser = require('xmldom').DOMParser;
 
 // command IDs
 export const SCAFFOLD_PROJECT_COMMAND = 'vscode.didact.scaffoldProject';
@@ -555,13 +555,13 @@ export function validateAllRequirements(): void {
 	}
 }
 
-function collectElements(tagname: string) : any[] {
+export function collectElements(tagname: string) : any[] {
 	const elements: any[] = [];
 	if (DidactWebviewPanel.currentPanel) {
 		const html : string | undefined = DidactWebviewPanel.currentPanel.getCurrentHTML();
 		if (html) {
-			const document = new DOMParser().parseFromString(html, 'text/html');
-			const links = document.getElementsByTagName(tagname);
+			const document = parse(html);
+			const links = document.querySelectorAll(tagname);
 			for (let index = 0; index < links.length; index++) {
 				const element = links[index];
 				elements.push(element);
