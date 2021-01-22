@@ -20,7 +20,6 @@ import * as extensionFunctions from './extensionFunctions';
 import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
-import * as path from 'path';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 
 const DIDACT_VIEW = 'didact.tutorials';

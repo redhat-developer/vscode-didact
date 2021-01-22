@@ -4,7 +4,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.2.1
 
-- TBD
+- Switching from xmldom to node-html-parser for heading parsing
 
 ## 0.2.0
 

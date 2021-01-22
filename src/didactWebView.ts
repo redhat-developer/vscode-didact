@@ -22,9 +22,9 @@ import * as commandHandler from './commandHandler';
 import * as fs from 'fs';
 import { ViewColumn } from 'vscode';
 import { getLastColumnUsedSetting, setLastColumnUsedSetting, DIDACT_DEFAULT_URL } from './utils';
-import { DOMParser } from 'xmldom';
 
 export class DidactWebviewPanel {
+	
 	/**
 	 * Track the current panel. Only allow a single panel to exist at a time.
 	 */
@@ -499,19 +499,13 @@ export class DidactWebviewPanel {
 	}
 
 	getFirstHeadingText() : string | undefined {
-		const html : string | undefined = this.getCurrentHTML();
-		if (html) {
-			const parsed : Document = new DOMParser().parseFromString(html);
-			if (parsed) {
-				const h1 : HTMLCollectionOf<HTMLHeadingElement> = parsed.getElementsByTagName('h1');
-				if (h1 && h1.length > 0 && h1[0].textContent) {
-					return h1[0].textContent;
-				}
-				const h2: HTMLCollectionOf<HTMLHeadingElement> = parsed.getElementsByTagName('h2');
-				if (h2 && h2.length > 0 && h2[0].textContent) {
-					return h2[0].textContent;
-				}
-			}
+		const h1 = extensionFunctions.collectElements('h1');
+		if (h1 && h1.length > 0 && h1[0].innerText) {
+			return h1[0].innerText;
+		}
+		const h2 = extensionFunctions.collectElements('h2');
+		if (h2 && h2.length > 0 && h2[0].innerText) {
+			return h2[0].innerText;
 		}
 		return undefined;
 	}
