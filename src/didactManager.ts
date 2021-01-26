@@ -16,7 +16,7 @@
  */
 
  'use strict';
-import {ExtensionContext, Memento, Uri} from 'vscode';
+import {ExtensionContext} from 'vscode';
 import { DidactPanel } from './didactPanel';
 
 export const DEFAULT_TITLE_VALUE = `Didact Tutorial`;
@@ -59,15 +59,7 @@ export class DidactManager {
 	public resetVisibility() : void {
 		this._panels.forEach(p => p.visible = false);
 	}
-		
-	public configure(): void {
-		this._panels.forEach(p => p.configure());
-	}
-
-	public getContext() : ExtensionContext | undefined {
-		return this.context;
-	}
-
+	
 	public setContext(ctxt : ExtensionContext): void {
 		this.context = ctxt;
 	}

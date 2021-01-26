@@ -37,7 +37,6 @@ export class DidactPanel {
 	private _disposed = false;
 	public visible = false;
 
-
 	public constructor(uri?: vscode.Uri ) {
 		if (!uri) {
 			uri = vscode.Uri.parse(DIDACT_DEFAULT_URL);
@@ -158,8 +157,6 @@ export class DidactPanel {
 			this._panel.webview.html = html;
 		}
 	} 
-
-	dataUrl: string | undefined;
 	
 	public setDidactStr(value: string | undefined): void {
 		this.didactStr = value;
@@ -169,10 +166,6 @@ export class DidactPanel {
 		return this._panel?.webview.html;
 	}
 
-	getDidactStr(): string | undefined {
-		return this.didactStr;
-	}
-	
 	public getDidactUriPath(): vscode.Uri | undefined {
 		return this.didactUriPath;
 	}
@@ -336,8 +329,6 @@ export class DidactPanel {
 
 		this._disposed = true;
 		
-		//DidactWebviewPanel.cacheFile();
-
 		didactManager.remove(this);
 
 		// Clean up our resources
