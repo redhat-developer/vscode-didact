@@ -253,13 +253,6 @@ export async function openDidactWithDefault(): Promise<void>{
 	panel.handleEvents();
 	panel.configure();
 	_didactFileUri = panel.getDidactUriPath();
-	// // TODO: add Didact document path here?
-	// DidactWebviewPanel.createOrShow(extContext.extensionPath);
-	// DidactWebviewPanel.setContext(extContext);
-	// _didactFileUri = undefined;
-	// DidactWebviewPanel.hardReset();
-	// _didactFileUri = DidactWebviewPanel.currentPanel?.getDidactUriPath();
-	// addToHistory(_didactFileUri);
 }
 
 function processExtensionFilePath(value: string | undefined) : vscode.Uri | undefined {
@@ -340,9 +333,7 @@ export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise
 		_didactFileUri = out;
 	}
 	console.log(`--Retrieved file URI ${_didactFileUri}`);
-	//addToHistory(_didactFileUri);
 	sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
-	//const isAdoc = isAsciiDoc();
 
 	didactManager.setContext(extContext);
 	const panel = new DidactPanel(_didactFileUri);
@@ -351,13 +342,6 @@ export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise
 	panel.setIsAsciiDoc(isAsciiDoc());
 	panel.handleEvents();
 	await panel.configure();
-
-	// DidactWebviewPanel.createOrShow(extContext.extensionPath, _didactFileUri, actualColumn);
-	// DidactWebviewPanel.setContext(extContext);
-	// if (DidactWebviewPanel.currentPanel && _didactFileUri) {
-	// 	DidactWebviewPanel.currentPanel.setIsAsciiDoc(isAdoc);
-	// 	DidactWebviewPanel.currentPanel.setDidactUriPath(_didactFileUri);
-	// }
 }
 
 // very basic requirements testing -- check to see if the results of a command executed at CLI returns a known result
