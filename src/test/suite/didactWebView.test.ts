@@ -18,10 +18,10 @@
 
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import { DidactWebviewPanel } from '../../didactWebView';
 import { START_DIDACT_COMMAND } from '../../extensionFunctions';
 import { ok, fail } from 'assert';
 import { DIDACT_DEFAULT_URL } from '../../utils';
+import { didactManager } from '../../didactManager';
 
 suite("Didact Web View tests", function () {
 
@@ -32,11 +32,11 @@ suite("Didact Web View tests", function () {
 		if (configuredUri) {
 			const defaultUri = vscode.Uri.parse(configuredUri);
 			await vscode.commands.executeCommand(START_DIDACT_COMMAND, testUri);
-			if (DidactWebviewPanel.currentPanel) {
-				const oldPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
-				DidactWebviewPanel.hardReset();
+			if (didactManager.active()) {
+				const oldPath = didactManager.active()?.getDidactUriPath()?.toString();
+				await didactManager.active()?.hardReset();
 
-				const newPath = DidactWebviewPanel.currentPanel.getDidactUriPath()?.toString();
+				const newPath = didactManager.active()?.getDidactUriPath()?.toString();
 				expect(oldPath).not.equals(newPath);
 				expect(newPath).equals(defaultUri.toString());
 			} else {
@@ -50,8 +50,8 @@ suite("Didact Web View tests", function () {
 	test("ensure we can get a valid H1 title out of the didact file", async () => {
 		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithH1.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
-		if (DidactWebviewPanel.currentPanel) {
-			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+		if (didactManager.active()) {
+			const firstheading : string | undefined = didactManager.active()?.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading: ${firstheading}`);
 				expect(firstheading).equals('This should be the H1 heading');
@@ -67,8 +67,8 @@ suite("Didact Web View tests", function () {
 	test("ensure we can get the first valid H1 title out of a didact file with multiple H1s", async () => {
 		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithMultipleH1.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
-		if (DidactWebviewPanel.currentPanel) {
-			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+		if (didactManager.active()) {
+			const firstheading : string | undefined = didactManager.active()?.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading: ${firstheading}`);
 				expect(firstheading).equals('This should be the first H1 heading');
@@ -84,8 +84,8 @@ suite("Didact Web View tests", function () {
 	test("ensure we can get a valid H2 title out of the didact file", async () => {
 		const testOneH2Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithH2.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH2Uri);
-		if (DidactWebviewPanel.currentPanel) {
-			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+		if (didactManager.active()) {
+			const firstheading : string | undefined = didactManager.active()?.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading: ${firstheading}`);
 				expect(firstheading).equals('This should be the H2 heading');
@@ -101,14 +101,14 @@ suite("Didact Web View tests", function () {
 	test("ensure we can get no title out of the didact file if no headings present", async () => {
 		const testOneH2Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithNoHeadings.didact.md');
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH2Uri);
-		if (DidactWebviewPanel.currentPanel) {
-			const firstheading : string | undefined = DidactWebviewPanel.currentPanel.getFirstHeadingText();
+		if (didactManager.active()) {
+			const firstheading : string | undefined = didactManager.active()?.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading, though we should not have: ${firstheading}`);
 				fail(`DidactWebviewPanel found a heading when no heading should be present.`);
 			} else {
 				ok(`DidactWebviewPanel did not find a heading when there was no heading to find.`);
-				const defaultTitle : string | undefined = DidactWebviewPanel.currentPanel.getDidactDefaultTitle();
+				const defaultTitle : string | undefined = didactManager.active()?.getDidactDefaultTitle();
 				console.log(`Retrieved default heading: ${defaultTitle}`);
 				expect(defaultTitle).equals('didactWithNoHeadings.didact.md');
 			}

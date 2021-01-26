@@ -17,7 +17,6 @@
 
 import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
-import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
@@ -81,20 +80,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	});
 
 	// set up so we don't lose the webview contents each time it goes 'invisible' 
-	if (vscode.window.registerWebviewPanelSerializer) {
-		// Make sure we register a serializer in activation event
-		vscode.window.registerWebviewPanelSerializer(DidactWebviewPanel.viewType, {
-			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-				DidactWebviewPanel.setContext(context);
-				if (state && state.oldBody) {
-					DidactWebviewPanel.revive(webviewPanel, context.extensionPath, state.oldBody);
-				} else {
-					DidactWebviewPanel.revive(webviewPanel, context.extensionPath);
-				}
-			}
-		});
-	}
-
 	vscode.window.registerWebviewPanelSerializer(VIEW_TYPE, new DidactPanelSerializer(context));
 
 	// always clear the registry and let the extensions register as they are activated
@@ -124,9 +109,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	if (openAtStartup) {
 		await extensionFunctions.openDidactWithDefault();
 	}
-
-	// workaround to retrieve cached Uri for last didact opened at session shutdown
-	extensionFunctions.addCachedDidactUriToHistory();
 }
 
 function createIntegrationsView(): void {
@@ -141,7 +123,6 @@ function createIntegrationsView(): void {
 }
 
 export async function deactivate(): Promise<void> {
-	await DidactWebviewPanel.cacheFile();
 	await clearRegisteredTutorials();
 	clearOutputChannels();
 }

@@ -25,7 +25,9 @@ import * as commandHandler from './commandHandler';
 
 export class DidactPanel {
 
-	private _panel: vscode.WebviewPanel | undefined;
+	// public for testing purposes 
+	public _panel: vscode.WebviewPanel | undefined;
+
 	private _disposables: vscode.Disposable[] = [];
 	private currentHtml : string | undefined = undefined;
 	private didactStr : string | undefined = undefined;
@@ -33,6 +35,8 @@ export class DidactPanel {
 	private defaultTitle = DEFAULT_TITLE_VALUE;
 	private isAsciiDoc = false;
 	private _disposed = false;
+	public visible = false;
+
 
 	public constructor(uri?: vscode.Uri ) {
 		if (!uri) {
@@ -70,7 +74,7 @@ export class DidactPanel {
 				localResourceRoots: localResourceRoots, 
 
 				// persist the state 
-				//retainContextWhenHidden: true
+				retainContextWhenHidden: true
 			}
 		);
 		panel.iconPath = localIconPath;
@@ -80,12 +84,16 @@ export class DidactPanel {
 	
 	public attachWebviewPanel(webviewPanel: vscode.WebviewPanel): DidactPanel {
 		this._panel = webviewPanel;
-		this.visible = webviewPanel.active;
+		this.setVisible(webviewPanel.active);
 		this._panel.onDidDispose(() => {
-			//this.saveState();
 			this.dispose();
 		}, this, this._disposables);
 		return this;
+	}
+
+	private setVisible(flag: boolean) {
+		didactManager.resetVisibility();
+		this.visible = flag;
 	}
 	
 	public static revive(context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel, oldBody? : string): DidactPanel {
@@ -102,36 +110,34 @@ export class DidactPanel {
 	}
 
 	public handleEvents() : void {
-		if (this._panel) {
-			this._panel.webview.onDidReceiveMessage(
-				async message => {
-					console.log(message);
-					switch (message.command) {
-						case 'update':
-							if (message.text) {
-								this.currentHtml = message.text;
+		this._panel?.webview.onDidReceiveMessage(
+			async message => {
+				console.log(message);
+				switch (message.command) {
+					case 'update':
+						if (message.text) {
+							this.currentHtml = message.text;
+						}
+						return;
+					case 'link':
+						if (message.text) {
+							try {
+								await commandHandler.processInputs(message.text, didactManager.getExtensionPath());
+							} catch (error) {
+								vscode.window.showErrorMessage(`Didact was unable to call commands: ${message.text}: ${error}`);
 							}
-							return;
-						case 'link':
-							if (message.text) {
-								try {
-									await commandHandler.processInputs(message.text, didactManager.getExtensionPath());
-								} catch (error) {
-									vscode.window.showErrorMessage(`Didact was unable to call commands: ${message.text}: ${error}`);
-								}
-							}
-							return;
-					}
-				},
-				null,
-				this._disposables
-			);
+						}
+						return;
+				}
+			},
+			null,
+			this._disposables
+		);
 
-			this._panel.onDidChangeViewState( (e) => {
-				this.saveState();
-				this.visible = e.webviewPanel.active;
-			});
-		}
+		this._panel?.onDidChangeViewState( async (e) => {
+			this.setVisible(e.webviewPanel.active);
+			await this.sendSetStateMessage();
+		});
 	}
 
 	public async sendSetStateMessage() : Promise<void> {
@@ -144,7 +150,7 @@ export class DidactPanel {
 
 	async configure(flag = false): Promise<void> {
 		this._update(flag);
-		this.saveState();
+		await this.sendSetStateMessage();
 	}
 
 	public setHtml(html : string) : void {
@@ -154,14 +160,13 @@ export class DidactPanel {
 	} 
 
 	dataUrl: string | undefined;
-	visible: unknown;
 	
 	public setDidactStr(value: string | undefined): void {
 		this.didactStr = value;
 	}
 
 	public getCurrentHTML() : string | undefined {
-		return this.currentHtml;
+		return this._panel?.webview.html;
 	}
 
 	getDidactStr(): string | undefined {
@@ -185,7 +190,7 @@ export class DidactPanel {
 		this.didactUriPath = inpath;
 		if (inpath) {
 			const tempFilename = path.basename(inpath.fsPath);
-				this.defaultTitle = tempFilename;
+			this.defaultTitle = tempFilename;
 		}
 		this._update(true);
 	}
@@ -207,7 +212,7 @@ export class DidactPanel {
 				this._panel.title = this.defaultTitle;
 			}
 		}
-		this.saveState();
+		await this.sendSetStateMessage();
 	}
 	
 	wrapDidactContent(didactHtml: string | undefined) : string | undefined {
@@ -349,11 +354,11 @@ export class DidactPanel {
 	}
 	
 	getFirstHeadingText() : string | undefined {
-		const h1 = extensionFunctions.collectElements('h1');
+		const h1 = extensionFunctions.collectElements('h1', this._panel?.webview.html);
 		if (h1 && h1.length > 0 && h1[0].innerText) {
 			return h1[0].innerText;
 		}
-		const h2 = extensionFunctions.collectElements('h2');
+		const h2 = extensionFunctions.collectElements('h2', this._panel?.webview.html);
 		if (h2 && h2.length > 0 && h2[0].innerText) {
 			return h2[0].innerText;			
 		}
@@ -365,10 +370,6 @@ export class DidactPanel {
 			return this._panel.viewColumn;
 		}
 		return undefined;
-	}
-
-	public saveState() : void {
-		this.sendSetStateMessage();
 	}
 
 	public async postMessage(message: string): Promise<void> {
@@ -385,7 +386,7 @@ export class DidactPanel {
 		}
 		const jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
 		this._panel.webview.postMessage(jsonMsg);
-		this.saveState();
+		await this.sendSetStateMessage();
 	}
 
 	async postNamedSimpleMessage(msg: string): Promise<void> {
@@ -406,5 +407,15 @@ export class DidactPanel {
 
 	public async postCollectAllCommandIdsMessage(): Promise<void> {
 		this.postNamedSimpleMessage("returnCommands");
+	}
+
+	public hardReset(): void {
+		didactManager.active()?.setDidactStr(undefined);
+		const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
+		if (configuredUri) {
+			const defaultUri = vscode.Uri.parse(configuredUri);
+			didactManager.active()?.setDidactUriPath(defaultUri);
+		}
+		didactManager.active()?._update(true);
 	}
 }

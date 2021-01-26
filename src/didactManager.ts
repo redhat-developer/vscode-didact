@@ -52,13 +52,12 @@ export class DidactManager {
 		}
 	}
 
-	public find(dataUri: Uri): Array<DidactPanel> {
-		const dataUrl: string = dataUri.toString(true); // skip uri encoding
-		return this._panels.filter(p => p.dataUrl === dataUrl);
-	}
-
 	public active(): DidactPanel | undefined {
 		return this._panels.find(p => p.visible);
+	}
+
+	public resetVisibility() : void {
+		this._panels.forEach(p => p.visible = false);
 	}
 		
 	public configure(): void {
@@ -79,13 +78,6 @@ export class DidactManager {
 		}
 		return undefined;
 	}
-
-	public getMemento() : Memento | undefined {
-		if (this.context) {
-			return this.context.workspaceState;
-		}
-		return undefined;
-	}	
 }
 
 // export preview manager singleton

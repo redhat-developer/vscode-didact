@@ -18,7 +18,6 @@
 import * as vscode from 'vscode';
 import * as utils from './utils';
 import * as fs from 'fs';
-import {DidactWebviewPanel} from './didactWebView';
 import * as querystring from 'querystring';
 import * as path from 'path';
 import * as child_process from 'child_process';
@@ -29,8 +28,6 @@ import { TreeNode } from './nodeProvider';
 import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as url from 'url';
 import * as download from 'download';
-import { DidactHistory } from './history';
-import { parse } from 'node-html-parser';
 import { didactManager } from './didactManager';
 import { DidactPanel } from './didactPanel';
 import { parse } from 'node-html-parser';
@@ -84,8 +81,6 @@ export let didactOutputChannel: vscode.OutputChannel;
 
 // stashed Didact URI
 let _didactFileUri : vscode.Uri | undefined = undefined;
-
-const historyList = new DidactHistory();
 
 // exposed for testing purposes
 export function getContext() : vscode.ExtensionContext {
@@ -322,27 +317,6 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 	return out;
 }
 
-export function addCachedDidactUriToHistory(): void {
-	// if (DidactWebviewPanel.currentPanel) {
-	// 	const stashedUri = DidactWebviewPanel.currentPanel.getCachedUri();
-	// 	if (stashedUri) {
-	// 		const realUri = vscode.Uri.parse(stashedUri);
-	// 		addToHistory(realUri);
-	// 	}
-	// }
-}
-
-// exposed for testing
-export function getHistory() : DidactHistory {
-	return historyList;
-}
-
-export function addToHistory(uri:vscode.Uri | undefined): void {
-	if (uri) {
-		historyList.add(uri);
-	}		
-}
-
 // open the didact window with the didact file passed in via Uri
 export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise<void>{
 	if (!uri) {
@@ -372,7 +346,7 @@ export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise
 
 	didactManager.setContext(extContext);
 	const panel = new DidactPanel(_didactFileUri);
-	panel.initWebviewPanel(actualColumn);
+	panel.initWebviewPanel(actualColumn, _didactFileUri);
 	panel.setDidactUriPath(_didactFileUri);
 	panel.setIsAsciiDoc(isAsciiDoc());
 	panel.handleEvents();
@@ -462,23 +436,14 @@ export async function validWorkspaceCheck(requirement: string) : Promise<boolean
 // dispose of and reload the didact window with the latest Uri
 export async function reloadDidact(): Promise<void>{
 	sendTextToOutputChannel(`Reloading Didact window`);
-	if (DidactWebviewPanel.currentPanel) {
-		DidactWebviewPanel.currentPanel.dispose();
-	}
+	didactManager.active()?.dispose();
 	await vscode.commands.executeCommand(START_DIDACT_COMMAND, _didactFileUri);
 }
 
 // send a message back to the webview - used for requirements testing mostly
 function postRequirementsResponseMessage(requirement: string, booleanResponse: boolean): void {
-	if (requirement && DidactWebviewPanel.currentPanel) {
-		DidactWebviewPanel.postRequirementsResponseMessage(requirement, booleanResponse);
-	} else {
-		if (didactManager.active()) {
-			const panel = didactManager.active();
-			if (panel) {
-				panel.postRequirementsResponseMessage(requirement, booleanResponse);
-			}
-		}
+	if (requirement) {
+		didactManager.active()?.postRequirementsResponseMessage(requirement, booleanResponse);
 	}
 }
 
@@ -572,47 +537,30 @@ export async function getDataFromUrl(inurl:string) : Promise<string> {
 }
 
 export function validateAllRequirements(): void {
-	if (DidactWebviewPanel.currentPanel) {
-		sendTextToOutputChannel(`Validating all requirements specified in Didact tutorial`);
-		DidactWebviewPanel.postTestAllRequirementsMessage();
-	}
+	sendTextToOutputChannel(`Validating all requirements specified in Didact tutorial`);
+	didactManager.active()?.postTestAllRequirementsMessage();
 }
 
-export function collectElements(tagname: string) : any[] {
+export function collectElements(tagname: string, html? : string | undefined) : any[] {
 	const elements: any[] = [];
-	if (DidactWebviewPanel.currentPanel) {
-		const html : string | undefined = DidactWebviewPanel.currentPanel.getCurrentHTML();
-		if (html) {
-			const document = parse(html);
-			const links = document.querySelectorAll(tagname);
-			for (let index = 0; index < links.length; index++) {
-				const element = links[index];
-				elements.push(element);
-			}
+	if (!html) {
+		html = didactManager.active()?.getCurrentHTML();
+	}
+	if (html) {
+		const document = parse(html);
+		const links = document.querySelectorAll(tagname);
+		for (let index = 0; index < links.length; index++) {
+			const element = links[index];
+			elements.push(element);
 		}
-	} else {
-		if (didactManager.active()) {
-			const panel = didactManager.active();
-			if (panel) {
-				const html : string | undefined = panel.getCurrentHTML();
-				if (html) {
-					const document = parse(html);
-					const links = document.querySelectorAll(tagname);
-					for (let index = 0; index < links.length; index++) {
-						const element = links[index];
-						elements.push(element);
-					}
-				}
-			}
-		}	
 	}
 	return elements;
 }
 
 export function gatherAllRequirementsLinks() : any[] {
 	const requirements = [];
-	if (DidactWebviewPanel.currentPanel) {
-		const links = collectElements("a");
+	if (didactManager.active()?.getCurrentHTML()) {
+		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
 		for (let index = 0; index < links.length; index++) {
 			const element = links[index];
 			if (element.getAttribute('href')) {
@@ -631,8 +579,8 @@ export function gatherAllRequirementsLinks() : any[] {
 
 export function gatherAllCommandsLinks(): any[] {
 	const commandLinks = [];
-	if (DidactWebviewPanel.currentPanel) {
-		const links = collectElements("a");
+	if (didactManager.active()?.getCurrentHTML()) {
+		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
 		for (let index = 0; index < links.length; index++) {
 			const element = links[index];
 			if (element.getAttribute('href')) {
@@ -730,22 +678,20 @@ export async function validateCommandIDsInSelectedFile(didactUri: vscode.Uri) : 
 	if (didactUri) {
 		await vscode.commands.executeCommand(START_DIDACT_COMMAND, didactUri);
 	}
-	if (DidactWebviewPanel.currentPanel) {
-		const commands: any[] = gatherAllCommandsLinks();
-		let allOk = false;
-		await openDidactOutputChannel();
-		if (commands && commands.length > 0) {
-			allOk = await validateDidactCommands(commands);
-			if (allOk) {
-				sendTextToOutputChannel(`--Command IDs: OK`);
-				sendTextToOutputChannel(`Validation Result: SUCCESS (${commands.length} Commands Validated)`);
-			} else {
-				sendTextToOutputChannel(`Validation Result: FAILURE`);
-				sendTextToOutputChannel(`-- Note that command IDs not found may be due to a missing extension or simply an invalid ID.`);
-			}
+	const commands: any[] = gatherAllCommandsLinks();
+	let allOk = false;
+	await openDidactOutputChannel();
+	if (commands && commands.length > 0) {
+		allOk = await validateDidactCommands(commands);
+		if (allOk) {
+			sendTextToOutputChannel(`--Command IDs: OK`);
+			sendTextToOutputChannel(`Validation Result: SUCCESS (${commands.length} Commands Validated)`);
 		} else {
-			sendTextToOutputChannel(`Validation Result: FAILURE - No command IDs found in current Didact file`);
+			sendTextToOutputChannel(`Validation Result: FAILURE`);
+			sendTextToOutputChannel(`-- Note that command IDs not found may be due to a missing extension or simply an invalid ID.`);
 		}
+	} else {
+		sendTextToOutputChannel(`Validation Result: FAILURE - No command IDs found in current Didact file`);
 	}
 }
 
