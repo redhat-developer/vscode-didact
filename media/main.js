@@ -25,7 +25,12 @@ function () {
 	const oldState = vscode.getState();
 	let oldBody = oldState ? oldState.oldbody : '';
 	if (oldBody) {
-		document.body = oldBody;
+		const textFromBase64 = window.btoa(oldBody);
+		document.body = decodeURI(textFromBase64);
+	}
+	let oldTitle = oldState ? oldState.oldTitle : '';
+	if (oldTitle) {
+		this.title = oldTitle;
 	}
 
 	document.body.addEventListener('click', event => {
@@ -47,6 +52,7 @@ function () {
 					element.checked = true;
 					if (document.body) {
 						vscode.postMessage({ command: 'update', text: document.body });
+						updateState();
 					}
 				}				
 
@@ -78,7 +84,9 @@ function () {
 
 	function updateState() {
 		const textToCache = '<!DOCTYPE HTML>' + '\n' + document.documentElement.outerHTML;
-		vscode.setState( { oldBody: textToCache});
+		const step1 = encodeURI(textToCache);
+		const textToBase64 = window.btoa(step1);
+		vscode.setState( { oldBody: textToBase64, oldTitle : this.title});
 	}
 
 	// Handle messages sent from the extension to the webview

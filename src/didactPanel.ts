@@ -20,8 +20,8 @@ import * as extensionFunctions from './extensionFunctions';
 import * as path from 'path';
 import { ViewColumn } from 'vscode';
 import { DIDACT_DEFAULT_URL } from './utils';
-import { DOMParser } from 'xmldom';
 import { DEFAULT_TITLE_VALUE, didactManager, VIEW_TYPE } from './didactManager';
+import * as commandHandler from './commandHandler';
 
 export class DidactPanel {
 
@@ -33,17 +33,15 @@ export class DidactPanel {
 	private defaultTitle = DEFAULT_TITLE_VALUE;
 	private isAsciiDoc = false;
 	private _disposed = false;
-	private _storage: vscode.Memento | undefined;
 
 	public constructor(uri?: vscode.Uri ) {
-		this._storage = didactManager.getMemento();
 		if (!uri) {
 			uri = vscode.Uri.parse(DIDACT_DEFAULT_URL);
 		}
 		this.didactUriPath = uri;
 		didactManager.add(this);
 	}
-	
+
 	public initWebviewPanel(viewColumn: ViewColumn, inpath?: vscode.Uri | undefined): DidactPanel | undefined {
 		const extPath = didactManager.getExtensionPath();
 		if (!extPath) {
@@ -72,7 +70,7 @@ export class DidactPanel {
 				localResourceRoots: localResourceRoots, 
 
 				// persist the state 
-				retainContextWhenHidden: true
+				//retainContextWhenHidden: true
 			}
 		);
 		panel.iconPath = localIconPath;
@@ -82,60 +80,78 @@ export class DidactPanel {
 	
 	public attachWebviewPanel(webviewPanel: vscode.WebviewPanel): DidactPanel {
 		this._panel = webviewPanel;
+		this.visible = webviewPanel.active;
 		this._panel.onDidDispose(() => {
-			this.saveState();
+			//this.saveState();
 			this.dispose();
 		}, this, this._disposables);
 		return this;
 	}
 	
-	public static revive(context: vscode.ExtensionContext, uri: vscode.Uri, webviewPanel: vscode.WebviewPanel, oldBody? : string): DidactPanel {
+	public static revive(context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel, oldBody? : string): DidactPanel {
 		didactManager.setContext(context);
 
-		const panel = new DidactPanel(uri);
+		const panel = new DidactPanel();
 		panel.attachWebviewPanel(webviewPanel);
 		panel.handleEvents();
+		panel.configure();
 		if (oldBody) {
-			panel.configure();
-		} else {
-			panel.configure(oldBody);
+			panel.setHtml(oldBody);
 		}
 		return panel;
 	}
-	
+
 	public handleEvents() : void {
 		if (this._panel) {
-			this._panel.webview.onDidReceiveMessage(async (e) => {
-				// do the things
-				if (e.save) {
-					this.saveState();
-				}				
-			}, this, this._disposables);
+			this._panel.webview.onDidReceiveMessage(
+				async message => {
+					console.log(message);
+					switch (message.command) {
+						case 'update':
+							if (message.text) {
+								this.currentHtml = message.text;
+							}
+							return;
+						case 'link':
+							if (message.text) {
+								try {
+									await commandHandler.processInputs(message.text, didactManager.getExtensionPath());
+								} catch (error) {
+									vscode.window.showErrorMessage(`Didact was unable to call commands: ${message.text}: ${error}`);
+								}
+							}
+							return;
+					}
+				},
+				null,
+				this._disposables
+			);
 
-			this._panel.onDidChangeViewState( () => {
+			this._panel.onDidChangeViewState( (e) => {
 				this.saveState();
+				this.visible = e.webviewPanel.active;
 			});
-
-			this._update(true);
 		}
 	}
 
 	public async sendSetStateMessage() : Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || this._disposed) {
 			return;
 		}
-		const jsonMsg = "{ \"command\": \"setState\" }";
-		console.log("outgoing message being posted: " + jsonMsg);
+		const jsonMsg = `{ "command": "setState" }`;
 		this._panel.webview.postMessage(jsonMsg);
 	}	
 
-	async configure(html? : string): Promise<void> {
-		if (!html) {
-			await this._update(true);
-		} else if (this._panel) {
+	async configure(flag = false): Promise<void> {
+		this._update(flag);
+		this.saveState();
+	}
+
+	public setHtml(html : string) : void {
+		if (this._panel) {
 			this._panel.webview.html = html;
 		}
-	}
+	} 
 
 	dataUrl: string | undefined;
 	visible: unknown;
@@ -333,21 +349,13 @@ export class DidactPanel {
 	}
 	
 	getFirstHeadingText() : string | undefined {
-		if (this._panel) {
-			const html : string | undefined = this._panel.webview.html;
-			if (html) {
-				const parsed : Document = new DOMParser().parseFromString(html);
-				if (parsed) {
-					const h1 : HTMLCollectionOf<HTMLHeadingElement> = parsed.getElementsByTagName('h1');
-					if (h1 && h1.length > 0 && h1[0].textContent) {
-						return h1[0].textContent;
-					}
-					const h2: HTMLCollectionOf<HTMLHeadingElement> = parsed.getElementsByTagName('h2');
-					if (h2 && h2.length > 0 && h2[0].textContent) {
-						return h2[0].textContent;
-					}
-				}
-			}
+		const h1 = extensionFunctions.collectElements('h1');
+		if (h1 && h1.length > 0 && h1[0].innerText) {
+			return h1[0].innerText;
+		}
+		const h2 = extensionFunctions.collectElements('h2');
+		if (h2 && h2.length > 0 && h2[0].innerText) {
+			return h2[0].innerText;			
 		}
 		return undefined;
 	}
@@ -361,5 +369,42 @@ export class DidactPanel {
 
 	public saveState() : void {
 		this.sendSetStateMessage();
+	}
+
+	public async postMessage(message: string): Promise<void> {
+		if (!this._panel) {
+			return;
+		}
+		const jsonMsg:string = "{ \"command\": \"sendMessage\", \"data\": \"" + message + "\"}";
+		this._panel.webview.postMessage(jsonMsg);
+	}
+
+	public async postRequirementsResponseMessage(requirementName: string, result: boolean): Promise<void> {
+		if (!this._panel) {
+			return;
+		}
+		const jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
+		this._panel.webview.postMessage(jsonMsg);
+		this.saveState();
+	}
+
+	async postNamedSimpleMessage(msg: string): Promise<void> {
+		if (!this._panel) {
+			return;
+		}
+		const jsonMsg = `{ "command" : "${msg}"}`;
+		this._panel.webview.postMessage(jsonMsg);
+	}
+
+	public async postTestAllRequirementsMessage(): Promise<void> {
+		this.postNamedSimpleMessage("allRequirementCheck");
+	}
+
+	public async postCollectAllRequirementsMessage(): Promise<void> {
+		this.postNamedSimpleMessage("returnRequirements");
+	}
+
+	public async postCollectAllCommandIdsMessage(): Promise<void> {
+		this.postNamedSimpleMessage("returnCommands");
 	}
 }
