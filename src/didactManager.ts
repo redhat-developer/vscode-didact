@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
- 'use strict';
+'use strict';
 import {ExtensionContext} from 'vscode';
 import { DidactPanel } from './didactPanel';
 
