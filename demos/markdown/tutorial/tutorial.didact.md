@@ -98,7 +98,7 @@ Let's walk through the parts of this example.
 
 Essentially the *Status* label is a textual placeholder for a success or failure message based on the requirement status. We have another type-ahead helper to help you create one.
 
-* Ctrl+Space, select `Insert Requirements label` and then make the hashtag label specific for your requirement.
+* Ctrl+Space, select `Insert Didact Requirements label` and then make the hashtag label specific for your requirement.
 * Example: `*Status: unknown*{#requirement-name}`
 
 Then you have to decide what kind of requirement it is you’re checking and how specific you want to get.
