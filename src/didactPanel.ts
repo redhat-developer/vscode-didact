@@ -65,7 +65,7 @@ export class DidactPanel {
 				// Enable javascript in the webview
 				enableScripts: true,
 
-				// And restrict the webview to only loading content from our extension's `media` directory.
+				// And restrict the webview to only loading content from known directories
 				localResourceRoots: localResourceRoots, 
 
 				// persist the state 
@@ -91,10 +91,16 @@ export class DidactPanel {
 		this.visible = flag;
 	}
 	
-	public static revive(context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel, oldBody? : string): DidactPanel {
+	public static revive(context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel, oldBody? : string, oldUri? : string): DidactPanel {
 		didactManager.setContext(context);
 
-		const panel = new DidactPanel();
+		let panel : DidactPanel;
+		if (oldUri) {
+			const toUri = vscode.Uri.parse(oldUri);
+			panel = new DidactPanel(toUri);
+		} else {
+			panel = new DidactPanel();
+		}
 		panel.attachWebviewPanel(webviewPanel);
 		panel.handleEvents();
 		panel.configure();
@@ -139,7 +145,17 @@ export class DidactPanel {
 		if (!this._panel || this._disposed) {
 			return;
 		}
-		const jsonMsg = `{ "command": "setState" }`;
+		const sendCommand = `"command": "setState"`;
+		let sendUri = undefined;
+		if (this.didactUriPath) {
+			const encodedUri = encodeURI(this.didactUriPath.toString());
+			sendUri = `"oldUri" : "${encodedUri}"`;
+		}
+
+		let jsonMsg = `{ ${sendCommand} }`;
+		if (sendUri) {
+			jsonMsg = `{ ${sendCommand}, ${sendUri} }`;
+		}
 		this._panel.webview.postMessage(jsonMsg);
 	}	
 

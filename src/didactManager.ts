@@ -16,11 +16,12 @@
  */
 
 'use strict';
-import {ExtensionContext} from 'vscode';
+import {ExtensionContext, Uri, ViewColumn} from 'vscode';
 import { DidactPanel } from './didactPanel';
+import { isAsciiDoc } from './extensionFunctions';
 
 export const DEFAULT_TITLE_VALUE = `Didact Tutorial`;
-export const VIEW_TYPE = 'didact2';
+export const VIEW_TYPE = 'didact';
 
 export class DidactManager {
 	
@@ -35,6 +36,32 @@ export class DidactManager {
 
 	public static get Instance() : DidactManager {
 		return this._instance || (this._instance = new this());
+	}
+
+	public async create(didactUri : Uri, column? : ViewColumn) : Promise<DidactPanel | undefined> {
+		if (didactUri) {
+			let panel : DidactPanel | undefined;
+			let reload = false;
+			if(this.getByUri(didactUri)) {
+				panel = this.getByUri(didactUri);
+				column = panel?.getColumn();
+				panel?._panel?.dispose();
+				reload = true;
+			}
+			panel = new DidactPanel(didactUri);
+			if (panel) {
+				if (!column) {
+					column = ViewColumn.Active;
+				}
+				panel.initWebviewPanel(column, didactUri);
+				panel.setDidactUriPath(didactUri);
+				panel.setIsAsciiDoc(isAsciiDoc());
+				panel.handleEvents();
+				await panel.configure(reload);
+			}
+			return panel;
+		}
+		return undefined;
 	}
 
 	public add(panel: DidactPanel): void {
@@ -74,6 +101,22 @@ export class DidactManager {
 	// for test purposes
 	public countPanels() : number {
 		return this._panels.length;
+	}
+
+	public getByUri(testUri: Uri): DidactPanel | undefined {
+		let returnPanel = undefined;
+		for (let index = 0; index < this._panels.length; index++) {
+			const p = this._panels[index];
+			const originalUri = p.getDidactUriPath();
+			if (testUri && originalUri) {
+				if (originalUri.toString() === testUri.toString()) {
+					returnPanel = p;
+					break;
+				}
+			}
+			
+		}
+		return returnPanel;
 	}
 }
 

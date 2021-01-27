@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +18,7 @@
  * limitations under the License.
  */
 'use strict';
-import { WebviewPanel, WebviewPanelSerializer, ExtensionContext, Uri } from 'vscode';
+import { WebviewPanel, WebviewPanelSerializer, ExtensionContext } from 'vscode';
 import { DidactPanel } from './didactPanel';
 
 const base64 = require('base-64');
@@ -29,10 +32,11 @@ export class DidactPanelSerializer implements WebviewPanelSerializer {
 	}
 
 	public async deserializeWebviewPanel(webviewPanel: WebviewPanel, state: any) : Promise<void> {
-		if (state && state.oldBody) {
+		if (state && state.oldBody && state.oldUri) {
 			const textFromBase64 = base64.decode(state.oldBody);
 			const decoded = decodeURI(textFromBase64);
-			DidactPanel.revive(this._context, webviewPanel, decoded);
+			const decodedUri = decodeURI(state.oldUri);
+			DidactPanel.revive(this._context, webviewPanel, decoded, decodedUri);
 		} else {
 			DidactPanel.revive(this._context, webviewPanel);
 		}

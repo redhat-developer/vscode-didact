@@ -82,11 +82,11 @@ function () {
 		return elements;
 	}
 
-	function updateState() {
+	function updateState(passedUri) {
 		const textToCache = '<!DOCTYPE HTML>' + '\n' + document.documentElement.outerHTML;
-		const step1 = encodeURI(textToCache);
-		const textToBase64 = window.btoa(step1);
-		vscode.setState( { oldBody: textToBase64, oldTitle : this.title});
+		const encodedText = encodeURI(textToCache);
+		const textToBase64 = window.btoa(encodedText);
+		vscode.setState( { oldBody: textToBase64, oldTitle : this.title, oldUri : passedUri });
 	}
 
 	// Handle messages sent from the extension to the webview
@@ -95,6 +95,8 @@ function () {
 		const json = JSON.parse(message);
 		const requirementName = json.requirementName;
 		const isAvailable = json.result;
+		const passedUri = json.oldUri;
+
 		let element = document.getElementById(requirementName);
 
 		switch (json.command) {
@@ -139,7 +141,7 @@ function () {
 				break;
 
 			case 'setState':
-				updateState();
+				updateState(passedUri);
 				break;
 		}
 	});

@@ -254,12 +254,7 @@ export async function openDidactWithDefault(): Promise<void>{
 		_didactFileUri = vscode.Uri.parse(configuredPath);
 	}
 	if (_didactFileUri) {
-		const panel = new DidactPanel(_didactFileUri);	
-		panel.initWebviewPanel(vscode.ViewColumn.Active, _didactFileUri);
-		panel.setDidactUriPath(_didactFileUri);
-		panel.setIsAsciiDoc(isAsciiDoc());
-		panel.handleEvents();
-		await panel.configure();
+		await didactManager.create(_didactFileUri);
 	} else {
 		const errStr = `No default didact URL provided when opening default tutorial. Check setting to ensure path is provided.`;
 		sendTextToOutputChannel(errStr);
@@ -348,12 +343,7 @@ export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise
 	sendTextToOutputChannel(`--Retrieved file URI ${_didactFileUri}`);
 
 	didactManager.setContext(extContext);
-	const panel = new DidactPanel(_didactFileUri);
-	panel.initWebviewPanel(actualColumn, _didactFileUri);
-	panel.setDidactUriPath(_didactFileUri);
-	panel.setIsAsciiDoc(isAsciiDoc());
-	panel.handleEvents();
-	await panel.configure();
+	await didactManager.create(_didactFileUri, actualColumn);
 }
 
 // very basic requirements testing -- check to see if the results of a command executed at CLI returns a known result
