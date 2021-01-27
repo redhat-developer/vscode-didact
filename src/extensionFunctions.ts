@@ -31,6 +31,7 @@ import * as download from 'download';
 import { didactManager } from './didactManager';
 import { DidactPanel } from './didactPanel';
 import { parse } from 'node-html-parser';
+import { DIDACT_DEFAULT_URL } from './utils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -248,11 +249,22 @@ export async function openDidactWithDefault(): Promise<void>{
 	sendTextToOutputChannel(`Starting Didact window with default`);
 
 	didactManager.setContext(extContext);
-	const panel = new DidactPanel();
-	panel.initWebviewPanel(vscode.ViewColumn.Active);
-	panel.handleEvents();
-	panel.configure();
-	_didactFileUri = panel.getDidactUriPath();
+	const configuredPath : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
+	if (configuredPath) {
+		_didactFileUri = vscode.Uri.parse(configuredPath);
+	}
+	if (_didactFileUri) {
+		const panel = new DidactPanel(_didactFileUri);	
+		panel.initWebviewPanel(vscode.ViewColumn.Active, _didactFileUri);
+		panel.setDidactUriPath(_didactFileUri);
+		panel.setIsAsciiDoc(isAsciiDoc());
+		panel.handleEvents();
+		await panel.configure();
+	} else {
+		const errStr = `No default didact URL provided when opening default tutorial. Check setting to ensure path is provided.`;
+		sendTextToOutputChannel(errStr);
+		vscode.window.showErrorMessage(errStr);
+	}
 }
 
 function processExtensionFilePath(value: string | undefined) : vscode.Uri | undefined {

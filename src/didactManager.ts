@@ -70,6 +70,11 @@ export class DidactManager {
 		}
 		return undefined;
 	}
+
+	// for test purposes
+	public countPanels() : number {
+		return this._panels.length;
+	}
 }
 
 // export preview manager singleton

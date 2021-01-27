@@ -30,7 +30,6 @@ export class DidactPanel {
 
 	private _disposables: vscode.Disposable[] = [];
 	private currentHtml : string | undefined = undefined;
-	private didactStr : string | undefined = undefined;
 	private didactUriPath : vscode.Uri | undefined = undefined;
 	private defaultTitle = DEFAULT_TITLE_VALUE;
 	private isAsciiDoc = false;
@@ -38,9 +37,6 @@ export class DidactPanel {
 	public visible = false;
 
 	public constructor(uri?: vscode.Uri ) {
-		if (!uri) {
-			uri = vscode.Uri.parse(DIDACT_DEFAULT_URL);
-		}
 		this.didactUriPath = uri;
 		didactManager.add(this);
 	}
@@ -158,12 +154,12 @@ export class DidactPanel {
 		}
 	} 
 	
-	public setDidactStr(value: string | undefined): void {
-		this.didactStr = value;
-	}
-
 	public getCurrentHTML() : string | undefined {
 		return this._panel?.webview.html;
+	}
+
+	public getCurrentTitle() : string | undefined {
+		return this._panel?.title;
 	}
 
 	public getDidactUriPath(): vscode.Uri | undefined {
@@ -401,7 +397,6 @@ export class DidactPanel {
 	}
 
 	public hardReset(): void {
-		didactManager.active()?.setDidactStr(undefined);
 		const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
 		if (configuredUri) {
 			const defaultUri = vscode.Uri.parse(configuredUri);

@@ -40,7 +40,7 @@ suite("Didact Web View tests", function () {
 				expect(oldPath).not.equals(newPath);
 				expect(newPath).equals(defaultUri.toString());
 			} else {
-				fail(`DidactWebviewPanel did not open properly.`);
+				fail(`DidactPanel did not open properly.`);
 			}
 		} else {
 			fail (`Unable to retrieve default didact tutorial URI from user settings`);
@@ -57,10 +57,10 @@ suite("Didact Web View tests", function () {
 				expect(firstheading).equals('This should be the H1 heading');
 				expect(firstheading).not.equals('This would be the H2 heading, but should not be picked');
 			} else {
-				fail(`DidactWebviewPanel did not find first H1 heading.`);
+				fail(`DidactPanel did not find first H1 heading.`);
 			}
 		} else {
-			fail(`DidactWebviewPanel did not open properly.`);
+			fail(`DidactPanel did not open properly.`);
 		}
 	});
 
@@ -74,10 +74,10 @@ suite("Didact Web View tests", function () {
 				expect(firstheading).equals('This should be the first H1 heading');
 				expect(firstheading).not.equals('This would be a second H1 heading, but should not be picked');
 			} else {
-				fail(`DidactWebviewPanel did not find first H1 heading.`);
+				fail(`DidactPanel did not find first H1 heading.`);
 			}
 		} else {
-			fail(`DidactWebviewPanel did not open properly.`);
+			fail(`DidactPanel did not open properly.`);
 		}
 	});
 
@@ -91,10 +91,10 @@ suite("Didact Web View tests", function () {
 				expect(firstheading).equals('This should be the H2 heading');
 				expect(firstheading).not.equals('This would be the H3 heading, but should not be picked');
 			} else {
-				fail(`DidactWebviewPanel did not find first H2 heading.`);
+				fail(`DidactPanel did not find first H2 heading.`);
 			}
 		} else {
-			fail(`DidactWebviewPanel did not open properly.`);
+			fail(`DidactPanel did not open properly.`);
 		}
 	});
 
@@ -105,15 +105,48 @@ suite("Didact Web View tests", function () {
 			const firstheading : string | undefined = didactManager.active()?.getFirstHeadingText();
 			if (firstheading) {
 				console.log(`Retrieved first heading, though we should not have: ${firstheading}`);
-				fail(`DidactWebviewPanel found a heading when no heading should be present.`);
+				fail(`DidactPanel found a heading when no heading should be present.`);
 			} else {
-				ok(`DidactWebviewPanel did not find a heading when there was no heading to find.`);
+				ok(`DidactPanel did not find a heading when there was no heading to find.`);
 				const defaultTitle : string | undefined = didactManager.active()?.getDidactDefaultTitle();
 				console.log(`Retrieved default heading: ${defaultTitle}`);
 				expect(defaultTitle).equals('didactWithNoHeadings.didact.md');
 			}
 		} else {
-			fail(`DidactWebviewPanel did not open properly.`);
+			fail(`DidactPanel did not open properly.`);
+		}
+	});
+
+	test("ensure that we can open two didact windows", async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllGroups');
+
+		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithMultipleH1.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
+
+		const testOneH2Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithH2.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH2Uri);
+
+		expect(didactManager.countPanels()).to.be.equal(2);
+	});
+
+	test("ensure that if we open a didact window and do a reload, it persists", async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllGroups');
+
+		const testReloadUri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactForReload.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testReloadUri);
+		if (didactManager.active()) {
+			await didactManager.active()?.postTestAllRequirementsMessage();
+			const titleToCache = didactManager.active()?.getCurrentTitle();
+			const htmlToCache = didactManager.active()?.getCurrentHTML();
+
+			await vscode.commands.executeCommand(`workbench.action.webview.reloadWebviewAction`);
+
+			const htmlAfterRefresh = didactManager.active()?.getCurrentHTML();
+			const titleAfterRefresh = didactManager.active()?.getCurrentTitle();
+			expect(htmlAfterRefresh).to.be.equal(htmlToCache);
+			expect(titleAfterRefresh).to.be.equal(titleToCache);
+		} else {
+			fail(`DidactPanel did not open properly.`);
 		}
 	});
 });
