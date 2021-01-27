@@ -23,7 +23,7 @@ import { ok, fail } from 'assert';
 import { DIDACT_DEFAULT_URL } from '../../utils';
 import { didactManager } from '../../didactManager';
 
-suite("Didact Web View tests", function () {
+suite("Didact Panel tests", function () {
 
 	const testUri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
 
@@ -148,5 +148,15 @@ suite("Didact Web View tests", function () {
 		} else {
 			fail(`DidactPanel did not open properly.`);
 		}
+	});
+
+	test("ensure that if we open the same didact uri twice, we only end up with one active panel", async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllGroups');
+
+		const testOneH1Uri = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=src/test/data/didactWithMultipleH1.didact.md');
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
+		await vscode.commands.executeCommand(START_DIDACT_COMMAND, testOneH1Uri);
+
+		expect(didactManager.countPanels()).to.be.equal(1);
 	});
 });
