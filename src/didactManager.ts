@@ -108,13 +108,10 @@ export class DidactManager {
 		for (let index = 0; index < this._panels.length; index++) {
 			const p = this._panels[index];
 			const originalUri = p.getDidactUriPath();
-			if (testUri && originalUri) {
-				if (originalUri.toString() === testUri.toString()) {
-					returnPanel = p;
-					break;
-				}
-			}
-			
+			if (testUri && originalUri && originalUri.toString() === testUri.toString()) {
+				returnPanel = p;
+				break;
+			}			
 		}
 		return returnPanel;
 	}
