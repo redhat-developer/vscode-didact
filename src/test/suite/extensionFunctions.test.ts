@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as extensionFunctions from '../../extensionFunctions';
-import { handleProjectFilePath } from '../../commandHandler';
+import { handleExtFilePath, handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
 import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels } from '../../utils';
 import { beforeEach, after, afterEach } from 'mocha';
@@ -270,7 +270,47 @@ suite('Extension Functions Test Suite', () => {
 		expect(content).to.not.equal(null);
 		expect(content).to.include('How do you access this amazing functionality? The Command Palette!');
 	});
+
+	test('paste from clipboard to active editor', async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+		const textToPaste = 'Some text to copy into a new file created by separate command.';
+		await extensionFunctions.placeTextOnClipboard(textToPaste);
+		await extensionFunctions.pasteClipboardToActiveEditor();
+		if(vscode.window.activeTextEditor) {
+			const doc = vscode.window.activeTextEditor.document;
+			const docText = doc.getText();
+			expect(docText).to.equal(textToPaste);
+		}
+	});
 		
+	test('paste from clipboard to editor for specific file', async() => {
+		const testUriPath = 'vscode://redhat.vscode-didact?extension=src/test/data/fileToOpen.txt';
+		const testUri = handleExtFilePath(testUriPath);
+		const textToPaste = 'Some text to copy into an existing file we open.';
+		if (testUri) {
+			await extensionFunctions.placeTextOnClipboard(textToPaste);
+			await extensionFunctions.pasteClipboardToEditorForFile(testUri);
+			if(vscode.window.activeTextEditor) {
+				const doc = vscode.window.activeTextEditor.document;
+				const docText = doc.getText();
+				expect(docText).to.equal(textToPaste);
+			}
+		}
+
+	});
+
+	test('paste from clipboard to editor for new file', async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		const textToPaste = 'Some text to copy into a new file.';
+		await extensionFunctions.placeTextOnClipboard(textToPaste);
+		await extensionFunctions.pasteClipboardToNewTextFile();
+		if(vscode.window.activeTextEditor) {
+			const doc = vscode.window.activeTextEditor.document;
+			const docText = doc.getText();
+			expect(docText).to.equal(textToPaste);
+		}
+	});
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
