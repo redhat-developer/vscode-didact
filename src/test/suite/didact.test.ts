@@ -22,18 +22,17 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as extensionFunctions from '../../extensionFunctions';
-import {DidactWebviewPanel} from '../../didactWebView';
 import * as url from 'url';
 import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import { removeFilesAndFolders } from '../../utils';
 
 import waitUntil = require('async-wait-until');
+import { didactManager } from '../../didactManager';
 
 const EDITOR_OPENED_TIMEOUT = 5000;
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
-const testMD2 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/simple-example.didact.md');
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Linux';
@@ -221,7 +220,7 @@ suite('Didact test suite', () => {
 
 	test('Walk through the demo didact file to ensure that all commands exist in the VS Code system', async () => {
 		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD).then( async () => {
-			if (DidactWebviewPanel.currentPanel) {
+			if (didactManager.active()) {
 				const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 				assert.strictEqual(commands && commands.length > 0, true);
 				const isOk = await extensionFunctions.validateDidactCommands(commands);
@@ -242,43 +241,23 @@ suite('Didact test suite', () => {
 	});
 
 	test('Verify that validation fails when given a negative case', async () => {
-		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD3).then( async () => {
-			if (DidactWebviewPanel.currentPanel) {
-				const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
-				assert.strictEqual(commands && commands.length > 0, true);
-				const isOk = await extensionFunctions.validateDidactCommands(commands);
-				assert.strictEqual(isOk, false, `Invalid file should not have passed validation test`);
-			}
-		});
+		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD3);
+		if (didactManager.active()) {
+			const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
+			assert.strictEqual(commands && commands.length > 0, true);
+			const isOk = await extensionFunctions.validateDidactCommands(commands);
+			assert.strictEqual(isOk, false, `Invalid file should not have passed validation test`);
+		}
 	});	
 
 	test('Walk through the demo didact file to ensure that we get all the requirements commands successfully', async () => {
 		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD).then( async () => {
-			if (DidactWebviewPanel.currentPanel) {
+			if (didactManager.active()) {
 				const hrefs : any[] = extensionFunctions.gatherAllRequirementsLinks();
 				console.log('Gathered these requirements URIs: ' + hrefs);
 				// currently there are 5 requirements links in the test 
 				assert.strictEqual(hrefs && hrefs.length === 5, true);
 			}			
-		});
-	});
-
-	test('open one didact, then open another to make sure it refreshes properly', async () => {
-		await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD).then( async () => {
-			if (DidactWebviewPanel.currentPanel) {
-				// grab the html that we generate from the first didact file
-				// this should be cached
-				const firstHtml = DidactWebviewPanel.currentPanel.getCurrentHTML();
-				await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testMD2).then( async () => {
-					if (DidactWebviewPanel.currentPanel) {
-						// make sure that when we start a new tutorial, the cache updates
-						const secondHtml = DidactWebviewPanel.currentPanel.getCachedHTML();
-						assert.notStrictEqual(firstHtml, secondHtml);
-					}
-				});		
-			} else {
-				assert.fail('Unable to get initial html for first didact to test');
-			}
 		});
 	});
 });

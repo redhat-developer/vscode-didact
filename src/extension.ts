@@ -17,10 +17,11 @@
 
 import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
-import { DidactWebviewPanel } from './didactWebView';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
 import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
+import { DidactPanelSerializer } from './didactPanelSerializer';
+import { VIEW_TYPE } from './didactManager';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -55,9 +56,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.VALIDATE_COMMAND_IDS, extensionFunctions.validateCommandIDsInSelectedFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.TEXT_TO_CLIPBOARD_COMMAND, extensionFunctions.placeTextOnClipboard));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.COPY_FILE_URL_TO_WORKSPACE_COMMAND, extensionFunctions.copyFileFromURLtoLocalURI));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_BACK_COMMAND, extensionFunctions.historyBack));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_FORWARD_COMMAND, extensionFunctions.historyForward));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.HISTORY_CLEAR, extensionFunctions.clearHistory));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.openNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.sendTextToNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.FILE_TO_CLIPBOARD_COMMAND, extensionFunctions.copyFileTextToClipboard));
@@ -82,15 +80,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	});
 
 	// set up so we don't lose the webview contents each time it goes 'invisible' 
-	if (vscode.window.registerWebviewPanelSerializer) {
-		// Make sure we register a serializer in activation event
-		vscode.window.registerWebviewPanelSerializer(DidactWebviewPanel.viewType, {
-			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-				DidactWebviewPanel.setContext(context);
-				DidactWebviewPanel.revive(webviewPanel, context.extensionPath);
-			}
-		});
-	}
+	vscode.window.registerWebviewPanelSerializer(VIEW_TYPE, new DidactPanelSerializer(context));
 
 	// always clear the registry and let the extensions register as they are activated
 	await clearRegisteredTutorials();
@@ -119,9 +109,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	if (openAtStartup) {
 		await extensionFunctions.openDidactWithDefault();
 	}
-
-	// workaround to retrieve cached Uri for last didact opened at session shutdown
-	extensionFunctions.addCachedDidactUriToHistory();
 }
 
 function createIntegrationsView(): void {
@@ -136,7 +123,6 @@ function createIntegrationsView(): void {
 }
 
 export async function deactivate(): Promise<void> {
-	await DidactWebviewPanel.cacheFile();
 	await clearRegisteredTutorials();
 	clearOutputChannels();
 }

@@ -18,11 +18,11 @@
 
 import { expect } from 'chai';
 import { handleNumber, processInputs } from '../../commandHandler';
-import { DidactWebviewPanel } from '../../didactWebView';
 import * as vscode from 'vscode';
 import { setLastColumnUsedSetting } from '../../utils';
 import * as assert from 'assert';
 import sinon = require('sinon');
+import { didactManager } from '../../didactManager';
 const waitUntil = require('async-wait-until');
 
 function disposeAll(disposables: vscode.Disposable[]) {
@@ -49,25 +49,24 @@ suite("Command Handler tests", function () {
 		await setLastColumnUsedSetting(1);
 		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Two';
 		await processInputs(didactUri);
-		expect(DidactWebviewPanel.currentPanel).to.not.equal(undefined);
+		expect(didactManager.active()).to.not.equal(undefined);
 
 		let changed = false;
-		if (DidactWebviewPanel.currentPanel) {
-			const panel = DidactWebviewPanel.currentPanel.getPanel();
-			expect(panel).to.not.equal(null);
-			expect(panel).to.not.equal(undefined);
-			if (panel) {
-				const viewStateChanged = new Promise<vscode.WebviewPanelOnDidChangeViewStateEvent>((resolve) => {
-					panel.onDidChangeViewState(e => {
-						if (changed) {
-							throw new Error('Only expected a single view state change');
-						}
-						changed = true;
-						resolve(e);
-					}, undefined, disposables);
-				});
-				assert.strictEqual((await viewStateChanged).webviewPanel.viewColumn, vscode.ViewColumn.Two);
-			}
+		const panel = didactManager.active();
+		expect(panel).to.not.equal(null);
+		expect(panel).to.not.equal(undefined);
+		expect(panel?._panel).to.not.equal(undefined);
+		if (panel) {
+			const viewStateChanged = new Promise<vscode.WebviewPanelOnDidChangeViewStateEvent>((resolve) => {
+				panel._panel?.onDidChangeViewState(e => {
+					if (changed) {
+						throw new Error('Only expected a single view state change');
+					}
+					changed = true;
+					resolve(e);
+				}, undefined, disposables);
+			});
+			assert.strictEqual((await viewStateChanged).webviewPanel.viewColumn, vscode.ViewColumn.Two);
 		}
 		await resetAfterTest();
 	});
@@ -81,12 +80,10 @@ suite("Command Handler tests", function () {
 		await setLastColumnUsedSetting(1);
 		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Active';
 		await processInputs(didactUri);
-		expect(DidactWebviewPanel.currentPanel).to.not.equal(undefined);
-		if (DidactWebviewPanel.currentPanel) {
-			const column : vscode.ViewColumn | undefined = DidactWebviewPanel.currentPanel.getColumn();
-			console.log(`Column returned = ${column}`);
-			expect(column).to.equal(vscode.ViewColumn.One);
-		}
+		expect(didactManager.active()?._panel).to.not.equal(undefined);
+		const column : vscode.ViewColumn | undefined = didactManager.active()?.getColumn();
+		console.log(`Column returned = ${column}`);
+		expect(column).to.equal(vscode.ViewColumn.One);
 		await resetAfterTest();
 	});
 
@@ -95,12 +92,10 @@ suite("Command Handler tests", function () {
 		await setLastColumnUsedSetting(1);
 		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Beside';
 		await processInputs(didactUri);
-		expect(DidactWebviewPanel.currentPanel).to.not.equal(undefined);
-		if (DidactWebviewPanel.currentPanel) {
-			const column : vscode.ViewColumn | undefined = DidactWebviewPanel.currentPanel.getColumn();
-			console.log(`Column returned = ${column}`);
-			expect(column).to.equal(vscode.ViewColumn.Two);
-		}
+		expect(didactManager.active()?._panel).to.not.equal(undefined);
+		const column : vscode.ViewColumn | undefined = didactManager.active()?.getColumn();
+		console.log(`Column returned = ${column}`);
+		expect(column).to.equal(vscode.ViewColumn.Two);
 		await resetAfterTest();
 	});
 

@@ -22,6 +22,17 @@ function () {
 	//connect to the vscode api
 	const vscode = acquireVsCodeApi();
 
+	const oldState = vscode.getState();
+	let oldBody = oldState ? oldState.oldbody : '';
+	if (oldBody) {
+		const textFromBase64 = window.btoa(oldBody);
+		document.body = decodeURI(textFromBase64);
+	}
+	let oldTitle = oldState ? oldState.oldTitle : '';
+	if (oldTitle) {
+		this.title = oldTitle;
+	}
+
 	document.body.addEventListener('click', event => {
 		let node = event && event.target;
 		while (node) {
@@ -41,6 +52,7 @@ function () {
 					element.checked = true;
 					if (document.body) {
 						vscode.postMessage({ command: 'update', text: document.body });
+						updateState();
 					}
 				}				
 
@@ -70,17 +82,25 @@ function () {
 		return elements;
 	}
 
+	function updateState(passedUri) {
+		const textToCache = '<!DOCTYPE HTML>' + '\n' + document.documentElement.outerHTML;
+		const encodedText = encodeURI(textToCache);
+		const textToBase64 = window.btoa(encodedText);
+		vscode.setState( { oldBody: textToBase64, oldTitle : this.title, oldUri : passedUri });
+	}
+
 	// Handle messages sent from the extension to the webview
 	window.addEventListener('message', event => {
 		const message = event.data; // The json data that the extension sent
 		const json = JSON.parse(message);
+		const requirementName = json.requirementName;
+		const isAvailable = json.result;
+		const passedUri = json.oldUri;
+
+		let element = document.getElementById(requirementName);
+
 		switch (json.command) {
 			case 'requirementCheck':
-				const requirementName = json.requirementName;
-				const isAvailable = json.result;
-
-				let element = document.getElementById(requirementName);
-
 				// add check for adoc div/p requirement label
 				if (element.tagName.toLowerCase() === 'div' && element.childNodes.length > 0) {
 					let list = element.getElementsByTagName('em');
@@ -101,7 +121,9 @@ function () {
 					}
 				}
 				console.log(`${requirementName} is available: ${isAvailable}`);
+				updateState();
 				break;
+
 			case 'allRequirementCheck':
 				var links = collectElements("a");
 				for (let index = 0; index < links.length; index++) {
@@ -115,6 +137,11 @@ function () {
 						}
 					}
 				}
+				updateState();
+				break;
+
+			case 'setState':
+				updateState(passedUri);
 				break;
 		}
 	});
