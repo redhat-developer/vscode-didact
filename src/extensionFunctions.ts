@@ -29,7 +29,6 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as url from 'url';
 import * as download from 'download';
 import { didactManager } from './didactManager';
-import { DidactPanel } from './didactPanel';
 import { parse } from 'node-html-parser';
 import { DIDACT_DEFAULT_URL } from './utils';
 
