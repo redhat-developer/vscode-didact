@@ -300,10 +300,14 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	expect(startCompletionExists || startCommandCompletionExists).to.be.true;
 
 	const _disposables: vscode.Disposable[] = [];
-	await acceptFirstSuggestion(document.uri, _disposables, selectLastSuggestion)
-	await vscode.commands.executeCommand('editor.action.selectAll');
-	await delay(1000);
-	expect(editor.document.lineAt(0).text).to.be.equal(expected);
+	await acceptFirstSuggestion(testFileUri, _disposables, selectLastSuggestion)
+		.then ( (returnedDoc) => {
+			expect(returnedDoc.lineAt(0).text).to.be.equal(expected);
+		});
+	// await vscode.commands.executeCommand('editor.action.selectAll')
+	// 	.then( () => {
+	// 		expect(editor.document.lineAt(0).text).to.be.equal(expected);
+	// 	});
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
@@ -312,10 +316,11 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[], selectLastSuggestion = false) : Promise<vscode.TextDocument> {
 	const didChangeDocument = onChangedDocument(uri, _disposables);
 	await vscode.commands.executeCommand('editor.action.triggerSuggest');
-	await delay(2000);
+	const timeVal = 500;
+	await delay(timeVal);
 	if (selectLastSuggestion) {
 		await vscode.commands.executeCommand("selectLastSuggestion");
-		await delay(2000);
+		await delay(timeVal);
 	}
 	await vscode.commands.executeCommand('acceptSelectedSuggestion');
 	return await didChangeDocument;
