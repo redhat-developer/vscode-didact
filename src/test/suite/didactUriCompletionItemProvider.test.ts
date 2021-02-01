@@ -299,19 +299,32 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	// if either is complete, we have expected completions showing up
 	expect(startCompletionExists || startCommandCompletionExists).to.be.true;
 
-	// await vscode.commands.executeCommand("editor.action.triggerSuggest");
-	// await delay(1000);
-
-	// // bump the selection down to the last suggestion
-	// if (selectLastSuggestion) {
-	// 	await vscode.commands.executeCommand("selectLastSuggestion");
-	// 	await delay(500);
-	// }
-	// await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	// await vscode.commands.executeCommand('editor.action.selectAll');
-	// await delay(1000);
-	// expect(editor.document.lineAt(0).text).to.be.equal(expected);
+	const _disposables: vscode.Disposable[] = [];
+	await acceptFirstSuggestion(document.uri, _disposables, selectLastSuggestion)
+	await vscode.commands.executeCommand('editor.action.selectAll');
+	await delay(1000);
+	expect(editor.document.lineAt(0).text).to.be.equal(expected);
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
+}
+
+async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[], selectLastSuggestion = false) : Promise<vscode.TextDocument> {
+	const didChangeDocument = onChangedDocument(uri, _disposables);
+	await vscode.commands.executeCommand('editor.action.triggerSuggest');
+	await delay(100);
+	if (selectLastSuggestion) {
+		await vscode.commands.executeCommand("selectLastSuggestion");
+		await delay(100);
+	}
+	await vscode.commands.executeCommand('acceptSelectedSuggestion');
+	return await didChangeDocument;
+}
+
+function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]) : Promise<vscode.TextDocument> {
+	return new Promise<vscode.TextDocument>(resolve => vscode.workspace.onDidChangeTextDocument(e => {
+		if (e.document.uri.toString() === documentUri.toString()) {
+			resolve(e.document);
+		}
+	}, undefined, disposables));
 }

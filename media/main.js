@@ -50,7 +50,7 @@ function () {
 				let element = node.parentNode.querySelector('input');
 				if (element) {
 					element.checked = true;
-					if (document.body) {
+					if (document && document.body) {
 						vscode.postMessage({ command: 'update', text: document.body });
 						updateState();
 					}
