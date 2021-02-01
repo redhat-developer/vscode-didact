@@ -315,6 +315,7 @@ async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Dispo
 	await delay(1000);
 	if (selectLastSuggestion) {
 		await vscode.commands.executeCommand("selectLastSuggestion");
+		await delay(1000);
 	}
 	await vscode.commands.executeCommand('acceptSelectedSuggestion');
 	return await didChangeDocument;
