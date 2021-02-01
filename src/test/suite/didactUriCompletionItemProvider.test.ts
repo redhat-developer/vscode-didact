@@ -316,8 +316,9 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	}
 	
 	await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	await didChangeDocument.then ( (doc) => {
-		expect(doc.getText()).to.be.equal(expected);	
+	await didChangeDocument.then ( async (doc) => {
+		await delay(timeoutValue);
+		expect(doc.getText()).to.be.equal(expected);
 	});
 
 	//await vscode.commands.executeCommand('editor.action.selectAll');
