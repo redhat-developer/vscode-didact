@@ -26,7 +26,7 @@ import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
 
 const waitUntil = require('async-wait-until');
-const COMPLETION_TIMEOUT = 3000;
+const COMPLETION_TIMEOUT = 5000;
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 const foldersAndFilesToRemove: string[] = [
@@ -308,7 +308,7 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 		await delay(500);
 	}
 	await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	await delay(1000);
+	await delay(2000);
 	await vscode.commands.executeCommand('editor.action.selectAll');
 	expect(editor.document.getText()).to.be.equal(expected);
 
