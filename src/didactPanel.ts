@@ -376,7 +376,7 @@ export class DidactPanel {
 	}
 
 	public async postMessage(message: string): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || !this._panel.webview) {
 			return;
 		}
 		const jsonMsg:string = "{ \"command\": \"sendMessage\", \"data\": \"" + message + "\"}";
@@ -384,7 +384,7 @@ export class DidactPanel {
 	}
 
 	public async postRequirementsResponseMessage(requirementName: string, result: boolean): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || !this._panel.webview) {
 			return;
 		}
 		const jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
@@ -393,7 +393,7 @@ export class DidactPanel {
 	}
 
 	async postNamedSimpleMessage(msg: string): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || !this._panel.webview) {
 			return;
 		}
 		const jsonMsg = `{ "command" : "${msg}"}`;
