@@ -288,7 +288,7 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 		'vscode.executeCompletionItemProvider',
 		document.uri, newCursorPosition)) as vscode.CompletionList;
 	expect(actualCompletionList).to.not.be.null;
-	expect(actualCompletionList.items.length).to.be.at.least(1);
+	expect(actualCompletionList).to.not.be.empty;
 
 	// if this is available, we have completed the didact://?commandId= part of the completion
 	const startCompletionExists = await checkForCommandInList(actualCompletionList.items, "Start new Didact command link");
@@ -301,19 +301,32 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 
 	// commented out to work on flaky nature of this completion test
 
-	// await vscode.commands.executeCommand("editor.action.triggerSuggest");
-	// await delay(1000);
+	const _disposables: vscode.Disposable[] = [];
+	const didChangeDocument = onChangedDocument(testFileUri, _disposables);
 
-	// // bump the selection down to the last suggestion
-	// if (selectLastSuggestion) {
-	// 	await vscode.commands.executeCommand("selectLastSuggestion");
-	// 	await delay(500);
-	// }
-	// await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	// await delay(1000);
-	// await vscode.commands.executeCommand('editor.action.selectAll');
-	// expect(editor.document.getText()).to.be.equal(expected);
+	await vscode.commands.executeCommand("editor.action.triggerSuggest");
+	await delay(500);
+
+	// bump the selection down to the last suggestion
+	if (selectLastSuggestion) {
+		await vscode.commands.executeCommand("selectLastSuggestion");
+		await delay(500);
+	}
+	
+	await vscode.commands.executeCommand("acceptSelectedSuggestion");
+	await didChangeDocument;
+
+	await vscode.commands.executeCommand('editor.action.selectAll');
+	expect(editor.document.getText()).to.be.equal(expected);
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
+}
+
+function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]) : Promise<vscode.TextDocument> {
+	return new Promise<vscode.TextDocument>(resolve => vscode.workspace.onDidChangeTextDocument(e => {
+		if (e.document.uri.toString() === documentUri.toString()) {
+			resolve(e.document);
+		}
+	}, undefined, disposables));
 }
