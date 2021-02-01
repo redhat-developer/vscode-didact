@@ -275,12 +275,13 @@ function delay(ms: number) {
 }
 
 async function executeCompletionTest(input: string, expected: string, selectLastSuggestion? : boolean) {
+	const timeoutValue = 750;
 	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
 	const document = await vscode.workspace.openTextDocument(testFileUri);
 	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
 	waitUntil( () => {
 		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
-	}, 500);
+	}, timeoutValue);
 
 	const newCursorPosition = new vscode.Position(0, input.length);
 	editor.selection = new vscode.Selection(newCursorPosition, newCursorPosition);
@@ -306,18 +307,18 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	const didChangeDocument = onChangedDocument(testFileUri, _disposables);
 
 	await vscode.commands.executeCommand("editor.action.triggerSuggest");
-	await delay(500);
+	await delay(timeoutValue);
 
 	// bump the selection down to the last suggestion
 	if (selectLastSuggestion) {
 		await vscode.commands.executeCommand("selectLastSuggestion");
-		await delay(500);
+		await delay(timeoutValue);
 	}
 	
 	await vscode.commands.executeCommand("acceptSelectedSuggestion");
 	await didChangeDocument;
 
-	await vscode.commands.executeCommand('editor.action.selectAll');
+	//await vscode.commands.executeCommand('editor.action.selectAll');
 	expect(editor.document.getText()).to.be.equal(expected);
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
