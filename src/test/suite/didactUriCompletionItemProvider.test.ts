@@ -316,10 +316,12 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 	}
 	
 	await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	await didChangeDocument;
+	await didChangeDocument.then ( (doc) => {
+		expect(doc.getText()).to.be.equal(expected);	
+	});
 
 	//await vscode.commands.executeCommand('editor.action.selectAll');
-	expect(editor.document.getText()).to.be.equal(expected);
+	//expect(editor.document.getText()).to.be.equal(expected);
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
