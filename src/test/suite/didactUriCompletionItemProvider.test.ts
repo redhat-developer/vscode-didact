@@ -312,10 +312,10 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[], selectLastSuggestion = false) : Promise<vscode.TextDocument> {
 	const didChangeDocument = onChangedDocument(uri, _disposables);
 	await vscode.commands.executeCommand('editor.action.triggerSuggest');
-	await delay(1500);
+	await delay(2000);
 	if (selectLastSuggestion) {
 		await vscode.commands.executeCommand("selectLastSuggestion");
-		await delay(1500);
+		await delay(2000);
 	}
 	await vscode.commands.executeCommand('acceptSelectedSuggestion');
 	return await didChangeDocument;
