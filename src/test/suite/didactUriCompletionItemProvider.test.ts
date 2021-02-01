@@ -26,7 +26,7 @@ import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
 
 const waitUntil = require('async-wait-until');
-const COMPLETION_TIMEOUT = 5000;
+const COMPLETION_TIMEOUT = 7500;
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 const foldersAndFilesToRemove: string[] = [
@@ -312,10 +312,10 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[], selectLastSuggestion = false) : Promise<vscode.TextDocument> {
 	const didChangeDocument = onChangedDocument(uri, _disposables);
 	await vscode.commands.executeCommand('editor.action.triggerSuggest');
-	await delay(1000);
+	await delay(1500);
 	if (selectLastSuggestion) {
 		await vscode.commands.executeCommand("selectLastSuggestion");
-		await delay(1000);
+		await delay(1500);
 	}
 	await vscode.commands.executeCommand('acceptSelectedSuggestion');
 	return await didChangeDocument;
