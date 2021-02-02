@@ -39,7 +39,7 @@ suite("Didact URI completion provider tests", function () {
 
 	const ctx = getContext();
 	const provider = new DidactUriCompletionItemProvider(ctx);
-	
+
 	test("that all commands in the didactCompletionCatalog.json are available", async () => {
 		const catalog : any = provider.getCompletionCatalog(ctx);
 		const vsCommands : string[] = await vscode.commands.getCommands(true);
@@ -73,7 +73,6 @@ suite("Didact URI completion provider tests", function () {
 			'[My Link](didact://?co',
 			'[My Link](didact://?com'
 		];
-		const expected = "[My Link](didact://?commandId=";
 
 		suite('walk through each provided completion', () => {
 			listOfCompletions.forEach(function(stringToTest: string){
@@ -82,24 +81,12 @@ suite("Didact URI completion provider tests", function () {
 				});
 
 				test(`test provided completion "${stringToTest}"`, async () => {
-					await executeCompletionTest(stringToTest, expected);
+					await executeCompletionTest(stringToTest);
 					}).timeout(COMPLETION_TIMEOUT);
 
 			});
 		});
 
-		suite("test that completion works with even simpler partial didact link [my link](didact)", async () => {
-			const stringToTest = '[My Link](didact';
-
-			afterEach( async () => {
-				await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
-			});
-		
-			test(`test provided completion "${stringToTest}" with the last suggestion to get the one we want`, async () => {
-				await executeCompletionTest(stringToTest, expected, true);
-				}).timeout(COMPLETION_TIMEOUT);
-
-			});
 	});
 
 	test("that the match utility returns expected results for simple didact uri", () => {
@@ -269,29 +256,11 @@ async function checkForCommandInList(completions: vscode.CompletionItem[], label
 	return false;
 }
 
-function delay(ms: number) {
-	return new Promise( resolve => setTimeout(resolve, ms) );
-}
-
 async function createTestEditor(uri: vscode.Uri, input: string) {
 	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
 	const document = await vscode.workspace.openTextDocument(uri);
 	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
 	return editor;
-}
-
-async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[], selectLast = false) {
-	const didChangeDocument = onChangedDocument(uri, _disposables);
-	await vscode.commands.executeCommand('editor.action.triggerSuggest');
-	await delay(1000); // Give time for suggestions to show
-
-	if (selectLast) {
-		await vscode.commands.executeCommand("selectLastSuggestion");
-		await delay(1000); // Give time for selecting last suggestion
-	}
-
-	await vscode.commands.executeCommand('acceptSelectedSuggestion');
-	return didChangeDocument;
 }
 
 async function checkSuggestions(input: string, editor: vscode.TextEditor, document: vscode.TextDocument) {
@@ -314,7 +283,7 @@ async function checkSuggestions(input: string, editor: vscode.TextEditor, docume
 	expect(startCompletionExists || startCommandCompletionExists).to.be.true;
 }
 
-async function executeCompletionTest(input: string, expected: string, selectLastSuggestion? : boolean) {
+async function executeCompletionTest(input: string) {
 	const editor = await createTestEditor(testFileUri, input);
 	waitUntil( () => {
 		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
@@ -322,21 +291,6 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 
 	await checkSuggestions(input, editor, editor.document);
 
-	const _disposables: vscode.Disposable[] = [];
-	await acceptFirstSuggestion(testFileUri, _disposables, selectLastSuggestion).then( (document) => {
-		console.log('Document = ' + document.getText());
-		console.log('Compared to: ' + expected);
-		expect(document.getText()).to.be.equal(expected);
-	});
-
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
-}
-
-function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]) : Promise<vscode.TextDocument> {
-	return new Promise<vscode.TextDocument>(resolve => vscode.workspace.onDidChangeTextDocument(e => {
-		if (e.document.uri.toString() === documentUri.toString()) {
-			resolve(e.document);
-		}
-	}, undefined, disposables));
 }
