@@ -26,7 +26,7 @@ import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
 
 const waitUntil = require('async-wait-until');
-const COMPLETION_TIMEOUT = 3000;
+const COMPLETION_TIMEOUT = 5000;
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 const foldersAndFilesToRemove: string[] = [
@@ -317,16 +317,16 @@ async function checkSuggestions(input: string, editor: vscode.TextEditor, docume
 async function executeCompletionTest(input: string, expected: string, selectLastSuggestion? : boolean) {
 	const timeoutValue = 750;
 	const editor = await createTestEditor(testFileUri, input);
-	const document = editor.document;
 	waitUntil( () => {
 		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
 	}, timeoutValue);
 
-	await checkSuggestions(input, editor, document);
+	await checkSuggestions(input, editor, editor.document);
 
 	const _disposables: vscode.Disposable[] = [];
 	await acceptFirstSuggestion(testFileUri, _disposables, selectLastSuggestion);
-	expect(document.getText()).to.be.equal(expected);
+	await delay(1000); // Give time for selecting suggestion and updating document
+	expect(editor.document.getText()).to.be.equal(expected);
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
