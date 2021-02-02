@@ -315,18 +315,19 @@ async function checkSuggestions(input: string, editor: vscode.TextEditor, docume
 }
 
 async function executeCompletionTest(input: string, expected: string, selectLastSuggestion? : boolean) {
-	const timeoutValue = 750;
 	const editor = await createTestEditor(testFileUri, input);
 	waitUntil( () => {
 		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
-	}, timeoutValue);
+	}, 500);
 
 	await checkSuggestions(input, editor, editor.document);
 
 	const _disposables: vscode.Disposable[] = [];
-	await acceptFirstSuggestion(testFileUri, _disposables, selectLastSuggestion);
-	await delay(1000); // Give time for selecting suggestion and updating document
-	expect(editor.document.getText()).to.be.equal(expected);
+	await acceptFirstSuggestion(testFileUri, _disposables, selectLastSuggestion).then( (document) => {
+		console.log('Document = ' + document.getText());
+		console.log('Compared to: ' + expected);
+		expect(document.getText()).to.be.equal(expected);
+	});
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
