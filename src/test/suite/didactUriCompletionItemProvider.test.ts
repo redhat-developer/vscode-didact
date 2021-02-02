@@ -79,7 +79,6 @@ suite("Didact URI completion provider tests", function () {
 			listOfCompletions.forEach(function(stringToTest: string){
 				afterEach( async () => {
 					await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
-					delay(250);
 				});
 
 				test(`test provided completion "${stringToTest}"`, async () => {
