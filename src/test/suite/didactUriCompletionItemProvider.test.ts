@@ -259,8 +259,7 @@ async function checkForCommandInList(completions: vscode.CompletionItem[], label
 async function createTestEditor(uri: vscode.Uri, input: string) {
 	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
 	const document = await vscode.workspace.openTextDocument(uri);
-	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
-	return editor;
+	return await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
 }
 
 async function checkSuggestions(input: string, editor: vscode.TextEditor, document: vscode.TextDocument) {

@@ -65,9 +65,8 @@ async function testWeGetExpectedResult(textToInsert : string, expectedResult: st
 	await vscode.commands.executeCommand('type', {"text": textToInsert});
 	await vscode.commands.executeCommand("editor.action.triggerSuggest");
 	await delay(2000);
-	await vscode.commands.executeCommand("acceptSelectedSuggestion").then(() => {
-		expect(editor.document.getText()).to.include(expectedResult);
-	});
+	await vscode.commands.executeCommand("acceptSelectedSuggestion");
+	expect(editor.document.getText()).to.include(expectedResult);
 }
 
 function delay(ms: number) {
