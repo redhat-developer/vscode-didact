@@ -26,7 +26,7 @@ import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
 
 const waitUntil = require('async-wait-until');
-const COMPLETION_TIMEOUT = 3000;
+const COMPLETION_TIMEOUT = 5000;
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 const foldersAndFilesToRemove: string[] = [
@@ -39,7 +39,7 @@ suite("Didact URI completion provider tests", function () {
 
 	const ctx = getContext();
 	const provider = new DidactUriCompletionItemProvider(ctx);
-	
+
 	test("that all commands in the didactCompletionCatalog.json are available", async () => {
 		const catalog : any = provider.getCompletionCatalog(ctx);
 		const vsCommands : string[] = await vscode.commands.getCommands(true);
@@ -73,7 +73,6 @@ suite("Didact URI completion provider tests", function () {
 			'[My Link](didact://?co',
 			'[My Link](didact://?com'
 		];
-		const expected = "[My Link](didact://?commandId=";
 
 		suite('walk through each provided completion', () => {
 			listOfCompletions.forEach(function(stringToTest: string){
@@ -82,24 +81,12 @@ suite("Didact URI completion provider tests", function () {
 				});
 
 				test(`test provided completion "${stringToTest}"`, async () => {
-					await executeCompletionTest(stringToTest, expected);
+					await executeCompletionTest(stringToTest);
 					}).timeout(COMPLETION_TIMEOUT);
 
 			});
 		});
 
-		suite("test that completion works with even simpler partial didact link [my link](didact)", async () => {
-			const stringToTest = '[My Link](didact';
-
-			afterEach( async () => {
-				await removeFilesAndFolders(testWorkspace, foldersAndFilesToRemove);
-			});
-		
-			test(`test provided completion "${stringToTest}" with the last suggestion to get the one we want`, async () => {
-				await executeCompletionTest(stringToTest, expected, true);
-				}).timeout(COMPLETION_TIMEOUT);
-
-			});
 	});
 
 	test("that the match utility returns expected results for simple didact uri", () => {
@@ -269,18 +256,13 @@ async function checkForCommandInList(completions: vscode.CompletionItem[], label
 	return false;
 }
 
-function delay(ms: number) {
-	return new Promise( resolve => setTimeout(resolve, ms) );
+async function createTestEditor(uri: vscode.Uri, input: string) {
+	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
+	const document = await vscode.workspace.openTextDocument(uri);
+	return await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
 }
 
-async function executeCompletionTest(input: string, expected: string, selectLastSuggestion? : boolean) {
-	await vscode.workspace.fs.writeFile(testFileUri, Buffer.from(input));
-	const document = await vscode.workspace.openTextDocument(testFileUri);
-	const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.One, true);
-	waitUntil( () => {
-		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
-	}, 500);
-
+async function checkSuggestions(input: string, editor: vscode.TextEditor, document: vscode.TextDocument) {
 	const newCursorPosition = new vscode.Position(0, input.length);
 	editor.selection = new vscode.Selection(newCursorPosition, newCursorPosition);
 
@@ -288,7 +270,7 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 		'vscode.executeCompletionItemProvider',
 		document.uri, newCursorPosition)) as vscode.CompletionList;
 	expect(actualCompletionList).to.not.be.null;
-	expect(actualCompletionList.items.length).to.be.at.least(1);
+	expect(actualCompletionList).to.not.be.empty;
 
 	// if this is available, we have completed the didact://?commandId= part of the completion
 	const startCompletionExists = await checkForCommandInList(actualCompletionList.items, "Start new Didact command link");
@@ -298,21 +280,15 @@ async function executeCompletionTest(input: string, expected: string, selectLast
 
 	// if either is complete, we have expected completions showing up
 	expect(startCompletionExists || startCommandCompletionExists).to.be.true;
+}
 
-	// commented out to work on flaky nature of this completion test
+async function executeCompletionTest(input: string) {
+	const editor = await createTestEditor(testFileUri, input);
+	waitUntil( () => {
+		return vscode.window.activeTextEditor?.document.fileName.endsWith('testmy.didact.md');
+	}, 500);
 
-	// await vscode.commands.executeCommand("editor.action.triggerSuggest");
-	// await delay(1000);
-
-	// // bump the selection down to the last suggestion
-	// if (selectLastSuggestion) {
-	// 	await vscode.commands.executeCommand("selectLastSuggestion");
-	// 	await delay(500);
-	// }
-	// await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	// await delay(1000);
-	// await vscode.commands.executeCommand('editor.action.selectAll');
-	// expect(editor.document.getText()).to.be.equal(expected);
+	await checkSuggestions(input, editor, editor.document);
 
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	await vscode.workspace.fs.delete(testFileUri);
