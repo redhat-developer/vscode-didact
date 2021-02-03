@@ -202,7 +202,7 @@
 		"@types/sinon": "^9.0.10",
 		"@types/vscode": "^1.52.0",
 		"@typescript-eslint/eslint-plugin": "^4.14.2",
-		"@typescript-eslint/parser": "^4.14.1",
+		"@typescript-eslint/parser": "^4.14.2",
 		"async-wait-until": "^1.2.6",
 		"chai": "^4.2.0",
 		"eslint": "^7.19.0",
