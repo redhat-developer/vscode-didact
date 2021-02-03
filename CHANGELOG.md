@@ -9,7 +9,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 - open a new didact window with each tutorial
 - persist html state between workspace sessions
 - remove old webview implementation
-- adding new commands to paste from clipboard to open editor - vscode.didact.copyClipboardToActiveTextEditor, vscode.didact.copyClipboardToEditorForFile, vscode.didact.copyClipboardToNewFile
+- adding new commands to paste from clipboard to open editor - *vscode.didact.copyClipboardToActiveTextEditor*, *vscode.didact.copyClipboardToEditorForFile*, *vscode.didact.copyClipboardToNewFile*
 
 ## 0.2.0
 

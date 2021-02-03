@@ -276,11 +276,13 @@ suite('Extension Functions Test Suite', () => {
 		await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
 		const textToPaste = 'Some text to copy into a new file created by separate command.';
 		await extensionFunctions.placeTextOnClipboard(textToPaste);
-		await extensionFunctions.pasteClipboardToActiveEditor();
+		await extensionFunctions.pasteClipboardToActiveEditorOrPreviouslyUsedOne();
 		if(vscode.window.activeTextEditor) {
 			const doc = vscode.window.activeTextEditor.document;
 			const docText = doc.getText();
 			expect(docText).to.equal(textToPaste);
+		} else {
+			expect.fail("Editor did not open");
 		}
 	});
 		
@@ -295,6 +297,8 @@ suite('Extension Functions Test Suite', () => {
 				const doc = vscode.window.activeTextEditor.document;
 				const docText = doc.getText();
 				expect(docText).to.equal(textToPaste);
+			} else {
+				expect.fail("Editor did not open");
 			}
 		}
 
@@ -309,6 +313,8 @@ suite('Extension Functions Test Suite', () => {
 			const doc = vscode.window.activeTextEditor.document;
 			const docText = doc.getText();
 			expect(docText).to.equal(textToPaste);
+		} else {
+			expect.fail("Editor did not open");
 		}
 	});
 });

@@ -904,7 +904,7 @@ export async function copyFileTextToClipboard(uri: vscode.Uri) : Promise<void> {
 	}
 } 
 
-export async function pasteClipboardToActiveEditor() : Promise<void> {
+export async function pasteClipboardToActiveEditorOrPreviouslyUsedOne() : Promise<void> {
 	let currentEditor : vscode.TextEditor | undefined = vscode.window.activeTextEditor;
 	if (!currentEditor) {
 		await vscode.commands.executeCommand('workbench.action.openPreviousRecentlyUsedEditor');
@@ -912,17 +912,17 @@ export async function pasteClipboardToActiveEditor() : Promise<void> {
 	}
 	if (currentEditor) {
 		const textFromClipboard = await vscode.env.clipboard.readText();
-		if (!textFromClipboard) {
+		if (textFromClipboard) {
+			await currentEditor.insertSnippet(new vscode.SnippetString(textFromClipboard));
+		} else {
 			await vscode.window.showWarningMessage(`No text found on clipboard`);
-			return;
 		}
-		await currentEditor.insertSnippet(new vscode.SnippetString(textFromClipboard));
-		return;
+	} else {
+		await vscode.window.showWarningMessage(`No active text editor found to paste from clipboard`);
 	}
-	await vscode.window.showWarningMessage(`No active text editor found to paste from clipboard`);
 }
 
-export async function openEditorForFile(uri: vscode.Uri) : Promise<vscode.TextEditor | undefined> {
+export async function findOpenEditorForFileURI(uri: vscode.Uri) : Promise<vscode.TextEditor | undefined> {
 	for (let index = 0; index < vscode.window.visibleTextEditors.length; index++) {
 		const editor = vscode.window.visibleTextEditors[index];
 		if (editor.document.uri === uri) {
@@ -933,24 +933,22 @@ export async function openEditorForFile(uri: vscode.Uri) : Promise<vscode.TextEd
 }
 
 export async function pasteClipboardToEditorForFile(uri: vscode.Uri) : Promise<void> {
-	let editorForFile : vscode.TextEditor | undefined = await openEditorForFile(uri);
+	let editorForFile : vscode.TextEditor | undefined = await findOpenEditorForFileURI(uri);
 	if (!editorForFile) {
 		try {
-			await waitUntil(async () => {
-				await vscode.commands.executeCommand('vscode.open', uri, vscode.ViewColumn.Beside);
-				editorForFile = vscode.window.activeTextEditor;
-			}, EDITOR_OPENED_TIMEOUT, 1000);
+			await vscode.commands.executeCommand('vscode.open', uri, vscode.ViewColumn.Beside);
+			editorForFile = vscode.window.activeTextEditor;
 		} catch (error) {
 			await vscode.window.showWarningMessage(`No editor found for file ${uri.fsPath}. ${error}`);
 			console.log(error);
 		}
 	}
 	if (editorForFile) {
-		await pasteClipboardToActiveEditor();
+		await pasteClipboardToActiveEditorOrPreviouslyUsedOne();
 	} 
 }
 
 export async function pasteClipboardToNewTextFile() : Promise<void> {
 	await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
-	await pasteClipboardToActiveEditor();
+	await pasteClipboardToActiveEditorOrPreviouslyUsedOne();
 }

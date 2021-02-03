@@ -59,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.openNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TO_NAMED_OUTPUTCHANNEL_COMMAND, extensionFunctions.sendTextToNamedOutputChannel));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.FILE_TO_CLIPBOARD_COMMAND, extensionFunctions.copyFileTextToClipboard));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_ACTIVE_EDITOR_COMMAND, extensionFunctions.pasteClipboardToActiveEditor));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_ACTIVE_EDITOR_COMMAND, extensionFunctions.pasteClipboardToActiveEditorOrPreviouslyUsedOne));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_EDITOR_FOR_FILE_COMMAND, extensionFunctions.pasteClipboardToEditorForFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_NEW_FILE_COMMAND, extensionFunctions.pasteClipboardToNewTextFile));
 
