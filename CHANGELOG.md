@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.3.2
+
+- TBD
+
 ## 0.3.1
 
 - adding async-await-until package that got lost in a merge
