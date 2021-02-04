@@ -4,9 +4,9 @@ We have several clipboard-related Didact commands:
 
 * vscode.didact.copyFileTextToClipboardCommand
 * vscode.didact.copyToClipboardCommand 
-* vscode.didact.copyClipboardToNewFile (new)
-* vscode.didact.copyClipboardToEditorForFile (new)
-* vscode.didact.copyClipboardToActiveTextEditor (new)
+* vscode.didact.copyClipboardToNewFile
+* vscode.didact.copyClipboardToEditorForFile
+* vscode.didact.copyClipboardToActiveTextEditor
 
 ## Putting text on the clipboard
 
