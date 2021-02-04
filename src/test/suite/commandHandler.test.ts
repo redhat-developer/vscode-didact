@@ -56,9 +56,7 @@ suite("Command Handler tests", function () {
 		expect(panel).to.not.equal(null);
 		expect(panel).to.not.equal(undefined);
 		expect(panel?._panel).to.not.equal(undefined);
-		if (panel) {
-			assert.strictEqual(panel._panel?.viewColumn, vscode.ViewColumn.Two);
-		}
+		assert.strictEqual(panel?._panel?.viewColumn, vscode.ViewColumn.Two);
 		await resetAfterTest();
 	});
 
