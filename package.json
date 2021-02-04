@@ -203,7 +203,6 @@
 		"@types/vscode": "^1.53.0",
 		"@typescript-eslint/eslint-plugin": "^4.14.2",
 		"@typescript-eslint/parser": "^4.14.2",
-		"async-wait-until": "^1.2.6",
 		"chai": "^4.2.0",
 		"eslint": "^7.19.0",
 		"mocha": "^8.2.1",
