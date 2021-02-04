@@ -2,9 +2,11 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
-## 0.3.0
+## 0.3.1
 
-- TBD
+- adding async-await-until package that got lost in a merge
+- streamlining the start didact in column test
+- reducing the timeout in the completion test
 
 ## 0.3.0
 

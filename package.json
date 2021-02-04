@@ -32,7 +32,7 @@
 		"Framework"
 	],
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.53.0"
 	},
 	"categories": [
 		"Other"
@@ -200,10 +200,9 @@
 		"@types/mocha": "^8.2.0",
 		"@types/node": "^14.14.24",
 		"@types/sinon": "^9.0.10",
-		"@types/vscode": "^1.52.0",
+		"@types/vscode": "^1.53.0",
 		"@typescript-eslint/eslint-plugin": "^4.14.2",
 		"@typescript-eslint/parser": "^4.14.2",
-		"async-wait-until": "^1.2.6",
 		"chai": "^4.2.0",
 		"eslint": "^7.19.0",
 		"mocha": "^8.2.1",
@@ -217,6 +216,7 @@
 		"@types/markdown-it": "^12.0.1",
 		"@types/request-promise": "^4.1.47",
 		"asciidoctor": "^2.2.1",
+		"async-wait-until": "1.2.6",
 		"base-64": "^1.0.0",
 		"download": "^8.0.0",
 		"glob": "^7.1.6",

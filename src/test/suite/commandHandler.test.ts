@@ -56,18 +56,7 @@ suite("Command Handler tests", function () {
 		expect(panel).to.not.equal(null);
 		expect(panel).to.not.equal(undefined);
 		expect(panel?._panel).to.not.equal(undefined);
-		if (panel) {
-			const viewStateChanged = new Promise<vscode.WebviewPanelOnDidChangeViewStateEvent>((resolve) => {
-				panel._panel?.onDidChangeViewState(e => {
-					if (changed) {
-						throw new Error('Only expected a single view state change');
-					}
-					changed = true;
-					resolve(e);
-				}, undefined, disposables);
-			});
-			assert.strictEqual((await viewStateChanged).webviewPanel.viewColumn, vscode.ViewColumn.Two);
-		}
+		assert.strictEqual(panel?._panel?.viewColumn, vscode.ViewColumn.Two);
 		await resetAfterTest();
 	});
 
