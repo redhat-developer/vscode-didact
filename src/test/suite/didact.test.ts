@@ -45,6 +45,7 @@ const testScaffoldOpen = 'didact://?commandId=vscode.didact.scaffoldProject&extF
 
 const OS_WINDOWS = "win32";
 const OS_LINUX = "linux";
+const OS_MACOS = "darwin";
 
 suite('Didact test suite', () => {
 
@@ -178,7 +179,7 @@ suite('Didact test suite', () => {
 			href = testReqWin;
 		} else if (osName.startsWith(OS_LINUX)) {
 			href = testReq;
-		} else if (osName.startsWith("darwin")) {
+		} else if (osName.startsWith(OS_MACOS)) {
 			href = testReqMac;
 		}
 		const parsedUrl = url.parse(href, true);
