@@ -36,6 +36,7 @@ const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/m
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Linux';
+const testReqMac = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Darwin';
 const testReqWin = 'didact://?commandId=vscode.didact.requirementCheck&text=echo-requirements-status$$echo%20test$$test';
 const testReqCli = 'didact://?commandId=vscode.didact.cliCommandSuccessful&text=echo-cli-return-status$$echo%20test';
 const testWS = 'didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status';
@@ -44,6 +45,7 @@ const testScaffoldOpen = 'didact://?commandId=vscode.didact.scaffoldProject&extF
 
 const OS_WINDOWS = "win32";
 const OS_LINUX = "linux";
+const OS_MACOS = "darwin";
 
 suite('Didact test suite', () => {
 
@@ -177,6 +179,8 @@ suite('Didact test suite', () => {
 			href = testReqWin;
 		} else if (osName.startsWith(OS_LINUX)) {
 			href = testReq;
+		} else if (osName.startsWith(OS_MACOS)) {
+			href = testReqMac;
 		}
 		const parsedUrl = url.parse(href, true);
 		const query = parsedUrl.query;
