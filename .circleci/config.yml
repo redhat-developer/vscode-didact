@@ -51,6 +51,39 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ~/.npm
+  macbuild:
+    macos:
+      xcode: "11.7.0"
+    environment:
+        GOVERSION: 1.13.3
+        XCODE_SCHEME: symbolicator
+        XCODE_WORKSPACE: symbolicator
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: install-typescript
+          command: sudo npm install -g typescript
+      - run:
+          name: install-vsce
+          command: sudo npm install -g vsce
+      - run:
+          name: npm-ci
+          command: npm ci
+      - run:
+          name: npm-vscode:prepublish
+          command: npm run vscode:prepublish
+      - run:
+          name: vsce-package
+          command: vsce package
+      - run:
+          name: test
+          command: npm test
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.2
@@ -60,6 +93,7 @@ workflows:
   vscode-didact:
     jobs:
       - build
+      - macbuild
       - sonar:
           context: sonarcloud
           filters:
