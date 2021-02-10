@@ -18,6 +18,10 @@
 
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import * as extensionFunctions from '../../extensionFunctions';
+import { didactManager } from '../../didactManager';
+import { expect } from 'chai';
+import { resolve } from 'path';
 
 const waitUntil = require('async-wait-until');
 
@@ -50,4 +54,26 @@ async function waitInCaseExtensionIsActivating(extension: vscode.Extension<unkno
 	}, ACTIVATION_TIMEOUT).catch(() => {
 		console.log('Extension has not started automatically, we will force call to activate it.');
 	});
+}
+
+export async function validateCommands(testUri : vscode.Uri) : Promise<boolean> {
+	await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testUri);
+	if (didactManager.active()) {
+		const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
+		expect(commands).to.not.be.empty;
+		const isOk = await extensionFunctions.validateDidactCommands(commands);
+
+		// if we failed the above, we can do a deeper dive to figure out what command is missing
+		if (!isOk) {
+			const vsCommands : string[] = await vscode.commands.getCommands(true);
+			for (const command of commands) {
+				const commandOk = extensionFunctions.validateCommand(command, vsCommands);
+				if (!commandOk) {
+					console.log(`--Missing Command ID ${command}`);
+				}
+			}
+		}
+		return isOk;
+	}
+	return false;
 }
