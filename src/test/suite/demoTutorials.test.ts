@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 import { Uri, commands }  from 'vscode';
-import { ensureExtensionActivated, validateCommands } from './Utils';
+import { ensureExtensionActivated, validateCommands, getFailedCommands } from './Utils';
 import { expect } from 'chai';
+import * as extensionFunctions from '../../extensionFunctions';
+import { beforeEach } from 'mocha';
 
 suite('Test the demo tutorials', () => {
 
@@ -28,14 +30,15 @@ suite('Test the demo tutorials', () => {
 		`demos/markdown/tutorial/tutorial.didact.md`,
 		`demos/asciidoc/simple-example.didact.adoc`,
 		`demos/asciidoc/didact-demo.didact.adoc`,
-		`demos/asciidoc/dep-table.didact.adoc`
+		`demos/asciidoc/dep-table.didact.adoc`,
 	];
 
-    setup(() => {
+	setup(async () => {
 		ensureExtensionActivated();
+		return;
 	});
 
-	teardown(async () => {
+	beforeEach(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
 		return;
 	});
@@ -44,7 +47,7 @@ suite('Test the demo tutorials', () => {
 		suite('walk through a list of demo files', () => {
 			filesToTest.forEach(function(fileToTest: string) {
 
-				teardown(async () => {
+				beforeEach(async () => {
 					await commands.executeCommand('workbench.action.closeAllEditors');
 					return;
 				});
@@ -56,6 +59,15 @@ suite('Test the demo tutorials', () => {
 				});
 			});
 		});
+	});
+
+	test('Walk through a tutorial we know has one command that fails due to vscode-java not being loaded', async() => {
+		const testCommand = `vscode://redhat.vscode-didact?extension=demos/markdown/camelinaction/chapter1/cia2-chapter-1-v2.didact.md`;
+		const isOk = await validateCommands(Uri.parse(testCommand));
+		expect(isOk).to.be.false;
+		const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
+		const failedCommands = await getFailedCommands(commands);
+		expect(failedCommands).to.include('java.projectConfiguration.update');
 	});
 
 	test('make sure the validation test fails', async () => {

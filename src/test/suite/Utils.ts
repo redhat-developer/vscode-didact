@@ -21,7 +21,8 @@ import * as vscode from 'vscode';
 import * as extensionFunctions from '../../extensionFunctions';
 import { didactManager } from '../../didactManager';
 import { expect } from 'chai';
-import { resolve } from 'path';
+import * as url from 'url';
+import * as utils from '../../utils';
 
 const waitUntil = require('async-wait-until');
 
@@ -61,19 +62,29 @@ export async function validateCommands(testUri : vscode.Uri) : Promise<boolean> 
 	if (didactManager.active()) {
 		const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 		expect(commands).to.not.be.empty;
-		const isOk = await extensionFunctions.validateDidactCommands(commands);
-
-		// if we failed the above, we can do a deeper dive to figure out what command is missing
-		if (!isOk) {
-			const vsCommands : string[] = await vscode.commands.getCommands(true);
-			for (const command of commands) {
-				const commandOk = extensionFunctions.validateCommand(command, vsCommands);
-				if (!commandOk) {
-					console.log(`--Missing Command ID ${command}`);
-				}
-			}
-		}
+		let isOk = await extensionFunctions.validateDidactCommands(commands, true);
 		return isOk;
 	}
 	return false;
+}
+
+export async function getFailedCommands(commands : any[]) : Promise<String[]> {
+	let failedCommandList : String[] = [];
+	if (commands && commands.length > 0) {
+		const vsCommands : string[] = await vscode.commands.getCommands(true);
+		for(const command of commands) {
+			const parsedUrl = url.parse(command, true);
+			const query = parsedUrl.query;
+			if (query.commandId) {
+				const commandId = utils.getValue(query.commandId);
+				if (commandId) {
+					const foundCommand = extensionFunctions.validateCommand(commandId, vsCommands);
+					if (!foundCommand) {
+						failedCommandList.push(commandId);
+					}
+				}
+			}
+		}
+	}
+	return failedCommandList;
 }
