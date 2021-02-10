@@ -31,6 +31,7 @@ suite('Test the demo tutorials', () => {
 		`demos/asciidoc/simple-example.didact.adoc`,
 		`demos/asciidoc/didact-demo.didact.adoc`,
 		`demos/asciidoc/dep-table.didact.adoc`,
+		`create_extension/create-new-tutorial-with-extension.didact.md`
 	];
 
 	setup(async () => {
