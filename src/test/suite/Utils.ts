@@ -62,8 +62,7 @@ export async function validateCommands(testUri : vscode.Uri) : Promise<boolean> 
 	if (didactManager.active()) {
 		const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
 		expect(commands).to.not.be.empty;
-		let isOk = await extensionFunctions.validateDidactCommands(commands, true);
-		return isOk;
+		return await extensionFunctions.validateDidactCommands(commands, true);
 	}
 	return false;
 }

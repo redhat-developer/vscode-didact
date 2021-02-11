@@ -35,13 +35,11 @@ suite('Test the demo tutorials', () => {
 	];
 
 	setup(async () => {
-		ensureExtensionActivated();
-		return;
+		await ensureExtensionActivated();
 	});
 
 	beforeEach(async () => {
 		await commands.executeCommand('workbench.action.closeAllEditors');
-		return;
 	});
 
 	test('Walk through the demo files to ensure that all commands exist in the VS Code system', async () => {
@@ -50,7 +48,6 @@ suite('Test the demo tutorials', () => {
 
 				beforeEach(async () => {
 					await commands.executeCommand('workbench.action.closeAllEditors');
-					return;
 				});
 			
 				test(`test provided demo file "${fileToTest}"`, async () => {

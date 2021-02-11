@@ -641,10 +641,10 @@ export async function validateDidactCommands(commands : any[], sendToConsole = f
 					if (!foundCommand) {
 						// unexpected result - let the user know
 						const msg = `--Missing Command ID ${commandId}.`;
-						if (!sendToConsole) {
-							await sendTextToOutputChannel(msg);
-						} else {
+						if (sendToConsole) {
 							console.log(msg);
+						} else {
+							await sendTextToOutputChannel(msg);
 						}
 						allOk = false;
 					}
