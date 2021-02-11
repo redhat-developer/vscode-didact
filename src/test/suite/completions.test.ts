@@ -20,6 +20,7 @@ import { expect } from 'chai';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { removeFilesAndFolders } from '../../utils';
+import { Position, Range, TextEditor } from "vscode";
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 const foldersAndFilesToRemove: string[] = [
@@ -49,7 +50,7 @@ suite("New Didact URI completion provider tests", function () {
 		const expected = "[My Link](didact://?commandId=";
 
 		suite('walk through a list of command completions', () => {
-			listOfCompletions.forEach(function(stringToTest: string){
+			listOfCompletions.forEach(function(stringToTest: string) {
 				test(`test provided completion "${stringToTest}"`, async () => {
 					await testWeGetExpectedResult(stringToTest, expected);
 				});
@@ -61,16 +62,31 @@ suite("New Didact URI completion provider tests", function () {
 
 async function testWeGetExpectedResult(textToInsert : string, expectedResult: string) {
 	const editor = await createTestEditor(testDocumentUri);
-	await vscode.commands.executeCommand('editor.action.selectAll');
-	await vscode.commands.executeCommand('type', {"text": textToInsert});
+	await delay(100);
+	await clearTextEditor(editor, textToInsert);
+	await delay(100);
+	await vscode.commands.executeCommand("cursorEnd");
+	await delay(100);
 	await vscode.commands.executeCommand("editor.action.triggerSuggest");
-	await delay(1000);
+	await delay(100);
 	await vscode.commands.executeCommand("acceptSelectedSuggestion");
+	await delay(100);
 	expect(editor.document.getText()).to.include(expectedResult);
 }
 
 function delay(ms: number) {
 	return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
+async function clearTextEditor(textEditor: TextEditor, initializeWith = "") {
+	const doc = textEditor.document;
+	await textEditor.edit((editBuilder) => {
+	  editBuilder.delete(new Range(new Position(0, 0), doc.positionAt(doc.getText().length)));
+	});
+	await textEditor.edit((editBuilder) => {
+	  editBuilder.insert(new Position(0, 0), initializeWith);
+	});
+	expect(doc.getText()).to.be.equal(initializeWith);
 }
 
 async function createTestEditor(uri: vscode.Uri) : Promise<vscode.TextEditor> {
