@@ -625,7 +625,7 @@ async function  openDidactOutputChannel() : Promise<void> {
 }
 
 // exported for testing
-export async function validateDidactCommands(commands : any[]) : Promise<boolean> {
+export async function validateDidactCommands(commands : any[], sendToConsole = false) : Promise<boolean> {
 	let allOk = true;
 	if (commands && commands.length > 0) {
 		sendTextToOutputChannel(`Starting validation...`);
@@ -638,11 +638,14 @@ export async function validateDidactCommands(commands : any[]) : Promise<boolean
 				const commandId = utils.getValue(query.commandId);
 				if (commandId) {
 					const foundCommand = validateCommand(commandId, vsCommands);
-					if (foundCommand) {
-						// expected result - we found the command in the vscode command list
-					} else {
+					if (!foundCommand) {
 						// unexpected result - let the user know
-						sendTextToOutputChannel(`--Missing Command ID ${commandId}.`);
+						const msg = `--Missing Command ID ${commandId}.`;
+						if (sendToConsole) {
+							console.log(msg);
+						} else {
+							await sendTextToOutputChannel(msg);
+						}
 						allOk = false;
 					}
 				}

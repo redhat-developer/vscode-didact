@@ -18,6 +18,11 @@
 
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import * as extensionFunctions from '../../extensionFunctions';
+import { didactManager } from '../../didactManager';
+import { expect } from 'chai';
+import * as url from 'url';
+import * as utils from '../../utils';
 
 const waitUntil = require('async-wait-until');
 
@@ -50,4 +55,35 @@ async function waitInCaseExtensionIsActivating(extension: vscode.Extension<unkno
 	}, ACTIVATION_TIMEOUT).catch(() => {
 		console.log('Extension has not started automatically, we will force call to activate it.');
 	});
+}
+
+export async function validateCommands(testUri : vscode.Uri) : Promise<boolean> {
+	await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, testUri);
+	if (didactManager.active()) {
+		const commands : any[] = extensionFunctions.gatherAllCommandsLinks();
+		expect(commands).to.not.be.empty;
+		return await extensionFunctions.validateDidactCommands(commands, true);
+	}
+	return false;
+}
+
+export async function getFailedCommands(commands : any[]) : Promise<String[]> {
+	let failedCommandList : String[] = [];
+	if (commands && commands.length > 0) {
+		const vsCommands : string[] = await vscode.commands.getCommands(true);
+		for(const command of commands) {
+			const parsedUrl = url.parse(command, true);
+			const query = parsedUrl.query;
+			if (query.commandId) {
+				const commandId = utils.getValue(query.commandId);
+				if (commandId) {
+					const foundCommand = extensionFunctions.validateCommand(commandId, vsCommands);
+					if (!foundCommand) {
+						failedCommandList.push(commandId);
+					}
+				}
+			}
+		}
+	}
+	return failedCommandList;
 }
