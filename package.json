@@ -109,6 +109,10 @@
 				"command": "vscode.didact.verifyCommands",
 				"title": "Validate Didact File",
 				"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+			},
+			{
+				"command": "vscode.didact.refresh",
+				"title": "Didact: Refresh Current Didact Window"
 			}
 		],
 		"keybindings": [
