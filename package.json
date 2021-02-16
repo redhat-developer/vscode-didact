@@ -209,7 +209,7 @@
 		"mocha-jenkins-reporter": "^0.4.4",
 		"sinon": "9.2.4",
 		"typescript": "^4.1.5",
-		"vscode-test": "^1.5.0"
+		"vscode-test": "^1.5.1"
 	},
 	"dependencies": {
 		"@types/download": "^6.2.4",
