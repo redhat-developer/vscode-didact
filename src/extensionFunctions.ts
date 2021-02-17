@@ -155,8 +155,10 @@ export async function startTerminal(...rest: any[]): Promise<void>{ //name:strin
 		}
 	}
 	if (name) {
-		if (findTerminal(name)) {
-			throw new Error(`Terminal ${name} already exists`);
+		const oldTerm = findTerminal(name);
+		if (oldTerm) {
+			oldTerm.show();
+			return;
 		}
 	}
 	let terminal : vscode.Terminal | undefined = undefined;
