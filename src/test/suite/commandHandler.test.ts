@@ -23,7 +23,7 @@ import { setLastColumnUsedSetting } from '../../utils';
 import * as assert from 'assert';
 import sinon = require('sinon');
 import { didactManager } from '../../didactManager';
-const waitUntil = require('async-wait-until');
+import { waitUntil } from 'async-wait-until';
 
 function disposeAll(disposables: vscode.Disposable[]) {
 	vscode.Disposable.from(...disposables).dispose();

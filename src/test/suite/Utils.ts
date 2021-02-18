@@ -23,8 +23,7 @@ import { didactManager } from '../../didactManager';
 import { expect } from 'chai';
 import * as url from 'url';
 import * as utils from '../../utils';
-
-const waitUntil = require('async-wait-until');
+import { waitUntil } from 'async-wait-until';
 
 const extensionId = 'redhat.vscode-didact';
 export const ACTIVATION_TIMEOUT = 45000;
@@ -46,7 +45,7 @@ async function forceActivation(extension: vscode.Extension<unknown>) {
 	await extension.activate();
 	await waitUntil(() => {
 		return extension.isActive;
-	}, ACTIVATION_TIMEOUT, 'Extension is not active even after calling activate explicitily.');
+	}, ACTIVATION_TIMEOUT);
 }
 
 async function waitInCaseExtensionIsActivating(extension: vscode.Extension<unknown>) {

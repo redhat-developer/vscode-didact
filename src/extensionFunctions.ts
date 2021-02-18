@@ -32,7 +32,6 @@ import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
 import { DIDACT_DEFAULT_URL } from './utils';
 
-const waitUntil = require('async-wait-until');
 const tmp = require('tmp');
 const fetch = require('node-fetch');
 
