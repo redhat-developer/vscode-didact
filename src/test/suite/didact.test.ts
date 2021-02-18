@@ -27,7 +27,7 @@ import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import { removeFilesAndFolders } from '../../utils';
 
-import waitUntil = require('async-wait-until');
+import { waitUntil } from 'async-wait-until';
 import { didactManager } from '../../didactManager';
 
 const EDITOR_OPENED_TIMEOUT = 5000;
@@ -102,9 +102,8 @@ suite('Didact test suite', () => {
 		try {
 			await commandHandler.processInputs(testScaffoldOpen).then( async () => {
 				try {
-					await waitUntil(() => {
-						return findEditorForFile(`simple.groovy`);
-					}, EDITOR_OPENED_TIMEOUT, 1000);
+					const predicate = () => findEditorForFile('simple.groovy') != undefined;
+					await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 });
 				} catch (error) {
 					assert.fail(`simple.groovy has not been opened in editor`);
 				}
@@ -270,9 +269,8 @@ async function testScaffoldProjectDoesNotOpenFile(fileName: string) {
 	try {
 		await commandHandler.processInputs(testScaffoldOpen).then(async () => {
 			try {
-				await waitUntil(() => {
-					return findEditorForFile(fileName);
-				}, EDITOR_OPENED_TIMEOUT, 1000).then(() => {
+				const predicate = () => findEditorForFile('simple.groovy') != undefined;
+				await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 }).then(() => {
 					assert.fail(`${fileName} was found opened in editor when it should not have been`);
 				});
 			} catch (error) {
