@@ -24,8 +24,8 @@ import { getContext } from '../../extensionFunctions';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
+import { waitUntil } from 'async-wait-until';
 
-const waitUntil = require('async-wait-until');
 const COMPLETION_TIMEOUT = 5000;
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
