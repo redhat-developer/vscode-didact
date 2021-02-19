@@ -62,6 +62,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_ACTIVE_EDITOR_COMMAND, extensionFunctions.pasteClipboardToActiveEditorOrPreviouslyUsedOne));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_EDITOR_FOR_FILE_COMMAND, extensionFunctions.pasteClipboardToEditorForFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_NEW_FILE_COMMAND, extensionFunctions.pasteClipboardToNewTextFile));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REFRESH_DIDACT, extensionFunctions.refreshDidactWindow));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({

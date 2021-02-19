@@ -159,6 +159,10 @@ export class DidactPanel {
 		this._panel.webview.postMessage(jsonMsg);
 	}	
 
+	public async refreshPanel() : Promise<void> {
+		this.configure(true);
+	}
+
 	async configure(flag = false): Promise<void> {
 		this._update(flag);
 		await this.sendSetStateMessage();

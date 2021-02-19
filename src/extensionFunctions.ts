@@ -68,6 +68,7 @@ export const FILE_TO_CLIPBOARD_COMMAND = 'vscode.didact.copyFileTextToClipboardC
 export const PASTE_TO_ACTIVE_EDITOR_COMMAND = 'vscode.didact.copyClipboardToActiveTextEditor';
 export const PASTE_TO_EDITOR_FOR_FILE_COMMAND = 'vscode.didact.copyClipboardToEditorForFile';
 export const PASTE_TO_NEW_FILE_COMMAND = 'vscode.didact.copyClipboardToNewFile';
+export const REFRESH_DIDACT = 'vscode.didact.refresh';
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
@@ -433,6 +434,11 @@ export async function reloadDidact(): Promise<void>{
 	await vscode.commands.executeCommand(START_DIDACT_COMMAND, _didactFileUri);
 }
 
+export async function refreshDidactWindow(): Promise<void>{
+	sendTextToOutputChannel(`Refreshing Didact window`);
+	await didactManager.active()?.refreshPanel();
+}
+
 // send a message back to the webview - used for requirements testing mostly
 function postRequirementsResponseMessage(requirement: string, booleanResponse: boolean): void {
 	if (requirement) {
@@ -457,17 +463,31 @@ export async function getWebviewContent() : Promise<string|void> {
 	}
 	if (_didactFileUri) {
 		if (_didactFileUri.scheme === 'file') {
-			return await getDataFromFile(_didactFileUri).catch( (error) => {
-				showFileUnavailable(error);
-			});
+			return await loadFileWithRetry(_didactFileUri);
 		} else if (_didactFileUri.scheme === 'http' || _didactFileUri.scheme === 'https'){
-			const urlToFetch = _didactFileUri.toString();
-			return await getDataFromUrl(urlToFetch).catch( (error) => {
-				showFileUnavailable(error);
-			});
+			return await loadFileFromHTTPWithRetry(_didactFileUri);
 		}
 	}
 	return undefined;
+}
+
+async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
+	return await getDataFromFile(uri).catch( async (error) => {
+		await utils.delay(3000);
+		return await getDataFromFile(uri).catch( async (error) => {
+			showFileUnavailable(error);
+		});
+	});
+}
+
+async function loadFileFromHTTPWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
+	const urlToFetch = uri.toString();
+	return await getDataFromUrl(urlToFetch).catch( async (error) => {
+		await utils.delay(3000);
+		return await getDataFromUrl(urlToFetch).catch( async (error) => {
+			showFileUnavailable(error);
+		});
+	});
 }
 
 export function isAsciiDoc() : boolean {

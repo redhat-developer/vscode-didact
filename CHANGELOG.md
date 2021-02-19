@@ -4,7 +4,8 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.3.2
 
-- TBD
+- adding *vscode.didact.refresh* command to refresh the currently active Didact window
+- adding retry in case the uri for a tutorial isn't quite available yet
 
 ## 0.3.1
 
