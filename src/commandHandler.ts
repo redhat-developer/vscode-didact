@@ -17,10 +17,9 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import {getValue} from './utils';
+import {getValue, isDefaultNotificationDisabled} from './utils';
 import * as extensionFunctions from './extensionFunctions';
-import {isDefaultNotificationDisabled} from './utils';
-const url = require('url-parse');
+import * as url from 'url';
 
 // take the incoming didact link and allow a mix of a uri and text/user inputs
 export async function processInputs(incoming : string, extensionPath? : string) : Promise<void | undefined>  {
@@ -132,10 +131,9 @@ function handleSrcFilePath(srcFilePath: string, extensionPath : string) : vscode
 	if (extensionPath === undefined) { 
 		return undefined; 
 	}
-	const uri : vscode.Uri = vscode.Uri.file(
+	return vscode.Uri.file(
 		path.resolve(extensionPath, srcFilePath)
 	);
-	return uri;
 }
 
 // take a "extFilePath=" or "extension=" extId/filepath 
@@ -152,10 +150,9 @@ export function handleExtFilePath(extFilePath: string) : vscode.Uri | undefined 
 					const pathToAdd = array.join(separator);
 					const extensionPath = ext.extensionPath;
 					extensionFunctions.sendTextToOutputChannel(`-- combining ${pathToAdd} ${extensionPath}`);
-					const uri : vscode.Uri = vscode.Uri.file(
+					return vscode.Uri.file(
 						path.resolve(extensionPath, pathToAdd)
 					);
-					return uri;
 				}
 			}
 		}
