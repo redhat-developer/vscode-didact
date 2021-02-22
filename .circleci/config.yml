@@ -57,6 +57,11 @@ jobs:
       - store_artifacts:
           path: /home/circleci/.config/Code/User/workspaceStorage/
           name: Store VS Code User Workspace storage            
+      - when:
+          condition:
+            equal: [master, << pipeline.git.branch >>]
+          steps:
+            - sonarcloud/scan
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.2
@@ -65,12 +70,5 @@ workflows:
   version: 2
   vscode-didact:
     jobs:
-      - build
-      - sonar:
+      - build:
           context: sonarcloud
-          filters:
-            branches:
-              only:
-                - master
-          requires:
-            - build
