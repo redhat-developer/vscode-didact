@@ -26,7 +26,6 @@ import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
 import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
-import * as url from 'url';
 import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
@@ -34,7 +33,7 @@ import { DIDACT_DEFAULT_URL } from './utils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
-
+const url = require('url-parse');
 const EDITOR_OPENED_TIMEOUT = 3000;
 
 // command IDs
@@ -653,7 +652,7 @@ export async function validateDidactCommands(commands : any[], sendToConsole = f
 		const vsCommands : string[] = await vscode.commands.getCommands(true);
 		for(const command of commands) {
 			// validate all commands we found
-			const parsedUrl = url.parse(command, true);
+			const parsedUrl = new url(command, true);
 			const query = parsedUrl.query;
 			if (query.commandId) {
 				const commandId = utils.getValue(query.commandId);
@@ -720,7 +719,7 @@ export async function placeTextOnClipboard(clipText: string): Promise<void>{
 export async function downloadAndUnzipFile(httpFileUrl : string, installFolder : string, dlFilename? : string, extractFlag = false, ignoreOverwrite = false): Promise<any> {
 	let filename = '';
 	if (!dlFilename) {
-		const fileUrl = url.parse(httpFileUrl);
+		const fileUrl = new url(httpFileUrl);
 		const pathname = fileUrl.pathname;
 		if (pathname) {
 			filename = pathname.substring(pathname.lastIndexOf('/')+1);

@@ -21,9 +21,10 @@ import * as vscode from 'vscode';
 import * as extensionFunctions from '../../extensionFunctions';
 import { didactManager } from '../../didactManager';
 import { expect } from 'chai';
-import * as url from 'url';
 import * as utils from '../../utils';
 import { waitUntil } from 'async-wait-until';
+
+const url = require('url-parse');
 
 const extensionId = 'redhat.vscode-didact';
 export const ACTIVATION_TIMEOUT = 45000;
@@ -71,7 +72,7 @@ export async function getFailedCommands(commands : any[]) : Promise<String[]> {
 	if (commands && commands.length > 0) {
 		const vsCommands : string[] = await vscode.commands.getCommands(true);
 		for(const command of commands) {
-			const parsedUrl = url.parse(command, true);
+			const parsedUrl = new url(command, true);
 			const query = parsedUrl.query;
 			if (query.commandId) {
 				const commandId = utils.getValue(query.commandId);

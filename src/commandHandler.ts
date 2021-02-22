@@ -19,15 +19,15 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import {getValue} from './utils';
 import * as extensionFunctions from './extensionFunctions';
-import * as url from 'url';
 import {isDefaultNotificationDisabled} from './utils';
+const url = require('url-parse');
 
 // take the incoming didact link and allow a mix of a uri and text/user inputs
 export async function processInputs(incoming : string, extensionPath? : string) : Promise<void | undefined>  {
 	const output : any[] = [];
 	if (incoming) {
 		extensionFunctions.sendTextToOutputChannel(`Processing command inputs ${incoming} ${extensionPath}`);
-		const parsedUrl = url.parse(incoming, true);
+		const parsedUrl = new url(incoming, true);
 		const query = parsedUrl.query;
 
 		let commandId: string | undefined = undefined;
