@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorial, clearRegisteredTutorials} from '../../utils';
+import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials} from '../../utils';
 import {before} from 'mocha';
 import * as vscode from 'vscode';
 import { REGISTER_TUTORIAL } from '../../extensionFunctions';
@@ -19,7 +19,7 @@ suite('Didact registry test suite', () => {
 
 	test('add to registry', async () => {
 		try {
-			await registerTutorial(name, source, category).then( () => {
+			await registerTutorialWithCategory(name, source, category).then( () => {
 				assert.ok('No errors thrown while creating new didact registry entry');
 			});
 		} catch (error) {
@@ -27,7 +27,7 @@ suite('Didact registry test suite', () => {
 		}
 
 		try {
-			await registerTutorial(name, source, category);
+			await registerTutorialWithCategory(name, source, category);
 			assert.fail('Should have been an error thrown while creating new didact registry entry twice');
 		} catch (error) {
 			assert.ok('As expected, we failed to create the new didact registry entry with a duplicated entry');
@@ -41,7 +41,7 @@ suite('Didact registry test suite', () => {
 
 	test('verify can get categories', async () => {
 		try {
-			await registerTutorial(name2, source2, category2);
+			await registerTutorialWithCategory(name2, source2, category2);
 			assert.ok('No errors thrown while creating new didact registry entry for second category');
 		} catch (error) {
 			assert.fail('We failed to create the new didact registry entry for second category');

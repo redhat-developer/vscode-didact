@@ -18,7 +18,7 @@
 import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
-import { registerTutorial, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
+import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { VIEW_TYPE } from './didactManager';
@@ -91,19 +91,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 	// register the default tutorial
 	const tutorialUri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
-	await registerTutorial(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+	await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// register the tutorial for creating a new extension with a didact file
 	const tutorial2Uri = vscode.Uri.file(context.asAbsolutePath('./create_extension/create-new-tutorial-with-extension.didact.md'));
-	await registerTutorial("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+	await registerTutorialWithCategory("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// register the javascript tutorial
 	const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
-	await registerTutorial("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+	await registerTutorialWithCategory("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// register the didact tutorial
 	const tutorial4Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/tutorial/tutorial.didact.md'));
-	await registerTutorial("Writing Your First Didact Tutorial", tutorial4Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+	await registerTutorialWithCategory("Writing Your First Didact Tutorial", tutorial4Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 	// create the view
 	createIntegrationsView();

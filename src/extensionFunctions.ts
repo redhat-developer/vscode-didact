@@ -16,7 +16,6 @@
  */
 
 import * as vscode from 'vscode';
-import * as utils from './utils';
 import * as fs from 'fs';
 import * as querystring from 'querystring';
 import * as path from 'path';
@@ -29,7 +28,7 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
-import { DIDACT_DEFAULT_URL } from './utils';
+import { delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -101,7 +100,7 @@ export function initialize(inContext: vscode.ExtensionContext): void {
 // use the json to model the folder/file structure to be created in the vscode workspace
 export async function scaffoldProjectFromJson(jsonpath:vscode.Uri): Promise<void> {
 	sendTextToOutputChannel(`Scaffolding project from json: ${jsonpath}`);
-	if (utils.getWorkspacePath()) {
+	if (getWorkspacePath()) {
 		let testJson : any;
 		if (jsonpath) {
 			const jsoncontent = fs.readFileSync(jsonpath.fsPath, 'utf8');
@@ -290,13 +289,13 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 	if (uri) {
 		const query = querystring.parse(uri.query);
 		if (query.extension) {
-			const value = utils.getValue(query.extension);
+			const value = getValue(query.extension);
 			out = processExtensionFilePath(value);
 		} else if (query.extFilePath) {
-			const value = utils.getValue(query.extFilePath);
+			const value = getValue(query.extFilePath);
 			out = processExtensionFilePath(value);
 		} else if (query.workspace) {
-			const value = utils.getValue(query.workspace);
+			const value = getValue(query.workspace);
 			if (value) {
 				if (vscode.workspace.workspaceFolders) {
 					const workspace = vscode.workspace.workspaceFolders[0];
@@ -305,12 +304,12 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 				}
 			}
 		} else if (query.https) {
-			const value = utils.getValue(query.https);
+			const value = getValue(query.https);
 			if (value) {
 				out = vscode.Uri.parse(`https://${value}`);
 			}
 		} else if (query.http) {
-			const value = utils.getValue(query.http);
+			const value = getValue(query.http);
 			if (value) {
 				out = vscode.Uri.parse(`http://${value}`);
 			}
@@ -326,7 +325,7 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 // open the didact window with the didact file passed in via Uri
 export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise<void>{
 	if (!uri) {
-		uri = await utils.getCurrentFileSelectionPath();
+		uri = await getCurrentFileSelectionPath();
 	}
 
 	// if column passed, convert to viewcolumn enum
@@ -413,7 +412,7 @@ export async function extensionCheck(requirement: string, extensionId: string) :
 // very basic test -- check to see if the workspace has at least one root folder
 export async function validWorkspaceCheck(requirement: string) : Promise<boolean> {
 	sendTextToOutputChannel(`Validating workspace has at least one root folder`);
-	const wsPath = utils.getWorkspacePath();
+	const wsPath = getWorkspacePath();
 	if (wsPath) {
 		sendTextToOutputChannel(`--Workspace has at least one root folder: true`);
 		postRequirementsResponseMessage(requirement, true);
@@ -461,17 +460,17 @@ export async function getWebviewContent() : Promise<string|void> {
 	}
 	if (_didactFileUri) {
 		if (_didactFileUri.scheme === 'file') {
-			return await loadFileWithRetry(_didactFileUri);
+			return loadFileWithRetry(_didactFileUri);
 		} else if (_didactFileUri.scheme === 'http' || _didactFileUri.scheme === 'https'){
-			return await loadFileFromHTTPWithRetry(_didactFileUri);
+			return loadFileFromHTTPWithRetry(_didactFileUri);
 		}
 	}
 	return undefined;
 }
 
 async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
-	return await getDataFromFile(uri).catch( async (error) => {
-		await utils.delay(3000);
+	return await getDataFromFile(uri).catch( async () => {
+		await delay(3000);
 		return await getDataFromFile(uri).catch( async (error) => {
 			showFileUnavailable(error);
 		});
@@ -480,8 +479,8 @@ async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<string | void | un
 
 async function loadFileFromHTTPWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
 	const urlToFetch = uri.toString();
-	return await getDataFromUrl(urlToFetch).catch( async (error) => {
-		await utils.delay(3000);
+	return await getDataFromUrl(urlToFetch).catch( async () => {
+		await delay(3000);
 		return await getDataFromUrl(urlToFetch).catch( async (error) => {
 			showFileUnavailable(error);
 		});
@@ -560,8 +559,7 @@ export function collectElements(tagname: string, html? : string | undefined) : a
 	if (html) {
 		const document = parse(html);
 		const links = document.querySelectorAll(tagname);
-		for (let index = 0; index < links.length; index++) {
-			const element = links[index];
+		for (let element of links.values()) {
 			elements.push(element);
 		}
 	}
@@ -572,8 +570,7 @@ export function gatherAllRequirementsLinks() : any[] {
 	const requirements = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let index = 0; index < links.length; index++) {
-			const element = links[index];
+		for (let element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				for(const check of requirementCommandLinks) {
@@ -592,8 +589,7 @@ export function gatherAllCommandsLinks(): any[] {
 	const commandLinks = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let index = 0; index < links.length; index++) {
-			const element = links[index];
+		for (let element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				if (href.startsWith(commandPrefix)) {
@@ -615,7 +611,7 @@ export async function openTutorialFromView(node: TreeNode) : Promise<void> {
 
 export async function registerTutorial(name : string, sourceUri : string, category : string) : Promise<void> {
 	sendTextToOutputChannel(`Registering Didact tutorial with name (${name}), category (${category}, and sourceUri (${sourceUri})`);
-	await utils.registerTutorial(name, sourceUri, category);
+	await registerTutorialWithCategory(name, sourceUri, category);
 }
 
 export async function sendTextToOutputChannel(msg: string, channel?: vscode.OutputChannel) : Promise<void> {
@@ -655,7 +651,7 @@ export async function validateDidactCommands(commands : any[], sendToConsole = f
 			const parsedUrl = new url(command, true);
 			const query = parsedUrl.query;
 			if (query.commandId) {
-				const commandId = utils.getValue(query.commandId);
+				const commandId = getValue(query.commandId);
 				if (commandId) {
 					const foundCommand = validateCommand(commandId, vsCommands);
 					if (!foundCommand) {
@@ -862,10 +858,10 @@ export function openNamedOutputChannel(name?: string | undefined): vscode.Output
 		}
 		channel = didactOutputChannel;
 	} else {
-		channel = utils.getCachedOutputChannel(name);
+		channel = getCachedOutputChannel(name);
 		if (!channel) {
 			channel = vscode.window.createOutputChannel(name);
-			utils.rememberOutputChannel(channel);
+			rememberOutputChannel(channel);
 		}
 	}	
 	if (channel) {
@@ -946,8 +942,7 @@ export async function pasteClipboardToActiveEditorOrPreviouslyUsedOne() : Promis
 }
 
 export async function findOpenEditorForFileURI(uri: vscode.Uri) : Promise<vscode.TextEditor | undefined> {
-	for (let index = 0; index < vscode.window.visibleTextEditors.length; index++) {
-		const editor = vscode.window.visibleTextEditors[index];
+	for (let editor of vscode.window.visibleTextEditors.values()) {
 		if (editor.document.uri === uri) {
 			return editor;
 		}

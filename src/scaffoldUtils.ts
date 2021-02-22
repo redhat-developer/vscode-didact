@@ -176,9 +176,9 @@ async function createSubFolders(folderNode: any, folders: any, jsonpath: vscode.
 				fs.mkdirSync(newFolder);
 			}
 			if (folder.folders) {
-				return await createSubFolders(newFolder, folder.folders, jsonpath).then(async () => {
+				return createSubFolders(newFolder, folder.folders, jsonpath).then(async () => {
 					if (folder.files) {
-						return await createFiles(newFolder, folder.files, jsonpath)
+						return createFiles(newFolder, folder.files, jsonpath)
 							.catch((error) => {
 								console.log(error);
 							});
@@ -188,7 +188,7 @@ async function createSubFolders(folderNode: any, folders: any, jsonpath: vscode.
 				});
 			}
 			else if (folder.files) {
-				return await createFiles(newFolder, folder.files, jsonpath)
+				return createFiles(newFolder, folder.files, jsonpath)
 					.catch((error) => {
 						console.log(error);
 					});

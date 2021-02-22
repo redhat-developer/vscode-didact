@@ -21,7 +21,7 @@ export function getMDParser() : MarkdownIt {
 	const md = new MarkdownIt({html: true});
 	const taskLists = require('markdown-it-task-lists');
 	const markdownItAttrs = require('markdown-it-attrs');
-	const parser = md
+	return md
 		.set({ typographer: true })
 		.set({ linkify: true })
 		.enable('linkify')
@@ -30,7 +30,6 @@ export function getMDParser() : MarkdownIt {
 		.enable('table')
 		.use(taskLists, {enabled: true, label: true})
 		.use(markdownItAttrs, {});
-	return parser;
 }
 
 export function parseMDtoHTML(content: string) : string {
