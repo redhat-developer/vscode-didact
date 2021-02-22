@@ -201,6 +201,7 @@
 	"devDependencies": {
 		"@types/chai": "^4.2.15",
 		"@types/glob": "^7.1.3",
+		"@types/istanbul": "^0.4.30",
 		"@types/mocha": "^8.2.1",
 		"@types/node": "^14.14.31",
 		"@types/sinon": "^9.0.10",
@@ -209,8 +210,10 @@
 		"@typescript-eslint/parser": "^4.15.1",
 		"chai": "^4.3.0",
 		"eslint": "^7.20.0",
+		"istanbul": "^0.4.5",
 		"mocha": "^8.3.0",
 		"mocha-jenkins-reporter": "^0.4.4",
+		"remap-istanbul": "^0.13.0",
 		"sinon": "9.2.4",
 		"typescript": "^4.1.5",
 		"vscode-test": "^1.5.1"

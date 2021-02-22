@@ -51,6 +51,12 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ~/.npm
+      - store_artifacts:
+          path: /home/circleci/.config/Code/logs
+          name: Store VS Code logs
+      - store_artifacts:
+          path: /home/circleci/.config/Code/User/workspaceStorage/
+          name: Store VS Code User Workspace storage            
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.2
