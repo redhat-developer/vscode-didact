@@ -4,8 +4,7 @@
     "relativeCoverageDir": "../../../coverage",
     "ignorePatterns": [
         "**/node_modules/**",
-        "**/src/test/**",
-        "**/src/ui-test/**"
+        "**/src/test/**"
     ],
     "includePid": false,
     "reports": [
