@@ -24,13 +24,23 @@ function loadCoverageRunner(testsRoot: string): CoverageRunner | undefined {
 	}
 }
 
-// Create the mocha test
-const mocha = new Mocha({
+const config: any = {
 	ui: 'tdd',
-	timeout: 20000,
-	reporter: 'mocha-jenkins-reporter',
-	color: true
-});
+	timeout: 15000,
+	color: true,
+	fullStackTrace: true,
+};
+  
+if (process.env.BUILD_ID && process.env.BUILD_NUMBER) {
+	config.reporter = 'mocha-jenkins-reporter';
+}
+  
+let testFinishTimeout = 1000;
+if (process.env.TRAVIS && process.platform === 'darwin') {
+	testFinishTimeout = 7000; // for macOS on travis we need bigger timeout
+}
+  
+const mocha = new Mocha(config);
 
 export function run(): Promise<void> {
 	const testsRoot = path.resolve(__dirname, '..');
