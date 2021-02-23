@@ -19,7 +19,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import {getValue, isDefaultNotificationDisabled} from './utils';
 import * as extensionFunctions from './extensionFunctions';
-import * as url from 'url';
+
+const url = require('url-parse');
 
 // take the incoming didact link and allow a mix of a uri and text/user inputs
 export async function processInputs(incoming : string, extensionPath? : string) : Promise<void | undefined>  {
