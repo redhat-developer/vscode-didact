@@ -17,9 +17,9 @@
 
 'use strict';
 
-import * as url from 'url';
 import {getValue} from './utils';
 import * as vscode from 'vscode';
+const url = require('url-parse');
 
 export class DidactUri {
 	private commandId: string | undefined;
@@ -76,7 +76,7 @@ export class DidactUri {
 	}
 
 	private parseDidactUrl(incoming: string) : void {
-		const parsedUrl = url.parse(incoming, true);
+		const parsedUrl = new url(incoming, true);
 		const query = parsedUrl.query;
 
 		if (query.commandId) {

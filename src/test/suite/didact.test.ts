@@ -22,13 +22,14 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as extensionFunctions from '../../extensionFunctions';
-import * as url from 'url';
 import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import { removeFilesAndFolders } from '../../utils';
 
 import { waitUntil } from 'async-wait-until';
 import { didactManager } from '../../didactManager';
+
+const url = require('url-parse');
 
 const EDITOR_OPENED_TIMEOUT = 5000;
 
@@ -132,7 +133,7 @@ suite('Didact test suite', () => {
 
 	test('Test the extension checking', async () => {
 		const href = testExt;
-		const parsedUrl = url.parse(href, true);
+		const parsedUrl = new url(href, true);
 		const query = parsedUrl.query;
 		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
@@ -153,7 +154,7 @@ suite('Didact test suite', () => {
 
 	test('test the command line requirements checking', async () => {
 		const href = testReqCli;
-		const parsedUrl = url.parse(href, true);
+		const parsedUrl = new url(href, true);
 		const query = parsedUrl.query;
 		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
@@ -181,7 +182,7 @@ suite('Didact test suite', () => {
 		} else if (osName.startsWith(OS_MACOS)) {
 			href = testReqMac;
 		}
-		const parsedUrl = url.parse(href, true);
+		const parsedUrl = new url(href, true);
 		const query = parsedUrl.query;
 		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
@@ -202,7 +203,7 @@ suite('Didact test suite', () => {
 
 	test('test the workspace checking', async () => {
 		const href = testWS.toString();
-		const parsedUrl = url.parse(href, true);
+		const parsedUrl = new url(href, true);
 		const query = parsedUrl.query;
 		assert.notStrictEqual(query.commandId, undefined);
 		if (query.commandId) {
