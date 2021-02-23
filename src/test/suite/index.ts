@@ -24,25 +24,15 @@ function loadCoverageRunner(testsRoot: string): CoverageRunner | undefined {
 	}
 }
 
-const config: any = {
+// Create the mocha test
+const mocha = new Mocha({
 	ui: 'tdd',
-	timeout: 15000,
-	color: true,
-	fullStackTrace: true,
-};
-  
-if (process.env.BUILD_ID && process.env.BUILD_NUMBER) {
-	config.reporter = 'mocha-jenkins-reporter';
-}
-  
-let testFinishTimeout = 1000;
-if (process.env.TRAVIS && process.platform === 'darwin') {
-	testFinishTimeout = 7000; // for macOS on travis we need bigger timeout
-}
-  
-const mocha = new Mocha(config);
+	timeout: 20000,
+	reporter: 'mocha-jenkins-reporter',
+	color: true
+});
 
-export function run(): Promise<void> {
+export function run(): any {
 	const testsRoot = path.resolve(__dirname, '..');
 	console.log(`testsRoot = ${testsRoot}`);
 	const coverageRunner = loadCoverageRunner(testsRoot);
@@ -54,7 +44,9 @@ export function run(): Promise<void> {
 			}
 
 			// Add files to the test suite
-			files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
+			files.forEach(f => {
+				mocha.addFile(path.resolve(testsRoot, f));
+			});
 
 			try {
 				// Run the mocha test
@@ -62,11 +54,11 @@ export function run(): Promise<void> {
 					if (failures > 0) {
 						e(new Error(`${failures} tests failed.`));
 					} else {
-						c();
+						c(undefined);
 					}
 				}).on('end', () => coverageRunner && coverageRunner.reportCoverage());
-			} catch (error) {
-				e(error);
+			} catch (innererr) {
+				e(innererr);
 			}
 		});
 	});
