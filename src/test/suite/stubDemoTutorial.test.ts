@@ -36,7 +36,7 @@ suite('stub out a tutorial', () => {
 	});
 
 	test('that we can get a response from each command in the demo tutorial', async () => {
-		return await commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
+		await commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
 			if (didactManager.active()) {
 
 				suite('walk through all the sendNamedTerminalAString commands in the demo', () => {

@@ -61,7 +61,7 @@ suite("New Didact URI completion provider tests", function () {
 });
 
 async function testWeGetExpectedResult(textToInsert : string, expectedResult: string) {
-	const editor = await createTestEditor(testDocumentUri);
+	const editor = await initializeTestEditor(testDocumentUri);
 	await delay(100);
 	await clearTextEditor(editor, textToInsert);
 	await delay(100);
@@ -89,7 +89,7 @@ async function clearTextEditor(textEditor: TextEditor, initializeWith = "") {
 	expect(doc.getText()).to.be.equal(initializeWith);
 }
 
-async function createTestEditor(uri: vscode.Uri) : Promise<vscode.TextEditor> {
+async function initializeTestEditor(uri: vscode.Uri) : Promise<vscode.TextEditor> {
 	await vscode.workspace.fs.writeFile(testDocumentUri, Buffer.from(''));
 	const document = await vscode.workspace.openTextDocument(uri);
 	await vscode.window.showTextDocument(document, vscode.ViewColumn.One);
