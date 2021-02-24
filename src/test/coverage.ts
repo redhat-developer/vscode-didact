@@ -57,7 +57,7 @@ export class CoverageRunner {
         const self = this;
         self.instrumenter = new istanbul.Instrumenter({ coverageVariable: self.coverageVar });
         const sourceRoot = paths.join(self.testsRoot, self.options.relativeSourcePath as string);
-
+		console.log("sourceRoot: " + sourceRoot);
         // Glob source files
         const srcFiles = glob.sync('**/**.js', {
             cwd: sourceRoot,
@@ -68,8 +68,10 @@ export class CoverageRunner {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const decache = require('decache');
         const fileMap: any = {};
+		console.log("setup coverage for files:");
         srcFiles.forEach((file) => {
-            const fullPath = paths.join(sourceRoot, file);
+			const fullPath = paths.join(sourceRoot, file);
+			console.log(fullPath);
             fileMap[fullPath] = true;
 
             // On Windows, extension is loaded pre-test hooks and this mean we lose
