@@ -24,7 +24,7 @@ import { handleText } from '../../commandHandler';
 
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
-const delayTime = 1000;
+const delayTime = 1500;
 
 suite('stub out a tutorial', () => {
 
