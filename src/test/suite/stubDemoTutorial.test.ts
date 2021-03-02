@@ -21,6 +21,7 @@ import { START_DIDACT_COMMAND, sendTerminalText, gatherAllCommandsLinks, getCont
 import { didactManager } from '../../didactManager';
 import { DidactUri } from '../../didactUri';
 import { handleText } from '../../commandHandler';
+import { waitUntil } from 'async-wait-until';
 
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
@@ -76,14 +77,16 @@ async function validateSimpleTerminalResponse(terminalName : string, terminalTex
 	if (term) {
 		console.log(`-current terminal = ${term?.name}`);
 		await sendTerminalText(terminalName, terminalText);
-		await delay(delayTime);
-		const term2 = focusOnNamedTerminal(terminalName);
-		await delay(delayTime);
-		let result = await getTerminalOutput(terminalName);
-		console.log(`-validateSimpleTerminalResponse terminal output = ${result}`);
+	
+		const resultValue = await waitUntil(async () => {
+			focusOnNamedTerminal(terminalName);
+			const result = await getTerminalOutput(terminalName);
+			console.log(`-validateSimpleTerminalResponse terminal output = ${result}`);
+			return result.includes(terminalText);
+		}, 5000);
 
 		// we're just making sure we get something back and can see the text we put into the terminal
-		expect(result).to.include(terminalText);
+		expect(resultValue).to.be.true;
 		findAndDisposeTerminal(terminalName);
 	}
 }
@@ -95,12 +98,14 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 	if (term) {
 		console.log(`-current terminal = ${term?.name}`);
 		await sendTerminalText(terminalName, terminalText);
-		await delay(delayTime);
-		const term2 = focusOnNamedTerminal(terminalName);
-		await delay(delayTime);
-		let result = await getTerminalOutput(terminalName);
-		console.log(`-validateTerminalResponse terminal output = ${result}`);
-		expect(result).to.include(terminalResponse);
+
+		const resultValue = await waitUntil(async () => {
+			focusOnNamedTerminal(terminalName);
+			const result = await getTerminalOutput(terminalName);
+			console.log(`-validateSimpleTerminalResponse terminal output = ${result}`);
+			return result.includes(terminalResponse);
+		}, 5000);
+		expect(resultValue).to.be.true;
 		findAndDisposeTerminal(terminalName);
 	}
 }
