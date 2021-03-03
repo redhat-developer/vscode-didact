@@ -203,8 +203,7 @@ async function handleUser(text : string, outputs : string[], errorMessage : stri
 
 // get a single input
 async function getUserInput(prompt:string): Promise<string | undefined> {
-	// though flagged as a code smell, this must be an await or we don't get the user input
-	return await vscode.window.showInputBox({
+	return vscode.window.showInputBox({
 		prompt: `Enter a ${prompt}`,
 		placeHolder: prompt
 	});		
