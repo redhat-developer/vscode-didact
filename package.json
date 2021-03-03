@@ -208,7 +208,7 @@
 		"@typescript-eslint/eslint-plugin": "^4.15.1",
 		"@typescript-eslint/parser": "^4.15.1",
 		"chai": "^4.3.0",
-		"eslint": "^7.20.0",
+		"eslint": "^7.21.0",
 		"mocha": "^8.3.0",
 		"mocha-jenkins-reporter": "^0.4.4",
 		"sinon": "9.2.4",
