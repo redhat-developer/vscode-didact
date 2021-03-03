@@ -970,3 +970,7 @@ export async function pasteClipboardToNewTextFile() : Promise<void> {
 	await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
 	await pasteClipboardToActiveEditorOrPreviouslyUsedOne();
 }
+
+export async function setDidactFileUri(newFileUri : vscode.Uri | undefined) {
+	_didactFileUri = newFileUri;
+}

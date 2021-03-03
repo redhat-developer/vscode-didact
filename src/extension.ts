@@ -22,6 +22,7 @@ import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartu
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { VIEW_TYPE } from './didactManager';
+import { HintBoxViewProvider } from './hintBoxViewProvider';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -30,6 +31,8 @@ const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
 export const didactTutorialsProvider = new DidactNodeProvider();
 let didactTreeView : vscode.TreeView<TreeNode>;
+let hintBoxProvider : HintBoxViewProvider;
+const REFRESH_HINTBOX_ACTION = 'didact.hintbox.refresh';
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
 	
@@ -63,6 +66,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_EDITOR_FOR_FILE_COMMAND, extensionFunctions.pasteClipboardToEditorForFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_NEW_FILE_COMMAND, extensionFunctions.pasteClipboardToNewTextFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REFRESH_DIDACT, extensionFunctions.refreshDidactWindow));
+	context.subscriptions.push(vscode.commands.registerCommand(REFRESH_HINTBOX_ACTION, refreshHintBox));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
@@ -108,6 +112,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	// create the view
 	createIntegrationsView();
 
+	// create the hintbox
+	hintBoxProvider = new HintBoxViewProvider(context.extensionUri);
+	context.subscriptions.push(vscode.window.registerWebviewViewProvider(HintBoxViewProvider.viewType, hintBoxProvider));
+
 	// open at startup if setting is true
 	const openAtStartup : boolean = getOpenAtStartupSetting();
 	if (openAtStartup) {
@@ -134,5 +142,11 @@ export async function deactivate(): Promise<void> {
 export function refreshTreeview(): void {
 	if (didactTreeView && didactTreeView.visible === true) {
 		didactTutorialsProvider.refresh();
+	}
+}
+
+export function refreshHintBox() : void {
+	if (hintBoxProvider) {
+		hintBoxProvider.show(true);
 	}
 }
