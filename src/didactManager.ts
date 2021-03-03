@@ -105,8 +105,7 @@ export class DidactManager {
 
 	public getByUri(testUri: Uri): DidactPanel | undefined {
 		let returnPanel = undefined;
-		for (let index = 0; index < this._panels.length; index++) {
-			const p = this._panels[index];
+		for ( let p of this._panels.values()) {
 			const originalUri = p.getDidactUriPath();
 			if (testUri && originalUri && originalUri.toString() === testUri.toString()) {
 				returnPanel = p;

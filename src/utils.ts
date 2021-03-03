@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
 import * as extension from './extension';
 import * as extensionFunctions from './extensionFunctions';
 import * as fs from 'fs';
-import { ViewColumn } from 'vscode';
+import { ViewColumn, OutputChannel, workspace, Uri, window, commands, env } from 'vscode';
 import * as path from 'path';
 
 export const DIDACT_DEFAULT_URL = 'didact.defaultUrl';
@@ -28,13 +27,13 @@ export const DIDACT_NOTIFICATION_SETTING = 'didact.disableNotifications';
 export const DIDACT_COLUMN_SETTING = 'didact.lastColumnUsed';
 export const DIDACT_OPEN_AT_STARTUP = 'didact.openDefaultTutorialAtStartup';
 
-const CACHED_OUTPUT_CHANNELS: vscode.OutputChannel[] = new Array<vscode.OutputChannel>();
+const CACHED_OUTPUT_CHANNELS: OutputChannel[] = new Array<OutputChannel>();
 
-export function getCachedOutputChannels(): vscode.OutputChannel[] {
+export function getCachedOutputChannels(): OutputChannel[] {
 	return CACHED_OUTPUT_CHANNELS;
 }
 
-export function getCachedOutputChannel(name: string): vscode.OutputChannel | undefined {
+export function getCachedOutputChannel(name: string): OutputChannel | undefined {
 	for (const channel of CACHED_OUTPUT_CHANNELS) {
 		if (channel.name === name) {
 			return channel;
@@ -43,7 +42,7 @@ export function getCachedOutputChannel(name: string): vscode.OutputChannel | und
 	return undefined;
 }
 
-export function rememberOutputChannel(channel: vscode.OutputChannel): void {
+export function rememberOutputChannel(channel: OutputChannel): void {
 	if (!getCachedOutputChannel(channel.name)) {
 		CACHED_OUTPUT_CHANNELS.push(channel);
 	}
@@ -67,8 +66,8 @@ export function pathEquals(path1: string, path2: string): boolean {
 
 // returns the first workspace root folder
 export function getWorkspacePath():string | undefined {
-	if(vscode.workspace.workspaceFolders !== undefined && vscode.workspace.workspaceFolders.length > 0) {
-		return vscode.workspace.workspaceFolders[0].uri.fsPath;
+	if(workspace.workspaceFolders !== undefined && workspace.workspaceFolders.length > 0) {
+		return workspace.workspaceFolders[0].uri.fsPath;
 	} else {
 		return undefined;
 	}
@@ -92,24 +91,22 @@ export function delay(ms: number): Promise<unknown> {
 }
 
 export function getDefaultUrl() : string | undefined {
-	const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
-	return configuredUri;
+	return workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
 }
 
 export function isDefaultNotificationDisabled() : boolean | undefined {
-	const notificationSetting : boolean | undefined = vscode.workspace.getConfiguration().get(DIDACT_NOTIFICATION_SETTING);
-	return notificationSetting;
+	return workspace.getConfiguration().get(DIDACT_NOTIFICATION_SETTING);
 }
 
 export function getOpenAtStartupSetting() : boolean {
-	return vscode.workspace.getConfiguration().get(DIDACT_OPEN_AT_STARTUP, false);
+	return workspace.getConfiguration().get(DIDACT_OPEN_AT_STARTUP, false);
 }
 
 export function getRegisteredTutorials() : string[] | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
-export async function registerTutorial(name : string, sourceUri : string, category : string ): Promise<void> {
+export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string ): Promise<void> {
 	const newDidact:JSON = <JSON><unknown>{
 		"name" : `${name}`,
 		"category" : `${category}`,
@@ -199,25 +196,25 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 }
 
 export async function clearRegisteredTutorials(): Promise<void>{
-	if (vscode.workspace.getConfiguration()) {
+	if (workspace.getConfiguration()) {
 		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, undefined);
 		console.log('Didact configuration cleared');
 	}
 }
 
-export async function getCurrentFileSelectionPath(): Promise<vscode.Uri> {
-  if (vscode.window.activeTextEditor)
+export async function getCurrentFileSelectionPath(): Promise<Uri> {
+  if (window.activeTextEditor)
   {
-    return vscode.window.activeTextEditor.document.uri;
+    return window.activeTextEditor.document.uri;
   }
   else{
 		// set focus to the Explorer view
-    await vscode.commands.executeCommand('workbench.view.explorer');
+    await commands.executeCommand('workbench.view.explorer');
     // then get the resource with focus
-    await vscode.commands.executeCommand('copyFilePath');
-    const copyPath = await vscode.env.clipboard.readText();
+    await commands.executeCommand('copyFilePath');
+    const copyPath = await env.clipboard.readText();
     if (fs.existsSync(`"${copyPath}"`) && fs.lstatSync(`"${copyPath}"`).isFile() ) {
-      return vscode.Uri.file(`"${copyPath}"`);
+      return Uri.file(`"${copyPath}"`);
     }
   }
   throw new Error("Can not determine current file selection");
@@ -227,8 +224,8 @@ export function getLastColumnUsedSetting() : number {
 	let lastColumn : number | undefined = extensionFunctions.getContext().workspaceState.get(DIDACT_COLUMN_SETTING);
 	if (lastColumn === undefined) {
 		// if we can, grab the current column from the active text editor
-		if (vscode.window.activeTextEditor) {
-			lastColumn = vscode.window.activeTextEditor.viewColumn;
+		if (window.activeTextEditor) {
+			lastColumn = window.activeTextEditor.viewColumn;
 		}
 		// otherwise assume it's the first column
 		if (lastColumn === undefined) {
@@ -247,8 +244,8 @@ export async function removeFilesAndFolders(workspacename: string, filesAndFolde
 		for (const fileOrFolder of filesAndFolders) {
 			const testPath = path.resolve(workspacename, fileOrFolder);
 			if (testPath && fs.existsSync(testPath)) {
-				const delUri = vscode.Uri.file(testPath);
-				await vscode.workspace.fs.delete(delUri, {recursive:true});
+				const delUri = Uri.file(testPath);
+				await workspace.fs.delete(delUri, {recursive:true});
 			}
 		}
 	}

@@ -17,9 +17,9 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import {getValue} from './utils';
+import {getValue, isDefaultNotificationDisabled} from './utils';
 import * as extensionFunctions from './extensionFunctions';
-import {isDefaultNotificationDisabled} from './utils';
+
 const url = require('url-parse');
 
 // take the incoming didact link and allow a mix of a uri and text/user inputs
@@ -132,10 +132,9 @@ function handleSrcFilePath(srcFilePath: string, extensionPath : string) : vscode
 	if (extensionPath === undefined) { 
 		return undefined; 
 	}
-	const uri : vscode.Uri = vscode.Uri.file(
+	return vscode.Uri.file(
 		path.resolve(extensionPath, srcFilePath)
 	);
-	return uri;
 }
 
 // take a "extFilePath=" or "extension=" extId/filepath 
@@ -152,10 +151,9 @@ export function handleExtFilePath(extFilePath: string) : vscode.Uri | undefined 
 					const pathToAdd = array.join(separator);
 					const extensionPath = ext.extensionPath;
 					extensionFunctions.sendTextToOutputChannel(`-- combining ${pathToAdd} ${extensionPath}`);
-					const uri : vscode.Uri = vscode.Uri.file(
+					return vscode.Uri.file(
 						path.resolve(extensionPath, pathToAdd)
 					);
-					return uri;
 				}
 			}
 		}
@@ -205,7 +203,7 @@ async function handleUser(text : string, outputs : string[], errorMessage : stri
 
 // get a single input
 async function getUserInput(prompt:string): Promise<string | undefined> {
-	return await vscode.window.showInputBox({
+	return vscode.window.showInputBox({
 		prompt: `Enter a ${prompt}`,
 		placeHolder: prompt
 	});		

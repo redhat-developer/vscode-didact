@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
 import * as path from 'path';
-import { ViewColumn } from 'vscode';
+import { ViewColumn, WebviewPanel, Disposable, Uri, workspace, window, ExtensionContext, extensions } from 'vscode';
 import { DIDACT_DEFAULT_URL } from './utils';
 import { DEFAULT_TITLE_VALUE, didactManager, VIEW_TYPE } from './didactManager';
 import * as commandHandler from './commandHandler';
@@ -26,22 +25,22 @@ import * as commandHandler from './commandHandler';
 export class DidactPanel {
 
 	// public for testing purposes 
-	public _panel: vscode.WebviewPanel | undefined;
+	public _panel: WebviewPanel | undefined;
 
-	private _disposables: vscode.Disposable[] = [];
+	private _disposables: Disposable[] = [];
 	private currentHtml : string | undefined = undefined;
-	private didactUriPath : vscode.Uri | undefined = undefined;
+	private didactUriPath : Uri | undefined = undefined;
 	private defaultTitle = DEFAULT_TITLE_VALUE;
 	private isAsciiDoc = false;
 	private _disposed = false;
 	public visible = false;
 
-	public constructor(uri?: vscode.Uri ) {
+	public constructor(uri?: Uri ) {
 		this.didactUriPath = uri;
 		didactManager.add(this);
 	}
 
-	public initWebviewPanel(viewColumn: ViewColumn, inpath?: vscode.Uri | undefined): DidactPanel | undefined {
+	public initWebviewPanel(viewColumn: ViewColumn, inpath?: Uri | undefined): DidactPanel | undefined {
 		const extPath = didactManager.getExtensionPath();
 		if (!extPath) {
 			console.error(`Error: Extension context not set on Didact manager`);
@@ -49,17 +48,17 @@ export class DidactPanel {
 		}
 
 		// Otherwise, create a new panel.
-		const localResourceRoots = [vscode.Uri.file(path.resolve(extPath, 'media'))];
+		const localResourceRoots = [Uri.file(path.resolve(extPath, 'media'))];
 		if (inpath) {
 			const dirName = path.dirname(inpath.fsPath);
-			localResourceRoots.push(vscode.Uri.file(dirName));
+			localResourceRoots.push(Uri.file(dirName));
 		}
 
-		const localIconPath = vscode.Uri.file(path.resolve(extPath, 'icon/logo.svg'));
+		const localIconPath = Uri.file(path.resolve(extPath, 'icon/logo.svg'));
 		const iconDirPath = path.dirname(localIconPath.fsPath);
-		localResourceRoots.push(vscode.Uri.file(iconDirPath));
+		localResourceRoots.push(Uri.file(iconDirPath));
 
-		const panel = vscode.window.createWebviewPanel(
+		const panel = window.createWebviewPanel(
 			VIEW_TYPE, this.defaultTitle, viewColumn,
 			{
 				// Enable javascript in the webview
@@ -77,7 +76,7 @@ export class DidactPanel {
 		return this.attachWebviewPanel(panel);
 	}
 	
-	public attachWebviewPanel(webviewPanel: vscode.WebviewPanel): DidactPanel {
+	public attachWebviewPanel(webviewPanel: WebviewPanel): DidactPanel {
 		this._panel = webviewPanel;
 		this.setVisible(webviewPanel.active);
 		this._panel.onDidDispose(() => {
@@ -91,12 +90,12 @@ export class DidactPanel {
 		this.visible = flag;
 	}
 	
-	public static revive(context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel, oldBody? : string, oldUri? : string): DidactPanel {
+	public static revive(context: ExtensionContext, webviewPanel: WebviewPanel, oldBody? : string, oldUri? : string): DidactPanel {
 		didactManager.setContext(context);
 
 		let panel : DidactPanel;
 		if (oldUri) {
-			const toUri = vscode.Uri.parse(oldUri);
+			const toUri = Uri.parse(oldUri);
 			panel = new DidactPanel(toUri);
 		} else {
 			panel = new DidactPanel();
@@ -125,7 +124,7 @@ export class DidactPanel {
 							try {
 								await commandHandler.processInputs(message.text, didactManager.getExtensionPath());
 							} catch (error) {
-								vscode.window.showErrorMessage(`Didact was unable to call commands: ${message.text}: ${error}`);
+								window.showErrorMessage(`Didact was unable to call commands: ${message.text}: ${error}`);
 							}
 						}
 						return;
@@ -182,7 +181,7 @@ export class DidactPanel {
 		return this._panel?.title;
 	}
 
-	public getDidactUriPath(): vscode.Uri | undefined {
+	public getDidactUriPath(): Uri | undefined {
 		return this.didactUriPath;
 	}
 
@@ -195,7 +194,7 @@ export class DidactPanel {
 		return this.defaultTitle;
 	}
 
-	public setDidactUriPath(inpath : vscode.Uri | undefined): void {
+	public setDidactUriPath(inpath : Uri | undefined): void {
 		this.didactUriPath = inpath;
 		if (inpath) {
 			const tempFilename = path.basename(inpath.fsPath);
@@ -231,13 +230,13 @@ export class DidactPanel {
 		const nonce = this.getNonce();
 		
 		// Base uri to support images
-		const didactUri : vscode.Uri = this.didactUriPath as vscode.Uri;
+		const didactUri : Uri = this.didactUriPath as Uri;
 		
 		let uriBaseHref = undefined;
 		if (didactUri && this._panel) {
 			try {
 				const didactUriPath = path.dirname(didactUri.fsPath);
-				const uriBase = this._panel.webview.asWebviewUri(vscode.Uri.file(didactUriPath)).toString();
+				const uriBase = this._panel.webview.asWebviewUri(Uri.file(didactUriPath)).toString();
 				uriBaseHref = `<base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>`;
 			} catch (error) {
 				console.error(error);
@@ -251,7 +250,7 @@ export class DidactPanel {
 		}
 
 		// Local path to main script run in the webview
-		const scriptPathOnDisk = vscode.Uri.file(
+		const scriptPathOnDisk = Uri.file(
 			path.resolve(extPath, 'media', 'main.js')
 		);
 
@@ -259,7 +258,7 @@ export class DidactPanel {
 		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
 
 		// the cssUri is our path to the stylesheet included in the security policy
-		const cssPathOnDisk = vscode.Uri.file(
+		const cssPathOnDisk = Uri.file(
 			path.resolve(extPath, 'media', 'webviewslim.css')
 		);
 		const cssUri = cssPathOnDisk.with({ scheme: 'vscode-resource' });
@@ -270,7 +269,7 @@ export class DidactPanel {
 		// process the stylesheet details for asciidoc or markdown-based didact files
 		const stylesheetHtml = this.produceStylesheetHTML(cssUriHtml);
 
-		const extensionHandle = vscode.extensions.getExtension(extensionFunctions.EXTENSION_ID);
+		const extensionHandle = extensions.getExtension(extensionFunctions.EXTENSION_ID);
 		let didactVersionLabel = 'Didact';
 		if (extensionHandle) {
 			const didactVersion = extensionHandle.packageJSON.version;
@@ -294,7 +293,7 @@ export class DidactPanel {
 			metaHeader += `\n${uriBaseHref}\n`;
 		}
 		
-		const completedHtml = `<!DOCTYPE html>
+		return `<!DOCTYPE html>
 		<html lang="en">
 		<head>
 			${metaHeader}
@@ -310,8 +309,6 @@ export class DidactPanel {
 			<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
 		</html>`;
-
-		return completedHtml;
 	}
 
 	produceStylesheetHTML(cssUriHtml : string) : string {
@@ -372,7 +369,7 @@ export class DidactPanel {
 		return undefined;
 	}
 
-	getColumn() : vscode.ViewColumn | undefined {
+	getColumn() : ViewColumn | undefined {
 		if (this._panel) {
 			return this._panel.viewColumn;
 		}
@@ -417,9 +414,9 @@ export class DidactPanel {
 	}
 
 	public hardReset(): void {
-		const configuredUri : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
+		const configuredUri : string | undefined = workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
 		if (configuredUri) {
-			const defaultUri = vscode.Uri.parse(configuredUri);
+			const defaultUri = Uri.parse(configuredUri);
 			didactManager.active()?.setDidactUriPath(defaultUri);
 		}
 		didactManager.active()?._update(true);
