@@ -27,6 +27,8 @@ const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown
 
 const delayTime = 1500;
 
+const WINDOWS: string = 'win32';
+
 suite('stub out a tutorial', () => {
 
 	test('that we can send an echo command to the terminal and get the response', async () => {
@@ -79,7 +81,9 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 		await sendTerminalText(terminalName, terminalText);
 		await waitUntil(async () => {
 			focusOnNamedTerminal(terminalName);
-			await delay(1000);
+			if (process.platform === WINDOWS) {
+				await delay(2000);
+			}
 			const result = await getTerminalOutput(terminalName);
 			console.log(`-validateTerminalResponse terminal output = ${result}`);
 			if (terminalResponse) {
