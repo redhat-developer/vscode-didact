@@ -1,0 +1,188 @@
+= Didact Commands Reference
+
+
+|===
+|vscode.didact.<ID> | Description | Parameters | Return
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactclicommandsuccessful[cliCommandSuccessful]
+| Even simpler command-line check for system capabilities. Takes two parameters - the id of the HTML element to update with the results and the test command (such as mvn --version. If command executes with no errors (return code 0), it returns true. If not, false.
+| requirement: string / required
+testCommand: string / required
+
+| true on success, false on failure; result posted as message to update requirement element
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactclosenamedterminal[closeNamedTerminal]
+| Terminate a named terminal and dispose of it.
+| name : string / required
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/blob/master/examples/clipboard.example.didact.md[copyClipboardToActiveTextEditor]
+| Copies contents of the system clipboard to the currently open (or previously used) editor.
+|
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/blob/master/examples/clipboard.example.didact.md[copyClipboardToEditorForFile]
+| Copies contents of the system clipboard to a file path for an existing file (opened if not already open).
+| filepath:vscode.Uri / required
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/blob/master/examples/clipboard.example.didact.md[copyClipboardToNewFile]
+| Copies contents of the system clipboard to a new file (opened after creation).
+|
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/[copyFileTextToClipboardCommand]
+| Copies text from a file to the system clipboard.
+| text : string / required
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/[copyToClipboardCommand]
+| Copies text to the system clipboard.
+| text : string / required
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactcreateworkspacefolder[createWorkspaceFolder]
+| Creating temporary folder as workspace root. Update named 'requirement' label field with success or failure.
+| requirement: string / optional
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactextensionrequirementcheck[extensionRequirementCheck]
+| Simple check to see if the extension Id is installed in the user workspace.
+| requirement: string / required
+extensionId : string / required
+
+| true on success, false on failure; result posted as message to update requirement element
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactgatherallcommands[gatherAllCommands]
+| Gathers a list of all commands used in the Didact file. Used for testing purposes only.
+|
+
+
+| array any[]
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactgatherallrequirements[gatherAllRequirements]
+| Gathers a list of all requirements in the Didact file. Used internally as part of the validateAllRequirements execution.
+|
+
+
+| array any[]
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactopentutorial[openTutorial]
+| Opens the Didact editor with the default didact URI set in the user settings.
+|
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactregister[register]
+| Command used to register a new Didact tutorial so that it appears in the Didact Tutorials view. This command is invoked by VS Code Extension code to register tutorials they provide.
+| name : string / required
+ sourceUri : string  / required
+ category : string / optional
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactreload[reload]
+| Forces the Didact window to reload with the default Didact file specified in VS Code settings.
+|
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactrequirementcheck[requirementCheck]
+| Simple command-line check for system capabilities. Takes three parameters - the id of the HTML element to update with the results, the test command (such as mvn --version, and a string to search for in the resulting text, such as Apache Maven if the mvn command works successfully).
+| requirement: string / required
+testCommand: string / required
+testResult: string / required
+| true on success, false on failure; result posted as message to update requirement element
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactscaffoldproject[scaffoldProject]
+| Create new project in user workspace from json file provided by P1.
+| jsonpath:vscode.Uri / required
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactsendnamedterminalastring[sendNamedTerminalAString]
+| Send a text string to a named terminal. If the terminal doesn't exist, create it. Pass text as is. Does not automatically add a NL/CR at the end.
+| name : string / required
+text: string / required
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactsendnamedterminalctrlc[sendNamedTerminalCtrlC]
+| Send a Ctrl+C key combination to a named terminal to stop a long-running process.
+| name : string / required
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Constructing-Didact-Links#didact-link-formatting-for-opening-didact-files-inside-vs-code[startDidact]
+| Opens the Didact editor using the markdown or asciidoc file URI passed in. Can be
+| uri:vscode.Uri / optional
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactstartterminalwithname[startTerminalWithName]
+| Start a named terminal so we have a handle to it. If passed a string, use that as the name for the terminal that can be referenced later. If passed a file URI, pass that as the current working directory.
+| name : string / optional
+filePath : vscode.Uri / optional
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactvalidateallrequirements[validateAllRequirements]
+| Gathers all requirements in the Didact file and invokes the requirement checks one at a time. Useful if you have a long list of requirements to check.
+|
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactviewrefresh[view.refresh]
+| Refresh the Didact Tutorials view. Called automatically each time register is called.
+|
+
+
+| No output
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactviewtutorialopen[view.tutorial.open]
+| Menu command used when the user right-clicks on a tutorial in the Didact Tutorials view to Start Didact Tutorial.
+| node: TreeNode / required
+
+
+| Check Didact output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactworkspacefolderexistscheck[workspaceFolderExistsCheck]
+| Simple check to see if the workspace has at least one root folder.
+| requirement: string / required
+
+
+| true on success, false on failure; result posted as message to update requirement element
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactopennamedoutputchannel[openNamedOutputChannel]
+| Creates and opens an output channel with the given name.
+| channelName: string / optional
+
+
+| Check the named output channel
+
+| https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactsendtexttonamedoutputchannel[sendTextToNamedOutputChannel]
+| Sends a text to the output channel with the given name. If no name is provided it will use the Didact Activity channel.
+| message: string
+channelName: string / optional
+
+| Check the named output channel
+|===
