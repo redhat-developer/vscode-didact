@@ -87,7 +87,7 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 			} else {
 				return result.includes(terminalText);
 			}
-		});
+		}, 5000);
 		findAndDisposeTerminal(terminalName);
 	}
 }
