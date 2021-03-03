@@ -82,7 +82,7 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 		await waitUntil(async () => {
 			focusOnNamedTerminal(terminalName);
 			if (process.platform === WINDOWS) {
-				await delay(3000);
+				await delay(1000);
 			}
 			const result = await getTerminalOutput(terminalName);
 			console.log(`-validateTerminalResponse terminal output = ${result}`);
@@ -91,7 +91,7 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 			} else {
 				return result.includes(terminalText);
 			}
-		}, 5000);
+		}, 10000);
 		findAndDisposeTerminal(terminalName);
 	}
 }
