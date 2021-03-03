@@ -46,10 +46,6 @@ export class HintBoxViewProvider implements WebviewViewProvider {
 		this._view.onDidDispose(() => this._view = undefined);
 
 		const extPath = this._extensionUri;
-		if (!extPath) {
-			console.error(`Error: Extension context not set on Didact manager`);
-		}
-
 		const _localResourceRoots = [this._extensionUri];
 		if (extPath) {
 			_localResourceRoots.push(Uri.file(path.resolve(extPath.fsPath, 'media')));
@@ -64,6 +60,7 @@ export class HintBoxViewProvider implements WebviewViewProvider {
 			localResourceRoots : _localResourceRoots
 		};
 
+		// hardcoded example file for now
 		const hintsPath = Uri.file(
 			path.resolve(this._extensionUri.fsPath, 'demos', 'hints', 'demohints.didact.md')
 		);
@@ -80,7 +77,7 @@ export class HintBoxViewProvider implements WebviewViewProvider {
 		  await commands.executeCommand(`${HintBoxViewProvider.viewType}.focus`);
 		}
 		await this._update();
-	  }
+	}
 
 	private async _update() {
 		const content = await extensionFunctions.getWebviewContent();
@@ -118,10 +115,6 @@ export class HintBoxViewProvider implements WebviewViewProvider {
 		);
 	}
 	
-	public getDidactUriPath(): Uri | undefined {
-		return this.didactUriPath;
-	}
-
 	public async setDidactUriPath(inpath : Uri | undefined): Promise<void> {
 		this.didactUriPath = inpath;
 		await extensionFunctions.setDidactFileUri(inpath);
