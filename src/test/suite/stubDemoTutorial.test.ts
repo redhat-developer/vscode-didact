@@ -16,8 +16,8 @@
  */
 
 import { expect } from 'chai';
-import { window, commands, env, Uri, Terminal, Pseudoterminal, Event, TerminalDimensions, EventEmitter } from 'vscode';
-import { START_DIDACT_COMMAND, sendTerminalText, gatherAllCommandsLinks, getContext, findTerminal } from '../../extensionFunctions';
+import { window, commands, env, Uri, Terminal } from 'vscode';
+import { START_DIDACT_COMMAND, sendTerminalText, gatherAllCommandsLinks, getContext } from '../../extensionFunctions';
 import { didactManager } from '../../didactManager';
 import { DidactUri } from '../../didactUri';
 import { handleText } from '../../commandHandler';
@@ -41,9 +41,9 @@ suite('stub out a tutorial', () => {
 			if (didactManager.active()) {
 
 				suite('walk through all the sendNamedTerminalAString commands in the demo', () => {
-					const commands : any[] = gatherAllCommandsLinks().filter( (href) => href.match(/=vscode.didact.sendNamedTerminalAString&/g));
-					expect(commands).to.not.be.empty;
-					commands.forEach(function(href: string) {
+					const commandsToTest : any[] = gatherAllCommandsLinks().filter( (href) => href.match(/=vscode.didact.sendNamedTerminalAString&/g));
+					expect(commandsToTest).to.not.be.empty;
+					commandsToTest.forEach(function(href: string) {
 						test(`test terminal command "${href}"`, async () => {
 							const ctxt = getContext();
 							if (ctxt) {
@@ -77,8 +77,9 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 	if (term) {
 		console.log(`-current terminal = ${term?.name}`);
 		await sendTerminalText(terminalName, terminalText);
-			const resultValue = await waitUntil(async () => {
+		await waitUntil(async () => {
 			focusOnNamedTerminal(terminalName);
+			await delay(1000);
 			const result = await getTerminalOutput(terminalName);
 			console.log(`-validateTerminalResponse terminal output = ${result}`);
 			if (terminalResponse) {
@@ -86,7 +87,7 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 			} else {
 				return result.includes(terminalText);
 			}
-		}, 5000);
+		});
 		findAndDisposeTerminal(terminalName);
 	}
 }
@@ -103,7 +104,7 @@ async function getTerminalOutput(terminalName : string) : Promise<string> {
 	await executeAndWait('workbench.action.terminal.copySelection');
 	await executeAndWait('workbench.action.terminal.clearSelection');	
 	const clipboard_content = await env.clipboard.readText();
-	return clipboard_content.trim();;
+	return clipboard_content.trim();
 }
 
 function delay(ms: number) {
