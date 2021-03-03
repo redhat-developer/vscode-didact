@@ -59,7 +59,7 @@ suite('stub out a tutorial', () => {
 								expect(outputs).length.to.be.at.least(2);
 								const terminalName = outputs[0];
 								const terminalString = outputs[1];
-								await validateSimpleTerminalResponse(terminalName, terminalString);
+								await validateTerminalResponse(terminalName, terminalString);
 							}
 						});
 					});
@@ -70,42 +70,23 @@ suite('stub out a tutorial', () => {
 
 });
 
-async function validateSimpleTerminalResponse(terminalName : string, terminalText : string) {
-	console.log(`validateSimpleTerminalResponse terminal ${terminalName} executing text ${terminalText}`);
+async function validateTerminalResponse(terminalName : string, terminalText : string, terminalResponse? : string) {
+	console.log(`validateTerminalResponse terminal ${terminalName} executing text ${terminalText}`);
 	const term = window.createTerminal(terminalName);
 	expect(term).to.not.be.null;
 	if (term) {
 		console.log(`-current terminal = ${term?.name}`);
 		await sendTerminalText(terminalName, terminalText);
-	
-		const resultValue = await waitUntil(async () => {
+			const resultValue = await waitUntil(async () => {
 			focusOnNamedTerminal(terminalName);
 			const result = await getTerminalOutput(terminalName);
-			console.log(`-validateSimpleTerminalResponse terminal output = ${result}`);
-			return result.includes(terminalText);
+			console.log(`-validateTerminalResponse terminal output = ${result}`);
+			if (terminalResponse) {
+				return result.includes(terminalResponse);
+			} else {
+				return result.includes(terminalText);
+			}
 		}, 5000);
-
-		// we're just making sure we get something back and can see the text we put into the terminal
-		expect(resultValue).to.be.true;
-		findAndDisposeTerminal(terminalName);
-	}
-}
-
-async function validateTerminalResponse(terminalName : string, terminalText : string, terminalResponse : string) {
-	console.log(`validateTerminalResponse terminal ${terminalName} executing text ${terminalText} and looking for response ${terminalResponse}`);
-	const term = window.createTerminal(terminalName);
-	expect(term).to.not.be.null;
-	if (term) {
-		console.log(`-current terminal = ${term?.name}`);
-		await sendTerminalText(terminalName, terminalText);
-
-		const resultValue = await waitUntil(async () => {
-			focusOnNamedTerminal(terminalName);
-			const result = await getTerminalOutput(terminalName);
-			console.log(`-validateSimpleTerminalResponse terminal output = ${result}`);
-			return result.includes(terminalResponse);
-		}, 5000);
-		expect(resultValue).to.be.true;
 		findAndDisposeTerminal(terminalName);
 	}
 }

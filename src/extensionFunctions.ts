@@ -182,7 +182,6 @@ export async function startTerminal(...rest: any[]): Promise<void>{ //name:strin
 export async function showAndSendText(terminal: vscode.Terminal, text:string): Promise<void> {
 	if (terminal) {
 		terminal.show();
-		utils.delay(100);
 		terminal.sendText(text);
 	}
 }
