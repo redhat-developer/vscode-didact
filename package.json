@@ -39,7 +39,7 @@
 	],
 	"activationEvents": [
 		"*",
-		"onWebviewPanel:didact"
+		"onView:didact.hintBoxView"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -73,6 +73,11 @@
 				{
 					"id": "didact.tutorials",
 					"name": "Didact Tutorials"
+				},
+				{
+					"type": "webview",
+					"id": "didact.hintBoxView",
+					"name": "Hintbox"
 				}
 			]
 		},
@@ -100,6 +105,14 @@
 			{
 				"command": "vscode.didact.view.refresh",
 				"title": "Refresh Didact Tutorials view",
+				"icon": {
+					"dark": "resources/dark/refresh.svg",
+					"light": "resources/light/refresh.svg"
+				}
+			},
+			{
+				"command": "didact.hintbox.refresh",
+				"title": "Refresh Didact Hintbox",
 				"icon": {
 					"dark": "resources/dark/refresh.svg",
 					"light": "resources/light/refresh.svg"
