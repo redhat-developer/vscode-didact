@@ -22,6 +22,7 @@ import { didactManager } from '../../didactManager';
 import { DidactUri } from '../../didactUri';
 import { handleText } from '../../commandHandler';
 import { waitUntil } from 'async-wait-until';
+import { fail } from 'assert';
 
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
@@ -79,21 +80,38 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 	if (term) {
 		console.log(`-current terminal = ${term?.name}`);
 		await sendTerminalText(terminalName, terminalText);
+
 		await waitUntil(async () => {
 			focusOnNamedTerminal(terminalName);
-			if (process.platform === WINDOWS) {
-				await delay(1000);
-			}
-			const result = await getTerminalOutput(terminalName);
-			console.log(`-validateTerminalResponse terminal output = ${result}`);
-			if (terminalResponse) {
-				return result.includes(terminalResponse);
-			} else {
-				return result.includes(terminalText);
-			}
-		}, 10000);
+			return terminalName == window.activeTerminal?.name;
+		}, 1000);
+
+		try {
+			await waitUntil(async () => {
+				const result = await getActiveTerminalOutput();
+				return result.includes(getExpectedTextInTerminal());
+			}, 10000);
+		} catch (error){
+			console.log(`Searching for ${getExpectedTextInTerminal()} but not found in current content of active terminal ${window.activeTerminal?.name} : ${await getActiveTerminalOutput()}`);
+			fail(error);
+		}
 		findAndDisposeTerminal(terminalName);
 	}
+
+	function getExpectedTextInTerminal() {
+		return terminalResponse ? terminalResponse : terminalText;
+	}
+}
+
+async function getActiveTerminalOutput() : Promise<string> {
+	const term = window.activeTerminal;
+	console.log(`-current terminal = ${term?.name}`);
+	await executeAndWait('workbench.action.terminal.selectAll');
+	await delay(delayTime);
+	await executeAndWait('workbench.action.terminal.copySelection');
+	await executeAndWait('workbench.action.terminal.clearSelection');	
+	const clipboard_content = await env.clipboard.readText();
+	return clipboard_content.trim();
 }
 
 async function getTerminalOutput(terminalName : string) : Promise<string> {
