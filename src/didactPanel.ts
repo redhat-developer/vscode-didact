@@ -305,7 +305,6 @@ export class DidactPanel {
 			<div class="tutorialContent">`
 			+ didactHtml + 
 			`</div> 
-			<div class="didactFooter">${didactVersionLabel}</div>
 			<script nonce="${nonce}" src="${scriptUri}"/>
 		</body>
 		</html>`;
