@@ -28,8 +28,6 @@ const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown
 
 const delayTime = 1500;
 
-const WINDOWS: string = 'win32';
-
 suite('stub out a tutorial', () => {
 
 	test('that we can send an echo command to the terminal and get the response', async () => {
@@ -104,21 +102,6 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 }
 
 async function getActiveTerminalOutput() : Promise<string> {
-	const term = window.activeTerminal;
-	console.log(`-current terminal = ${term?.name}`);
-	await executeAndWait('workbench.action.terminal.selectAll');
-	await delay(delayTime);
-	await executeAndWait('workbench.action.terminal.copySelection');
-	await executeAndWait('workbench.action.terminal.clearSelection');	
-	const clipboard_content = await env.clipboard.readText();
-	return clipboard_content.trim();
-}
-
-async function getTerminalOutput(terminalName : string) : Promise<string> {
-	const terminal = getNamedTerminal(terminalName);
-	expect(terminal).to.not.be.undefined;
-	expect(terminal?.name).to.equal(terminalName);
-	focusOnNamedTerminal(terminalName);
 	const term = window.activeTerminal;
 	console.log(`-current terminal = ${term?.name}`);
 	await executeAndWait('workbench.action.terminal.selectAll');
