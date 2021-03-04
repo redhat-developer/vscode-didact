@@ -1,5 +1,7 @@
 ![Welcome to Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/images/welcome-to-didact-header.png){.imageCenter}
 
+{.madeWithDidact}
+
 # Demonstrating Didact features
 
 Didact is an extension for VS Code that provides a simple Markdown-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the [VSCode Didact readme about link formatting for more information](https://github.com/redhat-developer/vscode-didact/blob/master/README.md)!
