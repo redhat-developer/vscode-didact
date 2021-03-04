@@ -269,15 +269,6 @@ export class DidactPanel {
 		// process the stylesheet details for asciidoc or markdown-based didact files
 		const stylesheetHtml = this.produceStylesheetHTML(cssUriHtml);
 
-		const extensionHandle = extensions.getExtension(extensionFunctions.EXTENSION_ID);
-		let didactVersionLabel = 'Didact';
-		if (extensionHandle) {
-			const didactVersion = extensionHandle.packageJSON.version;
-			if (didactVersion) {
-				didactVersionLabel += ` ${didactVersion}`;
-			}
-		}
-
 		let cspSrc = undefined;
 		if (this._panel) {
 			cspSrc = this._panel.webview.cspSource;
