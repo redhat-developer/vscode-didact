@@ -22,6 +22,7 @@ import { didactManager } from '../../didactManager';
 import { DidactUri } from '../../didactUri';
 import { handleText } from '../../commandHandler';
 import { waitUntil } from 'async-wait-until';
+import { fail } from 'assert';
 
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
@@ -79,28 +80,28 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 	if (term) {
 		console.log(`-current terminal = ${term?.name}`);
 		await sendTerminalText(terminalName, terminalText);
+		// depending if the command is expected to set focus on terminal or not, this conditional wait should be placed here or before previous line
 		await waitUntil(async () => {
-			focusOnNamedTerminal(terminalName);
-			if (process.platform === WINDOWS) {
-				await delay(1000);
-			}
-			const result = await getTerminalOutput(terminalName);
-			console.log(`-validateTerminalResponse terminal output = ${result}`);
-			if (terminalResponse) {
-				return result.includes(terminalResponse);
-			} else {
-				return result.includes(terminalText);
-			}
-		}, 10000);
+			return terminalName == window.activeTerminal?.name;
+		});
+		try {
+			await waitUntil(async () => {
+				const result = await getActiveTerminalOutput();
+				return result.includes(getExpectedTextInTerminal());
+			}, 10000);
+		} catch (error){
+			console.log(`Searching for ${getExpectedTextInTerminal()} but not found in current content of active terminal ${window.activeTerminal?.name} : ${await getActiveTerminalOutput()}`);
+			fail(error);
+		}
 		findAndDisposeTerminal(terminalName);
+	}
+
+	function getExpectedTextInTerminal() {
+		return terminalResponse ? terminalResponse : terminalText;
 	}
 }
 
-async function getTerminalOutput(terminalName : string) : Promise<string> {
-	const terminal = getNamedTerminal(terminalName);
-	expect(terminal).to.not.be.undefined;
-	expect(terminal?.name).to.equal(terminalName);
-	focusOnNamedTerminal(terminalName);
+async function getActiveTerminalOutput() : Promise<string> {
 	const term = window.activeTerminal;
 	console.log(`-current terminal = ${term?.name}`);
 	await executeAndWait('workbench.action.terminal.selectAll');
@@ -128,13 +129,5 @@ function findAndDisposeTerminal(terminalName: string) : void {
 	const term = getNamedTerminal(terminalName);
 	if (term) {
 		term.dispose();
-	}
-}
-
-async function focusOnNamedTerminal(terminalName : string) : Promise<void> {
-	let term = window.activeTerminal;
-	while (term?.name != terminalName) {
-		await commands.executeCommand('workbench.action.terminal.focusNext');
-		term = window.activeTerminal;
 	}
 }
