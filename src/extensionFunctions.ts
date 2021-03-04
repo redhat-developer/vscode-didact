@@ -469,9 +469,9 @@ export async function getWebviewContent() : Promise<string|void> {
 }
 
 async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
-	return await getDataFromFile(uri).catch( async () => {
+	return getDataFromFile(uri).catch( async () => {
 		await delay(3000);
-		return await getDataFromFile(uri).catch( async (error) => {
+		return getDataFromFile(uri).catch( async (error) => {
 			showFileUnavailable(error);
 		});
 	});
@@ -479,9 +479,9 @@ async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<string | void | un
 
 async function loadFileFromHTTPWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
 	const urlToFetch = uri.toString();
-	return await getDataFromUrl(urlToFetch).catch( async () => {
+	return getDataFromUrl(urlToFetch).catch( async () => {
 		await delay(3000);
-		return await getDataFromUrl(urlToFetch).catch( async (error) => {
+		return getDataFromUrl(urlToFetch).catch( async (error) => {
 			showFileUnavailable(error);
 		});
 	});
