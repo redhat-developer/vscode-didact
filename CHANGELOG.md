@@ -6,6 +6,8 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 - adding *vscode.didact.refresh* command to refresh the currently active Didact window
 - adding retry in case the uri for a tutorial isn't quite available yet
+- with terminal commands, now open existing terminal if it exists rather than erroring out
+- removing footer that was problematic at the bottom of every Didact window
 
 ## 0.3.1
 
