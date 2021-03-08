@@ -2,11 +2,10 @@
   cursor:crosshair;
 }
 
-.madeWithDidact {
-  background: url(../icon/made-with-didact-320x100.png) no-repeat;
-  width: 320px;
-  height: 100px;
-  float: right;
+div.poweredByDidact {
+  width:176px;
+  height:62px;
+  background-image:url(../icon/poweredByDidact-larger1-stroke-and-fill.svg);
 }
 
 .imageRight {
