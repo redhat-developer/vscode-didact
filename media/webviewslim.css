@@ -2,10 +2,10 @@
   cursor:crosshair;
 }
 
-div.poweredByDidact {
-  width:176px;
-  height:62px;
-  background-image:url(../icon/poweredByDidact-larger1-stroke-and-fill.svg);
+.poweredByDidact {
+  background: url(../icon/poweredByDidact-larger1-stroke-and-fill.svg);
+  width: 72px;
+  height: 18px;
 }
 
 .imageRight {
