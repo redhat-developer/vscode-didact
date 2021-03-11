@@ -67,10 +67,12 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 			if (this.isDidactAsciiDocFile(document.fileName)) {
 				completions.push(this.insertNamedStatusLabelAdoc());
 				completions.push(this.insertInstallExtensionLinkAsciiDoc());
+				completions.push(this.insertDidactBadgeAdoc());
 			} else if (this.isDidactMarkdownFile(document.fileName)) {
 				completions.push(this.insertNamedStatusLabelMarkdown());
 				completions.push(this.insertValidateAllButtonMarkdown());
 				completions.push(this.insertInstallExtensionLinkMarkdown());
+				completions.push(this.insertDidactBadgeMD());
 			}
 		}
 
@@ -301,5 +303,21 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 			}
 		}
 		return null;
+	}
+
+	insertDidactBadgeAdoc() : vscode.CompletionItem {
+		const labelText = "Insert Didact Badge";
+		const snippetText = `image:https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/poweredByDidact.png[Powered by Didact,link="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact"]`;
+		const snippetString = new vscode.SnippetString(snippetText);
+		const docs = "Inserts a snippet for a Didact badge";
+		return this.processSimplerLink(labelText, snippetString, docs);
+	}
+
+	insertDidactBadgeMD() : vscode.CompletionItem {
+		const labelText = "Insert Didact Badge";
+		const snippetText = `[![Powered by Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/poweredByDidact.png)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact)`;
+		const snippetString = new vscode.SnippetString(snippetText);
+		const docs = "Inserts a snippet for a Didact badge";
+		return this.processSimplerLink(labelText, snippetString, docs);
 	}
 }
