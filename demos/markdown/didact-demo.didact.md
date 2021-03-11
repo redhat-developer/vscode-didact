@@ -1,6 +1,6 @@
 ![Welcome to Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/images/welcome-to-didact-header.png){.imageCenter}
 
-{.poweredByDidact}
+[![Powered by Didact](../../icon/poweredByDidact.png)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact)
 
 # Demonstrating Didact features
 
