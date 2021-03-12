@@ -2,12 +2,6 @@
   cursor:crosshair;
 }
 
-.poweredByDidact {
-  background: url(../icon/poweredByDidact-larger1-stroke-and-fill.svg);
-  width: 72px;
-  height: 18px;
-}
-
 .imageRight {
   float: right;
   width:33%;
