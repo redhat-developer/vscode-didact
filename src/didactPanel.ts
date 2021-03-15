@@ -17,7 +17,7 @@
 
 import * as extensionFunctions from './extensionFunctions';
 import * as path from 'path';
-import { ViewColumn, WebviewPanel, Disposable, Uri, workspace, window, ExtensionContext, extensions } from 'vscode';
+import { ViewColumn, WebviewPanel, Disposable, Uri, workspace, window, ExtensionContext } from 'vscode';
 import { DIDACT_DEFAULT_URL } from './utils';
 import { DEFAULT_TITLE_VALUE, didactManager, VIEW_TYPE } from './didactManager';
 import * as commandHandler from './commandHandler';
