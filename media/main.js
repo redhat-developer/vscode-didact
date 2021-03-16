@@ -75,8 +75,7 @@ function () {
 	function collectElements(tagname) {
 		var elements = [];
 		var links = document.getElementsByTagName(tagname);
-		for (let index = 0; index < links.length; index++) {
-			const element = links[index];
+		for (const element of links) {
 			elements.push(element);
 		}
 		return elements;
@@ -87,6 +86,43 @@ function () {
 		const encodedText = encodeURI(textToCache);
 		const textToBase64 = window.btoa(encodedText);
 		vscode.setState( { oldBody: textToBase64, oldTitle : this.title, oldUri : passedUri });
+	}
+
+	function handleSingleRequirementCheck(element, isAvailable, requirementName) {
+		// add check for adoc div/p requirement label
+		if (element.tagName.toLowerCase() === 'div' && element.childNodes.length > 0) {
+			let list = element.getElementsByTagName('em');
+			if (list.length > 0) {
+				element = list[0];
+			}
+		}
+		
+		if (element) {
+			if (String(isAvailable).toLowerCase() === 'true') {
+				element.style.color = "green";
+				element.textContent = `Status: Available`;
+			} else {
+				element.style.color = "red";
+				element.textContent = `Status: Unavailable`;
+			}
+		}
+		console.log(`${requirementName} is available: ${isAvailable}`);
+		updateState();		
+	}
+
+	function processAllRequirements() {
+		const links = collectElements("a");
+		for (const linkElements of links) {
+			if (linkElements.getAttribute('href')) {
+				const href = linkElements.getAttribute('href');
+				for(const check of requirementCommandLinks) {
+					if (href.startsWith(check)) {
+						linkElements.click();
+					}
+				}
+			}
+		}
+		updateState();		
 	}
 
 	// Handle messages sent from the extension to the webview
@@ -101,43 +137,11 @@ function () {
 
 		switch (json.command) {
 			case 'requirementCheck':
-				// add check for adoc div/p requirement label
-				if (element.tagName.toLowerCase() === 'div' && element.childNodes.length > 0) {
-					let list = element.getElementsByTagName('em');
-					if (list.length > 0) {
-						element = list[0];
-					}
-				}
-				
-				if (element) {
-					let green = "green";
-					let red = "red";
-					if (String(isAvailable).toLowerCase() === 'true') {
-						element.style.color = green;
-						element.textContent = `Status: Available`;
-					} else {
-						element.style.color = red;
-						element.textContent = `Status: Unavailable`;
-					}
-				}
-				console.log(`${requirementName} is available: ${isAvailable}`);
-				updateState();
+				handleSingleRequirementCheck(element, isAvailable, requirementName);
 				break;
 
 			case 'allRequirementCheck':
-				var links = collectElements("a");
-				for (let index = 0; index < links.length; index++) {
-					const linkElements = links[index];
-					if (linkElements.getAttribute('href')) {
-						const href = linkElements.getAttribute('href');
-						for(let check of requirementCommandLinks) {
-							if (href.startsWith(check)) {
-								linkElements.click();
-							}
-						}
-					}
-				}
-				updateState();
+				processAllRequirements();
 				break;
 
 			case 'setState':
