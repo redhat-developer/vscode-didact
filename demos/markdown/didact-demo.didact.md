@@ -122,3 +122,5 @@ Check out [the project on Github](https://github.com/redhat-developer/vscode-did
 And feel free to [add issues, submit feature requests, log bugs, etc](https://github.com/redhat-developer/vscode-didact/issues)!
 
 Thanks!
+
+[![Powered by Didact](../../icon/powered240x40.png)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact)

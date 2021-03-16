@@ -109,3 +109,5 @@ https://github.com/redhat-developer/vscode-didact/blob/master/README.md[The read
 And feel free to https://github.com/redhat-developer/vscode-didact/issues[add issues, submit feature requests, log bugs, etc]!
 
 Thanks!
+
+image:../../icon/powered240x40.png[Powered by Didact,link="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact"]

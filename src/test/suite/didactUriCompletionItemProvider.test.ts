@@ -190,10 +190,11 @@ suite("Didact URI completion provider tests", function () {
 		const position = new vscode.Position(0, 0);
 		const actualItems = await getCompletionItems(provider, document, position);
 		expect(actualItems).to.not.be.null;
-		expect(actualItems).to.have.lengthOf(2)
+		expect(actualItems.length).to.be.at.least(3);
 
 		expect(await checkForCommandInList(actualItems, 'Insert Didact Requirements Label')).to.be.true;
 		expect(await checkForCommandInList(actualItems, 'Insert link to install required VS Code extension')).to.be.true;
+		expect(await checkForCommandInList(actualItems, 'Insert Didact Badge')).to.be.true;
 
 		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	});
@@ -205,7 +206,7 @@ suite("Didact URI completion provider tests", function () {
 		const position = new vscode.Position(2, 26);
 		const actualItems = await getCompletionItems(provider, document, position);
 		expect(actualItems).to.not.be.null;
-		expect(actualItems.length).to.be.at.least(3);
+		expect(actualItems.length).to.be.at.least(4);
 		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	});
 
@@ -215,11 +216,12 @@ suite("Didact URI completion provider tests", function () {
 		const position = new vscode.Position(0, 0);
 		const actualItems = await getCompletionItems(provider, document, position);
 		expect(actualItems).to.not.be.null;
-		expect(actualItems).to.have.lengthOf(3)
+		expect(actualItems).to.have.lengthOf(4)
 
 		expect(await checkForCommandInList(actualItems, 'Insert Didact Requirements Label')).to.be.true;
 		expect(await checkForCommandInList(actualItems, 'Insert Validate All Button')).to.be.true;
 		expect(await checkForCommandInList(actualItems, 'Insert link to install required VS Code extension')).to.be.true;
+		expect(await checkForCommandInList(actualItems, 'Insert Didact Badge')).to.be.true;
 
 		await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	});
