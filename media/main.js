@@ -75,7 +75,7 @@ function () {
 	function collectElements(tagname) {
 		var elements = [];
 		var links = document.getElementsByTagName(tagname);
-		for (let element of links) {
+		for (const element of links) {
 			elements.push(element);
 		}
 		return elements;
@@ -98,13 +98,11 @@ function () {
 		}
 		
 		if (element) {
-			let green = "green";
-			let red = "red";
 			if (String(isAvailable).toLowerCase() === 'true') {
-				element.style.color = green;
+				element.style.color = "green";
 				element.textContent = `Status: Available`;
 			} else {
-				element.style.color = red;
+				element.style.color = "red";
 				element.textContent = `Status: Unavailable`;
 			}
 		}
@@ -113,11 +111,11 @@ function () {
 	}
 
 	function processAllRequirements() {
-		var links = collectElements("a");
-		for (let linkElements of links) {
+		const links = collectElements("a");
+		for (const linkElements of links) {
 			if (linkElements.getAttribute('href')) {
 				const href = linkElements.getAttribute('href');
-				for(let check of requirementCommandLinks) {
+				for(const check of requirementCommandLinks) {
 					if (href.startsWith(check)) {
 						linkElements.click();
 					}
