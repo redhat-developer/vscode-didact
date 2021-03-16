@@ -207,7 +207,7 @@
 		"@types/vscode": "^1.54.0",
 		"@typescript-eslint/eslint-plugin": "^4.16.1",
 		"@typescript-eslint/parser": "^4.16.1",
-		"chai": "^4.3.3",
+		"chai": "^4.3.4",
 		"eslint": "^7.21.0",
 		"mocha": "^8.3.2",
 		"mocha-jenkins-reporter": "^0.4.4",
