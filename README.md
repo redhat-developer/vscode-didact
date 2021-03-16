@@ -11,6 +11,7 @@
 <a href="https://circleci.com/gh/redhat-developer/vscode-didact"><img src="https://circleci.com/gh/redhat-developer/vscode-didact.svg?style=shield"></a>
 <img src="https://img.shields.io/badge/license-Apache%202-blue.svg" alt="License"/>
 <a href="https://gitter.im/redhat-developer/vscode-didact"><img src="https://img.shields.io/gitter/room/redhat-developer/home.js.sv" alt="Gitter"/></a>
+<a href="https://gitpod.io/#https://github.com/redhat-developer/vscode-didact"><img src="ttps://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod" alt="Gitpod ready-to-code"/></a>
 </p><br/>
 
 <p align="center"><img src="./images/open-new-terminal-example.gif" alt="Three Step Didact Tutorial Example" width="100%"/></p><br/>
