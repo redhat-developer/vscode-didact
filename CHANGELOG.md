@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.3.3
+
+- TBD
+
 ## 0.3.2
 
 - adding *vscode.didact.refresh* command to refresh the currently active Didact window
