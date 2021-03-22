@@ -64,6 +64,12 @@
 						"default": "false",
 						"description": "Automatically open the default Didact file at workspace startup",
 						"scope": "window"
+					},
+					"didact.autoAddDefaultTutorials": {
+						"type": "boolean",
+						"default": "true",
+						"description": "Automatically add the default Didact tutorials to the Didact Tutorials view at workspace startup if not already registered",
+						"scope": "window"
 					}
 				}
 			}
@@ -113,6 +119,10 @@
 			{
 				"command": "vscode.didact.refresh",
 				"title": "Didact: Refresh Current Didact Window"
+			},
+			{
+				"command": "vscode.didact.registry.clear",
+				"title": "Didact: Clear Tutorial Registry"
 			}
 		],
 		"keybindings": [

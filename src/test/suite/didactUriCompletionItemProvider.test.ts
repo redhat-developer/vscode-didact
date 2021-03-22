@@ -110,7 +110,7 @@ suite("Didact URI completion provider tests", function () {
 	test("that the command processing for a command prefix returns expected results", async () => {
 		const match = provider.findMatchForCommandVariable('didact://?commandId=vscode.didact.');
 		const completionList = await provider.processCommands(match);
-		expect(completionList.items).to.have.lengthOf(27)
+		expect(completionList.items).to.have.lengthOf(29)
 	});
 
 	test("that the command processing for one command returns one expected result", async () => {

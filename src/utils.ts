@@ -15,19 +15,38 @@
  * limitations under the License.
  */
 
-import * as extension from './extension';
 import * as extensionFunctions from './extensionFunctions';
 import * as fs from 'fs';
 import { ViewColumn, OutputChannel, workspace, Uri, window, commands, env } from 'vscode';
 import * as path from 'path';
+import { refreshTreeview } from './extension';
 
 export const DIDACT_DEFAULT_URL = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING = 'didact.registered';
 export const DIDACT_NOTIFICATION_SETTING = 'didact.disableNotifications';
 export const DIDACT_COLUMN_SETTING = 'didact.lastColumnUsed';
 export const DIDACT_OPEN_AT_STARTUP = 'didact.openDefaultTutorialAtStartup';
+export const DIDACT_AUTO_INSTALL_DEFAULT_TUTORIALS = 'didact.autoAddDefaultTutorials';
 
 const CACHED_OUTPUT_CHANNELS: OutputChannel[] = new Array<OutputChannel>();
+
+export interface ITutorial {
+	name: string;
+	category: string;
+	sourceUri: string;
+}
+
+export class Tutorial implements ITutorial {
+	name: string;
+	category: string;
+	sourceUri: string;
+	
+	constructor(name : string, sourceUri : string, category : string) {
+		this.name = name;
+		this.category = category;
+		this.sourceUri = sourceUri;
+	}
+}
 
 export function getCachedOutputChannels(): OutputChannel[] {
 	return CACHED_OUTPUT_CHANNELS;
@@ -102,18 +121,21 @@ export function getOpenAtStartupSetting() : boolean {
 	return workspace.getConfiguration().get(DIDACT_OPEN_AT_STARTUP, false);
 }
 
+export function getAutoInstallDefaultTutorialsSetting() : boolean {
+	return workspace.getConfiguration().get(DIDACT_AUTO_INSTALL_DEFAULT_TUTORIALS, true);
+}
+
 export function getRegisteredTutorials() : string[] | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
-export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string ): Promise<void> {
-	const newDidact:JSON = <JSON><unknown>{
-		"name" : `${name}`,
-		"category" : `${category}`,
-		"sourceUri" : `${sourceUri}`,
-	};
-	const newDidactAsString = JSON.stringify(newDidact);
+export async function registerTutorialWithJSON( jsonObject: any) {
+	const newTutorial : Tutorial = jsonObject as ITutorial;
+	return registerTutorialWithClass(newTutorial);
+}
 
+export async function registerTutorialWithClass(newDidact: Tutorial): Promise<void> {
+	const newDidactAsString = JSON.stringify(newDidact);
 	let existingRegistry : string[] | undefined = getRegisteredTutorials();
 	if(!existingRegistry) {
 		existingRegistry = [newDidactAsString];
@@ -123,8 +145,8 @@ export async function registerTutorialWithCategory(name : string, sourceUri : st
 		for (const entry of existingRegistry) {
 			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.name && jsonObj.category) {
-				const testName = jsonObj.name.toLowerCase() === name;
-				const testCategory = jsonObj.category.toLowerCase() === category;
+				const testName = jsonObj.name.toLowerCase() === newDidact.name;
+				const testCategory = jsonObj.category.toLowerCase() === newDidact.category;
 				match = testName && testCategory;
 				if (match) {
 					break;
@@ -134,14 +156,20 @@ export async function registerTutorialWithCategory(name : string, sourceUri : st
 		if (!match) {
 			existingRegistry.push(newDidactAsString);
 		} else {
-			throw new Error(`Didact tutorial with name ${name} and category ${category} already exists`);
+			throw new Error(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
 		}
 	}
-
 	await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
+	refreshTreeview();
+}
 
-	// refresh view
-	extension.refreshTreeview();
+export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string ): Promise<void> {
+	const newTutorial = new Tutorial(name, sourceUri, category);
+	return registerTutorialWithClass(newTutorial);
+}
+
+export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string ): Promise<void> {
+	return registerTutorialWithArgs(name, sourceUri, category);
 }
 
 export function getDidactCategories() : string[] {
@@ -199,6 +227,8 @@ export async function clearRegisteredTutorials(): Promise<void>{
 	if (workspace.getConfiguration()) {
 		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, undefined);
 		console.log('Didact configuration cleared');
+
+		refreshTreeview();
 	}
 }
 
@@ -248,5 +278,12 @@ export async function removeFilesAndFolders(workspacename: string, filesAndFolde
 				await workspace.fs.delete(delUri, {recursive:true});
 			}
 		}
+	}
+}
+
+export async function updateRegisteredTutorials(inJson : any): Promise<void>{
+	if (workspace.getConfiguration()) {
+		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, inJson);
+		console.log('Didact configuration updated');
 	}
 }

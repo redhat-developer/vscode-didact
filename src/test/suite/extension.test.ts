@@ -1,15 +1,16 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { getOpenAtStartupSetting, getRegisteredTutorials } from '../../utils';
-import { DEFAULT_TUTORIAL_CATEGORY } from '../../extension';
+import { getAutoInstallDefaultTutorialsSetting, getOpenAtStartupSetting, getRegisteredTutorials, registerTutorialWithCategory } from '../../utils';
+import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME } from '../../extension';
 import { expect } from 'chai';
-import * as Utils from './Utils';
+import { ensureExtensionActivated } from './Utils';
+import { getContext } from '../../extensionFunctions';
 
 suite('Extension Test Suite', () => {
 	const extensionId = 'redhat.vscode-didact';
 
 	setup(() => {
-		Utils.ensureExtensionActivated();
+		ensureExtensionActivated();
 	});
 
 	test('vscode-didact extension should be present', function(done) {
@@ -27,7 +28,11 @@ suite('Extension Test Suite', () => {
 		}
 	});
 
-	test('that the didact tutorial is registered in the tutorials view', function () {
+	test('that the didact tutorial is registered in the tutorials view', async function () {
+
+		// assume that it was cleared in registry.test.ts and make sure we add it again to be sure
+		const tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
+		await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 		const tutorialName = 'Writing Your First Didact Tutorial';
 		const existingRegistry : string[] | undefined = getRegisteredTutorials();
@@ -45,6 +50,16 @@ suite('Extension Test Suite', () => {
 				}
 			}
 			expect(match).to.be.true;
+		}
+	});
+
+	test('by default, didact setting to automatically install default tutorials at startup should be true', function () {
+		const installAtStartup : boolean = getAutoInstallDefaultTutorialsSetting();
+		console.log(`installAtStartup = ${installAtStartup}`);
+		if (installAtStartup === false) {
+			assert.fail('Install tutorials at startup setting should be true by default');
+		} else {
+			assert.ok('Install tutorials at startup setting is correctly set to true by default.');
 		}
 	});
 	
