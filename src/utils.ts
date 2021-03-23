@@ -156,12 +156,12 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 		}
 		if (!match) {
 			existingRegistry.push(newDidactAsString);
+			await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
+			refreshTreeview();
 		} else {
-			throw new Error(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
+			extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
 		}
 	}
-	await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
-	refreshTreeview();
 }
 
 export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string ): Promise<void> {
@@ -289,9 +289,14 @@ export async function updateRegisteredTutorials(inJson : any): Promise<void>{
 	}
 }
 
-export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri) : Promise<void> {
-	const prompts : string[] = [ "Tutorial Name", "Tutorial Category" ];
-	const values : string[] = await collectUserInput(prompts);
+export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri, name? : string, category? : string) : Promise<void> {
+	let values : string[];
+	if (name && category) {
+		values = [ name, category ];
+	} else {
+		const prompts : string[] = [ "Tutorial Name", "Tutorial Category" ];
+		values = await collectUserInput(prompts);
+	}
 	if (!uri) {
 		uri = await getCurrentFileSelectionPath();
 	}

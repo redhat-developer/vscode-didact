@@ -2,7 +2,7 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
-## 0.3.3
+## 0.4.0
 
 - `Didact Tutorials` view no longer clears and resets the registry of tutorials on startup each time
 - New setting enables turning off re-adding the default Didact tutorials on Startup
