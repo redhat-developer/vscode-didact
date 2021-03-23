@@ -123,6 +123,14 @@
 			{
 				"command": "vscode.didact.registry.clear",
 				"title": "Didact: Clear Tutorial Registry"
+			},
+			{
+				"command": "vscode.didact.registry.addUri",
+				"title": "Didact: Register Didact Tutorial"
+			},
+			{
+				"command": "vscode.didact.view.tutorial.remove",
+				"title": "Remove Didact Tutorial"
 			}
 		],
 		"keybindings": [
@@ -144,6 +152,11 @@
 					"command": "vscode.didact.scaffoldProject",
 					"when": "resourceExtname =~ /\\.json$/",
 					"group": "vscode.didact.group@2"
+				},
+				{
+					"command": "vscode.didact.registry.addUri",
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"group": "vscode.didact.group@1"
 				}
 			],
 			"view/item/context": [
@@ -155,6 +168,11 @@
 				{
 					"command": "vscode.didact.view.tutorial.open",
 					"group": "1",
+					"when": "view == didact.tutorials && viewItem == TutorialNode"
+				},
+				{
+					"command": "vscode.didact.view.tutorial.remove",
+					"group": "2",
 					"when": "view == didact.tutorials && viewItem == TutorialNode"
 				}
 			],

@@ -18,7 +18,10 @@
 import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
-import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting } from './utils';
+import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, 
+	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
+	addNewTutorialWithNameAndCategoryForDidactUri, 
+	removeTutorialByNameAndCategory} from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { VIEW_TYPE } from './didactManager';
@@ -65,6 +68,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REFRESH_DIDACT, extensionFunctions.refreshDidactWindow));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CLEAR_DIDACT_REGISTRY, clearRegisteredTutorials));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_TO_REGISTRY, registerTutorialWithJSON));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY, addNewTutorialWithNameAndCategoryForDidactUri));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY, removeTutorialByNameAndCategory));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({

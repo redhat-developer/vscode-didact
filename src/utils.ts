@@ -20,6 +20,7 @@ import * as fs from 'fs';
 import { ViewColumn, OutputChannel, workspace, Uri, window, commands, env } from 'vscode';
 import * as path from 'path';
 import { refreshTreeview } from './extension';
+import { TutorialNode } from './nodeProvider';
 
 export const DIDACT_DEFAULT_URL = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING = 'didact.registered';
@@ -145,8 +146,8 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 		for (const entry of existingRegistry) {
 			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.name && jsonObj.category) {
-				const testName = jsonObj.name.toLowerCase() === newDidact.name;
-				const testCategory = jsonObj.category.toLowerCase() === newDidact.category;
+				const testName = jsonObj.name === newDidact.name;
+				const testCategory = jsonObj.category === newDidact.category;
 				match = testName && testCategory;
 				if (match) {
 					break;
@@ -286,4 +287,61 @@ export async function updateRegisteredTutorials(inJson : any): Promise<void>{
 		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, inJson);
 		console.log('Didact configuration updated');
 	}
+}
+
+export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri) : Promise<void> {
+	const prompts : string[] = [ "Tutorial Name", "Tutorial Category" ];
+	const values : string[] = await collectUserInput(prompts);
+	if (!uri) {
+		uri = await getCurrentFileSelectionPath();
+	}
+	await registerTutorialWithArgs(values[0], uri.fsPath, values[1]);
+}
+
+// get a single input
+async function getUserInput(prompt:string): Promise<string | undefined> {
+	return window.showInputBox({
+		prompt: `Enter a ${prompt}`,
+		placeHolder: prompt
+	});		
+}
+
+// collect all the inputs
+async function collectUserInput(args: string[]) : Promise<string[]> {
+	const outArgs : string[] = [];
+	for(const prompt of args) {
+		const result = await getUserInput(prompt);
+		if (result) {
+				outArgs.push(result);
+		} else {
+			throw new Error('Input aborted');
+		}
+	}
+	return outArgs;
+}
+
+export async function removeTutorialByNameAndCategory(node : TutorialNode ) : Promise<boolean>{
+	const existingRegistry : string[] | undefined = getRegisteredTutorials();
+	let success = false;
+	if(existingRegistry) {
+		let index = -1;
+		for (const entry of existingRegistry) {
+			index++;
+			const jsonObj : any = JSON.parse(entry);
+			if (jsonObj && jsonObj.category && jsonObj.name && jsonObj.sourceUri) {
+				const testName = jsonObj.name === node.label;
+				const testCategory = jsonObj.category === node.category;
+				if (testName && testCategory) {
+					existingRegistry.splice(index, 1);//remove element from array
+					success = true;
+					break;
+				}
+			}
+		}
+	}
+	if (success) {
+		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
+		refreshTreeview();
+	}
+	return success;
 }

@@ -103,7 +103,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
         const categories : string[] | undefined = utils.getDidactCategories();
         if (categories) {
             for (const category of categories) {
-                const newNode = new TreeNode("string", category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
+                const newNode = new TreeNode(category, category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
                 if (!this.doesNodeExist(this.treeNodes, newNode)) {
                     this.addChild(newNode, true, this.treeNodes);
                 }
@@ -118,7 +118,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 			if (tutorials) {
 				for (const tutorial of tutorials) {
 					const tutUri : string | undefined = utils.getUriForDidactNameAndCategory(tutorial, category);
-					const newNode = new TutorialNode("string", tutorial, tutUri, vscode.TreeItemCollapsibleState.None);
+					const newNode = new TutorialNode(category, tutorial, tutUri, vscode.TreeItemCollapsibleState.None);
 					newNode.contextValue = 'TutorialNode';
 					if (!this.doesNodeExist(children, newNode)) {
 						this.addChild(newNode, true, children);
@@ -133,7 +133,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 
 // simple tree node for our tutorials view
 export class TreeNode extends vscode.TreeItem {
-	type: string;
+	category: string;
 	uri : string | undefined;
 
 	constructor(
@@ -143,19 +143,19 @@ export class TreeNode extends vscode.TreeItem {
 		collapsibleState: vscode.TreeItemCollapsibleState
 	) {
 		super(label, collapsibleState);
-		this.type = type;
+		this.category = type;
 		this.uri = uri;
 	}
 }
 
 export class TutorialNode extends TreeNode {
 	constructor(
-		type: string,
+		category: string,
 		label: string,
 		uri: string | undefined,
 		collapsibleState: vscode.TreeItemCollapsibleState
 	) {
-		super(type, label, uri, collapsibleState);
+		super(category, label, uri, collapsibleState);
 		const localIconPath = vscode.Uri.file(path.resolve(extensionFunctions.getContext().extensionPath, 'icon/logo.svg'));
 		this.iconPath = localIconPath;
 	}
