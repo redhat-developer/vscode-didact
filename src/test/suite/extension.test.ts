@@ -30,10 +30,6 @@ suite('Extension Test Suite', () => {
 
 	test('that the didact tutorial is registered in the tutorials view', async function () {
 
-		// assume that it was cleared in registry.test.ts and make sure we add it again to be sure
-		const tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
-		await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
-
 		const tutorialName = 'Writing Your First Didact Tutorial';
 		const existingRegistry : string[] | undefined = getRegisteredTutorials();
 		if (existingRegistry) {
