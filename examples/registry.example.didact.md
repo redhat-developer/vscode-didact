@@ -16,7 +16,7 @@ The `Didact: Register Didact Tutorial` menu prompts you to enter the Tutorial Na
 
 ## *New* Setting to turn off adding default tutorials to Didact Tutorials view
 
-To change the default Didact file, access the settings (`File->Preferences->Settings`), type **Didact** and set the `Didact: Auto Add Default Tutorials`. This defaults to checked, automatically looking to see if the default tutorials exist on startup. If you remove them and don't want them to be re-added on startup, make sure this setting is unchecked.
+To change the default Didact file, access the settings [(`File->Preferences->Settings`)](didact://?commandId=workbench.action.openSettings), type **Didact** and set the `Didact: Auto Add Default Tutorials`. This defaults to checked, automatically looking to see if the default tutorials exist on startup. If you remove them and don't want them to be re-added on startup, make sure this setting is unchecked.
 
 ## *New* Removing tutorials via right-click `Remove Didact Tutorial` menu in Didact Tutorials view
 
@@ -26,6 +26,8 @@ Note that if the `Auto Add Default Tutorials` setting is checked, any default tu
 
 ## *New* Adding a Didact link to register a tutorial
 
-[Click here to create a new Didact file](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/examples/register-tutorial.project.json)
+We can even register a tutorial directly via a link if we have access to the URI of the file. 
 
-[Now let's register it with the Didact Tutorials view](didact://?commandId=vscode.didact.registry.addUri&projectFilePath=test.didact.md&&text=New%20Tutorial$$New%20Category)
+For example, if you [click here to create a new, simple Didact file called `test.didact.md`](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/examples/register-tutorial.project.json)...
+
+[You can register it with the Didact Tutorials view with this link.](didact://?commandId=vscode.didact.registry.addUri&projectFilePath=test.didact.md&&text=New%20Tutorial$$New%20Category)
