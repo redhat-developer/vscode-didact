@@ -156,12 +156,12 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 		}
 		if (!match) {
 			existingRegistry.push(newDidactAsString);
-			await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
-			refreshTreeview();
 		} else {
 			extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
 		}
 	}
+	await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
+	refreshTreeview();
 }
 
 export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string ): Promise<void> {

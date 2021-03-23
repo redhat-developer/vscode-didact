@@ -2,7 +2,8 @@ import * as assert from 'assert';
 import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials, registerTutorialWithArgs} from '../../utils';
 import {before} from 'mocha';
 import * as vscode from 'vscode';
-import { ADD_TUTORIAL_TO_REGISTRY, REGISTER_TUTORIAL } from '../../extensionFunctions';
+import { ADD_TUTORIAL_TO_REGISTRY, getContext, REGISTER_TUTORIAL } from '../../extensionFunctions';
+import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME } from '../../extension';
 
 const name = 'new-tutorial';
 const category = 'some-category';
@@ -20,6 +21,13 @@ suite('Didact registry test suite', () => {
 	test('assert that clearing the registry made it empty', async () => {
 		const registry = getRegisteredTutorials();
 		assert.strictEqual(registry, undefined);
+
+		// clean up and add one demo tutorial back in
+		const tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
+		await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+
+		const addRegistry = getRegisteredTutorials();
+		assert.notStrictEqual(addRegistry, undefined);
 	});
 
 	test('add to registry', async () => {
