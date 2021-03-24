@@ -19,7 +19,7 @@ import * as extensionFunctions from './extensionFunctions';
 import * as fs from 'fs';
 import { ViewColumn, OutputChannel, workspace, Uri, window, commands, env } from 'vscode';
 import * as path from 'path';
-import { refreshTreeview } from './extension';
+import { didactTutorialsProvider, refreshTreeview, revealTreeItem } from './extension';
 import { TutorialNode } from './nodeProvider';
 
 export const DIDACT_DEFAULT_URL = 'didact.defaultUrl';
@@ -107,7 +107,7 @@ export function getValue(input : string | string[]) : string | undefined {
 
 // utility method to do a simple delay of a few ms
 export function delay(ms: number): Promise<unknown> {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+	return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 export function getDefaultUrl() : string | undefined {
@@ -160,8 +160,14 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 			extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
 		}
 	}
+	await commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
 	await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
 	refreshTreeview();
+
+	const tutorialNode = didactTutorialsProvider.findTutorialNode(newDidact.category, newDidact.name);
+	if (tutorialNode) {
+		await revealTreeItem(tutorialNode);
+	}
 }
 
 export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string ): Promise<void> {
@@ -236,17 +242,17 @@ export async function clearRegisteredTutorials(): Promise<void>{
 export async function getCurrentFileSelectionPath(): Promise<Uri> {
   if (window.activeTextEditor)
   {
-    return window.activeTextEditor.document.uri;
+	return window.activeTextEditor.document.uri;
   }
   else{
 		// set focus to the Explorer view
-    await commands.executeCommand('workbench.view.explorer');
-    // then get the resource with focus
-    await commands.executeCommand('copyFilePath');
-    const copyPath = await env.clipboard.readText();
-    if (fs.existsSync(`"${copyPath}"`) && fs.lstatSync(`"${copyPath}"`).isFile() ) {
-      return Uri.file(`"${copyPath}"`);
-    }
+	await commands.executeCommand('workbench.view.explorer');
+	// then get the resource with focus
+	await commands.executeCommand('copyFilePath');
+	const copyPath = await env.clipboard.readText();
+	if (fs.existsSync(`"${copyPath}"`) && fs.lstatSync(`"${copyPath}"`).isFile() ) {
+	  return Uri.file(`"${copyPath}"`);
+	}
   }
   throw new Error("Can not determine current file selection");
 }
@@ -297,6 +303,7 @@ export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri, na
 		const prompts : string[] = [ "Tutorial Name", "Tutorial Category" ];
 		values = await collectUserInput(prompts);
 	}
+	
 	if (!uri) {
 		uri = await getCurrentFileSelectionPath();
 	}
@@ -317,7 +324,7 @@ async function collectUserInput(args: string[]) : Promise<string[]> {
 	for(const prompt of args) {
 		const result = await getUserInput(prompt);
 		if (result) {
-				outArgs.push(result);
+			outArgs.push(result);
 		} else {
 			throw new Error('Input aborted');
 		}

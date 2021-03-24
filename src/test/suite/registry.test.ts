@@ -106,10 +106,7 @@ suite('Didact registry test suite', () => {
 		};
 		
 		try {
-			await vscode.commands.executeCommand(ADD_TUTORIAL_TO_REGISTRY, tutorialJson).then( () => {
-				assert.ok('Registered via json');
-				return;
-			});
+			await vscode.commands.executeCommand(ADD_TUTORIAL_TO_REGISTRY, tutorialJson);
 		} catch (error) {
 			assert.fail('Failed to register via json: ' + error);
 		}

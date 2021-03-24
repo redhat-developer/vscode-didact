@@ -4,11 +4,12 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.4.0
 
-- `Didact Tutorials` view no longer clears and resets the registry of tutorials on startup each time
-- New setting enables turning off re-adding the default Didact tutorials on Startup
-- New command `Didact: Clear Tutorial Registry` will clear the entire tutorial registry (use at own risk!)
-- New right-click menu `Didact: Register Didact Tutorial` on Didact files in the Explorer view enables user-registered tutorials to appear in `Didact Tutorials` view
-- New right-click menu `Remove Didact Tutorial` on tutorials in `Didact Tutorials` view enables tutorial removal
+- Didact Tutorial Registry Improvements
+  - `Didact Tutorials` view no longer clears and resets the registry of tutorials on startup each time
+  - New setting enables turning off re-adding the default Didact tutorials on Startup
+  - New command `Didact: Clear Tutorial Registry` will clear the entire tutorial registry (use at own risk!)
+  - New right-click menu `Didact: Register Didact Tutorial` on Didact files in the Explorer view enables user-registered tutorials to appear in `Didact Tutorials` view
+  - New right-click menu `Remove Didact Tutorial` on tutorials in `Didact Tutorials` view enables tutorial removal
 
 ## 0.3.2
 

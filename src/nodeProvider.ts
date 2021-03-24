@@ -85,6 +85,16 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		this._onDidChangeTreeData.fire(undefined);
 	}
 
+	public getParent(element : TreeNode) : TreeNode | undefined {
+		if (element instanceof TutorialNode) {
+			const tutorial = element as TutorialNode;
+			if (tutorial.category) {
+				return this.findCategoryNode(tutorial.category);
+			}
+		}
+		return undefined;
+	}
+
 	getTreeItem(node: TreeNode): vscode.TreeItem {
 		return node;
 	}
@@ -128,7 +138,29 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		}
         return children;
 	}
+
+	findCategoryNode(category : string) : TreeNode | undefined {
+		const nodeToFind = new TreeNode(category, category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
+		if (this.doesNodeExist(this.treeNodes, nodeToFind)) {
+			return nodeToFind;
+		}
+		return undefined;
+	}
 	
+	findTutorialNode(category : string, tutorialName : string ) : TreeNode | undefined {
+		const catNode = this.findCategoryNode(category);
+		if (catNode) {
+			const treeItems : TreeNode[] = this.getChildren(catNode);
+			let foundNode : TreeNode | undefined = undefined;
+			treeItems.forEach(element => {
+				if (element.label === tutorialName && element.category === category) {
+					foundNode = element;
+				}
+			});
+			return foundNode;
+		}
+		return undefined;
+	}
 }
 
 // simple tree node for our tutorials view

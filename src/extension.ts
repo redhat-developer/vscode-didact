@@ -143,3 +143,10 @@ export function refreshTreeview(): void {
 		didactTutorialsProvider.refresh();
 	}
 }
+
+export async function revealTreeItem(node: TreeNode) {
+	await vscode.commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
+	if (didactTreeView && didactTreeView.visible === true) {
+		didactTreeView.reveal(node);
+	}
+}
