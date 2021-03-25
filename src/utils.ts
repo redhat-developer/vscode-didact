@@ -343,12 +343,12 @@ async function getTutorialName(tutorialsForValidation : string[] ) : Promise<str
 			return val;
 		}
 	});
-	return result;
+	return result?.trim();
 }
 
 function validateTutorialNameInput(value: string, tutorialsForValidation : string[] ): string | null {
 	if (typeof value === "string") {
-	  if (value === "") {
+	  if (value.trim().length === 0) {
 		return "Empty tutorial name is not allowed";
 	  }
 	  if (tutorialsForValidation && tutorialsForValidation.indexOf(value) > -1) {
@@ -370,7 +370,7 @@ async function quickPickCategory(
 		let placeholder = "Select a Tutorial Category.";
 
 		if (acceptInput) {
-			placeholder = "Select an existing Category or type a new, unique Category name.";
+			placeholder = "Select existing Category or type a new name. 'Enter' to confirm. 'Escape' to cancel.";
 		}
 
 		quickPick.placeholder = placeholder;
@@ -385,12 +385,14 @@ async function quickPickCategory(
 		}
 
 		quickPick.onDidAccept(_ => {
-			if (canSelectMany) {
-				resolve(selectedItems.map((item) => item.label));
-			} else {
-				resolve(quickPick.activeItems.map((item) => item.label));
+			if (quickPick.value.trim().length > 0 || selectedItems.length > 0 || quickPick.activeItems.length > 0) {
+				if (canSelectMany) {
+					resolve(selectedItems.map((item) => item.label));
+				} else {
+					resolve(quickPick.activeItems.map((item) => item.label));
+				}
+				quickPick.hide();
 			}
-			quickPick.hide();
 		});
 
 		if (acceptInput) {
@@ -400,7 +402,7 @@ async function quickPickCategory(
 					quickPick.items = options;
 				} else {
 					// include currently typed option
-					quickPick.items = [{ label: quickPick.value }, ...options];
+					quickPick.items = [{ label: quickPick.value.trim() }, ...options];
 				}
 			});
 		}
