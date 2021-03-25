@@ -401,8 +401,10 @@ async function quickPickCategory(
 					quickPick.value = '';
 					quickPick.items = options;
 				} else {
-					// include currently typed option
-					quickPick.items = [{ label: quickPick.value.trim() }, ...options];
+					// include currently typed option if it isn't already there
+					if (categories.indexOf(quickPick.value.trim()) === -1) {
+                        quickPick.items = [{ label: quickPick.value }, ...options];
+                    }
 				}
 			});
 		}
