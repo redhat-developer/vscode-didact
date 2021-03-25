@@ -403,7 +403,7 @@ async function quickPickCategory(
 				} else {
 					// include currently typed option if it isn't already there
 					if (categories.indexOf(quickPick.value.trim()) === -1) {
-                        quickPick.items = [{ label: quickPick.value }, ...options];
+                        quickPick.items = [{ label: quickPick.value.trim() }, ...options];
                     }
 				}
 			});
@@ -412,14 +412,6 @@ async function quickPickCategory(
 		quickPick.onDidHide(_ => quickPick.dispose());
 		quickPick.show();
 	});
-}
-
-// get a single input
-async function getUserInput(prompt:string): Promise<string | undefined> {
-	return window.showInputBox({
-		prompt: `Enter a ${prompt}`,
-		placeHolder: prompt
-	});		
 }
 
 export async function removeTutorialByNameAndCategory(node : TutorialNode ) : Promise<boolean>{
