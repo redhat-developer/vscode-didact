@@ -360,53 +360,54 @@ function validateTutorialNameInput(value: string, tutorialsForValidation : strin
 }
 
 async function quickPickCategory(
-    categories: string[],
-    canSelectMany: boolean = false,
-    acceptInput: boolean = true): Promise<string[]> {
-    let options = categories.map(tag => ({ label: tag }));
+	categories: string[],
+	canSelectMany: boolean = false,
+	acceptInput: boolean = true): Promise<string[]> {
+	let options = categories.map(tag => ({ label: tag }));
 
-    return new Promise((resolve, _) => {
-        let quickPick = window.createQuickPick();
-        let placeholder = "Select a Tutorial Category.";
+	return new Promise((resolve, _) => {
+		let quickPick = window.createQuickPick();
+		let placeholder = "Select a Tutorial Category.";
 
-        if (acceptInput) {
-            placeholder = "Select an existing Category or type a new, unique Category name.";
-        }
+		if (acceptInput) {
+			placeholder = "Select an existing Category or type a new, unique Category name.";
+		}
 
-        quickPick.placeholder = placeholder;
-        quickPick.canSelectMany = canSelectMany;
-        quickPick.items = options;
-        let selectedItems: any[] = [];
+		quickPick.placeholder = placeholder;
+		quickPick.canSelectMany = canSelectMany;
+		quickPick.items = options;
+		let selectedItems: any[] = [];
 
-        if (canSelectMany) {
-            quickPick.onDidChangeSelection((selected) => {
-                selectedItems = selected;
-            });
-        }
+		if (canSelectMany) {
+			quickPick.onDidChangeSelection((selected) => {
+				selectedItems = selected;
+			});
+		}
 
-        quickPick.onDidAccept(_ => {
-            if (canSelectMany) {
-                resolve(selectedItems.map((item) => item.label));
-            } else {
-                resolve(quickPick.activeItems.map((item) => item.label));
-            }
-            quickPick.hide();
-        });
+		quickPick.onDidAccept(_ => {
+			if (canSelectMany) {
+				resolve(selectedItems.map((item) => item.label));
+			} else {
+				resolve(quickPick.activeItems.map((item) => item.label));
+			}
+			quickPick.hide();
+		});
 
-        if (acceptInput) {
-            quickPick.onDidChangeValue(_ => {
-                if (quickPick.value === "") {
-                    quickPick.items = options;
-                } else {
-                    // include currently typed option
-                    quickPick.items = [{ label: quickPick.value }, ...options];
-                }
-            });
-        }
+		if (acceptInput) {
+			quickPick.onDidChangeValue(_ => {
+				if (quickPick.value.trim().length === 0) {
+					quickPick.value = '';
+					quickPick.items = options;
+				} else {
+					// include currently typed option
+					quickPick.items = [{ label: quickPick.value }, ...options];
+				}
+			});
+		}
 
-        quickPick.onDidHide(_ => quickPick.dispose());
-        quickPick.show();
-    });
+		quickPick.onDidHide(_ => quickPick.dispose());
+		quickPick.show();
+	});
 }
 
 // get a single input
