@@ -187,11 +187,27 @@ export function getDidactCategories() : string[] {
 		for (const entry of existingRegistry) {
 			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.category) {
-				didactCategories.push(jsonObj.category);
+				if (didactCategories.indexOf(jsonObj.category) === -1) {
+					didactCategories.push(jsonObj.category);
+				}
 			}
 		}
 	}
 	return didactCategories;
+}
+
+export function getDidactTutorials() : string[] {
+	const existingRegistry : string[] | undefined = getRegisteredTutorials();
+	const didactTutorials : string[] = [];
+	if(existingRegistry) {
+		for (const entry of existingRegistry) {
+			const jsonObj : any = JSON.parse(entry);
+			if (jsonObj && jsonObj.category && jsonObj.name) {
+				didactTutorials.push(jsonObj.name);
+			}
+		}
+	}
+	return didactTutorials;
 }
 
 export function getTutorialsForCategory( category : string ) : string[] {
@@ -296,18 +312,101 @@ export async function updateRegisteredTutorials(inJson : any): Promise<void>{
 }
 
 export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri, name? : string, category? : string) : Promise<void> {
-	let values : string[];
+	let tutorialName = undefined;
+	let tutorialCategory = undefined;
 	if (name && category) {
-		values = [ name, category ];
+		tutorialName = name; 
+		tutorialCategory = category;
 	} else {
-		const prompts : string[] = [ "Tutorial Name", "Tutorial Category" ];
-		values = await collectUserInput(prompts);
+		const categoriesForValidation : string[] = getDidactCategories();
+		const tutorialsForValidation : string[] = getDidactTutorials();
+
+		tutorialName = await getTutorialName(tutorialsForValidation);
+		const selectedCategory : string[] = await quickPickCategory(categoriesForValidation);
+		tutorialCategory = selectedCategory[0];
 	}
 	
 	if (!uri) {
 		uri = await getCurrentFileSelectionPath();
 	}
-	await registerTutorialWithArgs(values[0], uri.fsPath, values[1]);
+	if (tutorialName && tutorialCategory) {
+		await registerTutorialWithArgs(tutorialName, uri.fsPath, tutorialCategory);
+	}
+}
+
+async function getTutorialName(tutorialsForValidation : string[] ) : Promise<string|undefined>{
+	const result = await window.showInputBox({
+		value: 'New Tutorial',
+		placeHolder: 'Enter the name for your new tutorial. The name must be unique.',
+		validateInput: (inputVal: string) => {
+			let val = validateTutorialNameInput(inputVal, tutorialsForValidation);
+			return val;
+		}
+	});
+	return result;
+}
+
+function validateTutorialNameInput(value: string, tutorialsForValidation : string[] ): string | null {
+	if (typeof value === "string") {
+	  if (value === "") {
+		return "Empty tutorial name is not allowed";
+	  }
+	  if (tutorialsForValidation && tutorialsForValidation.indexOf(value) > -1) {
+		  return "Tutorial with that name already exists. Tutorial names must be unique."
+	  }
+	  return null;
+	}
+  	return `${value} is invalid`;
+}
+
+async function quickPickCategory(
+    categories: string[],
+    canSelectMany: boolean = false,
+    acceptInput: boolean = true): Promise<string[]> {
+    let options = categories.map(tag => ({ label: tag }));
+
+    return new Promise((resolve, _) => {
+        let quickPick = window.createQuickPick();
+        let placeholder = "Select a Tutorial Category.";
+
+        if (acceptInput) {
+            placeholder = "Select an existing Category or type a new, unique Category name.";
+        }
+
+        quickPick.placeholder = placeholder;
+        quickPick.canSelectMany = canSelectMany;
+        quickPick.items = options;
+        let selectedItems: any[] = [];
+
+        if (canSelectMany) {
+            quickPick.onDidChangeSelection((selected) => {
+                selectedItems = selected;
+            });
+        }
+
+        quickPick.onDidAccept(_ => {
+            if (canSelectMany) {
+                resolve(selectedItems.map((item) => item.label));
+            } else {
+                resolve(quickPick.activeItems.map((item) => item.label));
+            }
+            quickPick.hide();
+        });
+
+        if (acceptInput) {
+            quickPick.onDidChangeValue(_ => {
+                if (quickPick.value === "") {
+                    quickPick.items = options;
+                } else {
+                    // include currently typed option
+                    quickPick.items = [{ label: quickPick.value }, ...options];
+                }
+            });
+        }
+
+        quickPick.onDidHide(_ => quickPick.dispose());
+        quickPick.show();
+    });
 }
 
 // get a single input
@@ -316,20 +415,6 @@ async function getUserInput(prompt:string): Promise<string | undefined> {
 		prompt: `Enter a ${prompt}`,
 		placeHolder: prompt
 	});		
-}
-
-// collect all the inputs
-async function collectUserInput(args: string[]) : Promise<string[]> {
-	const outArgs : string[] = [];
-	for(const prompt of args) {
-		const result = await getUserInput(prompt);
-		if (result) {
-			outArgs.push(result);
-		} else {
-			throw new Error('Input aborted');
-		}
-	}
-	return outArgs;
 }
 
 export async function removeTutorialByNameAndCategory(node : TutorialNode ) : Promise<boolean>{
