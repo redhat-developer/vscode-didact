@@ -323,6 +323,9 @@ export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri, na
 
 		tutorialName = await getTutorialName(tutorialsForValidation);
 		const selectedCategory : string[] = await quickPickCategory(categoriesForValidation);
+		if (selectedCategory === undefined) {
+			throw Error("Canceled out of Tutorial Category selection");
+		}		
 		tutorialCategory = selectedCategory[0];
 	}
 	
@@ -344,6 +347,9 @@ async function getTutorialName(tutorialsForValidation : string[] ) : Promise<str
 			return val;
 		}
 	});
+	if (result === undefined) {
+		throw Error("Canceled out of Tutorial Name input box");
+	}
 	return result?.trim();
 }
 
