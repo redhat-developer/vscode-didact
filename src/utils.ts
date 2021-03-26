@@ -338,6 +338,7 @@ async function getTutorialName(tutorialsForValidation : string[] ) : Promise<str
 	const result = await window.showInputBox({
 		value: 'New Tutorial',
 		placeHolder: 'Enter the name for your new tutorial. The name must be unique.',
+		ignoreFocusOut: true,
 		validateInput: (inputVal: string) => {
 			let val = validateTutorialNameInput(inputVal, tutorialsForValidation);
 			return val;
@@ -376,6 +377,7 @@ async function quickPickCategory(
 		quickPick.placeholder = placeholder;
 		quickPick.canSelectMany = canSelectMany;
 		quickPick.items = options;
+		quickPick.ignoreFocusOut = true;
 		let selectedItems: any[] = [];
 
 		if (canSelectMany) {
@@ -383,7 +385,6 @@ async function quickPickCategory(
 				selectedItems = selected;
 			});
 		}
-
 		quickPick.onDidAccept(_ => {
 			if (quickPick.value.trim().length > 0 || selectedItems.length > 0 || quickPick.activeItems.length > 0) {
 				if (canSelectMany) {
