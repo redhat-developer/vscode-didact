@@ -355,13 +355,13 @@ async function getTutorialName(tutorialsForValidation : string[] ) : Promise<str
 
 function validateTutorialNameInput(value: string, tutorialsForValidation : string[] ): string | null {
 	if (typeof value === "string") {
-	  if (value.trim().length === 0) {
-		return "Empty tutorial name is not allowed";
-	  }
-	  if (tutorialsForValidation && tutorialsForValidation.indexOf(value) > -1) {
-		  return "Tutorial with that name already exists. Tutorial names must be unique."
-	  }
-	  return null;
+		if (value.trim().length === 0) {
+			return "Empty tutorial name is not allowed";
+		}
+		if (tutorialsForValidation && tutorialsForValidation.indexOf(value) > -1) {
+			return "Tutorial with that name already exists. Tutorial names must be unique."
+		}
+		return null;
 	}
   	return `${value} is invalid`;
 }
@@ -410,8 +410,8 @@ async function quickPickCategory(
 				} else {
 					// include currently typed option if it isn't already there
 					if (categories.indexOf(quickPick.value.trim()) === -1) {
-                        quickPick.items = [{ label: quickPick.value.trim() }, ...options];
-                    }
+						quickPick.items = [{ label: quickPick.value.trim() }, ...options];
+					}
 				}
 			});
 		}

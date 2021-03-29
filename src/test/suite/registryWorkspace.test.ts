@@ -68,14 +68,13 @@ suite('Tutorial Registry Test Suite', () => {
 			await vscode.commands.executeCommand(START_DIDACT_COMMAND, didactFileUri);
 			try {
 				const predicate = () => didactManager.active() != undefined;
-				await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 }).then(() => {
-					expect(didactManager.active()?.getCurrentTitle()).to.equal("Local Didact Tutorial");
-				});
+				await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 });
+				expect(didactManager.active()?.getCurrentTitle()).to.equal("Local Didact Tutorial");
 			} catch (error) {
-				assert.fail(error);
+				assert.fail("Failed to start the Didact file and validate the title");
 			}
 		} catch (error) {
-			assert.fail(error);
+			assert.fail("Failed to register, then start the Didact file");
 		}
 	});
 });
