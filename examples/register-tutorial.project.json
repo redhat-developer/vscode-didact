@@ -1,0 +1,8 @@
+{
+    "files": [
+        {
+            "name":"test.didact.md",
+            "content":"# Local Didact Tutorial\n\nThis is an example of a Didact file provided in a scaffolded project.\n\n- [ ] [Click here to open the simple.groovy file in the new sample project](didact://?commandId=vscode.open&projectFilePath=anotherProject/src/simple.groovy&completion=Opened%20the%20simple.groovy%20file)\n"
+        }
+    ]
+}

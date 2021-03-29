@@ -1,8 +1,9 @@
 import * as assert from 'assert';
-import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials} from '../../utils';
+import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials, registerTutorialWithArgs} from '../../utils';
 import {before} from 'mocha';
 import * as vscode from 'vscode';
-import { REGISTER_TUTORIAL } from '../../extensionFunctions';
+import { ADD_TUTORIAL_TO_REGISTRY, getContext, REGISTER_TUTORIAL } from '../../extensionFunctions';
+import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME } from '../../extension';
 
 const name = 'new-tutorial';
 const category = 'some-category';
@@ -17,9 +18,21 @@ suite('Didact registry test suite', () => {
 		await clearRegisteredTutorials();
 	});
 
+	test('assert that clearing the registry made it empty', async () => {
+		const registry = getRegisteredTutorials();
+		assert.strictEqual(registry, undefined);
+
+		// clean up and add one demo tutorial back in
+		const tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
+		await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+
+		const addRegistry = getRegisteredTutorials();
+		assert.notStrictEqual(addRegistry, undefined);
+	});
+
 	test('add to registry', async () => {
 		try {
-			await registerTutorialWithCategory(name, source, category).then( () => {
+			await registerTutorialWithArgs(name, source, category).then( () => {
 				assert.ok('No errors thrown while creating new didact registry entry');
 			});
 		} catch (error) {
@@ -75,6 +88,31 @@ suite('Didact registry test suite', () => {
 		} catch (error) {
 			assert.fail('Failed to register via command: ' + error);
 		}
+
+		const foundTutorial = verifyTutorialInRegistry(name3);
+		assert.ok(foundTutorial, `Did not find new-tutorial-3 registered via JSON`);
+
+	});
+
+	test('call command to register tutorial via json', async() => {
+		const name4 = 'new-tutorial-4';
+		const category4 = 'some-category-4';
+		const source4 = 'my-uri-4';
+
+		const tutorialJson:JSON = <JSON><unknown>{
+			"name" : `${name4}`,
+			"category" : `${category4}`,
+			"sourceUri" : `${source4}`,
+		};
+		
+		try {
+			await vscode.commands.executeCommand(ADD_TUTORIAL_TO_REGISTRY, tutorialJson);
+		} catch (error) {
+			assert.fail('Failed to register via json: ' + error);
+		}
+
+		const foundTutorial = verifyTutorialInRegistry(name4);
+		assert.ok(foundTutorial, `Did not find new-tutorial-4 registered via JSON`);
 	});
 
 	test('Clear all the tutorials', async() => {
@@ -87,3 +125,19 @@ suite('Didact registry test suite', () => {
 		assert.deepStrictEqual(afterregistry, undefined);
 	});
 });
+
+function verifyTutorialInRegistry(nameToTest : string) : boolean {
+	const existingRegistry : string[] | undefined = getRegisteredTutorials();
+	if (existingRegistry) {
+		for (const entry of existingRegistry) {
+			const jsonObj : any = JSON.parse(entry);
+			if (jsonObj && jsonObj.name && jsonObj.category) {
+				const testName = jsonObj.name.toLowerCase() === nameToTest.toLowerCase();
+				if (testName) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}

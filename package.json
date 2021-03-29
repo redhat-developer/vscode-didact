@@ -3,7 +3,7 @@
 	"displayName": "Didact",
 	"description": "Didact Tutorial Tools for Visual Studio Code",
 	"license": "Apache-2.0",
-	"version": "0.3.3",
+	"version": "0.4.0",
 	"icon": "icon/logo.png",
 	"publisher": "redhat",
 	"preview": true,
@@ -64,6 +64,12 @@
 						"default": "false",
 						"description": "Automatically open the default Didact file at workspace startup",
 						"scope": "window"
+					},
+					"didact.autoAddDefaultTutorials": {
+						"type": "boolean",
+						"default": "true",
+						"description": "Automatically add the default Didact tutorials to the Didact Tutorials view at workspace startup if not already registered",
+						"scope": "window"
 					}
 				}
 			}
@@ -113,6 +119,18 @@
 			{
 				"command": "vscode.didact.refresh",
 				"title": "Didact: Refresh Current Didact Window"
+			},
+			{
+				"command": "vscode.didact.registry.clear",
+				"title": "Didact: Clear Tutorial Registry"
+			},
+			{
+				"command": "vscode.didact.registry.addUri",
+				"title": "Didact: Register Didact Tutorial"
+			},
+			{
+				"command": "vscode.didact.view.tutorial.remove",
+				"title": "Remove Didact Tutorial"
 			}
 		],
 		"keybindings": [
@@ -134,6 +152,11 @@
 					"command": "vscode.didact.scaffoldProject",
 					"when": "resourceExtname =~ /\\.json$/",
 					"group": "vscode.didact.group@2"
+				},
+				{
+					"command": "vscode.didact.registry.addUri",
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"group": "vscode.didact.group@1"
 				}
 			],
 			"view/item/context": [
@@ -145,6 +168,11 @@
 				{
 					"command": "vscode.didact.view.tutorial.open",
 					"group": "1",
+					"when": "view == didact.tutorials && viewItem == TutorialNode"
+				},
+				{
+					"command": "vscode.didact.view.tutorial.remove",
+					"group": "2",
 					"when": "view == didact.tutorials && viewItem == TutorialNode"
 				}
 			],

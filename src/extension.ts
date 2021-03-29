@@ -18,7 +18,10 @@
 import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
 import { DidactNodeProvider, TreeNode } from './nodeProvider';
-import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, clearOutputChannels } from './utils';
+import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, 
+	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
+	addNewTutorialWithNameAndCategoryForDidactUri, 
+	removeTutorialByNameAndCategory} from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { VIEW_TYPE } from './didactManager';
@@ -26,7 +29,7 @@ import { VIEW_TYPE } from './didactManager';
 const DIDACT_VIEW = 'didact.tutorials';
 
 export const DEFAULT_TUTORIAL_CATEGORY = "Didact";
-const DEFAULT_TUTORIAL_NAME = "Didact Demo";
+export const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
 export const didactTutorialsProvider = new DidactNodeProvider();
 let didactTreeView : vscode.TreeView<TreeNode>;
@@ -63,6 +66,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_EDITOR_FOR_FILE_COMMAND, extensionFunctions.pasteClipboardToEditorForFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PASTE_TO_NEW_FILE_COMMAND, extensionFunctions.pasteClipboardToNewTextFile));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REFRESH_DIDACT, extensionFunctions.refreshDidactWindow));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CLEAR_DIDACT_REGISTRY, clearRegisteredTutorials));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_TO_REGISTRY, registerTutorialWithJSON));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY, addNewTutorialWithNameAndCategoryForDidactUri));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY, removeTutorialByNameAndCategory));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
@@ -86,24 +93,25 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	// set up so we don't lose the webview contents each time it goes 'invisible' 
 	vscode.window.registerWebviewPanelSerializer(VIEW_TYPE, new DidactPanelSerializer(context));
 
-	// always clear the registry and let the extensions register as they are activated
-	await clearRegisteredTutorials();
+	// register the default tutorials if the setting is set to true
+	const installTutorialsAtStartup : boolean = getAutoInstallDefaultTutorialsSetting();
+	if (installTutorialsAtStartup) {
+		// register the default tutorial
+		const tutorialUri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
+		await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
-	// register the default tutorial
-	const tutorialUri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
-	await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+		// register the tutorial for creating a new extension with a didact file
+		const tutorial2Uri = vscode.Uri.file(context.asAbsolutePath('./create_extension/create-new-tutorial-with-extension.didact.md'));
+		await registerTutorialWithCategory("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
-	// register the tutorial for creating a new extension with a didact file
-	const tutorial2Uri = vscode.Uri.file(context.asAbsolutePath('./create_extension/create-new-tutorial-with-extension.didact.md'));
-	await registerTutorialWithCategory("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+		// register the javascript tutorial
+		const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
+		await registerTutorialWithCategory("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
-	// register the javascript tutorial
-	const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
-	await registerTutorialWithCategory("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
-
-	// register the didact tutorial
-	const tutorial4Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/tutorial/tutorial.didact.md'));
-	await registerTutorialWithCategory("Writing Your First Didact Tutorial", tutorial4Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+		// register the didact tutorial
+		const tutorial4Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/tutorial/tutorial.didact.md'));
+		await registerTutorialWithCategory("Writing Your First Didact Tutorial", tutorial4Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+	}
 
 	// create the view
 	createIntegrationsView();
@@ -127,12 +135,18 @@ function createIntegrationsView(): void {
 }
 
 export async function deactivate(): Promise<void> {
-	await clearRegisteredTutorials();
 	clearOutputChannels();
 }
 
 export function refreshTreeview(): void {
 	if (didactTreeView && didactTreeView.visible === true) {
 		didactTutorialsProvider.refresh();
+	}
+}
+
+export async function revealTreeItem(node: TreeNode) {
+	await vscode.commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
+	if (didactTreeView && didactTreeView.visible === true) {
+		didactTreeView.reveal(node);
 	}
 }

@@ -66,6 +66,10 @@ export const PASTE_TO_ACTIVE_EDITOR_COMMAND = 'vscode.didact.copyClipboardToActi
 export const PASTE_TO_EDITOR_FOR_FILE_COMMAND = 'vscode.didact.copyClipboardToEditorForFile';
 export const PASTE_TO_NEW_FILE_COMMAND = 'vscode.didact.copyClipboardToNewFile';
 export const REFRESH_DIDACT = 'vscode.didact.refresh';
+export const CLEAR_DIDACT_REGISTRY = 'vscode.didact.registry.clear';
+export const ADD_TUTORIAL_TO_REGISTRY = 'vscode.didact.registry.addJson';
+export const ADD_TUTORIAL_URI_TO_REGISTRY = 'vscode.didact.registry.addUri';
+export const REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY = 'vscode.didact.view.tutorial.remove';
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
