@@ -131,6 +131,14 @@
 			{
 				"command": "vscode.didact.view.tutorial.remove",
 				"title": "Remove Didact Tutorial"
+			},
+			{
+				"command": "vscode.didact.view.tutorial.heading.open",
+				"title": "Open to heading in tutorial",
+				"icon": {
+					"dark": "resources/dark/run.svg",
+					"light": "resources/light/run.svg"
+				}
 			}
 		],
 		"keybindings": [
@@ -174,6 +182,11 @@
 					"command": "vscode.didact.view.tutorial.remove",
 					"group": "2",
 					"when": "view == didact.tutorials && viewItem == TutorialNode"
+				},
+				{
+					"command": "vscode.didact.view.tutorial.heading.open",
+					"group": "inline",
+					"when": "view == didact.tutorials && viewItem == HeadingNode"
 				}
 			],
 			"view/title": [

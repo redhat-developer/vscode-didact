@@ -164,7 +164,7 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 	await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
 	refreshTreeview();
 
-	const tutorialNode = didactTutorialsProvider.findTutorialNode(newDidact.category, newDidact.name);
+	const tutorialNode = await didactTutorialsProvider.findTutorialNode(newDidact.category, newDidact.name);
 	if (tutorialNode) {
 		await revealTreeItem(tutorialNode);
 	}

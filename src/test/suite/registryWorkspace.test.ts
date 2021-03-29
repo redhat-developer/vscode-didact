@@ -58,7 +58,7 @@ suite('Tutorial Registry Test Suite', () => {
 			const catNode = didactTutorialsProvider.findCategoryNode(category);
 			expect(catNode).to.not.be.undefined;
 
-			const foundTutorial = didactTutorialsProvider.findTutorialNode(category, tutorialName);
+			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
 			expect(foundTutorial).to.not.be.undefined;
 			const didactFileUri = foundTutorial?.uri;
 			expect(didactFileUri).to.not.be.undefined;

@@ -326,6 +326,17 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 	return out;
 }
 
+export async function findOrCreateDidact(uri : vscode.Uri, viewColumn? : string) : Promise <void> {
+	if (uri) {
+		const parentPanel = didactManager.getByUri(uri);
+		if (parentPanel) {
+			parentPanel._panel?.reveal();
+		} else {
+			await startDidact(uri, viewColumn);
+		}
+	}	
+}
+
 // open the didact window with the didact file passed in via Uri
 export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise<void>{
 	if (!uri) {
@@ -973,4 +984,47 @@ export async function pasteClipboardToEditorForFile(uri: vscode.Uri) : Promise<v
 export async function pasteClipboardToNewTextFile() : Promise<void> {
 	await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
 	await pasteClipboardToActiveEditorOrPreviouslyUsedOne();
+}
+
+export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<number> {
+	if (uri) {
+		let content : string | undefined | void = undefined;
+		if (uri.scheme === 'file') {
+			content = await loadFileWithRetry(uri);
+		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
+			content = await loadFileFromHTTPWithRetry(uri);
+		}
+		if (content) {
+			let elements : any[] = collectElements("[time]", content);
+			if (elements && elements.length > 0) {
+				let total = 0;
+				elements.forEach(element => {
+					const timeAttr = element.getAttribute("time");
+					if (timeAttr) {
+						const timeValue = Number(timeAttr);
+						if (timeValue > 0) {
+							total += timeValue;
+						}
+					}
+				});
+				return total;
+			}
+		}
+	}
+	return -1;
+}
+
+export async function getHeadingsForDidactFileUri(uri: vscode.Uri) : Promise<any[] | undefined> {
+	if (uri) {
+		let content : string | undefined | void = undefined;
+		if (uri.scheme === 'file') {
+			content = await loadFileWithRetry(uri);
+		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
+			content = await loadFileFromHTTPWithRetry(uri);
+		}
+		if (content) {
+			return collectElements("[time]", content);
+		}
+	}
+	return undefined;
 }
