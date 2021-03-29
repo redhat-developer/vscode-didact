@@ -11,7 +11,7 @@
 <a href="https://circleci.com/gh/redhat-developer/vscode-didact"><img src="https://circleci.com/gh/redhat-developer/vscode-didact.svg?style=shield"></a>
 <img src="https://img.shields.io/badge/license-Apache%202-blue.svg" alt="License"/>
 <a href="https://gitter.im/redhat-developer/vscode-didact"><img src="https://img.shields.io/gitter/room/redhat-developer/home.js.sv" alt="Gitter"/></a>
-<a href="https://workspaces.openshift.com/f?url=https://github.com/redhat-developer/vscode-didact"><img src="https://www.eclipse.org/che/contribute.svg" alt="Contribute"/></a>
+<a href="https://workspaces.openshift.com/f?url=https://github.com/redhat-developer/vscode-didact"><img src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/che-contribute.png" alt="Contribute"/></a>
 
 </p><br/>
 
