@@ -32,8 +32,6 @@ const EDITOR_OPENED_TIMEOUT = 5000;
 
 suite('Tutorial Registry Test Suite', () => {
 
-	const uriToRemoteDidactAdoc = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/asciidoc/simple-example.didact.adoc';
-
 	async function cleanFiles() {
 		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 		const foldersAndFilesToRemove: string[] = [
