@@ -358,7 +358,10 @@ function validateTutorialNameInput(value: string, tutorialsForValidation : strin
 		if (value.trim().length === 0) {
 			return "Empty tutorial name is not allowed";
 		}
-		if (tutorialsForValidation && tutorialsForValidation.indexOf(value) > -1) {
+		if (value.endsWith(' ')) {
+			return "Spaces at end of tutorial name are not allowed";
+		}
+		if (tutorialsForValidation && tutorialsForValidation.indexOf(value.trim()) > -1) {
 			return "Tutorial with that name already exists. Tutorial names must be unique."
 		}
 		return null;
