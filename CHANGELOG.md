@@ -11,6 +11,12 @@ All notable changes to the "vscode-didact" extension will be documented in this 
   - New right-click menu `Didact: Register Didact Tutorial` on Didact files in the Explorer view enables user-registered tutorials to appear in `Didact Tutorials` view
   - New right-click menu `Remove Didact Tutorial` on tutorials in `Didact Tutorials` view enables tutorial removal
 
+- Didact Time-boxing Tutorial Improvements
+  - added capability to show approximately how long a particular tutorial will take
+    - add `{time=x}` (where x is a number of minutes) to a heading declaration in markdown
+    - add `[role="time=x"]` (where x is a number of minutes) on the line above a heading declaration in asciidoc
+  - added capability to go directly to a time-boxed heading node from the `Didact Tutorials` view 
+
 ## 0.3.2
 
 - adding *vscode.didact.refresh* command to refresh the currently active Didact window
