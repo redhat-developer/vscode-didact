@@ -187,6 +187,11 @@
 					"command": "vscode.didact.view.tutorial.heading.open",
 					"group": "inline",
 					"when": "view == didact.tutorials && viewItem == HeadingNode"
+				},
+				{
+					"command": "vscode.didact.view.tutorial.heading.open",
+					"group": "1",
+					"when": "view == didact.tutorials && viewItem == HeadingNode"
 				}
 			],
 			"view/title": [
