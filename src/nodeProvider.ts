@@ -18,6 +18,8 @@ import * as vscode from 'vscode';
 import * as utils from './utils';
 import * as extensionFunctions from './extensionFunctions';
 import * as path from 'path';
+import { isAsciiDoc } from './extensionFunctions';
+import { HTMLElement } from 'node-html-parser';
 
 export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 
@@ -135,7 +137,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 					if (tutUri) {
 						const timeCount = await extensionFunctions.computeTimeForDidactFileUri(vscode.Uri.parse(tutUri));
 						if (timeCount > -1) {
-							tooltip = `(${timeCount} mins)`;
+							tooltip = `(~${timeCount} mins)`;
 							hasChildren = vscode.TreeItemCollapsibleState.Collapsed;
 						}
 					}
@@ -151,11 +153,38 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		return children;
 	}
 
+	getNodeFromADOCDiv(divElement : HTMLElement, tutUri: string | undefined) : HeadingNode | undefined {
+		const classAttr : string | undefined = divElement.getAttribute("class");
+		if (classAttr) {
+			const splitArray : string[] = classAttr.split(' ');
+			for (let count = 0; count < splitArray.length; count++) {
+				const chunk = splitArray[count];
+				if (chunk.startsWith('time=')) {
+					const splitTime = chunk.split('=')[1];
+					const timeValue = Number(splitTime);
+					if (divElement.childNodes.length > 0) {
+						let children = divElement.childNodes;
+						for (let i = 0; i < children.length; i++) {
+							if (children[i] instanceof HTMLElement) {
+								const child = children[i] as HTMLElement;
+								if (child.tagName.startsWith('H')) {
+									const title = children[i].innerText;
+									return new HeadingNode(title, tutUri, `(~${timeValue} mins)`);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return undefined;
+	}
+
 	async processHeadingsForTutorial(tutUri: string | undefined) : Promise<HeadingNode[]> {
 		const children : HeadingNode[] = [];
 		if (tutUri) {
-			const headings : any[] | undefined = await extensionFunctions.getHeadingsForDidactFileUri(vscode.Uri.parse(tutUri));
-			if (headings) {
+			const headings : HTMLElement[] | undefined = await extensionFunctions.getHeadingsForDidactFileUri(vscode.Uri.parse(tutUri));
+			if (headings && !isAsciiDoc(tutUri)) {
 				for (const heading of headings) {
 					const timeAttr = heading.getAttribute("time");
 					const timeValue = Number(timeAttr);
@@ -166,6 +195,16 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 						this.addChild(newNode, true, children);
 					}
 				}
+				return children;
+			} else if (headings && isAsciiDoc(tutUri)){
+				for (const heading of headings) {
+					const newNode : HeadingNode | undefined = this.getNodeFromADOCDiv(heading, tutUri);
+					if (newNode && !this.doesNodeExist(children, newNode)) {
+						newNode.contextValue = 'HeadingNode';
+						this.addChild(newNode, true, children);
+					}
+				}
+				return children;
 			}
 		}
 		return children;

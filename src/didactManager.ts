@@ -127,7 +127,7 @@ export class DidactManager {
 			const html : string | undefined = didactManager.active()?.getCurrentHTML();
 			const label : string = node.label as string;
 			if (html && label) {
-				const tags : string[] = ['h1', 'h2', 'h1'];
+				const tags : string[] = ['h1', 'h2', 'h3', 'h4'];
 				let element : any = undefined;
 				let tag : string | undefined = undefined;
 				tags.forEach(tagElement => {

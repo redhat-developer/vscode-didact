@@ -502,9 +502,11 @@ async function loadFileFromHTTPWithRetry ( uri:vscode.Uri ) : Promise<string | v
 	});
 }
 
-export function isAsciiDoc() : boolean {
+export function isAsciiDoc(inUri? : string) : boolean {
 	let uriToTest : vscode.Uri | undefined;
-	if (!_didactFileUri) {
+	if (inUri) {
+		uriToTest = vscode.Uri.parse(inUri);
+	} else if (!_didactFileUri) {
 		const strToTest : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
 		if (strToTest) {
 			uriToTest = vscode.Uri.parse(strToTest);
@@ -986,6 +988,14 @@ export async function pasteClipboardToNewTextFile() : Promise<void> {
 	await pasteClipboardToActiveEditorOrPreviouslyUsedOne();
 }
 
+function getTimeElementsForMD(content : string) : any[] {
+	return collectElements("[time]", content);
+}
+
+function getTimeElementsForAdoc(content : string) : any[] {
+	return collectElements("div[class*='time=']", content);
+}
+
 export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<number> {
 	if (uri) {
 		let content : string | undefined | void = undefined;
@@ -994,8 +1004,8 @@ export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<num
 		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
 			content = await loadFileFromHTTPWithRetry(uri);
 		}
-		if (content) {
-			let elements : any[] = collectElements("[time]", content);
+		if (content && !isAsciiDoc(uri.toString())) {
+			let elements : any[] = getTimeElementsForMD(content);
 			if (elements && elements.length > 0) {
 				let total = 0;
 				elements.forEach(element => {
@@ -1006,6 +1016,25 @@ export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<num
 							total += timeValue;
 						}
 					}
+				});
+				return total;
+			}
+		} else if (content && isAsciiDoc(uri.toString())) {
+			let elements : any[] = getTimeElementsForAdoc(content);
+			if (elements && elements.length > 0) {
+				let total = 0;
+				elements.forEach(element => {
+					const classAttr : string = element.getAttribute("class");
+					const splitArray : string[] = classAttr.split(' ');
+					splitArray.forEach(chunk => {
+						if (chunk.startsWith('time=')) {
+							const splitTime = chunk.split('=')[1];
+							const timeValue = Number(splitTime);
+							if (timeValue > 0) {
+								total += timeValue;
+							}
+						}
+					});
 				});
 				return total;
 			}
@@ -1022,8 +1051,10 @@ export async function getHeadingsForDidactFileUri(uri: vscode.Uri) : Promise<any
 		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
 			content = await loadFileFromHTTPWithRetry(uri);
 		}
-		if (content) {
-			return collectElements("[time]", content);
+		if (content && !isAsciiDoc(uri.toString())) {
+			return getTimeElementsForMD(content);
+		} else if (content && isAsciiDoc(uri.toString())) {
+			return getTimeElementsForAdoc(content);
 		}
 	}
 	return undefined;
