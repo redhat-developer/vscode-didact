@@ -83,7 +83,7 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 
 		await waitUntil(async () => {
 			focusOnNamedTerminal(terminalName);
-			return terminalName == window.activeTerminal?.name;
+			return terminalName === window.activeTerminal?.name;
 		}, 1000);
 
 		try {
