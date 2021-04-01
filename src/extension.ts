@@ -70,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_TO_REGISTRY, registerTutorialWithJSON));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY, addNewTutorialWithNameAndCategoryForDidactUri));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY, removeTutorialByNameAndCategory));
-	context.subscriptions.push(vscode.commands.registerCommand("vscode.didact.view.tutorial.heading.open", didactManager.openHeading));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_TUTORIAL_HEADING_FROM_VIEW, didactManager.openHeading));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
@@ -106,7 +106,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 		await registerTutorialWithCategory("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 		// register the javascript tutorial
-		const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
+		const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/hellojs_time/helloJS.time.didact.md'));
 		await registerTutorialWithCategory("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 		// register the didact tutorial

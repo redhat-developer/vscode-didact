@@ -70,6 +70,7 @@ export const CLEAR_DIDACT_REGISTRY = 'vscode.didact.registry.clear';
 export const ADD_TUTORIAL_TO_REGISTRY = 'vscode.didact.registry.addJson';
 export const ADD_TUTORIAL_URI_TO_REGISTRY = 'vscode.didact.registry.addUri';
 export const REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY = 'vscode.didact.view.tutorial.remove';
+export const OPEN_TUTORIAL_HEADING_FROM_VIEW = "vscode.didact.view.tutorial.heading.open";
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
