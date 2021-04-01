@@ -27,7 +27,8 @@ import { fail } from 'assert';
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
 const delayTime = 1500;
-const COMMAND_WAIT_TIMEOUT = 10000;
+const COMMAND_WAIT_TIMEOUT = 15000;
+const COMMAND_WAIT_RETRY = 1500;
 
 suite('stub out a tutorial', () => {
 
@@ -90,7 +91,7 @@ async function validateTerminalResponse(terminalName : string, terminalText : st
 				const result = await getActiveTerminalOutput();
 				return result.includes(getExpectedTextInTerminal());
 			};
-			await waitUntil(predicate, { timeout: COMMAND_WAIT_TIMEOUT, intervalBetweenAttempts: 1000 });
+			await waitUntil(predicate, { timeout: COMMAND_WAIT_TIMEOUT, intervalBetweenAttempts: COMMAND_WAIT_RETRY });
 		} catch (error){
 			console.log(`Searching for ${getExpectedTextInTerminal()} but not found in current content of active terminal ${window.activeTerminal?.name} : ${await getActiveTerminalOutput()}`);
 			fail(error);
