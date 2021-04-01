@@ -26,7 +26,7 @@ import { fail } from 'assert';
 
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
-const delayTime = 1500;
+const delayTime = 2500;
 const COMMAND_WAIT_TIMEOUT = 15000;
 const COMMAND_WAIT_RETRY = 1500;
 
