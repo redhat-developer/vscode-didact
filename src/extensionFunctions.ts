@@ -997,6 +997,44 @@ function getTimeElementsForAdoc(content : string) : any[] {
 	return collectElements("div[class*='time=']", content);
 }
 
+function processTimeTotalForMD(content : string) : number {
+	let total = 0;
+	let elements : any[] = getTimeElementsForMD(content);
+	if (elements && elements.length > 0) {
+		elements.forEach(element => {
+			const timeAttr = element.getAttribute("time");
+			if (timeAttr) {
+				const timeValue = Number(timeAttr);
+				if (!Number.isNaN(timeValue) && timeValue > 0) {
+					total += timeValue;
+				}
+			}
+		});
+	}
+	return total;
+}
+
+function processTimeTotalForAdoc(content : string) : number {
+	let total = 0;
+	let elements : any[] = getTimeElementsForAdoc(content);
+	if (elements && elements.length > 0) {
+		elements.forEach(element => {
+			const classAttr : string = element.getAttribute("class");
+			const splitArray : string[] = classAttr.split(' ');
+			splitArray.forEach(chunk => {
+				if (chunk.startsWith('time=')) {
+					const splitTime = chunk.split('=')[1];
+					const timeValue = Number(splitTime);
+					if (!Number.isNaN(timeValue) && timeValue > 0) {
+						total += timeValue;
+					}
+				}
+			});
+		});
+	}
+	return total;
+}
+
 export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<number> {
 	if (uri) {
 		let content : string | undefined | void = undefined;
@@ -1006,45 +1044,15 @@ export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<num
 			content = await loadFileFromHTTPWithRetry(uri);
 		}
 		if (content && !isAsciiDoc(uri.toString())) {
-			let elements : any[] = getTimeElementsForMD(content);
-			if (elements && elements.length > 0) {
-				let total = 0;
-				elements.forEach(element => {
-					const timeAttr = element.getAttribute("time");
-					if (timeAttr) {
-						const timeValue = Number(timeAttr);
-						if (timeValue > 0) {
-							total += timeValue;
-						}
-					}
-				});
-				return total;
-			}
+			return processTimeTotalForMD(content);
 		} else if (content && isAsciiDoc(uri.toString())) {
-			let elements : any[] = getTimeElementsForAdoc(content);
-			if (elements && elements.length > 0) {
-				let total = 0;
-				elements.forEach(element => {
-					const classAttr : string = element.getAttribute("class");
-					const splitArray : string[] = classAttr.split(' ');
-					splitArray.forEach(chunk => {
-						if (chunk.startsWith('time=')) {
-							const splitTime = chunk.split('=')[1];
-							const timeValue = Number(splitTime);
-							if (timeValue > 0) {
-								total += timeValue;
-							}
-						}
-					});
-				});
-				return total;
-			}
+			return processTimeTotalForAdoc(content);
 		}
 	}
 	return -1;
 }
 
-export async function getHeadingsForDidactFileUri(uri: vscode.Uri) : Promise<any[] | undefined> {
+export async function getTimeElementsForDidactFileUri(uri: vscode.Uri) : Promise<any[] | undefined> {
 	if (uri) {
 		let content : string | undefined | void = undefined;
 		if (uri.scheme === 'file') {

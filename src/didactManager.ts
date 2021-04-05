@@ -117,9 +117,8 @@ export class DidactManager {
 	}
 
 	public async openHeading(node : HeadingNode) : Promise<void> {
-		let parentUri : Uri | undefined = undefined;
 		if (node.uri) {
-			parentUri = Uri.parse(node.uri);
+			const parentUri = Uri.parse(node.uri);
 			await findOrCreateDidact(parentUri);
 		}
 

@@ -133,16 +133,16 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 				for (const tutorial of tutorials) {
 					let hasChildren = vscode.TreeItemCollapsibleState.None;
 					const tutUri : string | undefined = utils.getUriForDidactNameAndCategory(tutorial, category);
-					let tooltip : string | undefined = undefined;
+					let timeLabel : string | undefined = undefined;
 					if (tutUri) {
 						const timeCount = await extensionFunctions.computeTimeForDidactFileUri(vscode.Uri.parse(tutUri));
-						if (timeCount > -1) {
-							tooltip = `(~${timeCount} mins)`;
+						if (timeCount > 0) {
+							timeLabel = `(~${timeCount} mins)`;
 							hasChildren = vscode.TreeItemCollapsibleState.Collapsed;
 						}
 					}
 			
-					const newNode = new TutorialNode(category, tutorial, tutUri, hasChildren, tooltip);
+					const newNode = new TutorialNode(category, tutorial, tutUri, hasChildren, timeLabel);
 					newNode.contextValue = 'TutorialNode';
 					if (!this.doesNodeExist(children, newNode)) {
 						this.addChild(newNode, true, children);
@@ -163,13 +163,17 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 					const splitTime = chunk.split('=')[1];
 					const timeValue = Number(splitTime);
 					if (divElement.childNodes.length > 0) {
-						let children = divElement.childNodes;
+						const children = divElement.childNodes;
 						for (let i = 0; i < children.length; i++) {
 							if (children[i] instanceof HTMLElement) {
 								const child = children[i] as HTMLElement;
 								if (child.tagName.startsWith('H')) {
 									const title = children[i].innerText;
-									return new HeadingNode(title, tutUri, `(~${timeValue} mins)`);
+									if (!Number.isNaN(timeValue)) {
+										return new HeadingNode(title, tutUri, `(~${timeValue} mins)`);
+									} else {
+										extensionFunctions.sendTextToOutputChannel(`Warning: Heading node "${title}" has an invalid time value set to "${splitTime}"`)
+									}
 								}
 							}
 						}
@@ -183,16 +187,24 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	async processHeadingsForTutorial(tutUri: string | undefined) : Promise<HeadingNode[]> {
 		const children : HeadingNode[] = [];
 		if (tutUri) {
-			const headings : HTMLElement[] | undefined = await extensionFunctions.getHeadingsForDidactFileUri(vscode.Uri.parse(tutUri));
+			const headings : HTMLElement[] | undefined = await extensionFunctions.getTimeElementsForDidactFileUri(vscode.Uri.parse(tutUri));
 			if (headings && !isAsciiDoc(tutUri)) {
 				for (const heading of headings) {
 					const timeAttr = heading.getAttribute("time");
+
+					let timeLabel = undefined;
 					const timeValue = Number(timeAttr);
+					if (!Number.isNaN(timeValue)) {
+						timeLabel = `(~${timeValue} mins)`;
+					}
 					const title = heading.rawText;
-					const newNode = new HeadingNode(title, tutUri, `(~${timeValue} mins)`);
+					const newNode = new HeadingNode(title, tutUri, timeLabel);
 					newNode.contextValue = 'HeadingNode';
-					if (!this.doesNodeExist(children, newNode)) {
+					if (!this.doesNodeExist(children, newNode) && timeLabel) {
 						this.addChild(newNode, true, children);
+					}
+					if (Number.isNaN(timeValue)) {
+						extensionFunctions.sendTextToOutputChannel(`Warning: Heading node "${title}" has an invalid time value set to "${timeAttr}"`)
 					}
 				}
 				return children;
@@ -262,7 +274,6 @@ export class TutorialNode extends TreeNode {
 		const localIconPath = vscode.Uri.file(path.resolve(extensionFunctions.getContext().extensionPath, 'icon/logo.svg'));
 		this.iconPath = localIconPath;
 		if (inTooltip) {
-			//this.tooltip = inTooltip;
 			this.description = inTooltip;
 		}
 	}

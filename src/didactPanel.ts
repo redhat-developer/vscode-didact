@@ -416,8 +416,7 @@ export class DidactPanel {
 		if (!this._panel || this._disposed) {
 			return;
 		}
-		const sendCommand = `"command": "scrollToHeading"`;
-		let jsonMsg = `{ "command": "scrollToHeading", "tag" : "${tag}", "headingText" : "${headingText}"  }`;
+		const jsonMsg = `{ "command": "scrollToHeading", "tag" : "${tag}", "headingText" : "${headingText}"  }`;
 		await this._panel.webview.postMessage(jsonMsg);
 	}	
 }

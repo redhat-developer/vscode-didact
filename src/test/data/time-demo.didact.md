@@ -34,6 +34,10 @@ Cras laoreet erat est, sed pretium diam eleifend posuere. Donec et nulla id dolo
 
 Fusce ligula tellus, lobortis at finibus eu, consectetur at felis. Nulla facilisi. Etiam in scelerisque nunc. Vestibulum sagittis nibh ac elit consequat, vel dictum neque eleifend. Donec in rutrum elit. Sed in lacus porta, ullamcorper nunc sollicitudin, fringilla libero. Vivamus ultricies mi a velit cursus mattis. Donec felis sapien, maximus ut risus vel, consequat dignissim nisi. In a ornare leo. Sed sit amet venenatis lectus. Suspendisse scelerisque neque a massa hendrerit, a vehicula lectus hendrerit. Quisque est velit, placerat non congue eget, mattis vitae mauris. 
 
-## Done! 
+## Heading Step with Invalid Time {time=xxx}
+
+In odio sapien, interdum vel facilisis vitae, commodo sed dui. Nam eleifend lacinia dictum. Donec sollicitudin neque nec velit varius, at bibendum mi pharetra. Sed eu massa dui. Suspendisse neque ante, rhoncus vitae dui nec, faucibus malesuada lacus. Sed vitae placerat justo. Sed convallis iaculis egestas. Quisque blandit bibendum massa sed mattis. Donec posuere a turpis ac finibus. Nunc lorem justo, egestas ut erat eget, malesuada rhoncus lacus. Phasellus faucibus nisl eu diam pellentesque placerat. Nunc in gravida augue, vitae rutrum dui. Suspendisse a odio felis. Praesent eget risus ac diam lobortis aliquam.
+
+## Done!
 
 All done!
