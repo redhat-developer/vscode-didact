@@ -411,4 +411,12 @@ export class DidactPanel {
 		}
 		didactManager.active()?._update(true);
 	}
+
+	public async sendScrollToHeadingMessage(tag : string, headingText: string) : Promise<void> {
+		if (!this._panel || this._disposed) {
+			return;
+		}
+		const jsonMsg = `{ "command": "scrollToHeading", "tag" : "${tag}", "headingText" : "${headingText}"  }`;
+		await this._panel.webview.postMessage(jsonMsg);
+	}	
 }

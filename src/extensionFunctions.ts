@@ -70,6 +70,7 @@ export const CLEAR_DIDACT_REGISTRY = 'vscode.didact.registry.clear';
 export const ADD_TUTORIAL_TO_REGISTRY = 'vscode.didact.registry.addJson';
 export const ADD_TUTORIAL_URI_TO_REGISTRY = 'vscode.didact.registry.addUri';
 export const REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY = 'vscode.didact.view.tutorial.remove';
+export const OPEN_TUTORIAL_HEADING_FROM_VIEW = "vscode.didact.view.tutorial.heading.open";
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
@@ -326,6 +327,17 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 	return out;
 }
 
+export async function revealOrStartDidactByURI(uri : vscode.Uri, viewColumn? : string) : Promise <void> {
+	if (uri) {
+		const parentPanel = didactManager.getByUri(uri);
+		if (parentPanel) {
+			parentPanel._panel?.reveal();
+		} else {
+			await startDidact(uri, viewColumn);
+		}
+	}	
+}
+
 // open the didact window with the didact file passed in via Uri
 export async function startDidact(uri: vscode.Uri, viewColumn?: string): Promise<void>{
 	if (!uri) {
@@ -491,9 +503,11 @@ async function loadFileFromHTTPWithRetry ( uri:vscode.Uri ) : Promise<string | v
 	});
 }
 
-export function isAsciiDoc() : boolean {
+export function isAsciiDoc(inUri? : string) : boolean {
 	let uriToTest : vscode.Uri | undefined;
-	if (!_didactFileUri) {
+	if (inUri) {
+		uriToTest = vscode.Uri.parse(inUri);
+	} else if (!_didactFileUri) {
 		const strToTest : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
 		if (strToTest) {
 			uriToTest = vscode.Uri.parse(strToTest);
@@ -973,4 +987,84 @@ export async function pasteClipboardToEditorForFile(uri: vscode.Uri) : Promise<v
 export async function pasteClipboardToNewTextFile() : Promise<void> {
 	await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
 	await pasteClipboardToActiveEditorOrPreviouslyUsedOne();
+}
+
+function getTimeElementsForMD(content : string) : any[] {
+	return collectElements("[time]", content);
+}
+
+function getTimeElementsForAdoc(content : string) : any[] {
+	return collectElements("div[class*='time=']", content);
+}
+
+function processTimeTotalForMD(content : string) : number {
+	let total = 0;
+	let elements : any[] = getTimeElementsForMD(content);
+	if (elements && elements.length > 0) {
+		elements.forEach(element => {
+			const timeAttr = element.getAttribute("time");
+			if (timeAttr) {
+				const timeValue = Number(timeAttr);
+				if (!Number.isNaN(timeValue) && timeValue > 0) {
+					total += timeValue;
+				}
+			}
+		});
+	}
+	return total;
+}
+
+function processTimeTotalForAdoc(content : string) : number {
+	let total = 0;
+	let elements : any[] = getTimeElementsForAdoc(content);
+	if (elements && elements.length > 0) {
+		elements.forEach(element => {
+			const classAttr : string = element.getAttribute("class");
+			const splitArray : string[] = classAttr.split(' ');
+			splitArray.forEach(chunk => {
+				if (chunk.startsWith('time=')) {
+					const splitTime = chunk.split('=')[1];
+					const timeValue = Number(splitTime);
+					if (!Number.isNaN(timeValue) && timeValue > 0) {
+						total += timeValue;
+					}
+				}
+			});
+		});
+	}
+	return total;
+}
+
+export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<number> {
+	if (uri) {
+		let content : string | undefined | void = undefined;
+		if (uri.scheme === 'file') {
+			content = await loadFileWithRetry(uri);
+		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
+			content = await loadFileFromHTTPWithRetry(uri);
+		}
+		if (content && !isAsciiDoc(uri.toString())) {
+			return processTimeTotalForMD(content);
+		} else if (content && isAsciiDoc(uri.toString())) {
+			return processTimeTotalForAdoc(content);
+		}
+	}
+	return -1;
+}
+
+export async function getTimeElementsForDidactFileUri(uri: vscode.Uri) : Promise<any[] | undefined> {
+	if (uri) {
+		let content : string | undefined | void = undefined;
+		if (uri.scheme === 'file') {
+			content = await loadFileWithRetry(uri);
+		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
+			content = await loadFileFromHTTPWithRetry(uri);
+		}
+		if (content && !isAsciiDoc(uri.toString())) {
+			return getTimeElementsForMD(content);
+		} else if (content && isAsciiDoc(uri.toString())) {
+			return getTimeElementsForAdoc(content);
+		}
+	}
+	return undefined;
 }

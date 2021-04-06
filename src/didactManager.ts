@@ -16,9 +16,10 @@
  */
 
 'use strict';
-import {ExtensionContext, Uri, ViewColumn} from 'vscode';
+import {ExtensionContext, Uri, ViewColumn } from 'vscode';
 import { DidactPanel } from './didactPanel';
-import { isAsciiDoc } from './extensionFunctions';
+import { isAsciiDoc, collectElements, revealOrStartDidactByURI } from './extensionFunctions';
+import { HeadingNode } from './nodeProvider';
 
 export const DEFAULT_TITLE_VALUE = `Didact Tutorial`;
 export const VIEW_TYPE = 'didact';
@@ -113,6 +114,33 @@ export class DidactManager {
 			}			
 		}
 		return returnPanel;
+	}
+
+	public async openHeading(node : HeadingNode) : Promise<void> {
+		if (node.uri) {
+			const parentUri = Uri.parse(node.uri);
+			await revealOrStartDidactByURI(parentUri);
+		}
+
+		if (didactManager.active()) {
+			const html : string | undefined = didactManager.active()?.getCurrentHTML();
+			const label : string = node.label as string;
+			if (html && label) {
+				const tags : string[] = ['h1', 'h2', 'h3', 'h4'];
+				let element : any = undefined;
+				let tag : string | undefined = undefined;
+				tags.forEach(tagElement => {
+					const foundElements : any[] = collectElements(tagElement, html).filter(heading => heading.textContent.match(label));
+					if (foundElements && foundElements.length > 0 && !element) {
+						element = foundElements[0];
+						tag = tagElement;
+					}					
+				});
+				if (element && tag) {
+					await didactManager.active()?.sendScrollToHeadingMessage(tag, element.rawText);
+				}
+			}
+		}
 	}
 }
 

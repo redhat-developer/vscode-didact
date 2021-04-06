@@ -125,6 +125,13 @@ function () {
 		updateState();		
 	}
 
+	function scrollToHeading(tag, headingText) {
+		const found = Array.from(document.querySelectorAll(tag)).find(el => el.textContent === headingText);
+		if (found) {
+			found.scrollIntoView(); // Top
+		}
+	}
+
 	// Handle messages sent from the extension to the webview
 	window.addEventListener('message', event => {
 		const message = event.data; // The json data that the extension sent
@@ -132,6 +139,8 @@ function () {
 		const requirementName = json.requirementName;
 		const isAvailable = json.result;
 		const passedUri = json.oldUri;
+		const headingText = json.headingText;
+		const tag = json.tag;
 
 		let element = document.getElementById(requirementName);
 
@@ -147,6 +156,10 @@ function () {
 			case 'setState':
 				updateState(passedUri);
 				break;
+
+			case 'scrollToHeading':
+			 	scrollToHeading(tag, headingText);
+			 	break;
 		}
 	});
 }());

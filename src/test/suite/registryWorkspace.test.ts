@@ -58,7 +58,7 @@ suite('Tutorial Registry Test Suite', () => {
 			const catNode = didactTutorialsProvider.findCategoryNode(category);
 			expect(catNode).to.not.be.undefined;
 
-			const foundTutorial = didactTutorialsProvider.findTutorialNode(category, tutorialName);
+			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
 			expect(foundTutorial).to.not.be.undefined;
 			const didactFileUri = foundTutorial?.uri;
 			expect(didactFileUri).to.not.be.undefined;
@@ -75,4 +75,56 @@ suite('Tutorial Registry Test Suite', () => {
 			assert.fail("Failed to register, then start the Didact file");
 		}
 	});
+
+	test('register a time-boxed markdown tutorial and validate that heading nodes are created', async () => {
+		const category = "Time Category";
+		const tutorialName = "Time Markdown";
+		const didactUriToRegisterTutorial = `didact://?commandId=vscode.didact.registry.addUri&extFilePath=redhat.vscode-didact/src/test/data/time-demo.didact.md&&text=${encodeURI(tutorialName)}$$${encodeURI(category)}`;
+
+		try {
+			await commandHandler.processInputs(didactUriToRegisterTutorial);
+			const catNode = didactTutorialsProvider.findCategoryNode(category);
+			expect(catNode).to.not.be.undefined;
+
+			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
+			expect(foundTutorial).to.not.be.undefined;
+			const didactFileUri = foundTutorial?.uri;
+			expect(didactFileUri).to.not.be.undefined;
+
+			const headings = await didactTutorialsProvider.getChildren(foundTutorial);
+			expect(headings).to.not.be.undefined;
+
+			// make sure that the bogus heading is not included since it has an invalid time specified
+			// if it appears, there would be 4 headings
+			expect(headings.length).to.be.equal(3);
+		} catch (error) {
+			assert.fail("Failed to register the time-boxed markdown didact and find child heading nodes");
+		}
+	});	
+
+	test('register a time-boxed asciidoc tutorial and validate that heading nodes are created', async () => {
+		const category = "Time Category";
+		const tutorialName = "Time AsciiDoc";
+		const didactUriToRegisterTutorial = `didact://?commandId=vscode.didact.registry.addUri&extFilePath=redhat.vscode-didact/src/test/data/time-demo.didact.adoc&&text=${encodeURI(tutorialName)}$$${encodeURI(category)}`;
+
+		try {
+			await commandHandler.processInputs(didactUriToRegisterTutorial);
+			const catNode = didactTutorialsProvider.findCategoryNode(category);
+			expect(catNode).to.not.be.undefined;
+
+			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
+			expect(foundTutorial).to.not.be.undefined;
+			const didactFileUri = foundTutorial?.uri;
+			expect(didactFileUri).to.not.be.undefined;
+
+			const headings = await didactTutorialsProvider.getChildren(foundTutorial);
+			expect(headings).to.not.be.undefined;
+
+			// make sure that the bogus heading is not included since it has an invalid time specified
+			// if it appears, there would be 3 headings
+			expect(headings.length).to.be.equal(2);
+		} catch (error) {
+			assert.fail("Failed to register the time-boxed asciidoc didact and find child heading nodes");
+		}
+	});	
 });

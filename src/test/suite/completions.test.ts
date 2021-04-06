@@ -62,15 +62,16 @@ suite("New Didact URI completion provider tests", function () {
 
 async function testWeGetExpectedResult(textToInsert : string, expectedResult: string) {
 	const editor = await createTestEditor(testDocumentUri);
-	await delay(100);
+	const DELAY_TIME = 150;
+	await delay(DELAY_TIME);
 	await initializeTextEditor(editor, textToInsert);
-	await delay(100);
+	await delay(DELAY_TIME);
 	await vscode.commands.executeCommand("cursorEnd");
-	await delay(100);
+	await delay(DELAY_TIME);
 	await vscode.commands.executeCommand("editor.action.triggerSuggest");
-	await delay(100);
+	await delay(DELAY_TIME);
 	await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	await delay(100);
+	await delay(DELAY_TIME);
 	expect(editor.document.getText()).to.include(expectedResult);
 }
 

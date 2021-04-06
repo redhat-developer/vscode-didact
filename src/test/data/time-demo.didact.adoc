@@ -1,0 +1,26 @@
+= A Heading
+
+Some text.
+
+[role="time=6"]
+== A First Heading That Should Be Time-marked
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut leo odio, malesuada fermentum sem at, ultricies posuere ex. Donec id maximus neque. Etiam molestie nisl varius mi blandit, ut tempus mi congue. Vivamus maximus, arcu vel malesuada malesuada, orci leo rhoncus lectus, vel blandit ipsum mi id odio. Donec dictum feugiat vehicula. Nulla porta, risus sed congue pharetra, diam mauris scelerisque ex, eget suscipit ex arcu vel elit. Sed nec tellus leo. In ullamcorper fringilla vestibulum. Suspendisse interdum a lacus sed gravida. 
+
+== A Second Heading
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut leo odio, malesuada fermentum sem at, ultricies posuere ex. Donec id maximus neque. Etiam molestie nisl varius mi blandit, ut tempus mi congue. Vivamus maximus, arcu vel malesuada malesuada, orci leo rhoncus lectus, vel blandit ipsum mi id odio. Donec dictum feugiat vehicula. Nulla porta, risus sed congue pharetra, diam mauris scelerisque ex, eget suscipit ex arcu vel elit. Sed nec tellus leo. In ullamcorper fringilla vestibulum. Suspendisse interdum a lacus sed gravida. 
+
+[role="time=16"]
+== A Third Heading That Should Be Time-marked
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut leo odio, malesuada fermentum sem at, ultricies posuere ex. Donec id maximus neque. Etiam molestie nisl varius mi blandit, ut tempus mi congue. Vivamus maximus, arcu vel malesuada malesuada, orci leo rhoncus lectus, vel blandit ipsum mi id odio. Donec dictum feugiat vehicula. Nulla porta, risus sed congue pharetra, diam mauris scelerisque ex, eget suscipit ex arcu vel elit. Sed nec tellus leo. In ullamcorper fringilla vestibulum. Suspendisse interdum a lacus sed gravida.
+
+[role="time=xxxx"]
+== Heading with an Invalid Time
+
+In odio sapien, interdum vel facilisis vitae, commodo sed dui. Nam eleifend lacinia dictum. Donec sollicitudin neque nec velit varius, at bibendum mi pharetra. Sed eu massa dui. Suspendisse neque ante, rhoncus vitae dui nec, faucibus malesuada lacus. Sed vitae placerat justo. Sed convallis iaculis egestas. Quisque blandit bibendum massa sed mattis. Donec posuere a turpis ac finibus. Nunc lorem justo, egestas ut erat eget, malesuada rhoncus lacus. Phasellus faucibus nisl eu diam pellentesque placerat. Nunc in gravida augue, vitae rutrum dui.
+
+== Done! 
+
+All done!
