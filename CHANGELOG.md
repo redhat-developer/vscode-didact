@@ -16,6 +16,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
     - add `{time=x}` (where x is a number of minutes) to a heading declaration in markdown
     - add `[role="time=x"]` (where x is a number of minutes) on the line above a heading declaration in asciidoc
   - added capability to go directly to a time-boxed heading node from the `Didact Tutorials` view 
+  - updated the HelloJS tutorial to include time-boxed headings as an example 
 
 ## 0.3.2
 

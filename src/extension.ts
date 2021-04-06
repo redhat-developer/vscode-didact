@@ -105,8 +105,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 		const tutorial2Uri = vscode.Uri.file(context.asAbsolutePath('./create_extension/create-new-tutorial-with-extension.didact.md'));
 		await registerTutorialWithCategory("Create a New Didact Tutorial Extension", tutorial2Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
-		// register the javascript tutorial
-		const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/hellojs_time/helloJS.time.didact.md'));
+		// register the javascript tutorial (now updated with time details)
+		const tutorial3Uri = vscode.Uri.file(context.asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
 		await registerTutorialWithCategory("HelloWorld with JavaScript in Three Steps", tutorial3Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 
 		// register the didact tutorial
