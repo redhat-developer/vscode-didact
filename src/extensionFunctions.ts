@@ -327,7 +327,7 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 	return out;
 }
 
-export async function findOrCreateDidact(uri : vscode.Uri, viewColumn? : string) : Promise <void> {
+export async function revealOrStartDidactByURI(uri : vscode.Uri, viewColumn? : string) : Promise <void> {
 	if (uri) {
 		const parentPanel = didactManager.getByUri(uri);
 		if (parentPanel) {
