@@ -90,10 +90,11 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 	}
 
 	public async getParent(element : SimpleNode) : Promise<SimpleNode | null> {
+		console.log(`getting parent for ${element.toString()}`);
 		if (element instanceof TutorialNode) {
 			const tutorial = element as TutorialNode;
 			if (tutorial.category) {
-				return this.findCategoryNode(tutorial.category);
+				return Promise.resolve(this.findCategoryNode(tutorial.category));
 			}
 		}
 		if (element instanceof HeadingNode) {
@@ -103,12 +104,22 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 			}
 		}
 		// Return null if element is a category and a child of root
-		return null;
+		return Promise.resolve(null);
 	}
 
 	getTreeItem(node: SimpleNode): vscode.TreeItem {
 		return node;
 	}
+
+	getCategory(oldNodes: SimpleNode[], newNode: SimpleNode): SimpleNode | null {
+		for (const node of oldNodes) {
+			if (node.label === newNode.label) {
+				return node;
+			}
+		}
+		return null;
+	}
+
 
 	doesNodeExist(oldNodes: SimpleNode[], newNode: SimpleNode): boolean {
 		for (const node of oldNodes) {
@@ -231,10 +242,8 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 
 	findCategoryNode(category : string) : SimpleNode | null {
 		const nodeToFind = new TreeNode(category, category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
-		if (this.doesNodeExist(this.treeNodes, nodeToFind)) {
-			return nodeToFind;
-		}
-		return null;
+		const foundNode = this.getCategory(this.treeNodes, nodeToFind);
+		return foundNode;
 	}
 	
 	async findTutorialNode(category : string, tutorialName : string ) : Promise<TutorialNode | undefined> {
@@ -250,27 +259,27 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 					}
 				}
 			});
-			return foundNode;
+			return Promise.resolve(foundNode);
 		}
-		return undefined;
+		return Promise.resolve(undefined);
 	}
 
 	async findHeadingNode(category : string, uri: string) : Promise<SimpleNode | null> {
 		const catNode = this.findCategoryNode(category);
 		if (catNode) {
 			const treeItems : SimpleNode[] = await this.getChildren(catNode);
-			let foundNode : TreeNode | null = null;
+			let foundNode : SimpleNode | null = null;
 			treeItems.forEach(element => {
-				if (element instanceof TreeNode) {
-					const elementAsTreeNode = element as TreeNode;
+				if (element instanceof SimpleNode) {
+					const elementAsTreeNode = element as SimpleNode;
 					if (elementAsTreeNode.uri === uri && elementAsTreeNode.category === category) {
 						foundNode = elementAsTreeNode;
 					}
 				}
 			});
-			return foundNode;
+			return Promise.resolve(foundNode);
 		}
-		return null;
+		return Promise.resolve(null);
 	}
 	
 }
@@ -287,6 +296,10 @@ export class SimpleNode extends vscode.TreeItem {
 		this.uri = uri;
 		this.category = type;
 	}
+
+	toString(): string {
+		return `${this.category} ${this.label} ${this.uri}`;
+	}	
 }
 
 
