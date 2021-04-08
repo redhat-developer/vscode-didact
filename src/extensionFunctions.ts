@@ -622,8 +622,10 @@ export function gatherAllCommandsLinks(): any[] {
 export async function openTutorialFromView(node: TreeNode) : Promise<void> {
 	if (node && node.uri) {
 		sendTextToOutputChannel(`Opening tutorial from Didact view (${node.uri})`);
-		const vsUri = vscode.Uri.parse(node.uri);
-		await startDidact(vsUri);
+		const vsUri = getActualUri(node.uri);
+		if (vsUri) {
+			await startDidact(vsUri);
+		}
 	}
 }
 
@@ -1043,9 +1045,10 @@ export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<num
 		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
 			content = await loadFileFromHTTPWithRetry(uri);
 		}
-		if (content && !isAsciiDoc(uri.toString())) {
+		const isAdoc = isAsciiDoc(uri.toString());
+		if (content && !isAdoc) {
 			return processTimeTotalForMD(content);
-		} else if (content && isAsciiDoc(uri.toString())) {
+		} else if (content && isAdoc) {
 			return processTimeTotalForAdoc(content);
 		}
 	}
@@ -1067,4 +1070,14 @@ export async function getTimeElementsForDidactFileUri(uri: vscode.Uri) : Promise
 		}
 	}
 	return undefined;
+}
+
+export function getActualUri(uriString : string | undefined ) : vscode.Uri | undefined {
+	let actualUri : vscode.Uri | undefined;
+	if (uriString && !uriString?.startsWith(`http`)) {
+		actualUri = vscode.Uri.file(uriString);
+	} else if (uriString) {
+		actualUri = vscode.Uri.parse(uriString);
+	}
+	return actualUri;
 }

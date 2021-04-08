@@ -18,15 +18,22 @@
 
  import * as vscode from 'vscode';
  import { expect } from 'chai';
+ import {before} from 'mocha';
  import {getContext} from '../../extensionFunctions';
  import {TreeNode, TutorialNode, HeadingNode} from '../../nodeProvider';
  import {didactTutorialsProvider, revealTreeItem} from '../../extension';
+ import {registerTutorialWithCategory} from '../../utils';
  
  suite('Node provider test suite', () => {
 	const tutorialName = 'HelloWorld with JavaScript in Three Steps';
 	const tutorialCategory = 'Didact';
 	const tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
 	const headingName = 'Step 2: Create Our First JavaScript project';
+
+	before('set up the registry tests', async () => {
+		// make sure that the HelloWorld tutorial is registered if it's been cleared
+		await registerTutorialWithCategory(tutorialName, tutorialUri.fsPath, tutorialCategory);
+	});
 
 	test('Verify that we get null as the parent of the category', async () => {
 		const categoryNode = new TreeNode(tutorialCategory, tutorialCategory, undefined, vscode.TreeItemCollapsibleState.None);
@@ -44,7 +51,7 @@
 	});	
 
 	test('Verify that we get the tutorial as the parent of the heading', async () => {
-		const headingNode = new HeadingNode(tutorialCategory, headingName, tutorialUri.fsPath, undefined);
+		const headingNode = new HeadingNode(tutorialCategory, headingName, tutorialUri.fsPath, '');
 		await revealTreeItem(headingNode);
 		const parent = await didactTutorialsProvider.getParent(headingNode);
 		expect(parent).to.not.be.null;

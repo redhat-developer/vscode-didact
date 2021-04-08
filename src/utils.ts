@@ -333,7 +333,11 @@ export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri, na
 		uri = await getCurrentFileSelectionPath();
 	}
 	if (tutorialName && tutorialCategory) {
-		await registerTutorialWithArgs(tutorialName, uri.toString(), tutorialCategory);
+		if (uri.scheme.toLowerCase() === 'file') {
+			await registerTutorialWithArgs(tutorialName, uri.fsPath, tutorialCategory);
+		} else {
+			await registerTutorialWithArgs(tutorialName, uri.toString(), tutorialCategory);
+		}
 	}
 }
 
