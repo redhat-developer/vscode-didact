@@ -18,7 +18,7 @@
 'use strict';
 import {ExtensionContext, Uri, ViewColumn } from 'vscode';
 import { DidactPanel } from './didactPanel';
-import { isAsciiDoc, collectElements, revealOrStartDidactByURI } from './extensionFunctions';
+import { isAsciiDoc, collectElements, revealOrStartDidactByURI, getActualUri } from './extensionFunctions';
 import { HeadingNode } from './nodeProvider';
 
 export const DEFAULT_TITLE_VALUE = `Didact Tutorial`;
@@ -106,9 +106,9 @@ export class DidactManager {
 
 	public getByUri(testUri: Uri): DidactPanel | undefined {
 		let returnPanel = undefined;
-		for ( let p of this._panels.values()) {
+		for ( const p of this._panels.values()) {
 			const originalUri = p.getDidactUriPath();
-			if (testUri && originalUri && originalUri.toString() === testUri.toString()) {
+			if (testUri && originalUri && (originalUri.toString() === testUri.toString()) || (originalUri?.fsPath === testUri.fsPath)) {
 				returnPanel = p;
 				break;
 			}			
@@ -118,8 +118,10 @@ export class DidactManager {
 
 	public async openHeading(node : HeadingNode) : Promise<void> {
 		if (node.uri) {
-			const parentUri = Uri.parse(node.uri);
-			await revealOrStartDidactByURI(parentUri);
+			const parentUri = getActualUri(node.uri);
+			if (parentUri) {
+				await revealOrStartDidactByURI(parentUri);
+			}
 		}
 
 		if (didactManager.active()) {

@@ -145,7 +145,7 @@ export function refreshTreeview(): void {
 	}
 }
 
-export async function revealTreeItem(node: SimpleNode) {
+export async function revealTreeItem(node: SimpleNode | null | undefined) : Promise<void> {
 	await vscode.commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
 	if (didactTreeView && didactTreeView.visible === true && node) {
 		await didactTreeView.reveal(node);

@@ -130,7 +130,7 @@ export function getRegisteredTutorials() : string[] | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
-export async function registerTutorialWithJSON( jsonObject: any) {
+export async function registerTutorialWithJSON( jsonObject: unknown) : Promise<void> {
 	const newTutorial : Tutorial = jsonObject as ITutorial;
 	return registerTutorialWithClass(newTutorial);
 }
@@ -144,7 +144,7 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 		// check to see if a tutorial doesn't already exist with the name/category combination
 		let match = false;
 		for (const entry of existingRegistry) {
-			const jsonObj : any = JSON.parse(entry);
+			const jsonObj = JSON.parse(entry);
 			if (jsonObj && jsonObj.name && jsonObj.category) {
 				const testName = jsonObj.name === newDidact.name;
 				const testCategory = jsonObj.category === newDidact.category;
@@ -185,7 +185,7 @@ export function getDidactCategories() : string[] {
 	if(existingRegistry) {
 		// check to see if a tutorial doesn't already exist with the name/category combination
 		for (const entry of existingRegistry) {
-			const jsonObj : any = JSON.parse(entry);
+			const jsonObj = JSON.parse(entry);
 			if (jsonObj && jsonObj.category) {
 				if (didactCategories.indexOf(jsonObj.category) === -1) {
 					didactCategories.push(jsonObj.category);
@@ -201,7 +201,7 @@ export function getDidactTutorials() : string[] {
 	const didactTutorials : string[] = [];
 	if(existingRegistry) {
 		for (const entry of existingRegistry) {
-			const jsonObj : any = JSON.parse(entry);
+			const jsonObj = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name) {
 				didactTutorials.push(jsonObj.name);
 			}
@@ -216,7 +216,7 @@ export function getTutorialsForCategory( category : string ) : string[] {
 	if(existingRegistry) {
 		// check to see if a tutorial doesn't already exist with the name/category combination
 		for (const entry of existingRegistry) {
-			const jsonObj : any = JSON.parse(entry);
+			const jsonObj = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name) {
 				const testCategory = jsonObj.category === category;
 				if (testCategory) {
@@ -233,7 +233,7 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 	if(existingRegistry) {
 		// check to see if a tutorial doesn't already exist with the name/category combination
 		for (const entry of existingRegistry) {
-			const jsonObj : any = JSON.parse(entry);
+			const jsonObj = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name && jsonObj.sourceUri) {
 				const testName = jsonObj.name === name;
 				const testCategory = jsonObj.category === category;
@@ -267,7 +267,7 @@ export async function getCurrentFileSelectionPath(): Promise<Uri> {
 	await commands.executeCommand('copyFilePath');
 	const copyPath = await env.clipboard.readText();
 	if (fs.existsSync(`"${copyPath}"`) && fs.lstatSync(`"${copyPath}"`).isFile() ) {
-	  return Uri.file(`"${copyPath}"`);
+		return Uri.file(`"${copyPath}"`);
 	}
   }
   throw new Error("Can not determine current file selection");
@@ -304,7 +304,7 @@ export async function removeFilesAndFolders(workspacename: string, filesAndFolde
 	}
 }
 
-export async function updateRegisteredTutorials(inJson : any): Promise<void>{
+export async function updateRegisteredTutorials(inJson : unknown): Promise<void>{
 	if (workspace.getConfiguration()) {
 		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, inJson);
 		console.log('Didact configuration updated');
@@ -343,8 +343,7 @@ async function getTutorialName(tutorialsForValidation : string[] ) : Promise<str
 		placeHolder: 'Enter the name for your new tutorial. The name must be unique.',
 		ignoreFocusOut: true,
 		validateInput: (inputVal: string) => {
-			let val = validateTutorialNameInput(inputVal, tutorialsForValidation);
-			return val;
+			return validateTutorialNameInput(inputVal, tutorialsForValidation);
 		}
 	});
 	if (result === undefined) {
@@ -369,17 +368,16 @@ function validateTutorialNameInput(value: string, tutorialsForValidation : strin
 		}
 		return null;
 	}
-  	return `${value} is invalid`;
+	return `${value} is invalid`;
 }
 
 async function quickPickCategory(
 	categories: string[],
-	canSelectMany: boolean = false,
-	acceptInput: boolean = true): Promise<string[]> {
-	let options = categories.map(tag => ({ label: tag }));
-
-	return new Promise((resolve, _) => {
-		let quickPick = window.createQuickPick();
+	canSelectMany = false,
+	acceptInput = true): Promise<string[]> {
+	const options = categories.map(tag => ({ label: tag }));
+	return new Promise((resolve) => {
+		const quickPick = window.createQuickPick();
 		let placeholder = "Select a Tutorial Category.";
 
 		if (acceptInput) {
@@ -397,7 +395,7 @@ async function quickPickCategory(
 				selectedItems = selected;
 			});
 		}
-		quickPick.onDidAccept(_ => {
+		quickPick.onDidAccept(() => {
 			if (quickPick.value.trim().length > 0 || selectedItems.length > 0 || quickPick.activeItems.length > 0) {
 				if (canSelectMany) {
 					resolve(selectedItems.map((item) => item.label));
@@ -409,7 +407,7 @@ async function quickPickCategory(
 		});
 
 		if (acceptInput) {
-			quickPick.onDidChangeValue(_ => {
+			quickPick.onDidChangeValue(() => {
 				if (quickPick.value.trim().length === 0) {
 					quickPick.value = '';
 					quickPick.items = options;
@@ -422,7 +420,7 @@ async function quickPickCategory(
 			});
 		}
 
-		quickPick.onDidHide(_ => quickPick.dispose());
+		quickPick.onDidHide(() => quickPick.dispose());
 		quickPick.show();
 	});
 }
@@ -434,7 +432,7 @@ export async function removeTutorialByNameAndCategory(node : TutorialNode ) : Pr
 		let index = -1;
 		for (const entry of existingRegistry) {
 			index++;
-			const jsonObj : any = JSON.parse(entry);
+			const jsonObj = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name && jsonObj.sourceUri) {
 				const testName = jsonObj.name === node.label;
 				const testCategory = jsonObj.category === node.category;

@@ -33,7 +33,6 @@ import { delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelect
 const tmp = require('tmp');
 const fetch = require('node-fetch');
 const url = require('url-parse');
-const EDITOR_OPENED_TIMEOUT = 3000;
 
 // command IDs
 export const SCAFFOLD_PROJECT_COMMAND = 'vscode.didact.scaffoldProject';
@@ -577,7 +576,7 @@ export function collectElements(tagname: string, html? : string | undefined) : a
 	if (html) {
 		const document = parse(html);
 		const links = document.querySelectorAll(tagname);
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			elements.push(element);
 		}
 	}
@@ -588,7 +587,7 @@ export function gatherAllRequirementsLinks() : any[] {
 	const requirements = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				for(const check of requirementCommandLinks) {
@@ -607,7 +606,7 @@ export function gatherAllCommandsLinks(): any[] {
 	const commandLinks = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				if (href.startsWith(commandPrefix)) {
@@ -622,8 +621,10 @@ export function gatherAllCommandsLinks(): any[] {
 export async function openTutorialFromView(node: TreeNode) : Promise<void> {
 	if (node && node.uri) {
 		sendTextToOutputChannel(`Opening tutorial from Didact view (${node.uri})`);
-		const vsUri = vscode.Uri.parse(node.uri);
-		await startDidact(vsUri);
+		const vsUri = getActualUri(node.uri);
+		if (vsUri) {
+			await startDidact(vsUri);
+		}
 	}
 }
 
@@ -960,7 +961,7 @@ export async function pasteClipboardToActiveEditorOrPreviouslyUsedOne() : Promis
 }
 
 export async function findOpenEditorForFileURI(uri: vscode.Uri) : Promise<vscode.TextEditor | undefined> {
-	for (let editor of vscode.window.visibleTextEditors.values()) {
+	for (const editor of vscode.window.visibleTextEditors.values()) {
 		if (editor.document.uri === uri) {
 			return editor;
 		}
@@ -999,7 +1000,7 @@ function getTimeElementsForAdoc(content : string) : any[] {
 
 function processTimeTotalForMD(content : string) : number {
 	let total = 0;
-	let elements : any[] = getTimeElementsForMD(content);
+	const elements : any[] = getTimeElementsForMD(content);
 	if (elements && elements.length > 0) {
 		elements.forEach(element => {
 			const timeAttr = element.getAttribute("time");
@@ -1016,7 +1017,7 @@ function processTimeTotalForMD(content : string) : number {
 
 function processTimeTotalForAdoc(content : string) : number {
 	let total = 0;
-	let elements : any[] = getTimeElementsForAdoc(content);
+	const elements : any[] = getTimeElementsForAdoc(content);
 	if (elements && elements.length > 0) {
 		elements.forEach(element => {
 			const classAttr : string = element.getAttribute("class");
@@ -1043,9 +1044,10 @@ export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<num
 		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
 			content = await loadFileFromHTTPWithRetry(uri);
 		}
-		if (content && !isAsciiDoc(uri.toString())) {
+		const isAdoc = isAsciiDoc(uri.toString());
+		if (content && !isAdoc) {
 			return processTimeTotalForMD(content);
-		} else if (content && isAsciiDoc(uri.toString())) {
+		} else if (content && isAdoc) {
 			return processTimeTotalForAdoc(content);
 		}
 	}
@@ -1067,4 +1069,14 @@ export async function getTimeElementsForDidactFileUri(uri: vscode.Uri) : Promise
 		}
 	}
 	return undefined;
+}
+
+export function getActualUri(uriString : string | undefined ) : vscode.Uri | undefined {
+	let actualUri : vscode.Uri | undefined;
+	if (uriString && !uriString?.startsWith(`http`)) {
+		actualUri = vscode.Uri.file(uriString);
+	} else if (uriString) {
+		actualUri = vscode.Uri.parse(uriString);
+	}
+	return actualUri;
 }
