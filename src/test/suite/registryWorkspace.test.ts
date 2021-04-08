@@ -24,11 +24,11 @@ import {didactTutorialsProvider, revealTreeItem} from '../../extension';
 import { beforeEach } from 'mocha';
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import {START_DIDACT_COMMAND} from '../../extensionFunctions';
+import {getActualUri, START_DIDACT_COMMAND} from '../../extensionFunctions';
 import { didactManager } from '../../didactManager';
 import { waitUntil } from 'async-wait-until';
 
-const EDITOR_OPENED_TIMEOUT = 5000;
+const EDITOR_OPENED_TIMEOUT = 8000;
 
 suite('Tutorial Registry Test Suite', () => {
 
@@ -58,12 +58,20 @@ suite('Tutorial Registry Test Suite', () => {
 			const catNode = didactTutorialsProvider.findCategoryNode(category);
 			expect(catNode).to.not.be.undefined;
 
+			if (catNode) {
+				const tutorials = await didactTutorialsProvider.getChildren(catNode);
+				expect(tutorials).to.not.be.empty;
+			} else {
+				assert.fail(`No registered tutorials found for ${category}`);
+			}
+
 			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
 			expect(foundTutorial).to.not.be.undefined;
 			const didactFileUri = foundTutorial?.uri;
 			expect(didactFileUri).to.not.be.undefined;
 
-			await vscode.commands.executeCommand(START_DIDACT_COMMAND, didactFileUri);
+			const actualUri = getActualUri(didactFileUri);
+			await vscode.commands.executeCommand(START_DIDACT_COMMAND, actualUri);
 			try {
 				const predicate = () => didactManager.active() != undefined;
 				await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 });
