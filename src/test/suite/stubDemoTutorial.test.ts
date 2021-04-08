@@ -40,105 +40,98 @@ suite('stub out a tutorial', () => {
 	});
 
 	test('that we can get a response from each command in the demo tutorial', async () => {
-		await commands.executeCommand(START_DIDACT_COMMAND, testMD).then( async () => {
-			if (didactManager.active()) {
-
-				suite('walk through all the sendNamedTerminalAString commands in the demo', () => {
-					const commandsToTest : any[] = gatherAllCommandsLinks().filter( (href) => href.match(/=vscode.didact.sendNamedTerminalAString&/g));
-					expect(commandsToTest).to.not.be.empty;
-					commandsToTest.forEach(function(href: string) {
-						test(`test terminal command "${href}"`, async () => {
-							const ctxt = getContext();
-							if (ctxt) {
-								const testUri = new DidactUri(href, ctxt);
-								const textToParse = testUri.getText();
-								const userToParse = testUri.getUser();
-								let outputs : string[] = [];
-								if (textToParse) {
-									handleText(textToParse, outputs);
-								} else if (userToParse) {
-									handleText(userToParse, outputs);
-								}
-								expect(outputs).length.to.be.at.least(2);
-								const terminalName = outputs[0];
-								const terminalString = outputs[1];
-								await validateTerminalResponse(terminalName, terminalString);
-							}
-						});
-					});
-				});				
-			}
-		});
+		await commands.executeCommand(START_DIDACT_COMMAND, testMD);
+		if (didactManager.active()) {
+			const commandsToTest: any[] = gatherAllCommandsLinks().filter( (href) => href.match(/=vscode.didact.sendNamedTerminalAString&/g));
+			expect(commandsToTest).to.not.be.empty;
+			commandsToTest.forEach(async (href: string) => {
+				const ctxt = getContext();
+				if (ctxt) {
+					const testUri = new DidactUri(href, ctxt);
+					const textToParse = testUri.getText();
+					const userToParse = testUri.getUser();
+					let outputs : string[] = [];
+					if (textToParse) {
+						handleText(textToParse, outputs);
+					} else if (userToParse) {
+						handleText(userToParse, outputs);
+					}
+					expect(outputs).length.to.be.at.least(2);
+					const terminalName = outputs[0];
+					const terminalString = outputs[1];
+					await validateTerminalResponse(terminalName, terminalString);
+				}
+			});
+		}
 	});
 
-});
+	async function validateTerminalResponse(terminalName : string, terminalText : string, terminalResponse? : string) {
+		console.log(`validateTerminalResponse terminal ${terminalName} executing text ${terminalText}`);
+		const term = window.createTerminal(terminalName);
+		expect(term).to.not.be.null;
+		if (term) {
+			console.log(`-current terminal = ${term?.name}`);
+			await sendTerminalText(terminalName, terminalText);
 
-async function validateTerminalResponse(terminalName : string, terminalText : string, terminalResponse? : string) {
-	console.log(`validateTerminalResponse terminal ${terminalName} executing text ${terminalText}`);
-	const term = window.createTerminal(terminalName);
-	expect(term).to.not.be.null;
-	if (term) {
-		console.log(`-current terminal = ${term?.name}`);
-		await sendTerminalText(terminalName, terminalText);
+			await waitUntil(async () => {
+				focusOnNamedTerminal(terminalName);
+				return terminalName === window.activeTerminal?.name;
+			}, 1000);
 
-		await waitUntil(async () => {
-			focusOnNamedTerminal(terminalName);
-			return terminalName === window.activeTerminal?.name;
-		}, 1000);
-
-		try {
-			const predicate = async () => {
-				const result = await getActiveTerminalOutput();
-				return result.includes(getExpectedTextInTerminal());
-			};
-			await waitUntil(predicate, { timeout: COMMAND_WAIT_TIMEOUT, intervalBetweenAttempts: COMMAND_WAIT_RETRY });
-		} catch (error){
-			console.log(`Searching for ${getExpectedTextInTerminal()} but not found in current content of active terminal ${window.activeTerminal?.name} : ${await getActiveTerminalOutput()}`);
-			fail(error);
+			try {
+				const predicate = async () => {
+					const result = await getActiveTerminalOutput();
+					return result.includes(getExpectedTextInTerminal());
+				};
+				await waitUntil(predicate, { timeout: COMMAND_WAIT_TIMEOUT, intervalBetweenAttempts: COMMAND_WAIT_RETRY });
+			} catch (error){
+				console.log(`Searching for ${getExpectedTextInTerminal()} but not found in current content of active terminal ${window.activeTerminal?.name} : ${await getActiveTerminalOutput()}`);
+				fail(error);
+			}
+			findAndDisposeTerminal(terminalName);
 		}
-		findAndDisposeTerminal(terminalName);
+
+		function getExpectedTextInTerminal() {
+			return terminalResponse ? terminalResponse : terminalText;
+		}
 	}
 
-	function getExpectedTextInTerminal() {
-		return terminalResponse ? terminalResponse : terminalText;
+	async function getActiveTerminalOutput() : Promise<string> {
+		const term = window.activeTerminal;
+		console.log(`-current terminal = ${term?.name}`);
+		await executeAndWait('workbench.action.terminal.selectAll');
+		await delay(delayTime);
+		await executeAndWait('workbench.action.terminal.copySelection');
+		await executeAndWait('workbench.action.terminal.clearSelection');	
+		const clipboard_content = await env.clipboard.readText();
+		return clipboard_content.trim();
 	}
-}
 
-async function getActiveTerminalOutput() : Promise<string> {
-	const term = window.activeTerminal;
-	console.log(`-current terminal = ${term?.name}`);
-	await executeAndWait('workbench.action.terminal.selectAll');
-	await delay(delayTime);
-	await executeAndWait('workbench.action.terminal.copySelection');
-	await executeAndWait('workbench.action.terminal.clearSelection');	
-	const clipboard_content = await env.clipboard.readText();
-	return clipboard_content.trim();
-}
-
-function delay(ms: number) {
-	return new Promise( resolve => setTimeout(resolve, ms) );
-}
-
-async function executeAndWait(command: string): Promise<void> {
-	await commands.executeCommand(command);
-	delay(100);
-}
-
-function getNamedTerminal(terminalName : string): Terminal | undefined {
-	return window.terminals.filter(term => term.name === terminalName)[0];
-}
-
-function findAndDisposeTerminal(terminalName: string) : void {
-	const term = getNamedTerminal(terminalName);
-	if (term) {
-		term.dispose();
+	function delay(ms: number) {
+		return new Promise( resolve => setTimeout(resolve, ms) );
 	}
-}
 
-async function focusOnNamedTerminal(terminalName : string) : Promise<void> {
-	let term = window.activeTerminal;
-	while (term?.name != terminalName) {
-		await commands.executeCommand('workbench.action.terminal.focusNext');
-		term = window.activeTerminal;
+	async function executeAndWait(command: string): Promise<void> {
+		await commands.executeCommand(command);
+		delay(100);
 	}
-}
+
+	function getNamedTerminal(terminalName : string): Terminal | undefined {
+		return window.terminals.filter(term => term.name === terminalName)[0];
+	}
+
+	function findAndDisposeTerminal(terminalName: string) : void {
+		const term = getNamedTerminal(terminalName);
+		if (term) {
+			term.dispose();
+		}
+	}
+
+	async function focusOnNamedTerminal(terminalName : string) : Promise<void> {
+		let term = window.activeTerminal;
+		while (term?.name != terminalName) {
+			await commands.executeCommand('workbench.action.terminal.focusNext');
+			term = window.activeTerminal;
+		}
+	}
+});
