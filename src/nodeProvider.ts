@@ -89,7 +89,6 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 	}
 
 	public async getParent(element : SimpleNode) : Promise<SimpleNode | null> {
-		console.log(`getting parent for ${element.toString()}`);
 		if (element instanceof TutorialNode) {
 			const tutorial = element as TutorialNode;
 			if (tutorial.category) {
@@ -97,9 +96,8 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 			}
 		}
 		if (element instanceof HeadingNode) {
-			const heading = element as HeadingNode;
-			if (heading.category && heading.uri) {
-				return await this.findParentTutorialNode(heading.category, heading.uri);
+			if (element.category && element.uri) {
+				return await this.findParentTutorialNode(element.category, element.uri);
 			}
 		}
 		// Return null if element is a category and a child of root
@@ -253,11 +251,8 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 			const treeItems : SimpleNode[] = await this.getChildren(catNode);
 			let foundNode : TreeNode | undefined = undefined;
 			treeItems.forEach(element => {
-				if (element instanceof TreeNode) {
-					const elementAsTreeNode = element as TreeNode;
-					if (elementAsTreeNode.label === tutorialName && elementAsTreeNode.category === category) {
-						foundNode = elementAsTreeNode;
-					}
+				if (element.label === tutorialName && element.category === category) {
+					foundNode = element;
 				}
 			});
 			return Promise.resolve(foundNode);
@@ -272,13 +267,10 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 			let foundNode : SimpleNode | null = null;
 			for (let index = 0; index < treeItems.length; index++) {
 				const element = treeItems[index];
-				if (element instanceof SimpleNode) {
-					const elementAsTreeNode = element as SimpleNode;
-					if (elementAsTreeNode.uri === uri && elementAsTreeNode.category === category) {
-						foundNode = elementAsTreeNode;
-						break;
-					}
-				}				
+				if (element.uri === uri && element.category === category) {
+					foundNode = element;
+					break;
+				}
 			}
 			return Promise.resolve(foundNode);
 		}
