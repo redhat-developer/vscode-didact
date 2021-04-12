@@ -15,7 +15,7 @@ const source2 = 'my-uri-2';
 suite('Didact registry test suite', () => {
 
 	before('set up the registry tests', async () => {
-		await clearRegisteredTutorials();
+		await clearRegisteredTutorials(false);
 	});
 
 	test('assert that clearing the registry made it empty', async () => {
@@ -119,7 +119,7 @@ suite('Didact registry test suite', () => {
 		const registry = getRegisteredTutorials();
 		assert.notStrictEqual(registry, undefined);
 
-		await clearRegisteredTutorials();
+		await clearRegisteredTutorials(false);
 
 		const afterregistry = getRegisteredTutorials();
 		assert.deepStrictEqual(afterregistry, undefined);

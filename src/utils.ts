@@ -246,7 +246,14 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 	return undefined;
 }
 
-export async function clearRegisteredTutorials(): Promise<void>{
+export async function clearRegisteredTutorials(prompt = true): Promise<void>{
+	if (prompt) {
+		const confirmDelete = `Are you sure you want to clear all registered Didact tutorials? This cannot be undone.`;
+		const result = await window.showWarningMessage(confirmDelete, 'Yes', 'No');
+		if (result === 'No') {
+			return;
+		}
+	}
 	if (workspace.getConfiguration()) {
 		await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, undefined);
 		console.log('Didact configuration cleared');
