@@ -63,7 +63,7 @@ suite("New Didact URI completion provider tests", function () {
 async function testWeGetExpectedResult(textToInsert : string, expectedResult: string) {
 	const editor = await createTestEditor(testDocumentUri);
 	const _disposables: vscode.Disposable[] = [];
-	const DELAY_TIME = 500;
+	const DELAY_TIME = 150;
 	await delay(DELAY_TIME);
 	await initializeTextEditor(editor, textToInsert);
 	await delay(DELAY_TIME);
@@ -99,6 +99,7 @@ async function createTestEditor(uri: vscode.Uri) : Promise<vscode.TextEditor> {
 	return activeEditor;
 }
 
+// https://github.com/microsoft/vscode/blob/94c9ea46838a9a619aeafb7e8afd1170c967bb55/extensions/typescript-language-features/src/test/suggestTestHelpers.ts#L10
 async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[]) {
 	return retryUntilDocumentChanges(uri, { retries: 10, timeout: 0 }, _disposables, async () => {
 		await vscode.commands.executeCommand('editor.action.triggerSuggest');
@@ -107,6 +108,7 @@ async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Dispo
 	});
 }
 
+// https://github.com/microsoft/vscode/blob/94c9ea46838a9a619aeafb7e8afd1170c967bb55/extensions/typescript-language-features/src/test/testUtils.ts#L141
 export function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]) {
 	return new Promise<vscode.TextDocument>(resolve => vscode.workspace.onDidChangeTextDocument(e => {
 		if (e.document.uri.toString() === documentUri.toString()) {
@@ -115,16 +117,14 @@ export function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.D
 	}, undefined, disposables));
 }
 
+// https://github.com/microsoft/vscode/blob/94c9ea46838a9a619aeafb7e8afd1170c967bb55/extensions/typescript-language-features/src/test/testUtils.ts#L149
 export async function retryUntilDocumentChanges(
 	documentUri: vscode.Uri,
 	options: { retries: number, timeout: number },
 	disposables: vscode.Disposable[],
-	exec: () => Thenable<unknown>,
-) {
+	exec: () => Thenable<unknown>, ) {
 	const didChangeDocument = onChangedDocument(documentUri, disposables);
-
 	let done = false;
-
 	const result = await Promise.race([
 		didChangeDocument,
 		(async () => {
