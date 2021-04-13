@@ -17,7 +17,7 @@
 
 import * as vscode from 'vscode';
 import * as extensionFunctions from './extensionFunctions';
-import { DidactNodeProvider, TreeNode } from './nodeProvider';
+import { DidactNodeProvider, SimpleNode } from './nodeProvider';
 import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, 
 	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
 	addNewTutorialWithNameAndCategoryForDidactUri, 
@@ -32,7 +32,7 @@ export const DEFAULT_TUTORIAL_CATEGORY = "Didact";
 export const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
 export const didactTutorialsProvider = new DidactNodeProvider();
-let didactTreeView : vscode.TreeView<TreeNode>;
+let didactTreeView : vscode.TreeView<SimpleNode>;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
 	
@@ -145,9 +145,9 @@ export function refreshTreeview(): void {
 	}
 }
 
-export async function revealTreeItem(node: TreeNode) {
+export async function revealTreeItem(node: SimpleNode | null | undefined) : Promise<void> {
 	await vscode.commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
-	if (didactTreeView && didactTreeView.visible === true) {
-		didactTreeView.reveal(node);
+	if (didactTreeView && didactTreeView.visible === true && node) {
+		await didactTreeView.reveal(node, {expand : true});
 	}
 }

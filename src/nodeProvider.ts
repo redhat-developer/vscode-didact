@@ -16,15 +16,14 @@
  */
 import * as vscode from 'vscode';
 import * as utils from './utils';
-import * as extensionFunctions from './extensionFunctions';
 import * as path from 'path';
-import { isAsciiDoc } from './extensionFunctions';
+import { computeTimeForDidactFileUri, getActualUri, getContext, getTimeElementsForDidactFileUri, isAsciiDoc, sendTextToOutputChannel } from './extensionFunctions';
 import { HTMLElement } from 'node-html-parser';
 
-export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
+export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<TreeNode | undefined> = new vscode.EventEmitter<TreeNode | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<TreeNode | undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<SimpleNode | undefined> = new vscode.EventEmitter<SimpleNode | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<SimpleNode | undefined> = this._onDidChangeTreeData.event;
 
 	protected treeNodes: TreeNode[] = [];
 	protected retrieveTutorials = true;
@@ -40,11 +39,11 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
 	// get the list of children for the node provider
-	public async getChildren(element?: any): Promise<any[]> {
+	public async getChildren(element?: SimpleNode): Promise<SimpleNode[]> {
 		if (!element) {
 			return this.treeNodes;
 		} else if (element instanceof TutorialNode) {
-			return await this.processHeadingsForTutorial(element.uri);
+			return await this.processHeadingsForTutorial(element.uri, element.category);
 		} else {
 			// assume it's a category
 			if (element.label && !(element instanceof TutorialNode)) {
@@ -56,7 +55,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
 	// add a child to the list of nodes
-	public addChild(newNode: any, disableRefresh = false, oldNodes: any[] = this.treeNodes ): any[] {
+	public addChild(newNode: SimpleNode, disableRefresh = false, oldNodes: SimpleNode[] = this.treeNodes ): SimpleNode[] {
 		if (oldNodes) {
 			oldNodes.push(newNode);
 			if (!disableRefresh) {
@@ -67,7 +66,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
 	// This method isn't used by the view currently, but is here to facilitate testing
-	public removeChild(oldNode: TreeNode, disableRefresh = false, oldNodes: TreeNode[] = this.treeNodes ): TreeNode[] {
+	public removeChild(oldNode: SimpleNode, disableRefresh = false, oldNodes: SimpleNode[] = this.treeNodes ): SimpleNode[] {
 		if (oldNodes) {
 			const index = oldNodes.indexOf(oldNode);
 			if (index !== -1) {
@@ -89,21 +88,37 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		this._onDidChangeTreeData.fire(undefined);
 	}
 
-	public getParent(element : TreeNode) : TreeNode | undefined {
+	public async getParent(element : SimpleNode) : Promise<SimpleNode | null> {
 		if (element instanceof TutorialNode) {
 			const tutorial = element as TutorialNode;
 			if (tutorial.category) {
-				return this.findCategoryNode(tutorial.category);
+				return Promise.resolve(this.findCategoryNode(tutorial.category));
 			}
 		}
-		return undefined;
+		if (element instanceof HeadingNode) {
+			if (element.category && element.uri) {
+				return await this.findParentTutorialNode(element.category, element.uri);
+			}
+		}
+		// Return null if element is a category and a child of root
+		return Promise.resolve(null);
 	}
 
-	getTreeItem(node: TreeNode): vscode.TreeItem {
+	getTreeItem(node: SimpleNode): vscode.TreeItem {
 		return node;
 	}
 
-	doesNodeExist(oldNodes: any[], newNode: any): boolean {
+	getCategory(oldNodes: SimpleNode[], newNode: SimpleNode): SimpleNode | null {
+		for (const node of oldNodes) {
+			if (node.label === newNode.label) {
+				return node;
+			}
+		}
+		return null;
+	}
+
+
+	doesNodeExist(oldNodes: SimpleNode[], newNode: SimpleNode): boolean {
 		for (const node of oldNodes) {
 			if (node.label === newNode.label) {
 				return true;
@@ -125,17 +140,18 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		}
 	}
 
-	async processTutorialsForCategory(category: string | undefined) : Promise<TreeNode[]> {
-		const children : TutorialNode[] = [];
+	async processTutorialsForCategory(category: string | undefined) : Promise<SimpleNode[]> {
+		const children : SimpleNode[] = [];
 		if (category) {
 			const tutorials : string[] | undefined = utils.getTutorialsForCategory(category);
 			if (tutorials) {
 				for (const tutorial of tutorials) {
 					let hasChildren = vscode.TreeItemCollapsibleState.None;
 					const tutUri : string | undefined = utils.getUriForDidactNameAndCategory(tutorial, category);
+					const actualUri : vscode.Uri | undefined = getActualUri(tutUri);
 					let timeLabel : string | undefined = undefined;
-					if (tutUri) {
-						const timeCount = await extensionFunctions.computeTimeForDidactFileUri(vscode.Uri.parse(tutUri));
+					if (actualUri) {
+						const timeCount = await computeTimeForDidactFileUri(actualUri);
 						if (timeCount > 0) {
 							timeLabel = `(~${timeCount} mins)`;
 							hasChildren = vscode.TreeItemCollapsibleState.Collapsed;
@@ -153,7 +169,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		return children;
 	}
 
-	getNodeFromADOCDiv(divElement : HTMLElement, tutUri: string | undefined) : HeadingNode | undefined {
+	getNodeFromADOCDiv(divElement : HTMLElement, tutUri: string | undefined, category : string | undefined) : HeadingNode | undefined {
 		const classAttr : string | undefined = divElement.getAttribute("class");
 		if (classAttr) {
 			const splitArray : string[] = classAttr.split(' ');
@@ -170,9 +186,9 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 								if (child.tagName.startsWith('H')) {
 									const title = children[i].innerText;
 									if (!Number.isNaN(timeValue)) {
-										return new HeadingNode(title, tutUri, `(~${timeValue} mins)`);
+										return new HeadingNode(category, title, tutUri, `(~${timeValue} mins)`);
 									} else {
-										extensionFunctions.sendTextToOutputChannel(`Warning: Heading node "${title}" has an invalid time value set to "${splitTime}"`)
+										sendTextToOutputChannel(`Warning: Heading node "${title}" has an invalid time value set to "${splitTime}"`)
 									}
 								}
 							}
@@ -184,10 +200,11 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		return undefined;
 	}
 
-	async processHeadingsForTutorial(tutUri: string | undefined) : Promise<HeadingNode[]> {
+	async processHeadingsForTutorial(tutUri: string | undefined, category : string | undefined) : Promise<HeadingNode[]> {
 		const children : HeadingNode[] = [];
-		if (tutUri) {
-			const headings : HTMLElement[] | undefined = await extensionFunctions.getTimeElementsForDidactFileUri(vscode.Uri.parse(tutUri));
+		const actualUri : vscode.Uri | undefined = getActualUri(tutUri);
+		if (actualUri) {
+			const headings : HTMLElement[] | undefined = await getTimeElementsForDidactFileUri(actualUri);
 			if (headings && !isAsciiDoc(tutUri)) {
 				for (const heading of headings) {
 					const timeAttr = heading.getAttribute("time");
@@ -198,19 +215,19 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 						timeLabel = `(~${timeValue} mins)`;
 					}
 					const title = heading.rawText;
-					const newNode = new HeadingNode(title, tutUri, timeLabel);
+					const newNode = new HeadingNode(category, title, tutUri, timeLabel);
 					newNode.contextValue = 'HeadingNode';
 					if (!this.doesNodeExist(children, newNode) && timeLabel) {
 						this.addChild(newNode, true, children);
 					}
 					if (Number.isNaN(timeValue)) {
-						extensionFunctions.sendTextToOutputChannel(`Warning: Heading node "${title}" has an invalid time value set to "${timeAttr}"`)
+						sendTextToOutputChannel(`Warning: Heading node "${title}" has an invalid time value set to "${timeAttr}"`)
 					}
 				}
 				return children;
 			} else if (headings && isAsciiDoc(tutUri)){
 				for (const heading of headings) {
-					const newNode : HeadingNode | undefined = this.getNodeFromADOCDiv(heading, tutUri);
+					const newNode : HeadingNode | undefined = this.getNodeFromADOCDiv(heading, tutUri, category);
 					if (newNode && !this.doesNodeExist(children, newNode)) {
 						newNode.contextValue = 'HeadingNode';
 						this.addChild(newNode, true, children);
@@ -222,56 +239,90 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<TreeNode> {
 		return children;
 	}
 
-	findCategoryNode(category : string) : TreeNode | undefined {
+	findCategoryNode(category : string) : SimpleNode | null {
 		const nodeToFind = new TreeNode(category, category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
-		if (this.doesNodeExist(this.treeNodes, nodeToFind)) {
-			return nodeToFind;
-		}
-		return undefined;
+		const foundNode = this.getCategory(this.treeNodes, nodeToFind);
+		return foundNode;
 	}
 	
-	async findTutorialNode(category : string, tutorialName : string ) : Promise<TreeNode | undefined> {
+	async findTutorialNode(category : string, tutorialName : string ) : Promise<TutorialNode | undefined> {
 		const catNode = this.findCategoryNode(category);
 		if (catNode) {
-			const treeItems : TreeNode[] = await this.getChildren(catNode);
+			const treeItems : SimpleNode[] = await this.getChildren(catNode);
 			let foundNode : TreeNode | undefined = undefined;
 			treeItems.forEach(element => {
 				if (element.label === tutorialName && element.category === category) {
 					foundNode = element;
 				}
 			});
-			return foundNode;
+			return Promise.resolve(foundNode);
 		}
-		return undefined;
+		return Promise.resolve(undefined);
 	}
+
+	async findParentTutorialNode(category : string, uri: string) : Promise<SimpleNode | null> {
+		const catNode = this.findCategoryNode(category);
+		if (catNode) {
+			const treeItems : SimpleNode[] = await this.getChildren(catNode);
+			let foundNode : SimpleNode | null = null;
+			for (let index = 0; index < treeItems.length; index++) {
+				const element = treeItems[index];
+				if (element.uri === uri && element.category === category) {
+					foundNode = element;
+					break;
+				}
+			}
+			return Promise.resolve(foundNode);
+		}
+		return Promise.resolve(null);
+	}
+	
 }
 
-// simple tree node for our tutorials view
-export class TreeNode extends vscode.TreeItem {
-	category: string;
+export class SimpleNode extends vscode.TreeItem {
+	category: string | undefined;
 	uri : string | undefined;
 	constructor(
-		type: string,
+		type: string | undefined,
+		label: string,
+		uri: string | undefined,
+	) {
+		super(label, vscode.TreeItemCollapsibleState.None);
+		this.uri = uri;
+		this.category = type;
+	}
+
+	toString(): string {
+		return `${this.category} ${this.label} ${this.uri}`;
+	}	
+}
+
+
+// simple tree node for our tutorials view
+export class TreeNode extends SimpleNode {
+	uri : string | undefined;
+	constructor(
+		type: string | undefined,
 		label: string,
 		uri: string | undefined,
 		collapsibleState: vscode.TreeItemCollapsibleState
 	) {
-		super(label, collapsibleState);
-		this.category = type;
+		super(type, label, uri);
+		this.collapsibleState = collapsibleState;
 		this.uri = uri;
 	}
 }
 
 export class TutorialNode extends TreeNode {
 	constructor(
-		category: string,
+		category: string | undefined,
 		label: string,
 		uri: string | undefined,
 		collapsibleState: vscode.TreeItemCollapsibleState,
 		inTooltip? : string | undefined
 	) {
 		super(category, label, uri, collapsibleState);
-		const localIconPath = vscode.Uri.file(path.resolve(extensionFunctions.getContext().extensionPath, 'icon/logo.svg'));
+		const localIconPath = vscode.Uri.file(path.resolve(getContext().extensionPath, 'icon/logo.svg'));
 		this.iconPath = localIconPath;
 		if (inTooltip) {
 			this.description = inTooltip;
@@ -280,20 +331,20 @@ export class TutorialNode extends TreeNode {
 }
 
 // simple heading node for an outline of the headings in our tutorial
-export class HeadingNode extends vscode.TreeItem {
+export class HeadingNode extends SimpleNode {
 	uri : string | undefined;
 	constructor(
+		category: string | undefined,
 		label: string,
 		uri: string | undefined,
 		description : string | undefined
 	) {
-		super(label, vscode.TreeItemCollapsibleState.None);
-		this.uri = uri;
+		super(category, label, uri);
 		this.description = description;
 	}
 }
 
-function retrieveTreeItemName(selection: TreeNode) {
+function retrieveTreeItemName(selection: SimpleNode) {
 	const treeItemName: string | vscode.TreeItemLabel | undefined = selection.label;
 	if (treeItemName === undefined) {
 		return "";

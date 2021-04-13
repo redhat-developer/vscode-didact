@@ -20,15 +20,15 @@ import * as path from 'path';
 import { removeFilesAndFolders } from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import * as assert from 'assert';
-import {didactTutorialsProvider} from '../../extension';
+import {didactTutorialsProvider, revealTreeItem} from '../../extension';
 import { beforeEach } from 'mocha';
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import {START_DIDACT_COMMAND} from '../../extensionFunctions';
+import {getActualUri, START_DIDACT_COMMAND} from '../../extensionFunctions';
 import { didactManager } from '../../didactManager';
 import { waitUntil } from 'async-wait-until';
 
-const EDITOR_OPENED_TIMEOUT = 5000;
+const EDITOR_OPENED_TIMEOUT = 8000;
 
 suite('Tutorial Registry Test Suite', () => {
 
@@ -58,12 +58,20 @@ suite('Tutorial Registry Test Suite', () => {
 			const catNode = didactTutorialsProvider.findCategoryNode(category);
 			expect(catNode).to.not.be.undefined;
 
+			if (catNode) {
+				const tutorials = await didactTutorialsProvider.getChildren(catNode);
+				expect(tutorials).to.not.be.empty;
+			} else {
+				assert.fail(`No registered tutorials found for ${category}`);
+			}
+
 			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
 			expect(foundTutorial).to.not.be.undefined;
 			const didactFileUri = foundTutorial?.uri;
 			expect(didactFileUri).to.not.be.undefined;
 
-			await vscode.commands.executeCommand(START_DIDACT_COMMAND, didactFileUri);
+			const actualUri = getActualUri(didactFileUri);
+			await vscode.commands.executeCommand(START_DIDACT_COMMAND, actualUri);
 			try {
 				const predicate = () => didactManager.active() != undefined;
 				await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 });
@@ -84,15 +92,24 @@ suite('Tutorial Registry Test Suite', () => {
 		try {
 			await commandHandler.processInputs(didactUriToRegisterTutorial);
 			const catNode = didactTutorialsProvider.findCategoryNode(category);
-			expect(catNode).to.not.be.undefined;
+			expect(catNode).to.not.be.null;
+			await revealTreeItem(catNode);
 
+			if (catNode) {
+				const tutorials = await didactTutorialsProvider.getChildren(catNode);
+				expect(tutorials).to.not.be.empty;
+			} else {
+				assert.fail(`No registered tutorials found for ${category}`);
+			}
+			
 			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
 			expect(foundTutorial).to.not.be.undefined;
 			const didactFileUri = foundTutorial?.uri;
 			expect(didactFileUri).to.not.be.undefined;
+			await revealTreeItem(foundTutorial);
 
 			const headings = await didactTutorialsProvider.getChildren(foundTutorial);
-			expect(headings).to.not.be.undefined;
+			expect(headings).to.not.be.empty;
 
 			// make sure that the bogus heading is not included since it has an invalid time specified
 			// if it appears, there would be 4 headings
@@ -111,6 +128,7 @@ suite('Tutorial Registry Test Suite', () => {
 			await commandHandler.processInputs(didactUriToRegisterTutorial);
 			const catNode = didactTutorialsProvider.findCategoryNode(category);
 			expect(catNode).to.not.be.undefined;
+			await revealTreeItem(catNode);
 
 			const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
 			expect(foundTutorial).to.not.be.undefined;
