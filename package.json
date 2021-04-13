@@ -254,7 +254,7 @@
 		"@typescript-eslint/eslint-plugin": "^4.21.0",
 		"@typescript-eslint/parser": "^4.21.0",
 		"chai": "^4.3.4",
-		"eslint": "^7.23.0",
+		"eslint": "^7.24.0",
 		"mocha": "^8.3.2",
 		"mocha-jenkins-reporter": "^0.4.4",
 		"sinon": "10.0.0",
