@@ -62,16 +62,14 @@ suite("New Didact URI completion provider tests", function () {
 
 async function testWeGetExpectedResult(textToInsert : string, expectedResult: string) {
 	const editor = await createTestEditor(testDocumentUri);
-	const DELAY_TIME = 150;
+	const _disposables: vscode.Disposable[] = [];
+	const DELAY_TIME = 500;
 	await delay(DELAY_TIME);
 	await initializeTextEditor(editor, textToInsert);
 	await delay(DELAY_TIME);
 	await vscode.commands.executeCommand("cursorEnd");
 	await delay(DELAY_TIME);
-	await vscode.commands.executeCommand("editor.action.triggerSuggest");
-	await delay(DELAY_TIME);
-	await vscode.commands.executeCommand("acceptSelectedSuggestion");
-	await delay(DELAY_TIME);
+	await acceptFirstSuggestion(testDocumentUri, _disposables);
 	expect(editor.document.getText()).to.include(expectedResult);
 }
 
@@ -99,4 +97,46 @@ async function createTestEditor(uri: vscode.Uri) : Promise<vscode.TextEditor> {
 		throw new Error('no active editor');
 	}
 	return activeEditor;
+}
+
+async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Disposable[]) {
+	return retryUntilDocumentChanges(uri, { retries: 10, timeout: 0 }, _disposables, async () => {
+		await vscode.commands.executeCommand('editor.action.triggerSuggest');
+		await delay(1000);
+		await vscode.commands.executeCommand('acceptSelectedSuggestion');
+	});
+}
+
+export function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]) {
+	return new Promise<vscode.TextDocument>(resolve => vscode.workspace.onDidChangeTextDocument(e => {
+		if (e.document.uri.toString() === documentUri.toString()) {
+			resolve(e.document);
+		}
+	}, undefined, disposables));
+}
+
+export async function retryUntilDocumentChanges(
+	documentUri: vscode.Uri,
+	options: { retries: number, timeout: number },
+	disposables: vscode.Disposable[],
+	exec: () => Thenable<unknown>,
+) {
+	const didChangeDocument = onChangedDocument(documentUri, disposables);
+
+	let done = false;
+
+	const result = await Promise.race([
+		didChangeDocument,
+		(async () => {
+			for (let i = 0; i < options.retries; ++i) {
+				await delay(options.timeout);
+				if (done) {
+					return;
+				}
+				await exec();
+			}
+		})(),
+	]);
+	done = true;
+	return result;
 }
