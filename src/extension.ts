@@ -21,10 +21,13 @@ import { DidactNodeProvider, SimpleNode } from './nodeProvider';
 import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, 
 	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
 	addNewTutorialWithNameAndCategoryForDidactUri, 
-	removeTutorialByNameAndCategory} from './utils';
+	removeTutorialByNameAndCategory,
+	getValue} from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
+import { handleVSCodeDidactUriParsingForPath } from './extensionFunctions';
+import * as querystring from 'querystring';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -75,7 +78,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
 		async handleUri(uri:vscode.Uri) {
-			await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, uri);
+			const query = querystring.parse(uri.query);
+			if (query.commandId && query.commandId === extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY && query.https && query.name && query.category) {
+				const out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(uri);
+				if (out) {
+					const tutname : string | undefined = getValue(query.name);
+					const tutcat : string | undefined = getValue(query.category);
+					await addNewTutorialWithNameAndCategoryForDidactUri(out, tutname, tutcat);
+				}
+			} else {
+				await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, uri);
+			}
 		}
 	});
 
