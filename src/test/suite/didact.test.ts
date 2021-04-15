@@ -22,12 +22,14 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as extensionFunctions from '../../extensionFunctions';
-import {getValue} from '../../utils';
+import {delay, getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import { removeFilesAndFolders } from '../../utils';
 
 import { waitUntil } from 'async-wait-until';
 import { didactManager } from '../../didactManager';
+import { expect } from 'chai';
+import { didactTutorialsProvider, revealTreeItem } from '../../extension';
 
 const url = require('url-parse');
 
@@ -35,6 +37,8 @@ const EDITOR_OPENED_TIMEOUT = 5000;
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
+const testMD4 = vscode.Uri.parse('vscode://redhat.vscode-didact?commandId=vscode.didact.registry.addUri&&https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/requirements.example.didact.md&&name=Requirements%20Example&&category=Test%20From%20The%20Web');
+const testMD5 = vscode.Uri.parse('vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/terminal.example.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Linux';
 const testReqMac = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Darwin';
@@ -263,6 +267,27 @@ suite('Didact test suite', () => {
 				assert.strictEqual(hrefs && hrefs.length === 5, true);
 			}			
 		});
+	});
+
+	test('make sure we can open a didact file from a vscode extension', async () => {
+		await extensionFunctions.handleVSCodeUri(testMD5);
+		await delay(1000);
+		if (didactManager.active()) {
+			const title : string | undefined = didactManager.active()?.getCurrentTitle();
+			expect(title).to.equal('Didact Terminal Commands');
+		}
+	});
+
+	test('make sure we can register a didact file from a vscode extension', async () => {
+		const category = "Test From The Web";
+		const tutorialName = "Requirements Example";
+		await extensionFunctions.handleVSCodeUri(testMD4);
+		const catNode = didactTutorialsProvider.findCategoryNode(category);
+		expect(catNode).to.not.be.undefined;
+		await revealTreeItem(catNode);
+
+		const foundTutorial = await didactTutorialsProvider.findTutorialNode(category, tutorialName);
+		expect(foundTutorial).to.not.be.undefined;
 	});
 });
 
