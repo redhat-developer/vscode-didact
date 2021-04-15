@@ -26,7 +26,7 @@ import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartu
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
-import { handleVSCodeDidactUriParsingForPath } from './extensionFunctions';
+import { handleVSCodeDidactUriParsingForPath, sendTextToOutputChannel } from './extensionFunctions';
 import * as querystring from 'querystring';
 
 const DIDACT_VIEW = 'didact.tutorials';
@@ -85,6 +85,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 					const tutname : string | undefined = getValue(query.name);
 					const tutcat : string | undefined = getValue(query.category);
 					await addNewTutorialWithNameAndCategoryForDidactUri(out, tutname, tutcat);
+				} else {
+					sendTextToOutputChannel(`No parseable Didact file uri discovered in URI sent via vscode link ${uri.toString()}`);
 				}
 			} else {
 				await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, uri);
