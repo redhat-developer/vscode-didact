@@ -329,6 +329,9 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 }
 
 export async function revealOrStartDidactByURI(uri : vscode.Uri, viewColumn? : string) : Promise <void> {
+	if (!uri) {
+		uri = await getCurrentFileSelectionPath();
+	}
 	if (uri) {
 		const parentPanel = didactManager.getByUri(uri);
 		if (parentPanel) {
