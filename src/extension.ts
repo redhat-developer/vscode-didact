@@ -26,7 +26,7 @@ import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartu
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
-import { handleVSCodeDidactUriParsingForPath, sendTextToOutputChannel } from './extensionFunctions';
+import { handleVSCodeDidactUriParsingForPath, handleVSCodeUri, sendTextToOutputChannel } from './extensionFunctions';
 import * as querystring from 'querystring';
 
 const DIDACT_VIEW = 'didact.tutorials';
@@ -74,23 +74,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY, addNewTutorialWithNameAndCategoryForDidactUri));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY, removeTutorialByNameAndCategory));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_TUTORIAL_HEADING_FROM_VIEW, didactManager.openHeading));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PROCESS_VSCODE_LINK, handleVSCodeUri));	
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
 		async handleUri(uri:vscode.Uri) {
-			const query = querystring.parse(uri.query);
-			if (query.commandId && query.commandId === extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY && query.https && query.name && query.category) {
-				const out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(uri);
-				if (out) {
-					const tutname : string | undefined = getValue(query.name);
-					const tutcat : string | undefined = getValue(query.category);
-					await addNewTutorialWithNameAndCategoryForDidactUri(out, tutname, tutcat);
-				} else {
-					sendTextToOutputChannel(`No parseable Didact file uri discovered in URI sent via vscode link ${uri.toString()}`);
-				}
-			} else {
-				await vscode.commands.executeCommand(extensionFunctions.START_DIDACT_COMMAND, uri);
-			}
+			await handleVSCodeUri(uri);
 		}
 	});
 

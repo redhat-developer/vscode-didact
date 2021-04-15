@@ -139,6 +139,10 @@
 					"dark": "resources/dark/run.svg",
 					"light": "resources/light/run.svg"
 				}
+			},
+			{
+				"command": "vscode.didact.processVSCodeLink",
+				"title": "Didact: Process VSCode link from web"
 			}
 		],
 		"keybindings": [
