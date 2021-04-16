@@ -18,6 +18,11 @@ All notable changes to the "vscode-didact" extension will be documented in this 
   - added capability to go directly to a time-boxed heading node from the `Didact Tutorials` view 
   - updated the HelloJS tutorial to include time-boxed headings as an example 
 
+- Didact extension now works with the AsciiDoctor extension 
+- Added confirmation to `Didact: Clear Tutorial Registry` to add extra check before clearing the tutorial registry
+- Added `Insert Didact Badge` completion to show `Powered by Didact` badge with link back to the project in GitHub
+- Added new `vscode` URI processing to handle registering a Didact tutorial via a web link and a new command - `Didact: Process VSCode link from web` to process a copied link
+
 ## 0.3.2
 
 - adding *vscode.didact.refresh* command to refresh the currently active Didact window
