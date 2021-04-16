@@ -22,7 +22,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as extensionFunctions from '../../extensionFunctions';
-import {delay, getValue} from '../../utils';
+import {getValue} from '../../utils';
 import * as commandHandler from '../../commandHandler';
 import { removeFilesAndFolders } from '../../utils';
 
@@ -270,12 +270,12 @@ suite('Didact test suite', () => {
 	});
 
 	test('make sure we can open a didact file from a vscode extension', async () => {
+		const titleToCheck = 'Didact Terminal Commands';
 		await extensionFunctions.handleVSCodeUri(testMD5);
-		await delay(1000);
-		if (didactManager.active()) {
-			const title : string | undefined = didactManager.active()?.getCurrentTitle();
-			expect(title).to.equal('Didact Terminal Commands');
-		}
+		await waitUntil(() => didactManager.active()?.getCurrentTitle() ===  titleToCheck, 
+			{ timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 });
+		expect(didactManager.active()).to.not.be.undefined;
+		expect(didactManager.active()?.getCurrentTitle()).to.equal(titleToCheck);
 	});
 
 	test('make sure we can register a didact file from a vscode extension', async () => {
