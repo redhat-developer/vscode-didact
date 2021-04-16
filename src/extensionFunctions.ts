@@ -28,7 +28,7 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
-import { delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -71,6 +71,7 @@ export const ADD_TUTORIAL_TO_REGISTRY = 'vscode.didact.registry.addJson';
 export const ADD_TUTORIAL_URI_TO_REGISTRY = 'vscode.didact.registry.addUri';
 export const REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY = 'vscode.didact.view.tutorial.remove';
 export const OPEN_TUTORIAL_HEADING_FROM_VIEW = "vscode.didact.view.tutorial.heading.open";
+export const PROCESS_VSCODE_LINK = "vscode.didact.processVSCodeLink";
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
@@ -328,6 +329,9 @@ export function handleVSCodeDidactUriParsingForPath(uri:vscode.Uri) : vscode.Uri
 }
 
 export async function revealOrStartDidactByURI(uri : vscode.Uri, viewColumn? : string) : Promise <void> {
+	if (!uri) {
+		uri = await getCurrentFileSelectionPath();
+	}
 	if (uri) {
 		const parentPanel = didactManager.getByUri(uri);
 		if (parentPanel) {
@@ -1080,4 +1084,54 @@ export function getActualUri(uriString : string | undefined ) : vscode.Uri | und
 		actualUri = vscode.Uri.parse(uriString);
 	}
 	return actualUri;
+}
+
+function validateUriHasPath(textToValidate : string) : vscode.Uri | undefined {
+	try {
+		const uriToValidate = vscode.Uri.parse(textToValidate, true);
+		return handleVSCodeDidactUriParsingForPath(uriToValidate);
+	} catch (error) {
+		// just return
+	}
+	return undefined;
+}
+
+export async function handleVSCodeUri(uri:vscode.Uri | undefined) : Promise<void> {
+	let uriToProcess : vscode.Uri | undefined = uri;
+	if (!uriToProcess) {
+		// try clipboard
+		const textFromClipboard = await vscode.env.clipboard.readText();
+		const pathFromClipboard = validateUriHasPath(textFromClipboard);
+		if (textFromClipboard && pathFromClipboard) {
+			uriToProcess = vscode.Uri.parse(textFromClipboard);
+		}
+		if (!uriToProcess) {
+			await vscode.window.showInputBox({prompt: `Paste in the link from the web`}).then((textValueInput) => {
+				if (textValueInput && validateUriHasPath(textValueInput)) {
+					uriToProcess = vscode.Uri.parse(textValueInput);
+				} else {
+					const msg = `No parseable Didact file uri discovered in text provided '${textValueInput}'`;
+					sendTextToOutputChannel(msg);
+					vscode.window.showWarningMessage(msg);
+				}
+			});
+		}
+	}
+	if (uriToProcess) {
+		const query = querystring.parse(uriToProcess.query);
+		if (query.commandId && query.commandId === ADD_TUTORIAL_URI_TO_REGISTRY && query.https && query.name && query.category) {
+			const out : vscode.Uri | undefined = handleVSCodeDidactUriParsingForPath(uriToProcess);
+			if (out) {
+				const tutname : string | undefined = getValue(query.name);
+				const tutcat : string | undefined = getValue(query.category);
+				await addNewTutorialWithNameAndCategoryForDidactUri(out, tutname, tutcat);
+			} else {
+				const msg = `No parseable Didact file uri discovered in URI sent via vscode link '${uriToProcess.toString()}'`;
+				sendTextToOutputChannel(msg);
+				vscode.window.showWarningMessage(msg);
+			}
+		} else {
+			await vscode.commands.executeCommand(START_DIDACT_COMMAND, uriToProcess);
+		}
+	}
 }
