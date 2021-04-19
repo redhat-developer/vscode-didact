@@ -220,10 +220,9 @@ export function findTerminal(name: string) : vscode.Terminal | undefined {
 
 // send a message to a named terminal
 export async function sendTerminalText(name:string, text:string): Promise<void> {
-	const terminal : vscode.Terminal | undefined = findTerminal(name);
+	let terminal : vscode.Terminal | undefined = findTerminal(name);
 	if (!terminal) {
-		const newterminal = vscode.window.createTerminal(name);
-		showAndSendText(newterminal, text);
+		terminal = vscode.window.createTerminal(name);
 	}
 	if (terminal) {
 		showAndSendText(terminal, text);
