@@ -211,7 +211,7 @@ export class DidactPanel {
 			}
 		}
 		if (this.currentHtml) {
-			if (this._panel && this._panel.webview && this._panel.active) {
+			if (this._panel && this._panel.webview) {
 				this._panel.webview.html = this.currentHtml;
 				const firstHeading : string | undefined = this.getFirstHeadingText();
 				if (firstHeading && firstHeading.trim().length > 0) {
