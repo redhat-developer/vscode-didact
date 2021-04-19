@@ -75,13 +75,13 @@ suite('stub out a tutorial', () => {
 			await sendTerminalText(terminalName, terminalText);
 
 			await waitUntil(async () => {
-				focusOnNamedTerminal(terminalName);
+				await focusOnNamedTerminal(terminalName);
 				return terminalName === window.activeTerminal?.name;
 			}, 1000);
 
 			try {
 				const predicate = async () => {
-					const result = await getActiveTerminalOutput();
+					const result: string = await getActiveTerminalOutput();
 					return result.includes(getExpectedTextInTerminal());
 				};
 				await waitUntil(predicate, { timeout: COMMAND_WAIT_TIMEOUT, intervalBetweenAttempts: COMMAND_WAIT_RETRY });
