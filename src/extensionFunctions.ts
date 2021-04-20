@@ -335,6 +335,7 @@ export async function revealOrStartDidactByURI(uri : vscode.Uri, viewColumn? : s
 		const parentPanel = didactManager.getByUri(uri);
 		if (parentPanel) {
 			parentPanel._panel?.reveal();
+			await parentPanel.refreshPanel();
 		} else {
 			await startDidact(uri, viewColumn);
 		}
