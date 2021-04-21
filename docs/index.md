@@ -1,37 +1,39 @@
-## Welcome to GitHub Pages
+## Welcome to Didact!
 
-You can use the [editor on GitHub](https://github.com/redhat-developer/vscode-didact/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+Welcome to the vscode-didact project! Here you'll find a description of how to use Didact, write Didact files, construct Didact links and more.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# What is Didact?
 
-### Markdown
+Didact is a project designed to fill a void in Visual Studio Code, but what exactly is this thing? And more importantly, why should you care? 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+It started as a “What if?” VS Code doesn’t have a great way to walk users through a stepwise tutorial. What if we could come up with a way to meet that need by combining…
 
-```markdown
-Syntax highlighted code block
+* A simple markup language (such as Markdown or AsciiDoc)
+* The ability to render the markup as HTML using the VS Code Webview
+* And a way to invoke the commands we create for each VS Code extension
 
-# Header 1
-## Header 2
-### Header 3
+And it came together very quickly once we had some time to put it together!
 
-- Bulleted
-- List
+## Installing the extension
 
-1. Numbered
-2. List
+The **vscode-didact** extension is available in the VS Code Extension Marketplace (https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact). 
 
-**Bold** and _Italic_ and `Code` text
+### Steps
 
-[Link](url) and ![Image](src)
-```
+1. Open your VS Code Integrated Development Environment (IDE).
+2. In the VS Code Activity Bar, select Extensions. (Alternately, press Ctrl+Shift+X).
+3. In the search bar, type **Didact** 
+4. In the **vscode-didact** box, click **Install**.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Accessing Didact in the workspace. 
 
-### Jekyll Themes
+With Didact installed, there are three ways to open a Didact window.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/redhat-developer/vscode-didact/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+* To access Didact, access the Command Palette (`View->Command Palette`, `Ctrl+Shift+P`, or `F1`) and type **Didact**. Select `Open Didact` and it will open with the default Didact Markdown file specified in the Settings.
+* To open a local Didact file in the workspace directly, Right-click on the Didact Markdown file (`*.didact.md` or `*.didact.adoc`) and select **Start Didact Tutorial from File** from the context menu.
 
-### Support or Contact
+In addition, you now have the `Didact Tutorials` view. 
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+![Didact Tutorials View](Images/didact-view-with-popup.png)
+
+If you right-click on a tutorial (such as "Didact Demo"), you see a `Start Didact Tutorial` menu, which opens the Didact window or changes the current Didact window to the selected tutorial. These entries are provided by registering new tutorial name/tutorial uri/category combinations with Didact's tutorial registry.
