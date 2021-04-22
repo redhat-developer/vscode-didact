@@ -10,7 +10,7 @@ Imagine that you are presented with this window in VS Code.
 
 ![Didact Window image with Command Palette Example](./images/didact-view-command-palette-example.png "Didact Window with Command Palette Example")
 
-This window tells us a few things… From inside of VS Code, not via an external web browser hosting the Getting Started Guide at the VS Code Documentation site (https://code.visualstudio.com/docs/getstarted/userinterface), you have access to:
+This window tells us a few things… From inside of VS Code, not via an external web browser hosting the [Getting Started Guide at the VS Code Documentation site](https://code.visualstudio.com/docs/getstarted/userinterface), you have access to:
 
 * a bit of text that explains what the Command Palette is used for and how to access it
 * and a simple link that opens the palette with a click, showing you what happens when you hit the right series of keys (Ctrl+Shift+P).
@@ -21,6 +21,6 @@ All the “heavy lifting” going on behind the scenes in that link is a simple 
 
 * `didact://?commandId=workbench.action.showCommands&completion=Opened%20Command%20Palette`.
 
-If we unpack that a little, we have a command ID to the showCommands command in VS Code, which is what gets triggered when you hit Ctrl+Shift+P on your keyboard, and a completion message that shows what Didact did under the covers in a small information popup in the lower right corner. 
+If we unpack that a little, we have a *command ID* to the `showCommands` command in VS Code, which is what gets triggered when you hit `Ctrl+Shift+P` on your keyboard, and a *completion* message that shows what Didact did under the covers in a small information popup in the lower right corner. 
 
 So in this case, we told you what we were going to tell you, told you, showed it in action, and then showed it again, reinforcing the effects of clicking the right keys.

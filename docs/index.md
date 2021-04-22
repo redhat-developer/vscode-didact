@@ -25,9 +25,11 @@ And much, much more!
 
 The **vscode-didact** extension is available in the [VS Code Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact) and the [Open VSX Registry](https://open-vsx.org/extension/redhat/vscode-didact) as well as available for use in [Eclipse Che](https://www.eclipse.org/che/). 
 
+Didact can be installed in the [Microsoft VS Code](https://code.visualstudio.com/) or [VSCodium](https://vscodium.com/) IDEs locally.
+
 ### Steps
 
-1. Open your `VS Code Integrated Development Environment` (IDE). [(VSCode Site)[https://code.visualstudio.com/]] [(VSCodium site](https://vscodium.com/))]
+1. Open your *VS Code* (IDE). 
 2. In the VS Code Activity Bar, select `Extensions`. (Alternately, press `Ctrl+Shift+X`).
 3. In the search bar, type *Didact* 
 4. In the **vscode-didact** box, click **Install**.
