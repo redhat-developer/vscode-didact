@@ -41,7 +41,7 @@ With Didact installed, there are three main ways to open a Didact file.
 
 If a particular Didact file has been registered to appear in the `Didact Tutorials` view, you can quickly access it there as well.
 
-![Didact Tutorials View](../images/didact-view-with-popup.png)
+![Didact Tutorials View](./images/didact-view-with-popup.png)
 
 * With the tutorial highlighted, click the triangle to the right to quickly open the tutorial in a new Didact window.
 * Or you can right-click on a tutorial (such as "Didact Demo") and select the `Start Didact Tutorial` menu, which opens the Didact window. 

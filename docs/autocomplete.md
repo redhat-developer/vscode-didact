@@ -2,7 +2,7 @@
 
 To help you set up Didact tutorials (`*.didact.md`, `*.didact.adoc`), we've added a number of auto-completions (accessible by pressing `Ctrl+Space` while editing an AsciiDoc or Markdown file) to provide most of the basic things you'll need.
 
-![Didact Auto-Completion Demo](../images/didact-uri-completion-demo.gif)
+![Didact Auto-Completion Demo](./images/didact-uri-completion-demo.gif)
 
 Included completions:
 
