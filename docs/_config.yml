@@ -1,4 +1,4 @@
-theme: jekyll-theme-minimal
-title: Didact Gives Your Readme Superpowers!
-description: The <b>Didact</b> framework is designed to instruct users in a useful way regarding how to complete tasks through a combination of text (Markdown- or AsciiDoc-formatted), images, and active links that show VS Code functionality in action. Those links are paired with VS Code’s simple command framework to interact with the IDE directly -- and that provides one-click access to nearly all the functionality VS Code and its extensions have to offer.
+theme: jekyll-theme-slate
+title: vscode-didact
+description: Didact Gives Your Readme Superpowers!
 logo: https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/logo.png
