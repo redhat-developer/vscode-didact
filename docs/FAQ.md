@@ -1,5 +1,7 @@
 # FAQ
 
+A few of our frequently asked questions!
+
 ## Q: The toast notification for my completion message covers up some of my terminal area so you can't see the bottom right corner. Is it possible to move the notification?
 
 Completion messages are always optional, but when they are included they show up as those toast notifications you pointed out. I would recommend just removing the completion message. Let's say the didact command includes a "completion" element. Something like:

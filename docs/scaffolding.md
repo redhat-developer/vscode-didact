@@ -40,6 +40,4 @@ The Project JSON file structure is simply a collection of named folders and file
 
 Files can either have their content specified in the project JSON file itself (i.e. `content: "myfilecontent"`) or copy content from a file in the directory at the same level as the project JSON file (i.e. `copy: myfile.txt`).
 
-> New in Didact 0.1.18!
-
 By specifying `"open" : true` for a particular file, you can tag it to be opened automatically when the folders and files are created. If the flag is absent, it is assumed to be false and will not be opened. 

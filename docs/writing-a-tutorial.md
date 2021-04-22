@@ -71,9 +71,3 @@ With those three options, it would look like:
 ```
 Or [click here](didact://?commandId=workbench.action.showCommands&completion=Opened%20Command%20Palette. "Triggers the Show Commands command to open the Command Palette"){.didact} to see the Command Palette in action.
 ```
-
-# Registering a Didact Tutorial in the Didact Tutorials view
-
-You can create your own VS Code extension to register a new tutorial with the Didact Tutorials view. And we have written a Didact tutorial to help you do just that!
-
-If you look at the Didact Tutorials view, you should be able to find the `Didact` category and beneath that find `Creating a New Didact Tutorial Extension`. That will step you through creating the new extension and your Didact tutorial file, then registering the new file with the view. 
