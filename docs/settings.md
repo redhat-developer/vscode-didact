@@ -2,7 +2,7 @@
 
 The Didact Extension has several configurable settings available. To access the settings, go to (`File->Preferences->Settings`) and type **Didact**.
 
-![Didact Settings](../images/settings.jpg)
+![Didact Settings](./images/settings.jpg)
 
 * To stop automatically recreating the default Didact Tutorials to the view at workspace startup (on by default), set the `Didact: Auto Add Default Tutorials` setting to unchecked.
 * To change the default Didact file, set the `Didact: Default Url`. This can be any valid URL to a Didact formatted Markdown file, including `http://`, `https://`, or `file://` URLs.
