@@ -1,6 +1,6 @@
 # Registering Tutorials
 
-The `Didact Tutorials` view has been there since the beginning of Didact, offering a way for VS Code extension-creators to register tutorials for easy access. Now anybody can create and register tutorials with ease!
+The `Didact Tutorials` view has been there since the beginning of Didact, offering a way for VS Code extension-creators to register tutorials for easy access. We have since added capabilities for registering tutorials with a menu click or a Didact link!
 
 ## Registering a Didact Tutorial from a VS Code Extension
 

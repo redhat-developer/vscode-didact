@@ -1,6 +1,14 @@
+# Constructing Didact Links
+
+All Didact links are composed of three main parts:
+
+* `didact://?` which tells the Didact listener to process the command when it gets clicked on
+* `commandId=xxx` where xxx is the Command ID, such as the `workbench.action.showCommands` ID we copied just a second ago
+* and then any additional information passed to the command, completion and error messages, etc.
+
 ## Didact Link formatting for opening Didact files inside VS Code
 
-Didact now has the ability to open Didact files themselves, which enables us to leverage files that are at public URLs, such as those put into Github repositories as well as those provided in extension source files or even in scaffolded projects. This capability comes in handy if you want to mix and match tutorials and commands, breaking up lengthy processes into smaller chunks.
+Didact has the ability to open Didact files themselves, which enables us to leverage files that are at public URLs, such as those put into Github repositories as well as those provided in extension source files or even in scaffolded projects. This capability comes in handy if you want to mix and match tutorials and commands, breaking up lengthy processes into smaller chunks.
 
 * You supply https or http links in the format `vscode://redhat.vscode-didact?https=urltofile/file.didact.md` or `vscode://redhat.vscode-didact?http=urltofile/file.didact.md`
 * You supply `extension` links in the format `vscode://redhat.vscode-didact?extension=folder/file.didact.md`
