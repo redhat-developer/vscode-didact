@@ -22,6 +22,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 - Added confirmation to `Didact: Clear Tutorial Registry` to add extra check before clearing the tutorial registry
 - Added `Insert Didact Badge` completion to show `Powered by Didact` badge with link back to the project in GitHub
 - Added new `vscode` URI processing to handle registering a Didact tutorial via a web link and a new command - `Didact: Process VSCode link from web` to process a copied link
+- Add new `Ctrl/Cmd+Alt+T` shortcut to convert selected text into a `sendNamedTerminalAString` Didact link
 
 ## 0.3.2
 

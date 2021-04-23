@@ -74,7 +74,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY, addNewTutorialWithNameAndCategoryForDidactUri));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY, removeTutorialByNameAndCategory));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_TUTORIAL_HEADING_FROM_VIEW, didactManager.openHeading));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PROCESS_VSCODE_LINK, handleVSCodeUri));	
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PROCESS_VSCODE_LINK, handleVSCodeUri));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CREATE_SEND_TO_TERMINAL_LINK_FROM_SELECTED_TEXT, extensionFunctions.convertSelectionToCLILinkAndInsertAfterSelection));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({

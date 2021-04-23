@@ -143,6 +143,10 @@
 			{
 				"command": "vscode.didact.processVSCodeLink",
 				"title": "Didact: Process VSCode link from web"
+			},
+			{
+				"command": "vscode.didact.copyTextToCLI",
+				"title": "Didact: Create Didact sendToTerminal link from selected text"
 			}
 		],
 		"keybindings": [
@@ -150,6 +154,12 @@
 				"command": "vscode.didact.startDidact",
 				"key": "ctrl+shift+v",
 				"mac": "cmd+shift+v",
+				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+			},
+			{
+				"command": "vscode.didact.copyTextToCLI",
+				"key": "ctrl+alt+t",
+				"mac": "cmd+alt+t",
 				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
 			}
 		],

@@ -72,6 +72,7 @@ export const ADD_TUTORIAL_URI_TO_REGISTRY = 'vscode.didact.registry.addUri';
 export const REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY = 'vscode.didact.view.tutorial.remove';
 export const OPEN_TUTORIAL_HEADING_FROM_VIEW = "vscode.didact.view.tutorial.heading.open";
 export const PROCESS_VSCODE_LINK = "vscode.didact.processVSCodeLink";
+export const CREATE_SEND_TO_TERMINAL_LINK_FROM_SELECTED_TEXT = "vscode.didact.copyTextToCLI";
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
@@ -1134,4 +1135,57 @@ export async function handleVSCodeUri(uri:vscode.Uri | undefined) : Promise<void
 			await vscode.commands.executeCommand(START_DIDACT_COMMAND, uriToProcess);
 		}
 	}
+}
+
+export async function convertSelectionToCLILinkAndInsertAfterSelection() : Promise<void> {
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		if (!editor.selections || editor.selections.length === 0) {
+			vscode.window.showInformationMessage("There is no selected text!");
+			return;
+		}		
+		const selection = vscode.window.activeTextEditor?.selection;
+		const selectedText = vscode.window.activeTextEditor?.document.getText(selection);
+		if (selectedText && selectedText.trim().length > 0) {
+			const encodedText = encodeURI(selectedText);
+			const isAdoc = isAsciiDoc(editor.document.uri?.toString());
+			let templatedLink = ` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$${encodedText}))`;
+			if (isAdoc) {
+				templatedLink = ` link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$${encodedText}[(^ execute)]`;
+			}
+			await insertTextAtFirstWhitespacePastCurrentSelection(templatedLink);
+		}
+	}
+}
+
+async function insertTextAtFirstWhitespacePastCurrentSelection(replacementText : string) {
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		editor.edit(function (edit) {
+			const selection = editor.selections[0];
+			if (!selection.isEmpty) {
+				const pos = findOpeningCommentAfterPosition(selection.end);
+				if (pos) {
+					edit.insert(pos, replacementText);
+				}
+			}
+		});		
+	}
+}
+
+function findOpeningCommentAfterPosition(pos: vscode.Position): vscode.Position | undefined {
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		const document = editor.document;
+		const text = editor.document.getText(new vscode.Range(pos.line, pos.character, 
+			document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length));
+
+		let offset = text.search(/(\s)/g);
+		if (offset === -1) {
+			return;
+		}
+		offset += document.offsetAt(pos);
+		return document.positionAt(offset);
+	}
+	return undefined;
 }
