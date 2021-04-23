@@ -81,6 +81,10 @@ Sends text to a named terminal, which is then executed in the terminal. If the n
 
 Note: In order to send multiple commands spread out across multiple links in the same terminal window, ensure that the `name` passed is consistent.
 
+## vscode.didact.sendNamedTerminalAStringNoLF
+
+Same as sendNamedTerminalAString, but the command is not executed in the terminal by default.
+
 ## vscode.didact.sendNamedTerminalCtrlC
 
 Send a Ctrl+C key combination to a named terminal to stop a long-running process. Terminal with the given name must be accessible.
@@ -211,6 +215,12 @@ Command to copy text directly from the URL to the clipboard. Handy for short str
 
 * Input: URL encoded text to copy onto the clipboard
 * Example: `didact://?commandId=vscode.didact.copyToClipboardCommand&text=The%20fox%20jumped%20over%20the%20lazy%20dog.`
+
+## vscode.didact.copyTextToCLI
+
+Command to take the currently selected text in the open editor (of a Didact markdown or asciidoc file) and add a new Didact `sendNamedTerminalAString` or `sendNamedTerminalAStringNoLF` link with the selected text automatically URLencoded.
+
+This is triggered by default using `Ctrl+Alt+F` or `Cmd+Alt+F`.
 
 ***
 # Commands Elsewhere
