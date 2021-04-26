@@ -218,7 +218,7 @@ Command to copy text directly from the URL to the clipboard. Handy for short str
 
 ## vscode.didact.copyTextToCLI
 
-Command to take the currently selected text in the open editor (of a Didact markdown or asciidoc file) and add a new Didact `sendNamedTerminalAString` or `sendNamedTerminalAStringNoLF` link with the selected text automatically URLencoded.
+Command to take the currently selected text in the open editor (of a Didact Markdown or AsciiDoc file) and add a new Didact `sendNamedTerminalAString` or `sendNamedTerminalAStringNoLF` link with the selected text automatically URLencoded.
 
 This is triggered by default using `Ctrl+Alt+F` or `Cmd+Alt+F`.
 
