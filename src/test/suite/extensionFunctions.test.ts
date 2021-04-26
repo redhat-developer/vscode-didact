@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as extensionFunctions from '../../extensionFunctions';
 import { handleExtFilePath, handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
-import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels } from '../../utils';
+import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels, setInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting } from '../../utils';
 import { beforeEach, after, afterEach } from 'mocha';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
@@ -316,6 +316,29 @@ suite('Extension Functions Test Suite', () => {
 		} else {
 			expect.fail("Editor did not open");
 		}
+	});
+
+	test('verify inserted link text for markdown CLI and default send terminal command', async() => {
+		const selectedText = `echo The quick brown fox markdown`;
+		await setInsertLFForCLILinkSetting(true); // reset default
+		const linkText = getLinkTextForCLILinkSetting();
+		const generatedText = extensionFunctions.getDidactLinkForSelectedText(selectedText, false);
+		const encodedText = encodeURI(selectedText);
+		const defaultCommandToUse = 'vscode.didact.sendNamedTerminalAString';
+		const expectedLink = ` ([${linkText}](didact://?commandId=${defaultCommandToUse}&text=newTerminal$$${encodedText}))`;
+		expect(generatedText.trim()).to.deep.equal(expectedLink.trim());
+	});
+
+	test('verify inserted link text for adoc CLI and LF send terminal command setting set', async() => {
+		const selectedText = `echo The quick brown fox adoc`;
+		await setInsertLFForCLILinkSetting(false);
+		const linkText = getLinkTextForCLILinkSetting();
+		const generatedText = extensionFunctions.getDidactLinkForSelectedText(selectedText, true);
+		const encodedText = encodeURI(selectedText);
+		const defaultCommandToUse = 'vscode.didact.sendNamedTerminalAString';
+		const expectedLink = ` link:didact://?commandId=${defaultCommandToUse}&text=newTerminal$$${encodedText}[(${linkText})]`;
+		await setInsertLFForCLILinkSetting(true); // reset default
+		expect(generatedText.trim()).to.deep.equal(expectedLink.trim());
 	});
 });
 

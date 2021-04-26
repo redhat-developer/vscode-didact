@@ -1146,6 +1146,25 @@ export async function handleVSCodeUri(uri:vscode.Uri | undefined) : Promise<void
 	}
 }
 
+// for testing purposes
+export function getDidactLinkForSelectedText(selectedText : string, isAdoc : boolean) : string {
+	const encodedText = encodeURI(selectedText);
+	let linkText = getLinkTextForCLILinkSetting();
+	const linkUseLF = getInsertLFForCLILinkSetting();
+	let commandToUse = 'vscode.didact.sendNamedTerminalAString';
+	if(!linkUseLF) {
+		commandToUse = 'vscode.didact.sendNamedTerminalAStringNoLF';
+	}
+	if (!linkText) {
+		linkText = `^ execute`;
+	}
+	let templatedLink = ` ([${linkText}](didact://?commandId=${commandToUse}&text=newTerminal$$${encodedText}))`;
+	if (isAdoc) {
+		templatedLink = ` link:didact://?commandId=${commandToUse}&text=newTerminal$$${encodedText}[(${linkText})]`;
+	}
+	return templatedLink;
+}
+
 export async function convertSelectionToCLILinkAndInsertAfterSelection() : Promise<void> {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
@@ -1156,21 +1175,8 @@ export async function convertSelectionToCLILinkAndInsertAfterSelection() : Promi
 		const selection = vscode.window.activeTextEditor?.selection;
 		const selectedText = vscode.window.activeTextEditor?.document.getText(selection);
 		if (selectedText && selectedText.trim().length > 0) {
-			const encodedText = encodeURI(selectedText);
 			const isAdoc = isAsciiDoc(editor.document.uri?.toString());
-			let linkText = getLinkTextForCLILinkSetting();
-			const linkUseLF = getInsertLFForCLILinkSetting();
-			let commandToUse = 'vscode.didact.sendNamedTerminalAString';
-			if(!linkUseLF) {
-				commandToUse = 'vscode.didact.sendNamedTerminalAStringNoLF';
-			}
-			if (!linkText) {
-				linkText = `^ execute`;
-			}
-			let templatedLink = ` ([${linkText}](didact://?commandId=${commandToUse}&text=newTerminal$$${encodedText}))`;
-			if (isAdoc) {
-				templatedLink = ` link:didact://?commandId=${commandToUse}&text=newTerminal$$${encodedText}[(${linkText})]`;
-			}
+			const templatedLink = getDidactLinkForSelectedText(selectedText, isAdoc);
 			await insertTextAtFirstWhitespacePastCurrentSelection(templatedLink);
 		}
 	}

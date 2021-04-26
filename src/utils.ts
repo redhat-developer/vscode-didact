@@ -33,6 +33,8 @@ export const DIDACT_CLI_LINK_TEXT_SETTING = 'didact.edit.cliLinkText';
 
 const CACHED_OUTPUT_CHANNELS: OutputChannel[] = new Array<OutputChannel>();
 
+export const DEFAULT_EXECUTE_LINK_TEXT = '^ execute';
+
 export interface ITutorial {
 	name: string;
 	category: string;
@@ -471,5 +473,15 @@ export function getInsertLFForCLILinkSetting() : boolean {
 }
 
 export function getLinkTextForCLILinkSetting() : string | undefined {
-	return workspace.getConfiguration().get(DIDACT_CLI_LINK_TEXT_SETTING);
+	return workspace.getConfiguration().get(DIDACT_CLI_LINK_TEXT_SETTING, DEFAULT_EXECUTE_LINK_TEXT);
+}
+
+// for testing
+export async function setInsertLFForCLILinkSetting(flag: boolean): Promise<void> {
+	await extensionFunctions.getContext().workspaceState.update(DIDACT_CLI_LINK_LF_SETTING, flag);
+}
+
+// for testing
+export async function setLinkTextForCLILinkSetting(text: string): Promise<void> {
+	await extensionFunctions.getContext().workspaceState.update(DIDACT_CLI_LINK_TEXT_SETTING, text);
 }
