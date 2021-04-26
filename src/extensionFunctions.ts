@@ -1149,14 +1149,11 @@ export async function handleVSCodeUri(uri:vscode.Uri | undefined) : Promise<void
 // for testing purposes
 export function getDidactLinkForSelectedText(selectedText : string, isAdoc : boolean) : string {
 	const encodedText = encodeURI(selectedText);
-	let linkText = getLinkTextForCLILinkSetting();
+	const linkText = getLinkTextForCLILinkSetting();
 	const linkUseLF = getInsertLFForCLILinkSetting();
 	let commandToUse = 'vscode.didact.sendNamedTerminalAString';
 	if(!linkUseLF) {
 		commandToUse = 'vscode.didact.sendNamedTerminalAStringNoLF';
-	}
-	if (!linkText) {
-		linkText = `^ execute`;
 	}
 	let templatedLink = ` ([${linkText}](didact://?commandId=${commandToUse}&text=newTerminal$$${encodedText}))`;
 	if (isAdoc) {

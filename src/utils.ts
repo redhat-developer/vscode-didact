@@ -473,15 +473,19 @@ export function getInsertLFForCLILinkSetting() : boolean {
 }
 
 export function getLinkTextForCLILinkSetting() : string | undefined {
-	return workspace.getConfiguration().get(DIDACT_CLI_LINK_TEXT_SETTING, DEFAULT_EXECUTE_LINK_TEXT);
+	const value = workspace.getConfiguration().get(DIDACT_CLI_LINK_TEXT_SETTING, DEFAULT_EXECUTE_LINK_TEXT);
+	if (value && value.trim().length > 0) {
+		return value;
+	}
+	return DEFAULT_EXECUTE_LINK_TEXT;
 }
 
 // for testing
 export async function setInsertLFForCLILinkSetting(flag: boolean): Promise<void> {
-	await extensionFunctions.getContext().workspaceState.update(DIDACT_CLI_LINK_LF_SETTING, flag);
+	await workspace.getConfiguration().update(DIDACT_CLI_LINK_LF_SETTING, flag);
 }
 
 // for testing
-export async function setLinkTextForCLILinkSetting(text: string): Promise<void> {
-	await extensionFunctions.getContext().workspaceState.update(DIDACT_CLI_LINK_TEXT_SETTING, text);
+export async function setLinkTextForCLILinkSetting(text: string | undefined): Promise<void> {
+	await workspace.getConfiguration().update(DIDACT_CLI_LINK_TEXT_SETTING, text);
 }
