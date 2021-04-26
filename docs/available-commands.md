@@ -222,6 +222,12 @@ Command to take the currently selected text in the open editor (of a Didact Mark
 
 This is triggered by default using `Ctrl+Alt+F` or `Cmd+Alt+F`.
 
+A couple of things to note:
+
+* Any link inserted using this method will be surrounded by parentheses. For example, `^ execute` will appear in the Didact link as `(^ execute)`. 
+* Though you can modify the text inside the parentheses (i.e. `^ execute`) in the [`Didact>Edit: Cli Link Text` field in the Settings for Didact](https://redhat-developer.github.io/vscode-didact/settings), some characters will need to be escaped such as close square brackets (`\]`) due to the way links are formatted in Markdown and AsciiDoc.
+* You can insert emojis such as the [play button](https://emojipedia.org/play-button/) or [two-hump camel](https://emojipedia.org/two-hump-camel/) instead of text. 
+
 ***
 # Commands Elsewhere
 

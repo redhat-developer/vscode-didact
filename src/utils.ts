@@ -472,7 +472,7 @@ export function getInsertLFForCLILinkSetting() : boolean {
 	return workspace.getConfiguration().get(DIDACT_CLI_LINK_LF_SETTING, true);
 }
 
-export function getLinkTextForCLILinkSetting() : string | undefined {
+export function getLinkTextForCLILinkSetting() : string {
 	const value = workspace.getConfiguration().get(DIDACT_CLI_LINK_TEXT_SETTING, DEFAULT_EXECUTE_LINK_TEXT);
 	if (value && value.trim().length > 0) {
 		return value;
