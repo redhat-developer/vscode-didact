@@ -1,11 +1,16 @@
+.circleci
+.github
 .vscode/**
 .vscode-test/**
+docs/**
+out/**/*.map
 out/test/**
 src/**
-.gitignore
-**/tsconfig.json
-**/tslint.json
-**/*.map
-**/*.ts
-example/**/.project
 test Fixture with speci@l chars/**
+test-archive/**
+**/.gitignore
+**/JenkinsFile
+**/sonar-project.properties
+**/tsconfig.json
+**/*.ts
+**/*.vsix
