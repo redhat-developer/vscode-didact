@@ -74,7 +74,7 @@
 					"didact.edit.cliLinkText": {
 						"type": "string",
 						"default": "^ execute",
-						"markdownDescription": "Link text to use when converting text for use in a copyTextToCLI terminal link. Cannot be an empty string. Defaults to `^ execute`. [Read more.](https://redhat-developer.github.io/vscode-didact/settings)",
+						"markdownDescription": "Link text to use when converting text for use in a copyTextToCLI terminal link. Cannot be an empty string. Special characters must be escaped. Defaults to `^ execute`. [Read more.](https://redhat-developer.github.io/vscode-didact/settings)",
 						"scope": "window",
 						"pattern": "^(?!\\s*$).+",
 						"patternErrorMessage": "Link text cannot be an empty string. Please provide at least one character."

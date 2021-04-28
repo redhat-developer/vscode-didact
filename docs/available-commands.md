@@ -220,7 +220,7 @@ Command to copy text directly from the URL to the clipboard. Handy for short str
 
 Command to take the currently selected text in the open editor (of a Didact Markdown or AsciiDoc file) and add a new Didact `sendNamedTerminalAString` or `sendNamedTerminalAStringNoLF` link with the selected text automatically URLencoded.
 
-This is triggered by default using `Ctrl+Alt+F` or `Cmd+Alt+F`.
+This is triggered by default using `Ctrl+Alt+T` or `Cmd+Alt+T`.
 
 A couple of things to note:
 
