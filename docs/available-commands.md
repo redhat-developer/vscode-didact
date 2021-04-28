@@ -81,6 +81,10 @@ Sends text to a named terminal, which is then executed in the terminal. If the n
 
 Note: In order to send multiple commands spread out across multiple links in the same terminal window, ensure that the `name` passed is consistent.
 
+## vscode.didact.sendNamedTerminalAStringNoLF
+
+Same as sendNamedTerminalAString, but the command is not executed in the terminal by default.
+
 ## vscode.didact.sendNamedTerminalCtrlC
 
 Send a Ctrl+C key combination to a named terminal to stop a long-running process. Terminal with the given name must be accessible.
@@ -211,6 +215,18 @@ Command to copy text directly from the URL to the clipboard. Handy for short str
 
 * Input: URL encoded text to copy onto the clipboard
 * Example: `didact://?commandId=vscode.didact.copyToClipboardCommand&text=The%20fox%20jumped%20over%20the%20lazy%20dog.`
+
+## vscode.didact.copyTextToCLI
+
+Command to take the currently selected text in the open editor (of a Didact Markdown or AsciiDoc file) and add a new Didact `sendNamedTerminalAString` or `sendNamedTerminalAStringNoLF` link with the selected text automatically URLencoded.
+
+This is triggered by default using `Ctrl+Alt+T` or `Cmd+Alt+T`. Note that the key combination can be changed by going into Keyboard Shortcuts (`File->Preferences->Keyboard Shortcuts`) and searching for `copyTextToCLI`, then overwriting the Keybinding.
+
+A couple of things to note:
+
+* Any link inserted using this method will be surrounded by parentheses. For example, `^ execute` will appear in the Didact link as `(^ execute)`. 
+* Though you can modify the text inside the parentheses (i.e. `^ execute`) in the [`Didact>Edit: Cli Link Text` field in the Settings for Didact](https://redhat-developer.github.io/vscode-didact/settings), some characters will need to be escaped such as close square brackets (`\]`) due to the way links are formatted in Markdown and AsciiDoc.
+* You can insert emojis such as the [play button](https://emojipedia.org/play-button/) or [two-hump camel](https://emojipedia.org/two-hump-camel/) instead of text. 
 
 ***
 # Commands Elsewhere

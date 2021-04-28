@@ -21,13 +21,11 @@ import { DidactNodeProvider, SimpleNode } from './nodeProvider';
 import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, 
 	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
 	addNewTutorialWithNameAndCategoryForDidactUri, 
-	removeTutorialByNameAndCategory,
-	getValue} from './utils';
+	removeTutorialByNameAndCategory } from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
-import { handleVSCodeDidactUriParsingForPath, handleVSCodeUri, sendTextToOutputChannel } from './extensionFunctions';
-import * as querystring from 'querystring';
+import { handleVSCodeUri } from './extensionFunctions';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -48,6 +46,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.START_DIDACT_COMMAND, extensionFunctions.revealOrStartDidactByURI));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.START_TERMINAL_COMMAND, extensionFunctions.startTerminal));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TERMINAL_SOME_TEXT_COMMAND, extensionFunctions.sendTerminalText));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.SEND_TERMINAL_SOME_TEXT_COMMAND_NO_LF, extensionFunctions.sendTerminalTextNoLF));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REQUIREMENT_CHECK_COMMAND, extensionFunctions.requirementCheck));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.EXTENSION_REQUIREMENT_CHECK_COMMAND, extensionFunctions.extensionCheck));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND, extensionFunctions.validWorkspaceCheck));

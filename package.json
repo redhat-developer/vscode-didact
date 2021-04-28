@@ -45,7 +45,7 @@
 	"contributes": {
 		"configuration": [
 			{
-				"title": "Didact Extension Settings",
+				"title": "Didact",
 				"properties": {
 					"didact.defaultUrl": {
 						"type": "string",
@@ -69,6 +69,20 @@
 						"type": "boolean",
 						"default": "true",
 						"description": "Automatically add the default Didact tutorials to the Didact Tutorials view at workspace startup if not already registered",
+						"scope": "window"
+					},
+					"didact.edit.cliLinkText": {
+						"type": "string",
+						"default": "^ execute",
+						"markdownDescription": "Link text to use when converting text for use in a copyTextToCLI terminal link. Cannot be an empty string. Special characters must be escaped. Defaults to `^ execute`. [Read more.](https://redhat-developer.github.io/vscode-didact/settings)",
+						"scope": "window",
+						"pattern": "^(?!\\s*$).+",
+						"patternErrorMessage": "Link text cannot be an empty string. Please provide at least one character."
+					},
+					"didact.edit.cliLinkLF": {
+						"type": "boolean",
+						"default": "true",
+						"markdownDescription": "Automatically execute copyTextToCLI command in generated CLI terminal link. [Read more.](https://redhat-developer.github.io/vscode-didact/settings)",
 						"scope": "window"
 					}
 				}

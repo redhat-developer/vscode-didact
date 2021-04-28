@@ -28,8 +28,12 @@ export const DIDACT_NOTIFICATION_SETTING = 'didact.disableNotifications';
 export const DIDACT_COLUMN_SETTING = 'didact.lastColumnUsed';
 export const DIDACT_OPEN_AT_STARTUP = 'didact.openDefaultTutorialAtStartup';
 export const DIDACT_AUTO_INSTALL_DEFAULT_TUTORIALS = 'didact.autoAddDefaultTutorials';
+export const DIDACT_CLI_LINK_LF_SETTING = 'didact.edit.cliLinkLF';
+export const DIDACT_CLI_LINK_TEXT_SETTING = 'didact.edit.cliLinkText';
 
 const CACHED_OUTPUT_CHANNELS: OutputChannel[] = new Array<OutputChannel>();
+
+export const DEFAULT_EXECUTE_LINK_TEXT = '^ execute';
 
 export interface ITutorial {
 	name: string;
@@ -462,4 +466,26 @@ export async function removeTutorialByNameAndCategory(node : TutorialNode ) : Pr
 		refreshTreeview();
 	}
 	return success;
+}
+
+export function getInsertLFForCLILinkSetting() : boolean {
+	return workspace.getConfiguration().get(DIDACT_CLI_LINK_LF_SETTING, true);
+}
+
+export function getLinkTextForCLILinkSetting() : string {
+	const value = workspace.getConfiguration().get(DIDACT_CLI_LINK_TEXT_SETTING, DEFAULT_EXECUTE_LINK_TEXT);
+	if (value && value.trim().length > 0) {
+		return value;
+	}
+	return DEFAULT_EXECUTE_LINK_TEXT;
+}
+
+// for testing
+export async function setInsertLFForCLILinkSetting(flag: boolean): Promise<void> {
+	await workspace.getConfiguration().update(DIDACT_CLI_LINK_LF_SETTING, flag);
+}
+
+// for testing
+export async function setLinkTextForCLILinkSetting(text: string | undefined): Promise<void> {
+	await workspace.getConfiguration().update(DIDACT_CLI_LINK_TEXT_SETTING, text);
 }

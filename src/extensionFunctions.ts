@@ -28,12 +28,11 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
-import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
 const url = require('url-parse');
-const EDITOR_OPENED_TIMEOUT = 3000;
 
 // command IDs
 export const SCAFFOLD_PROJECT_COMMAND = 'vscode.didact.scaffoldProject';
@@ -41,6 +40,7 @@ export const OPEN_TUTORIAL_COMMAND = 'vscode.didact.openTutorial';
 export const START_DIDACT_COMMAND = 'vscode.didact.startDidact';
 export const START_TERMINAL_COMMAND = 'vscode.didact.startTerminalWithName';
 export const SEND_TERMINAL_SOME_TEXT_COMMAND = 'vscode.didact.sendNamedTerminalAString';
+export const SEND_TERMINAL_SOME_TEXT_COMMAND_NO_LF = 'vscode.didact.sendNamedTerminalAStringNoLF';
 export const REQUIREMENT_CHECK_COMMAND = 'vscode.didact.requirementCheck';
 export const EXTENSION_REQUIREMENT_CHECK_COMMAND = 'vscode.didact.extensionRequirementCheck';
 export const WORKSPACE_FOLDER_EXISTS_CHECK_COMMAND = 'vscode.didact.workspaceFolderExistsCheck';
@@ -185,10 +185,10 @@ export async function startTerminal(...rest: any[]): Promise<void>{ //name:strin
 	}
 }
 
-export async function showAndSendText(terminal: vscode.Terminal, text:string): Promise<void> {
+export async function showAndSendText(terminal: vscode.Terminal, text:string, sendLF = true): Promise<void> {
 	if (terminal) {
 		terminal.show();
-		terminal.sendText(text);
+		terminal.sendText(text, sendLF);
 	}
 }
 
@@ -220,15 +220,24 @@ export function findTerminal(name: string) : vscode.Terminal | undefined {
 }
 
 // send a message to a named terminal
-export async function sendTerminalText(name:string, text:string): Promise<void> {
+export async function sendTerminalText(name:string, text:string, sendLF = true): Promise<void> {
 	let terminal : vscode.Terminal | undefined = findTerminal(name);
 	if (!terminal) {
 		terminal = vscode.window.createTerminal(name);
 	}
 	if (terminal) {
-		showAndSendText(terminal, text);
+		showAndSendText(terminal, text, sendLF);
 	}
-	sendTextToOutputChannel(`Sent terminal ${name} the text ${text}`);
+	const msg = `Sent terminal ${name} the text ${text}`;
+	if (sendLF) {
+		sendTextToOutputChannel(msg + ` with LF`);
+	} else {
+		sendTextToOutputChannel(msg);
+	}
+}
+
+export async function sendTerminalTextNoLF(name:string, text:string): Promise<void> {
+	return sendTerminalText(name, text, false);
 }
 
 export async function sendTerminalCtrlC(name:string): Promise<void> {
@@ -1137,6 +1146,22 @@ export async function handleVSCodeUri(uri:vscode.Uri | undefined) : Promise<void
 	}
 }
 
+// for testing purposes
+export function getDidactLinkForSelectedText(selectedText : string, isAdoc : boolean) : string {
+	const encodedText = encodeURI(selectedText);
+	const linkText = getLinkTextForCLILinkSetting();
+	const linkUseLF = getInsertLFForCLILinkSetting();
+	let commandToUse = 'vscode.didact.sendNamedTerminalAString';
+	if(!linkUseLF) {
+		commandToUse = 'vscode.didact.sendNamedTerminalAStringNoLF';
+	}
+	let templatedLink = ` ([${linkText}](didact://?commandId=${commandToUse}&text=newTerminal$$${encodedText}))`;
+	if (isAdoc) {
+		templatedLink = ` link:didact://?commandId=${commandToUse}&text=newTerminal$$${encodedText}[(${linkText})]`;
+	}
+	return templatedLink;
+}
+
 export async function convertSelectionToCLILinkAndInsertAfterSelection() : Promise<void> {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
@@ -1147,12 +1172,8 @@ export async function convertSelectionToCLILinkAndInsertAfterSelection() : Promi
 		const selection = vscode.window.activeTextEditor?.selection;
 		const selectedText = vscode.window.activeTextEditor?.document.getText(selection);
 		if (selectedText && selectedText.trim().length > 0) {
-			const encodedText = encodeURI(selectedText);
 			const isAdoc = isAsciiDoc(editor.document.uri?.toString());
-			let templatedLink = ` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$${encodedText}))`;
-			if (isAdoc) {
-				templatedLink = ` link:didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$${encodedText}[(^ execute)]`;
-			}
+			const templatedLink = getDidactLinkForSelectedText(selectedText, isAdoc);
 			await insertTextAtFirstWhitespacePastCurrentSelection(templatedLink);
 		}
 	}

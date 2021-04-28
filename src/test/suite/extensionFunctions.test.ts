@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as extensionFunctions from '../../extensionFunctions';
 import { handleExtFilePath, handleProjectFilePath } from '../../commandHandler';
 import * as path from 'path';
-import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels } from '../../utils';
+import { removeFilesAndFolders, getCachedOutputChannel, getCachedOutputChannels, setInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, setLinkTextForCLILinkSetting, DEFAULT_EXECUTE_LINK_TEXT } from '../../utils';
 import { beforeEach, after, afterEach } from 'mocha';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
@@ -317,6 +317,56 @@ suite('Extension Functions Test Suite', () => {
 			expect.fail("Editor did not open");
 		}
 	});
+
+	test('verify inserted link text for markdown CLI and default send terminal command', async() => {
+		const selectedText = `echo The quick brown fox markdown`;
+		await setInsertLFForCLILinkSetting(true); // reset default
+		const linkText = getLinkTextForCLILinkSetting();
+		const generatedText = extensionFunctions.getDidactLinkForSelectedText(selectedText, false);
+		const encodedText = encodeURI(selectedText);
+		const defaultCommandToUse = extensionFunctions.SEND_TERMINAL_SOME_TEXT_COMMAND;
+		const expectedLink = ` ([${linkText}](didact://?commandId=${defaultCommandToUse}&text=newTerminal$$${encodedText}))`;
+		expect(generatedText.trim()).to.deep.equal(expectedLink.trim());
+	});
+
+	test('verify inserted link text for adoc CLI and LF send terminal command setting set', async() => {
+		const selectedText = `echo The quick brown fox adoc`;
+		await setInsertLFForCLILinkSetting(false);
+		const linkText = getLinkTextForCLILinkSetting();
+		const generatedText = extensionFunctions.getDidactLinkForSelectedText(selectedText, true);
+		const encodedText = encodeURI(selectedText);
+		const defaultCommandToUse = extensionFunctions.SEND_TERMINAL_SOME_TEXT_COMMAND_NO_LF;
+		const expectedLink = ` link:didact://?commandId=${defaultCommandToUse}&text=newTerminal$$${encodedText}[(${linkText})]`;
+		await setInsertLFForCLILinkSetting(true); // reset default
+		expect(generatedText.trim()).to.deep.equal(expectedLink.trim());
+	});
+
+	test('verify altered link text appears in generated CLI link', async() => {
+		const selectedText = `echo The quick brown fox`;
+		await setInsertLFForCLILinkSetting(true); // reset default
+		const newLinkText = `**link**`;
+		await setLinkTextForCLILinkSetting(newLinkText);
+		const generatedText = extensionFunctions.getDidactLinkForSelectedText(selectedText, false);
+		const encodedText = encodeURI(selectedText);
+		const defaultCommandToUse = extensionFunctions.SEND_TERMINAL_SOME_TEXT_COMMAND;
+		const expectedLink = ` ([${newLinkText}](didact://?commandId=${defaultCommandToUse}&text=newTerminal$$${encodedText}))`;
+		await setLinkTextForCLILinkSetting(DEFAULT_EXECUTE_LINK_TEXT); // reset default
+		expect(generatedText.trim()).to.deep.equal(expectedLink.trim());
+	});
+
+	test('validate that if we clear the link text setting, it resets to default', async() => {
+		await setLinkTextForCLILinkSetting(DEFAULT_EXECUTE_LINK_TEXT); // reset default
+		await setLinkTextForCLILinkSetting(undefined);
+		const linkTextFromSettings = getLinkTextForCLILinkSetting();
+		await setLinkTextForCLILinkSetting(DEFAULT_EXECUTE_LINK_TEXT); // reset default
+		expect(linkTextFromSettings).to.equal(DEFAULT_EXECUTE_LINK_TEXT);
+
+		await setLinkTextForCLILinkSetting(''); // blank
+		const linkTextFromSettings2 = getLinkTextForCLILinkSetting();
+		await setLinkTextForCLILinkSetting(DEFAULT_EXECUTE_LINK_TEXT); // reset default
+		expect(linkTextFromSettings2).to.equal(DEFAULT_EXECUTE_LINK_TEXT);
+	});
+
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
