@@ -1,8 +1,8 @@
-# The Command Line Interface (CLI)
+# The Command Line Interface (CLI) for Linux
 
-If you've written any kind of program on a computer, you've probably had to deal with a command line interface (CLI). Usually you interact with your computer's CLI in a terminal window, typing commands and examining the results. VSCode has a built-in terminal (also known as the integrated terminal) that we will use to explore the CLI a bit. 
+If you've written any kind of program on a computer, you've probably had to deal with a command line interface (CLI). Usually you interact with your computer's CLI in a terminal window, typing commands and examining the results. VS Code has a built-in terminal (also known as the integrated terminal) that we will use to explore the CLI a bit. 
 
-Let's open an integrated terminal in VSCode and see what we can do!
+Let's open an integrated terminal in VS Code and see what we can do!
 
 ## A Word about ▶️ and `^ execute` Links
 
@@ -24,11 +24,11 @@ You should see that `-n` is an optional flag that means "do not output the trail
 
 Try the following commands, hit enter, and watch the results to see how each differs. (The `^ execute` link types the text and hits Enter if you just want to see what happens!)
 
-* `echo "hello world"` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20%22hello%20world%22))
-* `echo -n hello world` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20-n%20hello%20world))
-* `echo hello world -n` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20hello%20world%20-n))
-* `echo "hello world" -n` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20%22hello%20world%22%20-n))
-* `echo "-n hello world"` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20%22-n%20hello%20world%22))
+1. `echo "hello world"` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20%22hello%20world%201%22))
+2. `echo -n hello world 2` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20-n%20hello%20world%202))
+3. `echo hello world 3 -n` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20hello%20world%203%20-n))
+4. `echo "hello world 4" -n` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20%22hello%20world%204%22%20-n))
+5. `echo "-n hello world 5"` ([^ execute](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=newTerminal$$echo%20%22-n%20hello%20world%205%22))
 
 ## Creating Directories and Files
 
@@ -72,7 +72,7 @@ Remember the `echo` command? Let's use it in a new way!
 
 Type `echo "some sample text" > sample.txt`, ([▶️](didact://?commandId=vscode.didact.sendNamedTerminalAStringNoLF&text=newTerminal$$echo%20%22some%20sample%20text%22%20%3E%20sample.txt)) and hit Enter. This creates a new file and puts some text into it from the start.
 
-We can then use the `cat` command to show the file contents. Type `cat sample.txt` ([▶️](didact://?commandId=vscode.didact.sendNamedTerminalAStringNoLF&text=newTerminal$$%60cat%20sample.txt)) to print out the contents of our file. You should see `Some example text` show up on the very next line!
+We can then use the `cat` command to show the file contents. Type `cat sample.txt` ([▶️](didact://?commandId=vscode.didact.sendNamedTerminalAStringNoLF&text=newTerminal$$cat%20sample.txt)) to print out the contents of our file. You should see `Some example text` show up on the very next line!
 
 ## Further Exploration
 

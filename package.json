@@ -156,7 +156,7 @@
 			},
 			{
 				"command": "vscode.didact.processVSCodeLink",
-				"title": "Didact: Process VSCode link from web"
+				"title": "Didact: Process VS Code link from web"
 			},
 			{
 				"command": "vscode.didact.copyTextToCLI",

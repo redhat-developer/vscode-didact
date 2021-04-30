@@ -15,7 +15,7 @@
 
 </p><br/>
 
-<p align="center"><img src="./images/didact-sample-tutorial-29-APR-2021.gif" alt="CLI Tutorial Example" width="100%"/></p><br/>
+<p align="center"><img src="./images/didact-sample-tutorial-30-APR-2021.gif" alt="CLI Tutorial Example" width="100%"/></p><br/>
 
 # Didact offers two avenues to success
 
