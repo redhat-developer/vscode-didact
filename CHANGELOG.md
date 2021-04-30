@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.4.1
+
+- TBD
+
 ## 0.4.0
 
 - Didact Tutorial Registry Improvements
