@@ -15,7 +15,7 @@
 
 </p><br/>
 
-<p align="center"><img src="./images/open-new-terminal-example.gif" alt="Three Step Didact Tutorial Example" width="100%"/></p><br/>
+<p align="center"><img src="./images/didact-sample-tutorial-30-APR-2021.gif" alt="CLI Tutorial Example" width="100%"/></p><br/>
 
 # Didact offers two avenues to success
 
@@ -44,9 +44,11 @@
 
 ![Open New Terminal Example](./images/open-new-terminal-example.gif)
 
-## Additional Details
+## Available Documentation (Updated!)
 
-Check out the Wiki pages [here](https://github.com/redhat-developer/vscode-didact/wiki/Welcome-to-Didact!) for details about how to use Didact, write your first tutorial, format links, and much more. 
+Our documentation started in these [wiki pages](https://github.com/redhat-developer/vscode-didact/wiki/Welcome-to-Didact!) but are now located in GitHub pages [here](https://redhat-developer.github.io/vscode-didact/). Included are details about all of Didact's capabilities and many examples to get you started.
+
+>Note: The [wiki pages](https://github.com/redhat-developer/vscode-didact/wiki/Welcome-to-Didact!) are deprecated and will be removed in a future release. Please use the [GitHub pages](https://redhat-developer.github.io/vscode-didact/) from release 0.4.0 forward.
 
 For a list of available commands, check out the [Command Reference](examples/commands.reference.md).
 

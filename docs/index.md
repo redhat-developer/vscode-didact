@@ -70,3 +70,4 @@ Let's get started!
 * [Troubleshooting](https://redhat-developer.github.io/vscode-didact/troubleshooting)
 * [FAQ](https://redhat-developer.github.io/vscode-didact/FAQ)
 * [Technical Details](https://redhat-developer.github.io/vscode-didact/tech-details)
+* [Available Demos and Examples](https://redhat-developer.github.io/vscode-didact/available-demos)
