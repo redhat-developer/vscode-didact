@@ -477,7 +477,10 @@ function showFileUnavailable(error : any): void {
 	if (_didactFileUri) {
 		vscode.window.showErrorMessage(`File at ${_didactFileUri.toString()} is unavailable`);
 	}
-	console.log(error);
+	if (error instanceof Error) {
+		const err = error as Error;
+		console.log(err.message);
+	}
 }
 
 // retrieve the didact content to render as HTML

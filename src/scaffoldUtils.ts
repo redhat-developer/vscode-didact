@@ -17,6 +17,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { delay } from './utils';
 
 // prototypical sample project with a few folders and a file with text content provided
 export function createSampleProject(): JSON {
@@ -75,22 +76,20 @@ export async function createFoldersFromJSON(json: any, jsonpath: vscode.Uri): Pr
 			throw new Error('No workspace folder. Workspace must have at least one folder before Didact scaffolding can begin. Add a folder, restart your workspace, and then try again.');
 		}
 		let rootPath: string | undefined;
-		await vscode.commands.executeCommand('workbench.view.explorer').then ( async () => {
-			await vscode.commands.executeCommand('copyFilePath').then ( async () => {
-				await vscode.env.clipboard.readText().then((copyPath) => {
-					try {
-						if (fs.existsSync(copyPath)) {
-							if (fs.lstatSync(copyPath).isDirectory()) {
-								rootPath = copyPath;
-							} else {
-								rootPath = path.dirname(copyPath);
-							}
-						}
-					} catch (err) {
-						console.log(err);
+		await vscode.commands.executeCommand('workbench.view.explorer');
+		await vscode.commands.executeCommand('copyFilePath');
+		await vscode.env.clipboard.readText().then((copyPath) => {
+			try {
+				if (fs.existsSync(copyPath)) {
+					if (fs.lstatSync(copyPath).isDirectory()) {
+						rootPath = copyPath;
+					} else {
+						rootPath = path.dirname(copyPath);
 					}
-				});
-			});	
+				}
+			} catch (err) {
+				console.log(err);
+			}
 		});
 		if (!rootPath) {
 			if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]) {
