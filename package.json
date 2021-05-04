@@ -168,7 +168,7 @@
 				"command": "vscode.didact.startDidact",
 				"key": "ctrl+shift+v",
 				"mac": "cmd+shift+v",
-				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](adoc)$/"
 			},
 			{
 				"command": "vscode.didact.copyTextToCLI",
@@ -258,6 +258,14 @@
 					".didact.adoc"
 				]
 			}
+		],
+		"markdown.previewStyles": [
+			"https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css",
+			"./media/webviewslim.css"
+		],
+		"markdown.markdownItPlugins": true,
+		"markdown.previewScripts": [
+			"./media/main.js"
 		]
 	},
 	"files.associations": {

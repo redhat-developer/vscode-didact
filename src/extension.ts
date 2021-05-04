@@ -35,7 +35,7 @@ export const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 export const didactTutorialsProvider = new DidactNodeProvider();
 let didactTreeView : vscode.TreeView<SimpleNode>;
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
+export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	
 	extensionFunctions.initialize(context);
 
@@ -126,6 +126,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	if (openAtStartup) {
 		await extensionFunctions.openDidactWithDefault();
 	}
+
+	return {
+		extendMarkdownIt(md: any) {
+			const taskLists = require('markdown-it-task-lists');
+			const markdownItAttrs = require('markdown-it-attrs');
+			return md.set({ typographer: true })
+				.set({ linkify: true })
+				.enable('linkify')
+				.enable('replacements')
+				.enable('strikethrough')
+				.enable('table')
+				.use(taskLists, {enabled: true, label: true})
+				.use(markdownItAttrs, {});
+		}
+	  };
 }
 
 function createIntegrationsView(): void {
