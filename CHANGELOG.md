@@ -4,7 +4,8 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.4.1
 
-- TBD
+- Integrated with the built-in VS Code Markdown Preview (Ctrl+Shift+V). Note that Didact links do not work from the built-in preview.
+  - Changed "start in Didact" hotkeys to `Ctrl/Cmd+Alt+d`
 
 ## 0.4.0
 
