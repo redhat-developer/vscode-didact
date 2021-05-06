@@ -52,8 +52,6 @@ Or [click here](didact://?commandId=workbench.action.showCommands) to see the Co
 
 For simple commands, that's all that necessary, so save your file.
 
-To see your link in action, just right-click on the Didact file (*.didact.md or *.didact.adoc) and select **Start Didact Tutorial from File** from the context menu. (Or use the keyboard shortcut Ctrl/Cmd+Alt+d!)
-
 To open and test your Didact file, right-click on the file (*.didact.md or *.didact.adoc) and select `Start Didact Tutorial from File` from the context menu or launch the Didact window while editing the file with `Ctrl+Alt+D` or `Cmd+Alt+D`.
 
 If you click the `click here` link in your file, it should automatically open the Command Palette for you, just like we wanted it to.
