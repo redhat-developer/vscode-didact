@@ -58,6 +58,8 @@ export class DidactPanel {
 		const iconDirPath = path.dirname(localIconPath.fsPath);
 		localResourceRoots.push(Uri.file(iconDirPath));
 
+		localResourceRoots.push(Uri.file(path.join(extPath, "quickstartsPreview")));
+
 		const panel = window.createWebviewPanel(
 			VIEW_TYPE, this.defaultTitle, viewColumn,
 			{

@@ -1,16 +1,15 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
 import * as path from "path";
 import { load as yamlLoad } from "js-yaml";
 import { Base64 } from 'js-base64';
 import * as extensionFunctions from "./extensionFunctions";
 
 export function getYamlContent(text : string, uri:vscode.Uri) : string {
-	const encodedText = encodeContent(text, '');
+	const encodedText = encodeContent(text, uri.toString());
 	return getWebviewContent(encodedText, uri.toString());	
 }
 
-function encodeContent(text: string, fileName: string): any {
+function encodeContent(text: string, fileName: string) {
 	if (fileName.endsWith(".yaml")) {
 		return Base64.encode(JSON.stringify(yamlLoad(text)));
 	}
@@ -20,7 +19,8 @@ function encodeContent(text: string, fileName: string): any {
 function getWebviewContent(config: string, filePath: string): string {
 	// Local path to main script run in the webview
 	const reactAppPathOnDisk = vscode.Uri.file(
-	  path.join(extensionFunctions.getContext().extensionPath, "quickstartsPreview", "quickstartsPreview.js")
+		path.join(extensionFunctions.getContext().extensionPath, "quickstartsPreview", "quickstartsPreview.js")
+		// path.join(this._extensionPath, "quickstartsPreview", "quickstartsPreview.js")
 	);
 	const reactAppUri = reactAppPathOnDisk.with({ scheme: "vscode-resource" });
 	const html = `<!DOCTYPE html>
