@@ -40,7 +40,7 @@
 * In AsciiDoc, type `link:[Open a new terminal]`, put the cursor after `link:`, and press `Ctrl+Space`.
 4. Select `Start new Didact command link`.
 5. Choose a command from the hundreds VS Code has available (like `workbench.action.terminal.new`) and press `Enter`.
-6. Press `Ctrl+Alt+V` to view your new Didact tutorial and click the link you created! Done!
+6. Press `Ctrl/Cmd+Alt+D` to view your new Didact tutorial and click the link you created! Done!
 
 ![Open New Terminal Example](./images/open-new-terminal-example.gif)
 
