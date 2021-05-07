@@ -271,7 +271,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run clean && npm run compile",
-		"compile": "tsc -p ./",
+		"compile": "npm run dev:compile",
 		"clean": "rm -rf out || rmdir out /s /q && rm -rf quickstartsPreview",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
