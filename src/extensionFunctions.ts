@@ -29,6 +29,7 @@ import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
 import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { getYamlContent } from './yamlUtils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -549,6 +550,12 @@ export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined
 				baseDir = path.dirname(uri.fsPath);
 			}
 			return parseADtoHTML(content, baseDir);
+		} else if (extname.localeCompare('.yaml') === 0) {
+			let baseDir : string | undefined = undefined;
+			if (uri.scheme.trim().startsWith('file')) {
+				baseDir = path.dirname(uri.fsPath);
+			}
+			return getYamlContent(content, uri);
 		} else if (extname.localeCompare('.md') === 0) {
 			return parseMDtoHTML(content);
 		} else {
