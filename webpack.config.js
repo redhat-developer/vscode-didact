@@ -39,32 +39,11 @@ module.exports = {
       {
         test: /\.(png|jpe?g|webp|gif|svg)$/,
         loader: "null-loader"
-        // use: {
-        //   loader: "url-loader",
-        //   options: {
-        //     limit: 1024,
-        //     fallback: "file-loader",
-        //     name: "[name].[contenthash].[ext]",
-        //     outputPath: "images/",
-        //   },
-        // },
       },
       {
         test: /.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
         loader: "null-loader"
-        // use: [
-        //   {
-        //     loader: "file-loader",
-        //     options: {
-        //       name: "[name].[ext]",
-        //       outputPath: "fonts/",
-        //     },
-        //   },
-        // ],
       },
     ],
   },
-  // performance: {
-  //   hints: false,
-  // },
 };

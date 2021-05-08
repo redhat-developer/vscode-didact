@@ -20,7 +20,6 @@ function getWebviewContent(config: string, filePath: string): string {
 	// Local path to main script run in the webview
 	const reactAppPathOnDisk = vscode.Uri.file(
 		path.join(extensionFunctions.getContext().extensionPath, "quickstartsPreview", "quickstartsPreview.js")
-		// path.join(this._extensionPath, "quickstartsPreview", "quickstartsPreview.js")
 	);
 	const scriptPathOnDisk = vscode.Uri.file(
 		path.resolve(extensionFunctions.getContext().extensionPath, 'media', 'main.js')
