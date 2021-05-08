@@ -9,7 +9,7 @@ import {
   QuickStartCatalogPage,
   useValuesForQuickStartContext,
   QuickStartContext,
-  useLocalStorage,
+  useLocalStorage
 } from "@cloudmosaic/quickstarts";
 import { Base64 } from "js-base64";
 
@@ -20,18 +20,18 @@ export const QuickStartsPreview = ({
 }: {
   initialData: string;
   filePath: string;
-  vscode: any;
+  vscode?: any;
 }) => {
   const decodedConfig = Base64.decode(config);
   // console.log(decodedConfig);
   const allQuickStarts = [];
   allQuickStarts.push(JSON.parse(decodedConfig));
   const [activeQuickStartID, setActiveQuickStartID] = useLocalStorage(
-    "quickstartId",
+    "vsQuickstartId",
     ""
   );
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage(
-    "quickstarts",
+    "vsQuickstarts",
     {}
   );
   const valuesForQuickstartContext = useValuesForQuickStartContext({
@@ -43,8 +43,10 @@ export const QuickStartsPreview = ({
   });
   return (
     <QuickStartContext.Provider value={valuesForQuickstartContext}>
-      <QuickStartDrawer>
-        <QuickStartCatalogPage />
+      <QuickStartDrawer fullWidth>
+        <div className="pf-c-page">
+          <QuickStartCatalogPage quickStarts={allQuickStarts} showTitle={false} />
+        </div>
       </QuickStartDrawer>
     </QuickStartContext.Provider>
   );

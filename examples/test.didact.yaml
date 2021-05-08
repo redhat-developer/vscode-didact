@@ -1,64 +1,135 @@
 metadata:
-  name: add-healthchecks
+  name: didact-quickstarts
 spec:
-  displayName: Adding health checks to your sample application
+  displayName: Using didact with quick starts
   durationMinutes: 10
   icon: ''
-  description: You just created a sample application. Now, let’s add health checks
-    to it.
-  prerequisites: [You completed the "Getting started with a sample" quick start.]
+  description: Let's use didact with quick starts
+  prerequisites: [You learned how to use didact commands]
   introduction: |-
-    ### This quick start shows you how to add health checks to your sample application.
-    You should have previously created the **sample-app** application and **nodejs-sample** deployment using the **Get started with a sample** quick start. If you haven't, you may be able to follow these tasks with any existing deployment without configured health checks.
+    ### This quick start shows you how to use didact commands in quick starts
+    Learn more about didact here: [Didact](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact)
   tasks:
-    - title: Viewing the details of your sample application
+    - title: Clipboard Commands
       description: |-
-        ### To view the details of your sample application:
-        1. Go to the project your sample application was created in.
-        2. In the **</> Developer** perspective, go to **Topology**.
-        3. Click on the **nodejs-sample** deployment to view its details.
+        [Copy text to clipboard](didact://?commandId=vscode.didact.copyToClipboardCommand&text=The%20fox%20jumped%20over%20the%20lazy%20dog.)
 
-        A side panel is displayed containing the details of your sample application.
+        [Copy text from file to clipboard](didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&extFilePath=redhat.vscode-didact/examples/clipboardTextToTerminal.txt)
       review:
         instructions: |-
-          #### To verify you are viewing the details of your sample application:
-          Is the side panel titled **nodejs-sample**?
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
         failedTaskHelp: This task isn’t verified yet. Try the task again.
       summary:
-        success: You have viewed the details of your sample app!
+        success: You have executed didact commands!
         failed: Try the steps again.
-    - title: Verifying that there are no health checks
+    - title: Output Channel Commands
       description: |-
-        ### To verify that there your sample application has no health checks configured:
-        1. View the information in the **Resources** tab in the side panel.
+        [Open Named Output Channel](didact://?commandId=vscode.didact.openNamedOutputChannel&text=newOutputChannel)
+
+        [Send Text to Named Output Channel](didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!$$newOutputChannel)
       review:
         instructions: |-
-          #### To verify there are no health checks configured:
-          Do you see an inline alert stating that **nodejs-sample** does not have health checks?
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
         failedTaskHelp: This task isn’t verified yet. Try the task again.
       summary:
-        success: You have verified that there are no existing health checks!
+        success: You have executed didact commands!
         failed: Try the steps again.
-    - title: Adding health checks to your sample
+    - title: Project Scaffolding Commands
       description: |-
-        ### To add health checks to your sample:
-        1. Add health checks to your **nodejs-sample** deployment in one of the following ways: (a) On the side panel, click on the **Actions** menu, where you will see an **Add Health Checks** menu item or (b) Click on the **Add Health Checks** link on the inline notification in the side panel.
-        2. In the Add Health Checks form, click on the **Add Readiness Probe** link.  Leave the default values, and click on the check to add the Readiness Probe.
-        3. Click on the **Add Liveness Probe** link.  Leave the default values, and click on the check to add the Liveness Probe.
-        4. Click on the **Add Startup Probe** link.  Leave the default values, and click on the check to add the Startup Probe.
-        5. Click **Add** when you’re done.
-
-        You will be brought back to the Topology View.
+        [Create the tutorial project](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/create_extension/md-tutorial.project.didact.json)
       review:
         instructions: |-
-          #### Verify that health checks are now configured:
-          Is the inline notification gone?
-        failedTaskHelp:
-          This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application-health.html#odc-adding-health-checks)
-          about this topic.
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
       summary:
-        success: You have added health checks to your sample app!
+        success: You have executed didact commands!
         failed: Try the steps again.
-  conclusion: Your sample application now has health checks. To ensure that your application
-    is running correctly, take the **Monitor your sample application** quick start.
-  nextQuickStart: [template-id]
+    - title: Requirements Commands
+      description: |-
+        [Validate all Requirements](didact://?commandId=vscode.didact.validateAllRequirements)
+
+        | Requirement                                                                                                                                                                    | Status                                            |
+        |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|
+        | [Red Hat Camel Extension Pack is Installed](didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack) | *Status: unknown*{#extension-requirement-status} |
+        | [Workspace has at least one root folder](didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status) | *Status: unknown*{#workspace-folder-status} |
+        | [CLI command is successful](didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-status$$echo%20blah) | *Status: unknown*{#cli-requirement-status} |
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Terminal Commands
+      description: |-
+        [Open the Named Terminal](didact://?commandId=vscode.didact.startTerminalWithName&text=NamedTerminal)
+
+        [Send Named Terminal a String](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=NamedTerminal$$echo%20And%20The%20Bunnymen)
+
+        [Send Named Terminal a Ctrl+C](didact://?commandId=vscode.didact.sendNamedTerminalCtrlC&text=NamedTerminal)
+
+        [Close the Named Terminal](didact://?commandId=vscode.didact.closeNamedTerminal&text=NamedTerminal)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Tutorial Commands
+      description: |-
+        [Open default Didact URL](didact://?commandId=vscode.didact.openTutorial)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Utility Commands
+      description: |-
+        [Create a workspace folder -- useful when in a workspace with no folder](didact://?commandId=vscode.didact.createWorkspaceFolder)
+
+        [Verify all Commands](didact://?commandId=vscode.didact.verifyCommands)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: View Commands
+      description: |-
+        [Reload the Tutorials view](didact://?commandId=vscode.didact.reload)
+
+        [Set focus to Tutorials view](didact://?commandId=didact.tutorials.focus)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Useful VS Code Commands
+      description: |-
+        [Open file in folder](didact://?commandId=vscode.open&projectFilePath=first-tutorial.didact.md)
+
+        [Start the task named 'start.task'](didact://?commandId=workbench.action.tasks.runTask&text=start.task)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+  conclusion: You have gone through a didact-powered quick start!
+  nextQuickStart: []

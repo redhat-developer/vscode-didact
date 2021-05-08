@@ -308,7 +308,7 @@
 		"y18n": ">=4.0.1"
 	},
 	"dependencies": {
-		"@cloudmosaic/quickstarts": "0.0.6",
+		"@cloudmosaic/quickstarts": "0.0.23",
 		"@patternfly/patternfly": "^4.102.2",
 		"@patternfly/react-catalog-view-extension": "^4.11.7",
 		"@types/download": "^6.2.4",

@@ -12,9 +12,9 @@ declare global {
   }
 }
 
-const vscode = window.acquireVsCodeApi();
+// const vscode = window.acquireVsCodeApi();
 
 ReactDOM.render(
-  <QuickStartsPreview vscode={vscode} initialData={window.initialData} filePath={window.filePath} />,
+  <QuickStartsPreview /*vscode={vscode}*/ initialData={window.initialData} filePath={window.filePath} />,
   document.getElementById("root")
 );

@@ -22,7 +22,11 @@ function getWebviewContent(config: string, filePath: string): string {
 		path.join(extensionFunctions.getContext().extensionPath, "quickstartsPreview", "quickstartsPreview.js")
 		// path.join(this._extensionPath, "quickstartsPreview", "quickstartsPreview.js")
 	);
+	const scriptPathOnDisk = vscode.Uri.file(
+		path.resolve(extensionFunctions.getContext().extensionPath, 'media', 'main.js')
+	);
 	const reactAppUri = reactAppPathOnDisk.with({ scheme: "vscode-resource" });
+	const mainScriptUri = scriptPathOnDisk.with({ scheme: "vscode-resource" });
 	const html = `<!DOCTYPE html>
 	<html lang="en">
 	<head>
@@ -35,7 +39,7 @@ function getWebviewContent(config: string, filePath: string): string {
 							 script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:;
 							 style-src vscode-resource: 'unsafe-inline';">
 		<script>
-		  window.acquireVsCodeApi = acquireVsCodeApi;
+		  // window.acquireVsCodeApi = acquireVsCodeApi;
 		  window.initialData = "${config}";
 		  window.filePath = "${filePath}";
 		</script>
@@ -43,6 +47,7 @@ function getWebviewContent(config: string, filePath: string): string {
 	<body>
 		<div id="root"></div>
 		<script src="${reactAppUri}"></script>
+		<script src="${mainScriptUri}"></script>
 	</body>
 	</html>`;
 	return html;
