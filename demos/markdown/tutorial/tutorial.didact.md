@@ -19,7 +19,7 @@ Didact gives you a way of writing those same files but gives them a way to lever
 3. Create a new AsciiDoc or Markdown file and add “didact” to the file extension (`myfile.didact.adoc`, `myotherfile.didact.md`) [(Click here to create your first Didact markdown file named `myfirst.didact.md`.)](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/demos/markdown/tutorial/didactmdfile.json) [(Then click here to open the new `myfirst.didact.md` file.)](didact://?commandId=vscode.open&projectFilePath=didactmdfile.json)
 4. Start writing!
 5. When you get to a point where you want the user to click on a link to do something active, write a Didact link (we'll cover that in the next section).
-6. To open and test your Didact file, right-click on the file and select `Start Didact Tutorial from File` from the context menu or launch the Didact window while editing the file with `Ctrl+Shift+V` or `Cmd+Shift+V`.
+6. To open and test your Didact file, right-click on the file and select `Start Didact Tutorial from File` from the context menu or launch the Didact window while editing the file with `Ctrl+Alt+D` or `Cmd+Alt+D`.
 6. Repeat steps 4-6 until you’re done!
 
 ## The Basics of Didact
