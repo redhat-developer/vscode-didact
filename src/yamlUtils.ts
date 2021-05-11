@@ -5,9 +5,11 @@ import { Base64 } from 'js-base64';
 import * as extensionFunctions from "./extensionFunctions";
 
 export function getYamlContent(text : string, uri:vscode.Uri) : string {
+	extensionFunctions.sendTextToOutputChannel(`Yaml text (${text}) and uri (${uri})`);
 	const encodedText = encodeContent(text, uri.toString());
+	extensionFunctions.sendTextToOutputChannel(`Yaml encodedText (${encodedText})`);
 	const htmlMe = getWebviewContent(encodedText, uri.toString());
-	console.log(`Yaml -----\n ${htmlMe}`);
+	extensionFunctions.sendTextToOutputChannel(`Yaml html (${htmlMe})`);
 	return getWebviewContent(encodedText, uri.toString());	
 }
 
