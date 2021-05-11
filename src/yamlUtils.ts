@@ -6,18 +6,15 @@ import * as extensionFunctions from "./extensionFunctions";
 
 export function getYamlContent(text : string, uri:vscode.Uri) : string {
 	//extensionFunctions.sendTextToOutputChannel(`Yaml text (${text}) and uri (${uri})`);
-	const encodedText = encodeContent(text, uri.toString());
+	const encodedText = encodeContent(text);
 	//extensionFunctions.sendTextToOutputChannel(`Yaml encodedText (${encodedText})`);
 	const htmlMe = getWebviewContent(encodedText, uri.toString());
 	//extensionFunctions.sendTextToOutputChannel(`Yaml html (${htmlMe})`);
 	return getWebviewContent(encodedText, uri.toString());	
 }
 
-function encodeContent(text: string, fileName: string) {
-	if (fileName.endsWith(".yaml")) {
-		return Base64.encode(JSON.stringify(yamlLoad(text)));
-	}
-	return Base64.encode(text);
+function encodeContent(text: string) {
+	return Base64.encode(JSON.stringify(yamlLoad(text)));
 }
 
 function getWebviewContent(config: string, filePath: string): string {

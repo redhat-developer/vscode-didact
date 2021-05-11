@@ -28,7 +28,7 @@ import { TreeNode } from './nodeProvider';
 import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
-import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
 import { getYamlContent } from './yamlUtils';
 
 const tmp = require('tmp');
@@ -267,13 +267,20 @@ export async function closeTerminal(name:string): Promise<void>{
 }
 
 // reset the didact window to use the default set in the settings
-export async function openDidactWithDefault(): Promise<void>{
+export async function openDidactWithDefault(this: any): Promise<void>{
 	sendTextToOutputChannel(`Starting Didact window with default`);
 
 	didactManager.setContext(extContext);
-	const configuredPath : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
+	const configuredPath : string | undefined = getDefaultUrl();
 	if (configuredPath) {
-		_didactFileUri = vscode.Uri.parse(configuredPath);
+		try {
+			const vsUri = vscode.Uri.parse(configuredPath);
+			if (vsUri) {
+				_didactFileUri = vsUri;
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}
 	if (_didactFileUri) {
 		await didactManager.create(_didactFileUri);
@@ -578,6 +585,8 @@ export async function getDataFromUrl(inurl:string) : Promise<string> {
 			return parseADtoHTML(content);
 		} else if (extname.localeCompare('.md') === 0) {
 			return parseMDtoHTML(content);
+		} else if (extname.localeCompare('.yaml') === 0) {
+			return getYamlContent(content, tempVSUri);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}

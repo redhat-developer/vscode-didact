@@ -271,9 +271,9 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run clean && webpack --mode production",
-		"compile": "webpack --mode development",
+		"compile": "tsc -p ./ && webpack --mode development",
 		"clean": "rm -rf out || rmdir out /s /q && rm -rf quickstartsPreview",
-		"watch": "webpack --mode development --watch",
+		"watch": "tsc -watch -p ./ && webpack --mode development --watch",
 		"pretest": "tsc -p ./",
 		"test": "tsc -p ./ && node ./out/test/runTest.js"
 	},
