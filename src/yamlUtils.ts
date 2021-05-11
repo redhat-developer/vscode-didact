@@ -21,6 +21,9 @@ function encodeContent(text: string, fileName: string) {
 }
 
 function getWebviewContent(config: string, filePath: string): string {
+	const nonce1 = getNonce();
+	const nonce2 = getNonce();
+	
 	// Local path to main script run in the webview
 	const reactAppPathOnDisk = vscode.Uri.file(
 		path.join(extensionFunctions.getContext().extensionPath, "quickstartsPreview", "quickstartsPreview.js")
@@ -49,9 +52,18 @@ function getWebviewContent(config: string, filePath: string): string {
 	</head>
 	<body>
 		<div id="root"></div>
-		<script src="${reactAppUri}"></script>
-		<script src="${mainScriptUri}"></script>
+		<script nonce="${nonce1}" src="${reactAppUri}"></script>
+		<script nonce="${nonce2}" src="${mainScriptUri}"></script>
 	</body>
 	</html>`;
 	return html;
+}
+
+function getNonce() : string {
+	let text = '';
+	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i < 32; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
 }
