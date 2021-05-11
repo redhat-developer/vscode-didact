@@ -1,6 +1,5 @@
 out
-dist
-quickstartsPreview
+quickstartsPreview/
 node_modules
 .vscode-test/
 *.vsix

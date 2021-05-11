@@ -41,7 +41,7 @@
 		"*",
 		"onWebviewPanel:didact"
 	],
-	"main": "./dist/extension",
+	"main": "./out/extension",
 	"contributes": {
 		"configuration": [
 			{
@@ -270,15 +270,12 @@
 		"*.didact.adoc": "asciidoctor"
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run clean && webpack --mode production --config webpack.ext.config.js && webpack --mode production --config webpack.qs.config.js",
-		"compile": "npm run dev:compile",
-		"clean": "rm -rf out || rmdir out /s /q && rm -rf dist && rm -rf quickstartsPreview",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile",
-		"test": "npm run compile && node ./out/test/runTest.js",
-		"dev:compile": "npm run clean && npm-run-all dev:compile:*",
-		"dev:compile:extension": "tsc -p ./",
-		"dev:compile:views": "webpack --mode development"
+		"vscode:prepublish": "npm run clean && webpack --mode production",
+		"compile": "webpack --mode development",
+		"clean": "rm -rf out || rmdir out /s /q && rm -rf quickstartsPreview",
+		"watch": "webpack --mode development --watch",
+		"pretest": "tsc -p ./",
+		"test": "tsc -p ./ && node ./out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.17",
@@ -296,7 +293,6 @@
 		"eslint": "^7.25.0",
 		"mocha": "^8.3.2",
 		"mocha-jenkins-reporter": "^0.4.4",
-		"npm-run-all": "^4.1.5",
 		"null-loader": "^4.0.1",
 		"sinon": "10.0.0",
 		"style-loader": "^2.0.0",

@@ -3,7 +3,6 @@
 .vscode/**
 .vscode-test/**
 docs/**
-out/
 src/
 test Fixture with speci@l chars/**
 test-archive/**
