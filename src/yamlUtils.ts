@@ -21,8 +21,7 @@ function encodeContent(text: string, fileName: string) {
 }
 
 function getWebviewContent(config: string, filePath: string): string {
-	const nonce1 = getNonce();
-	const nonce2 = getNonce();
+	const nonce = getNonce();
 	
 	// Local path to main script run in the webview
 	const reactAppPathOnDisk = vscode.Uri.file(
@@ -42,9 +41,9 @@ function getWebviewContent(config: string, filePath: string): string {
 		<meta http-equiv="Content-Security-Policy"
 					content="default-src 'self';
 							 img-src https:;
-							 script-src 'unsafe-eval' 'unsafe-inline' vscode-resource:;
+							 script-src 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline' vscode-resource:;
 							 style-src vscode-resource: 'unsafe-inline';">
-		<script>
+		 <script>
 		  // window.acquireVsCodeApi = acquireVsCodeApi;
 		  window.initialData = "${config}";
 		  window.filePath = "${filePath}";
@@ -52,8 +51,8 @@ function getWebviewContent(config: string, filePath: string): string {
 	</head>
 	<body>
 		<div id="root"></div>
-		<script nonce="${nonce1}" src="${reactAppUri}"></script>
-		<script nonce="${nonce2}" src="${mainScriptUri}"></script>
+		<script nonce="${nonce}" src="${reactAppUri}"></script>
+		<script nonce="${nonce}" src="${mainScriptUri}"></script>
 	</body>
 	</html>`;
 	return html;
