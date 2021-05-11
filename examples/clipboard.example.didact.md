@@ -1,6 +1,6 @@
 # Clipboard Examples
 
-We asd have several clipboard-related Didact commands:
+We have several clipboard-related Didact commands:
 
 * vscode.didact.copyFileTextToClipboardCommand
 * vscode.didact.copyToClipboardCommand 
