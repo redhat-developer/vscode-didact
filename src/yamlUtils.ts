@@ -6,6 +6,8 @@ import * as extensionFunctions from "./extensionFunctions";
 
 export function getYamlContent(text : string, uri:vscode.Uri) : string {
 	const encodedText = encodeContent(text, uri.toString());
+	const htmlMe = getWebviewContent(encodedText, uri.toString());
+	console.log(`Yaml -----\n ${htmlMe}`);
 	return getWebviewContent(encodedText, uri.toString());	
 }
 
