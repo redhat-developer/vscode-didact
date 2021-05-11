@@ -5,11 +5,11 @@ import { Base64 } from 'js-base64';
 import * as extensionFunctions from "./extensionFunctions";
 
 export function getYamlContent(text : string, uri:vscode.Uri) : string {
-	extensionFunctions.sendTextToOutputChannel(`Yaml text (${text}) and uri (${uri})`);
+	//extensionFunctions.sendTextToOutputChannel(`Yaml text (${text}) and uri (${uri})`);
 	const encodedText = encodeContent(text, uri.toString());
-	extensionFunctions.sendTextToOutputChannel(`Yaml encodedText (${encodedText})`);
+	//extensionFunctions.sendTextToOutputChannel(`Yaml encodedText (${encodedText})`);
 	const htmlMe = getWebviewContent(encodedText, uri.toString());
-	extensionFunctions.sendTextToOutputChannel(`Yaml html (${htmlMe})`);
+	//extensionFunctions.sendTextToOutputChannel(`Yaml html (${htmlMe})`);
 	return getWebviewContent(encodedText, uri.toString());	
 }
 
@@ -32,17 +32,19 @@ function getWebviewContent(config: string, filePath: string): string {
 	);
 	const reactAppUri = reactAppPathOnDisk.with({ scheme: "vscode-resource" });
 	const mainScriptUri = scriptPathOnDisk.with({ scheme: "vscode-resource" });
+	// need to figure out the CSP -- this gets us closer
+	// 		<meta http-equiv="Content-Security-Policy"
+	// content="default-src 'self';
+	// img-src https:;
+	// script-src 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline' vscode-resource:;
+	// style-src vscode-resource: 'unsafe-inline';">
+
 	const html = `<!DOCTYPE html>
 	<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Quick Starts View</title>
-		<meta http-equiv="Content-Security-Policy"
-					content="default-src 'self';
-							 img-src https:;
-							 script-src 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline' vscode-resource:;
-							 style-src vscode-resource: 'unsafe-inline';">
 		 <script>
 		  // window.acquireVsCodeApi = acquireVsCodeApi;
 		  window.initialData = "${config}";
