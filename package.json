@@ -270,15 +270,12 @@
 		"*.didact.adoc": "asciidoctor"
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run clean && npm run compile",
-		"compile": "npm run dev:compile",
+		"vscode:prepublish": "npm run clean && webpack --mode production",
+		"compile": "webpack --mode development",
 		"clean": "rm -rf out || rmdir out /s /q && rm -rf quickstartsPreview",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile",
-		"test": "npm run compile && node ./out/test/runTest.js",
-		"dev:compile": "npm run clean && npm-run-all dev:compile:*",
-		"dev:compile:extension": "tsc -p ./",
-		"dev:compile:views": "webpack --mode development"
+		"watch": "webpack --mode development --watch",
+		"pretest": "tsc -p ./",
+		"test": "tsc -p ./ && node ./out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.17",
@@ -296,7 +293,6 @@
 		"eslint": "^7.25.0",
 		"mocha": "^8.3.2",
 		"mocha-jenkins-reporter": "^0.4.4",
-		"npm-run-all": "^4.1.5",
 		"null-loader": "^4.0.1",
 		"sinon": "10.0.0",
 		"style-loader": "^2.0.0",
@@ -308,7 +304,7 @@
 		"y18n": ">=4.0.1"
 	},
 	"dependencies": {
-		"@cloudmosaic/quickstarts": "0.0.23",
+		"@cloudmosaic/quickstarts": "0.0.24",
 		"@patternfly/patternfly": "^4.102.2",
 		"@patternfly/react-catalog-view-extension": "^4.11.7",
 		"@types/download": "^6.2.4",
