@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- import * as MarkdownIt from 'markdown-it';
+import * as MarkdownIt from 'markdown-it';
 
 // set up and return the markdown parser
 export function getMDParser() : MarkdownIt {
