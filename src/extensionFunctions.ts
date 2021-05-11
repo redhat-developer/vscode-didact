@@ -73,6 +73,7 @@ export const REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY = 'vscode.didact
 export const OPEN_TUTORIAL_HEADING_FROM_VIEW = "vscode.didact.view.tutorial.heading.open";
 export const PROCESS_VSCODE_LINK = "vscode.didact.processVSCodeLink";
 export const CREATE_SEND_TO_TERMINAL_LINK_FROM_SELECTED_TEXT = "vscode.didact.copyTextToCLI";
+export const OPEN_URI_WITH_COLUMN_AND_LINE = "vscode.didact.openUriWithColumnAndLine";
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
@@ -1209,4 +1210,27 @@ function findOpeningCommentAfterPosition(pos: vscode.Position): vscode.Position 
 		return document.positionAt(offset);
 	}
 	return undefined;
+}
+
+export async function openFileAtColumnAndLine(uri: vscode.Uri, column? : vscode.ViewColumn, line? : number) : Promise<void> {
+	let editorForFile : vscode.TextEditor | undefined = await findOpenEditorForFileURI(uri);
+	if (!editorForFile) {
+		try {
+			let actualColumn : vscode.ViewColumn = vscode.ViewColumn.Beside;
+			if (column) {
+				actualColumn = (<any>vscode.ViewColumn)[column];
+			}
+			await vscode.commands.executeCommand('vscode.open', uri, actualColumn);
+			editorForFile = vscode.window.activeTextEditor;
+			if (line && editorForFile) {
+				await vscode.commands.executeCommand('revealLine', {
+					lineNumber: line,
+					at: "Top"
+				});
+			}
+		} catch (error) {
+			await vscode.window.showWarningMessage(`Issues encountered opening ${uri.fsPath} at column ${column} and line ${line}. ${error}`);
+			console.log(error);
+		}
+	}
 }

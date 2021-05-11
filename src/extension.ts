@@ -75,6 +75,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_TUTORIAL_HEADING_FROM_VIEW, didactManager.openHeading));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PROCESS_VSCODE_LINK, handleVSCodeUri));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CREATE_SEND_TO_TERMINAL_LINK_FROM_SELECTED_TEXT, extensionFunctions.convertSelectionToCLILinkAndInsertAfterSelection));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_URI_WITH_COLUMN_AND_LINE, extensionFunctions.openFileAtColumnAndLine));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
