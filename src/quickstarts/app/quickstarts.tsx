@@ -27,7 +27,7 @@ export const QuickStartsPreview = ({
   const allQuickStarts = [];
   allQuickStarts.push(JSON.parse(decodedConfig));
   const [activeQuickStartID, setActiveQuickStartID] = useLocalStorage(
-    "vsQuickstartId",
+    "vsQuickstarstId",
     ""
   );
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage(

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +26,6 @@ import {parseADtoHTML} from './asciidocUtils';
 import * as scaffoldUtils from './scaffoldUtils';
 import { TreeNode } from './nodeProvider';
 import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
-import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
 import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
@@ -34,6 +34,7 @@ import { getYamlContent } from './yamlUtils';
 const tmp = require('tmp');
 const fetch = require('node-fetch');
 const url = require('url-parse');
+const download = require('download');
 
 // command IDs
 export const SCAFFOLD_PROJECT_COMMAND = 'vscode.didact.scaffoldProject';
@@ -863,9 +864,9 @@ async function downloadAndExtract(link : string, installFolder : string, dlFilen
 
 	sendTextToOutputChannel('Downloading from: ' + link);
 	await download(link, installFolder, downloadSettings)
-		.on('response', (response) => {
+		.on('response', (response: { headers: { [x: string]: any; }; }) => {
 			sendTextToOutputChannel(`Bytes to transfer: ${response.headers['content-length']}`);
-		}).on('downloadProgress', (progress) => {
+		}).on('downloadProgress', (progress: { total: number; transferred: number; }) => {
 			const incr = progress.total > 0 ? Math.floor(progress.transferred / progress.total * 100) : 0;
 			const percent = Math.round(incr);
 			const message = `Download progress: ${progress.transferred} / ${progress.total} (${percent}%)`;
@@ -874,7 +875,7 @@ async function downloadAndExtract(link : string, installFolder : string, dlFilen
 		}).then(async () => {
 			myStatusBarItem.dispose();
 			return true;
-		}).catch((error) => {
+		}).catch((error: any) => {
 			console.log(error);
 		});
 	myStatusBarItem.dispose();

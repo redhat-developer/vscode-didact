@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as MarkdownIt from 'markdown-it';
+import * as MarkdownItType from 'markdown-it';
+
+const MarkdownIt = require('markdown-it');
 
 // set up and return the markdown parser
-export function getMDParser() : MarkdownIt {
+export function getMDParser() : MarkdownItType {
 	const md = new MarkdownIt({html: true});
 	const taskLists = require('markdown-it-task-lists');
 	const markdownItAttrs = require('markdown-it-attrs');

@@ -41,7 +41,7 @@
 		"*",
 		"onWebviewPanel:didact"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension",
 	"contributes": {
 		"configuration": [
 			{
@@ -270,9 +270,9 @@
 		"*.didact.adoc": "asciidoctor"
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run clean && npm run compile",
+		"vscode:prepublish": "npm run clean && webpack --mode production --config webpack.ext.config.js && webpack --mode production --config webpack.qs.config.js",
 		"compile": "npm run dev:compile",
-		"clean": "rm -rf out || rmdir out /s /q && rm -rf quickstartsPreview",
+		"clean": "rm -rf out || rmdir out /s /q && rm -rf dist && rm -rf quickstartsPreview",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
 		"test": "npm run compile && node ./out/test/runTest.js",
@@ -308,7 +308,7 @@
 		"y18n": ">=4.0.1"
 	},
 	"dependencies": {
-		"@cloudmosaic/quickstarts": "0.0.23",
+		"@cloudmosaic/quickstarts": "0.0.24",
 		"@patternfly/patternfly": "^4.102.2",
 		"@patternfly/react-catalog-view-extension": "^4.11.7",
 		"@types/download": "^6.2.4",

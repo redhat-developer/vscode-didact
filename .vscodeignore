@@ -3,9 +3,8 @@
 .vscode/**
 .vscode-test/**
 docs/**
-out/**/*.map
-out/test/**
-src/**
+out/
+src/
 test Fixture with speci@l chars/**
 test-archive/**
 **/.gitignore
@@ -14,3 +13,5 @@ test-archive/**
 **/tsconfig.json
 **/*.ts
 **/*.vsix
+webpack.*.config.js
+node_modules
