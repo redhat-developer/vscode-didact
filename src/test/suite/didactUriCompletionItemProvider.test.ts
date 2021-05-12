@@ -28,6 +28,9 @@ import { waitUntil } from 'async-wait-until';
 
 const COMPLETION_TIMEOUT = 5000;
 
+// this number should change as we add more commands 
+const NUMBER_OF_EXPECTED_COMMANDS = 36;
+
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
 const foldersAndFilesToRemove: string[] = [
 	'testmy.didact.md'
@@ -110,7 +113,7 @@ suite("Didact URI completion provider tests", function () {
 	test("that the command processing for a command prefix returns expected results", async () => {
 		const match = provider.findMatchForCommandVariable('didact://?commandId=vscode.didact.');
 		const completionList = await provider.processCommands(match);
-		expect(completionList.items).to.have.lengthOf(35)
+		expect(completionList.items).to.have.lengthOf(NUMBER_OF_EXPECTED_COMMANDS);
 	});
 
 	test("that the command processing for one command returns one expected result", async () => {

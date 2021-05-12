@@ -228,6 +228,15 @@ A couple of things to note:
 * Though you can modify the text inside the parentheses (i.e. `^ execute`) in the [`Didact>Edit: Cli Link Text` field in the Settings for Didact](https://redhat-developer.github.io/vscode-didact/settings), some characters will need to be escaped such as close square brackets (`\]`) due to the way links are formatted in Markdown and AsciiDoc.
 * You can insert emojis such as the [play button](https://emojipedia.org/play-button/) or [two-hump camel](https://emojipedia.org/two-hump-camel/) instead of text. 
 
+## vscode.didact.openUriWithLineAndOrColumn
+
+Command that opens a file and sets the editor on a particular line number. Can also specify the column in which the editor should appear.
+
+* Inputs: path to the tutorial, line number (optional), and column (optional, corresponds to enum values of vscode.ViewColumn - see [VS Code API doc](https://code.visualstudio.com/api/references/vscode-api#ViewColumn) for details)
+* Example 1: didact://?commandId=vscode.didact.openUriWithLineAndOrColumn&projectFilePath=cli-basics.didact.md (just opens file in active column at whatever line the file was at when it was last closed)
+* Example 2: didact://?commandId=vscode.didact.openUriWithLineAndOrColumn&projectFilePath=cli-basics.didact.md&text=37 (opens file in active column and sets editor cursor at specified line number)
+* Example 3: didact://?commandId=vscode.didact.openUriWithLineAndOrColumn&projectFilePath=cli-basics.didact.md&text=61$$Beside (opens file in column `Beside` the active column and sets the editor cursor to line 61)
+
 ***
 # Commands Elsewhere
 

@@ -73,7 +73,7 @@ export const REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY = 'vscode.didact
 export const OPEN_TUTORIAL_HEADING_FROM_VIEW = "vscode.didact.view.tutorial.heading.open";
 export const PROCESS_VSCODE_LINK = "vscode.didact.processVSCodeLink";
 export const CREATE_SEND_TO_TERMINAL_LINK_FROM_SELECTED_TEXT = "vscode.didact.copyTextToCLI";
-export const OPEN_URI_WITH_COLUMN_AND_LINE = "vscode.didact.openUriWithColumnAndLine";
+export const OPEN_URI_WITH_LINE_AND_OR_COLUMN = "vscode.didact.openUriWithLineAndOrColumn";
 
 export const EXTENSION_ID = "redhat.vscode-didact";
 
@@ -1212,22 +1212,32 @@ function findOpeningCommentAfterPosition(pos: vscode.Position): vscode.Position 
 	return undefined;
 }
 
-export async function openFileAtColumnAndLine(uri: vscode.Uri, column? : vscode.ViewColumn, line? : number) : Promise<void> {
+export async function openFileAtLineAndColumn(uri: vscode.Uri, line? : number, column? : vscode.ViewColumn) : Promise<void> {
 	let editorForFile : vscode.TextEditor | undefined = await findOpenEditorForFileURI(uri);
 	if (!editorForFile) {
 		try {
-			let actualColumn : vscode.ViewColumn = vscode.ViewColumn.Beside;
+			let actualColumn : vscode.ViewColumn = vscode.ViewColumn.Active;
 			if (column) {
 				actualColumn = (<any>vscode.ViewColumn)[column];
 			}
-			await vscode.commands.executeCommand('vscode.open', uri, actualColumn);
+			const openedDoc = await vscode.workspace.openTextDocument(uri);
+			await vscode.window.showTextDocument(openedDoc, actualColumn);
 			editorForFile = vscode.window.activeTextEditor;
-			if (line && editorForFile) {
-				await vscode.commands.executeCommand('revealLine', {
-					lineNumber: line,
-					at: "Top"
-				});
-			}
+		} catch (error) {
+			await vscode.window.showWarningMessage(`Issues encountered opening ${uri.fsPath} at column ${column}. ${error}`);
+			console.log(error);
+			return;
+		}
+	}
+	if (line && editorForFile) {
+		// account for the fact that the line index is zero-based but the line numbers in the editor start at 1
+		let trueLine = line-1;
+		if (trueLine < 0) {
+			trueLine = 0;
+		}
+
+		try {
+			await vscode.commands.executeCommand('revealLine', { lineNumber: trueLine, at: 'top' });
 		} catch (error) {
 			await vscode.window.showWarningMessage(`Issues encountered opening ${uri.fsPath} at column ${column} and line ${line}. ${error}`);
 			console.log(error);
