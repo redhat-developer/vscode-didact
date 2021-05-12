@@ -30,9 +30,9 @@ import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
 import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
 import { getYamlContent } from './yamlUtils';
+import fetch from 'node-fetch';
 
 const tmp = require('tmp');
-const fetch = require('node-fetch');
 const url = require('url-parse');
 const download = require('download');
 
@@ -492,7 +492,7 @@ function showFileUnavailable(error : any): void {
 // retrieve the didact content to render as HTML
 export async function getWebviewContent() : Promise<string|void> {
 	if (!_didactFileUri) {
-		const configuredUri : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
+		const configuredUri : string | undefined = getDefaultUrl();
 		if (configuredUri) {
 			_didactFileUri = vscode.Uri.parse(configuredUri);
 		}
@@ -558,14 +558,10 @@ export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined
 				baseDir = path.dirname(uri.fsPath);
 			}
 			return parseADtoHTML(content, baseDir);
-		} else if (extname.localeCompare('.yaml') === 0) {
-			let baseDir : string | undefined = undefined;
-			if (uri.scheme.trim().startsWith('file')) {
-				baseDir = path.dirname(uri.fsPath);
-			}
-			return getYamlContent(content, uri);
 		} else if (extname.localeCompare('.md') === 0) {
 			return parseMDtoHTML(content);
+		} else if (extname.localeCompare('.yaml') === 0) {
+			return getYamlContent(content, uri);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
@@ -591,6 +587,7 @@ export async function getDataFromUrl(inurl:string) : Promise<string> {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
 	} catch (error) {
+		sendTextToOutputChannel(`--getDataFromUrl: error = ${error}`);
 		throw new Error(error);
 	}
 }
