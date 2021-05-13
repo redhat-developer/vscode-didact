@@ -44,17 +44,18 @@ suite('Tutorial Registry Test Suite', () => {
 		await cleanFiles();
 	});
 
-	test('create new didact file and register it as a tutorial in the view', async () => {
-		const didactUriToCreateFile = `didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/examples/register-tutorial.project.json`;
+	test('copy didact file into workspace and register it as a tutorial in the view', async () => {
 		const category = "New Category";
 		const tutorialName = "New Tutorial";
 		const fileName = "test.didact.md";
+		const didactUriToCopyFile = `didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/simple-example.didact.md$$${fileName}`;
 		const didactUriToRegisterTutorial = `didact://?commandId=vscode.didact.registry.addUri&projectFilePath=${fileName}&&text=${encodeURI(tutorialName)}$$${encodeURI(category)}`;
 
 		try {
-			await vscode.commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
-			await commandHandler.processInputs(didactUriToCreateFile);
+			await vscode.commands.executeCommand('workbench.view.explorer'); // focus on the explorer file view
+			await commandHandler.processInputs(didactUriToCopyFile);
 			await commandHandler.processInputs(didactUriToRegisterTutorial);
+			await vscode.commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
 			const catNode = didactTutorialsProvider.findCategoryNode(category);
 			expect(catNode).to.not.be.undefined;
 
@@ -75,7 +76,7 @@ suite('Tutorial Registry Test Suite', () => {
 			try {
 				const predicate = () => didactManager.active() != undefined;
 				await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 });
-				expect(didactManager.active()?.getCurrentTitle()).to.equal("Local Didact Tutorial");
+				expect(didactManager.active()?.getCurrentTitle()).to.equal("Accessing Commands in Visual Studio Code");
 			} catch (error) {
 				assert.fail("Failed to start the Didact file and validate the title");
 			}
@@ -146,3 +147,15 @@ suite('Tutorial Registry Test Suite', () => {
 		}
 	});	
 });
+
+function findEditorForFile(filename: string) : vscode.TextEditor | undefined {
+	if (vscode.window.visibleTextEditors && vscode.window.visibleTextEditors.length > 0) {
+		for (let index = 0; index < vscode.window.visibleTextEditors.length; index++) {
+			const textEditor = vscode.window.visibleTextEditors[index];
+			if (textEditor?.document?.fileName.endsWith(`${filename}`)){
+				return textEditor;
+			}
+		}
+	}
+	return undefined;
+}
