@@ -80,7 +80,7 @@ suite('Tutorial Registry Test Suite', () => {
 				assert.fail("Failed to start the Didact file and validate the title");
 			}
 		} catch (error) {
-			assert.fail("Failed to register, then start the Didact file");
+			assert.fail(`Failed to register, then start the Didact file: ${error}`);
 		}
 	});
 
