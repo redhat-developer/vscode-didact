@@ -73,12 +73,13 @@ suite('Tutorial Registry Test Suite', () => {
 
 			const actualUri = getActualUri(didactFileUri);
 			await vscode.commands.executeCommand(START_DIDACT_COMMAND, actualUri);
+			const titleToCheck = "Accessing Commands in Visual Studio Code";
 			try {
 				const predicate = () => didactManager.active() != undefined;
 				await waitUntil(predicate, { timeout: EDITOR_OPENED_TIMEOUT, intervalBetweenAttempts: 1000 });
-				expect(didactManager.active()?.getCurrentTitle()).to.equal("Accessing Commands in Visual Studio Code");
+				expect(didactManager.active()?.getCurrentTitle()).to.equal(titleToCheck);
 			} catch (error) {
-				assert.fail("Failed to start the Didact file and validate the title");
+				assert.fail(`Failed to start the Didact file and validate the title: "${didactManager.active()?.getCurrentTitle()}" is not "${titleToCheck} `);
 			}
 		} catch (error) {
 			assert.fail(`Failed to register, then start the Didact file: ${error}`);
