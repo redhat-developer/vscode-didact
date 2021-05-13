@@ -148,15 +148,3 @@ suite('Tutorial Registry Test Suite', () => {
 		}
 	});	
 });
-
-function findEditorForFile(filename: string) : vscode.TextEditor | undefined {
-	if (vscode.window.visibleTextEditors && vscode.window.visibleTextEditors.length > 0) {
-		for (let index = 0; index < vscode.window.visibleTextEditors.length; index++) {
-			const textEditor = vscode.window.visibleTextEditors[index];
-			if (textEditor?.document?.fileName.endsWith(`${filename}`)){
-				return textEditor;
-			}
-		}
-	}
-	return undefined;
-}
