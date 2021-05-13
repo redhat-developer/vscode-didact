@@ -367,6 +367,65 @@ suite('Extension Functions Test Suite', () => {
 		expect(linkTextFromSettings2).to.equal(DEFAULT_EXECUTE_LINK_TEXT);
 	});
 
+	test('basic openUriWithLineAndOrColumn call', async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		const openUriLink1 = `redhat.vscode-didact/demos/markdown/didact-demo.didact.md`
+		const testUri = handleExtFilePath(openUriLink1);
+		if (testUri) {
+			await extensionFunctions.openFileAtLineAndColumn(testUri);
+			if(vscode.window.activeTextEditor) {
+				const doc = vscode.window.activeTextEditor.document;
+				const filename = doc.fileName;
+				expect(filename.endsWith(`didact-demo.didact.md`)).to.be.true;
+			} else {
+				expect.fail("Editor did not open");
+			}
+		}
+	});
+
+	test('openUriWithLineAndOrColumn call with line', async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		const openUriLink1 = `redhat.vscode-didact/demos/markdown/didact-demo.didact.md`
+		const testUri = handleExtFilePath(openUriLink1);
+		if (testUri) {
+			const line = 19;
+			await extensionFunctions.openFileAtLineAndColumn(testUri, line);
+			const activeEditor = vscode.window.activeTextEditor;
+			if(activeEditor) {
+				const doc = activeEditor.document;
+				const filename = doc.fileName;
+				expect(filename.endsWith(`didact-demo.didact.md`)).to.be.true;
+				const position = activeEditor.visibleRanges[0].start;
+				expect(position.line).to.equal(line-1); // convert to 0-based
+			} else {
+				expect.fail("Editor did not open");
+			}
+		}
+	});
+
+	test('openUriWithLineAndOrColumn call with line and column', async() => {
+		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+		const openUriLink1 = `redhat.vscode-didact/demos/markdown/didact-demo.didact.md`
+		const testUri = handleExtFilePath(openUriLink1);
+		if (testUri) {
+			const line = 19;
+			const col = vscode.ViewColumn.Beside;
+			await extensionFunctions.openFileAtLineAndColumn(testUri, line, col);
+			const activeEditor = vscode.window.activeTextEditor;
+			if(activeEditor) {
+				const doc = activeEditor.document;
+				const filename = doc.fileName;
+				expect(filename.endsWith(`didact-demo.didact.md`)).to.be.true;
+				const position = activeEditor.visibleRanges[0].start;
+				expect(position.line).to.equal(line-1); // convert to 0-based
+				const currentColumn = activeEditor.viewColumn;
+				// since no editors are open, even if we open it in column 8 it will appear in 1
+				expect(currentColumn).to.equal(vscode.ViewColumn.One); 
+			} else {
+				expect.fail("Editor did not open");
+			}
+		}
+	});
 });
 
 function checkCanParseDidactUriForPath(urlValue: string, endToCheck: string, alternateEnd : string) {
