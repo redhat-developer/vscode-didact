@@ -21,7 +21,9 @@ import { DidactNodeProvider, SimpleNode } from './nodeProvider';
 import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartupSetting, 
 	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
 	addNewTutorialWithNameAndCategoryForDidactUri, 
-	removeTutorialByNameAndCategory } from './utils';
+	removeTutorialByNameAndCategory, 
+	getAppendRegisteredSetting,
+	appendAdditionalTutorials} from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
@@ -118,6 +120,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 		await registerTutorialWithCategory("Writing Your First Didact Tutorial", tutorial4Uri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 	}
 
+	// append any additional tutorials if we have them
+	//await appendAdditionalTutorials();
+	
 	// create the view
 	createIntegrationsView();
 

@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials, registerTutorialWithArgs} from '../../utils';
+import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials, registerTutorialWithArgs, getAppendRegisteredSetting, setAppendRegisteredSetting, appendAdditionalTutorials} from '../../utils';
 import {before} from 'mocha';
 import * as vscode from 'vscode';
 import { ADD_TUTORIAL_TO_REGISTRY, getContext, REGISTER_TUTORIAL } from '../../extensionFunctions';
@@ -115,6 +115,28 @@ suite('Didact registry test suite', () => {
 		assert.ok(foundTutorial, `Did not find new-tutorial-4 registered via JSON`);
 	});
 
+	test('append to registry', async() => {
+		const registry = getRegisteredTutorials();
+		assert.notStrictEqual(registry, undefined);
+
+		const tutName = `AppendMe`;
+		const tutsToAppend = <JSON><unknown>[
+			{
+				"name" : `${tutName}`,
+				"category" : `AppendedCat`,
+				"sourceUri" : `https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/registry.example.didact.md`,
+			}
+		];
+		await setAppendRegisteredSetting(tutsToAppend);
+
+		const appendToRegistry = getAppendRegisteredSetting();
+		assert.notStrictEqual(appendToRegistry, undefined);
+
+		await appendAdditionalTutorials();
+		const foundTutorial = verifyTutorialInRegistry(tutName);
+		assert.ok(foundTutorial, `Did not find ${tutName} registered after appending to tutorial list from settings`);
+	});
+	
 	test('Clear all the tutorials', async() => {
 		const registry = getRegisteredTutorials();
 		assert.notStrictEqual(registry, undefined);
@@ -124,6 +146,7 @@ suite('Didact registry test suite', () => {
 		const afterregistry = getRegisteredTutorials();
 		assert.deepStrictEqual(afterregistry, undefined);
 	});
+
 });
 
 function verifyTutorialInRegistry(nameToTest : string) : boolean {

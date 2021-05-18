@@ -30,6 +30,7 @@ export const DIDACT_OPEN_AT_STARTUP = 'didact.openDefaultTutorialAtStartup';
 export const DIDACT_AUTO_INSTALL_DEFAULT_TUTORIALS = 'didact.autoAddDefaultTutorials';
 export const DIDACT_CLI_LINK_LF_SETTING = 'didact.edit.cliLinkLF';
 export const DIDACT_CLI_LINK_TEXT_SETTING = 'didact.edit.cliLinkText';
+export const DIDACT_APPEND_REGISTERED_SETTING = 'didact.append.registry';
 
 const CACHED_OUTPUT_CHANNELS: OutputChannel[] = new Array<OutputChannel>();
 
@@ -132,6 +133,14 @@ export function getAutoInstallDefaultTutorialsSetting() : boolean {
 
 export function getRegisteredTutorials() : string[] | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
+}
+
+export function getAppendRegisteredSetting() : string[] | undefined {
+	return extensionFunctions.getContext().workspaceState.get(DIDACT_APPEND_REGISTERED_SETTING);
+}
+
+export async function setAppendRegisteredSetting(json: any): Promise<void> {
+	await extensionFunctions.getContext().workspaceState.update(DIDACT_APPEND_REGISTERED_SETTING, json);
 }
 
 export async function registerTutorialWithJSON( jsonObject: any) {
@@ -488,4 +497,14 @@ export async function setInsertLFForCLILinkSetting(flag: boolean): Promise<void>
 // for testing
 export async function setLinkTextForCLILinkSetting(text: string | undefined): Promise<void> {
 	await workspace.getConfiguration().update(DIDACT_CLI_LINK_TEXT_SETTING, text);
+}
+
+export async function appendAdditionalTutorials() : Promise<void> {
+	const appendTutorialsAtStartup = getAppendRegisteredSetting();
+	if (appendTutorialsAtStartup) {
+		for (var i = 0; i < appendTutorialsAtStartup.length; i++) {
+			const jsonObj:any = appendTutorialsAtStartup[i];
+			await registerTutorialWithCategory(jsonObj.name, jsonObj.sourceUri, jsonObj.category);
+		}
+	}	
 }
