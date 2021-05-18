@@ -121,7 +121,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	}
 
 	// append any additional tutorials if we have them
-	//await appendAdditionalTutorials();
+	await appendAdditionalTutorials();
 	
 	// create the view
 	createIntegrationsView();
