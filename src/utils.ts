@@ -500,6 +500,7 @@ export async function setLinkTextForCLILinkSetting(text: string | undefined): Pr
 }
 
 export async function appendAdditionalTutorials() : Promise<void> {
+	extensionFunctions.sendTextToOutputChannel(`Starting Didact tutorials append process`);
 	const appendTutorialsAtStartup = getAppendRegisteredSetting();
 	if (appendTutorialsAtStartup) {
 		extensionFunctions.sendTextToOutputChannel(`Didact tutorials appended at startup via ${DIDACT_APPEND_REGISTERED_SETTING} with ${appendTutorialsAtStartup}`);
