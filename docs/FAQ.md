@@ -78,3 +78,39 @@ Yes! AsciiDoc offers a different approach to specifying a label and ID for it. S
 [[kubectl-requirements-status]]
 _Status: unknown_
 ```
+
+## Q: Is it possible to create an HTML link to a Didact tutorial?
+
+Yes! Use this format:
+
+```
+<a href=vscode://redhat.vscode-didact?extension=<url-to-didact-file>
+
+```
+
+For example, [click here](vscode://redhat.vscode-didact?extension=https://gist.github.com/pwright/9c34cb329c93d139e861d667da05e60e/raw/364a42d5cd7d4989ee8e0885cee21be98250157b/test.didact.adoc)
+
+
+However, note that VSCode links created in Markdown and AsciiDoc documents will not render when previewed in GitHub, see [example gist](https://gist.github.com/pwright/9c34cb329c93d139e861d667da05e60e/) which contains the same link as above.
+
+## Q: Is it possible to open a Didact tutorial from the command line?
+
+Yes! 
+
+For Linux:
+
+```
+xdg-open vscode://redhat.vscode-didact?extension=<url-to-didact-file>
+```
+
+For MacOS:
+
+```
+open vscode://redhat.vscode-didact?extension=<url-to-didact-file>
+```
+
+For Windows:
+
+```
+start open vscode://redhat.vscode-didact?extension=<url-to-didact-file>
+```
