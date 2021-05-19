@@ -25,7 +25,6 @@ import { registerTutorialWithCategory, clearRegisteredTutorials, getOpenAtStartu
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
-import { handleVSCodeUri } from './extensionFunctions';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -73,14 +72,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.ADD_TUTORIAL_URI_TO_REGISTRY, addNewTutorialWithNameAndCategoryForDidactUri));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.REMOVE_TUTORIAL_BY_NAME_AND_CATEGORY_FROM_REGISTRY, removeTutorialByNameAndCategory));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_TUTORIAL_HEADING_FROM_VIEW, didactManager.openHeading));
-	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PROCESS_VSCODE_LINK, handleVSCodeUri));
+	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.PROCESS_VSCODE_LINK, extensionFunctions.handleVSCodeUri));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.CREATE_SEND_TO_TERMINAL_LINK_FROM_SELECTED_TEXT, extensionFunctions.convertSelectionToCLILinkAndInsertAfterSelection));
 	context.subscriptions.push(vscode.commands.registerCommand(extensionFunctions.OPEN_URI_WITH_LINE_AND_OR_COLUMN, extensionFunctions.openFileAtLineAndColumn));
 
 	// set up the vscode URI handler
 	vscode.window.registerUriHandler({
 		async handleUri(uri:vscode.Uri) {
-			await handleVSCodeUri(uri);
+			await extensionFunctions.handleVSCodeUri(uri);
 		}
 	});
 

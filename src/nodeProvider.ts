@@ -43,12 +43,12 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 		if (!element) {
 			return this.treeNodes;
 		} else if (element instanceof TutorialNode) {
-			return await this.processHeadingsForTutorial(element.uri, element.category);
+			return this.processHeadingsForTutorial(element.uri, element.category);
 		} else {
 			// assume it's a category
 			if (element.label && !(element instanceof TutorialNode)) {
 				const tutorialCategory = retrieveTreeItemName(element);
-				return await this.processTutorialsForCategory(tutorialCategory);
+				return this.processTutorialsForCategory(tutorialCategory);
 			}   
 		}
 		return [];
@@ -90,14 +90,14 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 
 	public async getParent(element : SimpleNode) : Promise<SimpleNode | null> {
 		if (element instanceof TutorialNode) {
-			const tutorial = element as TutorialNode;
+			const tutorial : TutorialNode = element;
 			if (tutorial.category) {
 				return Promise.resolve(this.findCategoryNode(tutorial.category));
 			}
 		}
 		if (element instanceof HeadingNode) {
 			if (element.category && element.uri) {
-				return await this.findParentTutorialNode(element.category, element.uri);
+				return this.findParentTutorialNode(element.category, element.uri);
 			}
 		}
 		// Return null if element is a category and a child of root
@@ -173,18 +173,17 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 		const classAttr : string | undefined = divElement.getAttribute("class");
 		if (classAttr) {
 			const splitArray : string[] = classAttr.split(' ');
-			for (let count = 0; count < splitArray.length; count++) {
-				const chunk = splitArray[count];
+			for (let chunk of splitArray) {
 				if (chunk.startsWith('time=')) {
 					const splitTime = chunk.split('=')[1];
 					const timeValue = Number(splitTime);
 					if (divElement.childNodes.length > 0) {
 						const children = divElement.childNodes;
-						for (let i = 0; i < children.length; i++) {
-							if (children[i] instanceof HTMLElement) {
-								const child = children[i] as HTMLElement;
+						for (let rawChild of children) {
+							if (rawChild instanceof HTMLElement) {
+								const child: HTMLElement = rawChild;
 								if (child.tagName.startsWith('H')) {
-									const title = children[i].innerText;
+									const title = rawChild.innerText;
 									if (!Number.isNaN(timeValue)) {
 										return new HeadingNode(category, title, tutUri, `(~${timeValue} mins)`);
 									} else {
@@ -241,8 +240,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 
 	findCategoryNode(category : string) : SimpleNode | null {
 		const nodeToFind = new TreeNode(category, category, undefined, vscode.TreeItemCollapsibleState.Collapsed);
-		const foundNode = this.getCategory(this.treeNodes, nodeToFind);
-		return foundNode;
+		return this.getCategory(this.treeNodes, nodeToFind);
 	}
 	
 	async findTutorialNode(category : string, tutorialName : string ) : Promise<TutorialNode | undefined> {
@@ -265,8 +263,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 		if (catNode) {
 			const treeItems : SimpleNode[] = await this.getChildren(catNode);
 			let foundNode : SimpleNode | null = null;
-			for (let index = 0; index < treeItems.length; index++) {
-				const element = treeItems[index];
+			for (let element of treeItems) {
 				if (element.uri === uri && element.category === category) {
 					foundNode = element;
 					break;
