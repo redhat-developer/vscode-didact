@@ -358,8 +358,7 @@ async function getTutorialName(tutorialsForValidation : string[] ) : Promise<str
 		placeHolder: 'Enter the name for your new tutorial. The name must be unique.',
 		ignoreFocusOut: true,
 		validateInput: (inputVal: string) => {
-			let val = validateTutorialNameInput(inputVal, tutorialsForValidation);
-			return val;
+			return validateTutorialNameInput(inputVal, tutorialsForValidation);
 		}
 	});
 	if (result === undefined) {
@@ -412,7 +411,7 @@ async function quickPickCategory(
 				selectedItems = selected;
 			});
 		}
-		quickPick.onDidAccept(_ => {
+		quickPick.onDidAccept(() => {
 			if (quickPick.value.trim().length > 0 || selectedItems.length > 0 || quickPick.activeItems.length > 0) {
 				if (canSelectMany) {
 					resolve(selectedItems.map((item) => item.label));
@@ -424,7 +423,7 @@ async function quickPickCategory(
 		});
 
 		if (acceptInput) {
-			quickPick.onDidChangeValue(_ => {
+			quickPick.onDidChangeValue(() => {
 				if (quickPick.value.trim().length === 0) {
 					quickPick.value = '';
 					quickPick.items = options;
@@ -437,7 +436,7 @@ async function quickPickCategory(
 			});
 		}
 
-		quickPick.onDidHide(_ => quickPick.dispose());
+		quickPick.onDidHide(() => quickPick.dispose());
 		quickPick.show();
 	});
 }

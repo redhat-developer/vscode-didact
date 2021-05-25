@@ -28,7 +28,7 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
-import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -85,6 +85,8 @@ const requirementCommandLinks = [
 	'didact://?commandId=vscode.didact.workspaceFolderExistsCheck',
 	'didact://?commandId=vscode.didact.cliCommandSuccessful'
 ];
+
+type StringVoidUndefinedTypeAlias = string | void | undefined;
 
 // stashed extension context
 let extContext : vscode.ExtensionContext;
@@ -270,9 +272,16 @@ export async function openDidactWithDefault(): Promise<void>{
 	sendTextToOutputChannel(`Starting Didact window with default`);
 
 	didactManager.setContext(extContext);
-	const configuredPath : string | undefined = vscode.workspace.getConfiguration().get(DIDACT_DEFAULT_URL);
+	const configuredPath : string | undefined = getDefaultUrl();
 	if (configuredPath) {
-		_didactFileUri = vscode.Uri.parse(configuredPath);
+		try {
+			const vsUri = vscode.Uri.parse(configuredPath);
+			if (vsUri) {
+				_didactFileUri = vsUri;
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}
 	if (_didactFileUri) {
 		await didactManager.create(_didactFileUri);
@@ -484,7 +493,7 @@ function showFileUnavailable(error : any): void {
 // retrieve the didact content to render as HTML
 export async function getWebviewContent() : Promise<string|void> {
 	if (!_didactFileUri) {
-		const configuredUri : string | undefined = vscode.workspace.getConfiguration().get('didact.defaultUrl');
+		const configuredUri : string | undefined = getDefaultUrl();
 		if (configuredUri) {
 			_didactFileUri = vscode.Uri.parse(configuredUri);
 		}
@@ -499,7 +508,7 @@ export async function getWebviewContent() : Promise<string|void> {
 	return undefined;
 }
 
-async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
+async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<StringVoidUndefinedTypeAlias> {
 	return getDataFromFile(uri).catch( async () => {
 		await delay(3000);
 		return getDataFromFile(uri).catch( async (error) => {
@@ -508,7 +517,7 @@ async function loadFileWithRetry ( uri:vscode.Uri ) : Promise<string | void | un
 	});
 }
 
-async function loadFileFromHTTPWithRetry ( uri:vscode.Uri ) : Promise<string | void | undefined> {
+async function loadFileFromHTTPWithRetry ( uri:vscode.Uri ) : Promise<StringVoidUndefinedTypeAlias> {
 	const urlToFetch = uri.toString();
 	return getDataFromUrl(urlToFetch).catch( async () => {
 		await delay(3000);
@@ -857,9 +866,9 @@ async function downloadAndExtract(link : string, installFolder : string, dlFilen
 
 	sendTextToOutputChannel('Downloading from: ' + link);
 	await download(link, installFolder, downloadSettings)
-		.on('response', (response) => {
+		.on('response', (response: { headers: { [x: string]: any; }; }) => {
 			sendTextToOutputChannel(`Bytes to transfer: ${response.headers['content-length']}`);
-		}).on('downloadProgress', (progress) => {
+		}).on('downloadProgress', (progress: { total: number; transferred: number; }) => {
 			const incr = progress.total > 0 ? Math.floor(progress.transferred / progress.total * 100) : 0;
 			const percent = Math.round(incr);
 			const message = `Download progress: ${progress.transferred} / ${progress.total} (${percent}%)`;
@@ -868,7 +877,7 @@ async function downloadAndExtract(link : string, installFolder : string, dlFilen
 		}).then(async () => {
 			myStatusBarItem.dispose();
 			return true;
-		}).catch((error) => {
+		}).catch((error:any) => {
 			console.log(error);
 		});
 	myStatusBarItem.dispose();
@@ -1054,7 +1063,7 @@ function processTimeTotalForAdoc(content : string) : number {
 
 export async function computeTimeForDidactFileUri(uri: vscode.Uri) : Promise<number> {
 	if (uri) {
-		let content : string | undefined | void = undefined;
+		let content : StringVoidUndefinedTypeAlias = undefined;
 		if (uri.scheme === 'file') {
 			content = await loadFileWithRetry(uri);
 		} else if (uri.scheme === 'http' || uri.scheme === 'https'){
