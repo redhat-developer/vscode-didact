@@ -28,7 +28,7 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
-import { addNewTutorialWithNameAndCategoryForDidactUri, delay, DIDACT_DEFAULT_URL, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { addNewTutorialWithNameAndCategoryForDidactUri, delay, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
