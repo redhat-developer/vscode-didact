@@ -26,6 +26,7 @@ import { clearRegisteredTutorials, getOpenAtStartupSetting,
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
+import { getTelemetryServiceInstance } from './Telemetry';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -116,6 +117,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	if (openAtStartup) {
 		await extensionFunctions.openDidactWithDefault();
 	}
+
+	(await getTelemetryServiceInstance()).sendStartupEvent();
 
 	return {
 		extendMarkdownIt(md: any) {

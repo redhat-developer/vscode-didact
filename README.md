@@ -69,3 +69,7 @@ And feel free to [add issues, submit feature requests, log bugs, etc](https://gi
 [![Stargazers repo roster for @redhat-developer/vscode-didact](https://reporoster.com/stars/redhat-developer/vscode-didact)](https://github.com/redhat-developer/vscode-didact/stargazers)
 
 [![Forkers repo roster for @redhat-developer/vscode-didact](https://reporoster.com/forks/redhat-developer/vscode-didact)](https://github.com/redhat-developer/vscode-didact/network/members)
+
+## Data and telemetry
+
+The Didact extension for Visual Studio Code collects anonymous [usage data](USAGE_DATA.md) and sends it to Red Hat servers to help improve our products and services. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection) to learn more. This extension respects the `redhat.elemetry.enabled` setting which you can learn more about at https://github.com/redhat-developer/vscode-commons#how-to-disable-telemetry-reporting
