@@ -100,6 +100,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	// set up so we don't lose the webview contents each time it goes 'invisible' 
 	vscode.window.registerWebviewPanelSerializer(VIEW_TYPE, new DidactPanelSerializer(context));
 
+	// set up the telemetry
+	(await getTelemetryServiceInstance()).sendStartupEvent();
+
 	// register the default tutorials if the setting is set to true
 	const installTutorialsAtStartup : boolean = getAutoInstallDefaultTutorialsSetting();
 	if (installTutorialsAtStartup) {
@@ -117,8 +120,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	if (openAtStartup) {
 		await extensionFunctions.openDidactWithDefault();
 	}
-
-	(await getTelemetryServiceInstance()).sendStartupEvent();
 
 	return {
 		extendMarkdownIt(md: any) {

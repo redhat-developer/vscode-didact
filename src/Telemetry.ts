@@ -15,11 +15,34 @@
  * limitations under the License.
  */
 
- import { TelemetryService, getTelemetryService } from "@redhat-developer/vscode-redhat-telemetry/lib";
+import { TelemetryService, getTelemetryService, TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
+import {getFileExtension} from './utils';
 
-
- export const telemetryService: Promise<TelemetryService> = getTelemetryService('redhat.vscode-didact');
+export const telemetryService: Promise<TelemetryService> = getTelemetryService('redhat.vscode-didact');
  
- export async function getTelemetryServiceInstance(): Promise<TelemetryService> {
-     return telemetryService;
- }
+export async function getTelemetryServiceInstance(): Promise<TelemetryService> {
+    return telemetryService;
+}
+
+export async function sendCommandTracking(commandId: string) {
+	const telemetryEvent: TelemetryEvent = {
+		type: 'track',
+		name: 'didact.didactCommand',
+		properties: {
+			identifier: commandId
+		}
+	};
+	(await telemetryService).send(telemetryEvent);
+}
+
+export async function sendDidactOpenTypeTracking(filePath: string) {
+    const fileExt = getFileExtension(filePath);
+	const telemetryEvent: TelemetryEvent = {
+		type: 'track',
+		name: 'didact.didactOpenFileExtension',
+		properties: {
+			didactFileExtension: fileExt
+		}
+	};
+	(await telemetryService).send(telemetryEvent);
+}
