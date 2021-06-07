@@ -296,7 +296,7 @@
 		"y18n": ">=4.0.1"
 	},
 	"dependencies": {
-		"@types/download": "^6.2.4",
+		"@types/download": "^8.0.0",
 		"@types/markdown-it": "^12.0.1",
 		"@types/request-promise": "^4.1.47",
 		"asciidoctor": "^2.2.4",
