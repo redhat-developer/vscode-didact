@@ -135,7 +135,7 @@ export function getRegisteredTutorials() : string[] | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
-export function getAppendRegisteredSetting() : string[] | undefined {
+export function getAppendRegisteredSetting() : string | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_APPEND_REGISTERED_SETTING);
 }
 
