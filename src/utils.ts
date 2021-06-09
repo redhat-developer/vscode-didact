@@ -499,15 +499,34 @@ export async function setLinkTextForCLILinkSetting(text: string | undefined): Pr
 	await workspace.getConfiguration().update(DIDACT_CLI_LINK_TEXT_SETTING, text);
 }
 
+// export async function appendAdditionalTutorials() : Promise<void> {
+// 	extensionFunctions.sendTextToOutputChannel(`Starting Didact tutorials append process`);
+// 	const appendTutorialsAtStartup = getAppendRegisteredSetting();
+// 	if (appendTutorialsAtStartup) {
+// 		extensionFunctions.sendTextToOutputChannel(`Didact tutorials appended at startup via ${DIDACT_APPEND_REGISTERED_SETTING} with ${appendTutorialsAtStartup}`);
+// 		for (var i = 0; i < appendTutorialsAtStartup.length; i++) {
+// 			const jsonObj:any = appendTutorialsAtStartup[i];
+// 			extensionFunctions.sendTextToOutputChannel(`--Adding ${jsonObj.sourceUri} as ${jsonObj.name}/${jsonObj.category}`);
+// 			await registerTutorialWithCategory(jsonObj.name, jsonObj.sourceUri, jsonObj.category);
+// 		}
+// 	}	
+// }
+
 export async function appendAdditionalTutorials() : Promise<void> {
-	extensionFunctions.sendTextToOutputChannel(`Starting Didact tutorials append process`);
-	const appendTutorialsAtStartup = getAppendRegisteredSetting();
-	if (appendTutorialsAtStartup) {
-		extensionFunctions.sendTextToOutputChannel(`Didact tutorials appended at startup via ${DIDACT_APPEND_REGISTERED_SETTING} with ${appendTutorialsAtStartup}`);
-		for (var i = 0; i < appendTutorialsAtStartup.length; i++) {
-			const jsonObj:any = appendTutorialsAtStartup[i];
-			extensionFunctions.sendTextToOutputChannel(`--Adding ${jsonObj.sourceUri} as ${jsonObj.name}/${jsonObj.category}`);
-			await registerTutorialWithCategory(jsonObj.name, jsonObj.sourceUri, jsonObj.category);
+	try {
+		await extensionFunctions.sendTextToOutputChannel(`Starting Didact tutorials append process`);
+		const appendTutorialsAtStartup: string | undefined = getAppendRegisteredSetting();
+		if (appendTutorialsAtStartup) {
+			await extensionFunctions.sendTextToOutputChannel(`Didact tutorials appended at startup via ${DIDACT_APPEND_REGISTERED_SETTING} with ${appendTutorialsAtStartup}`);
+			for (var i = 0; i < appendTutorialsAtStartup.length; i++) {
+				const jsonObj:any = appendTutorialsAtStartup[i];
+				await extensionFunctions.sendTextToOutputChannel(`--Adding ${jsonObj.sourceUri} as ${jsonObj.name}/${jsonObj.category}`);
+				await registerTutorialWithCategory(jsonObj.name, jsonObj.sourceUri, jsonObj.category);
+			}
 		}
+	} catch (ex) {
+		await extensionFunctions.sendTextToOutputChannel(ex);
+		console.error(ex);
+		return Promise.reject(ex);
 	}	
 }
