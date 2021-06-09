@@ -308,7 +308,7 @@
 		"markdown-it-attrs": "^4.0.0",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.1",
-		"node-html-parser": "^3.3.4",
+		"node-html-parser": "^3.3.5",
 		"tmp": "^0.2.1",
 		"url-parse": "^1.5.1"
 	}
