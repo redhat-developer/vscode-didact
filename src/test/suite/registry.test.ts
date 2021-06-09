@@ -120,13 +120,14 @@ suite('Didact registry test suite', () => {
 		assert.notStrictEqual(registry, undefined);
 
 		const tutName = `AppendMe`;
-		const tutsToAppend = <JSON><unknown>[
-			{
-				"name" : `${tutName}`,
-				"category" : `AppendedCat`,
-				"sourceUri" : `https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/registry.example.didact.md`,
-			}
-		];
+		const tutsToAppend : String = '[{"name":"AppendMe","category":"AppendedCat","sourceUri":"https%3A%2F%2Fraw.githubusercontent.com%2Fredhat-developer%2Fvscode-didact%2Fmaster%2Fexamples%2Fregistry.example.didact.md"}]';
+		// const tutsToAppend = <JSON><unknown>[
+		// 	{
+		// 		"name" : `${tutName}`,
+		// 		"category" : `AppendedCat`,
+		// 		"sourceUri" : `https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/registry.example.didact.md`,
+		// 	}
+		// ];
 		await setAppendRegisteredSetting(tutsToAppend);
 
 		const appendToRegistry = getAppendRegisteredSetting();
