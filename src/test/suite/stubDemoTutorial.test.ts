@@ -16,7 +16,7 @@
  */
 
 import { expect } from 'chai';
-import { window, commands, env, Uri, Terminal } from 'vscode';
+import { window, commands, env, Uri, Terminal, Disposable } from 'vscode';
 import { START_DIDACT_COMMAND, sendTerminalText, gatherAllCommandsLinks, getContext } from '../../extensionFunctions';
 import { didactManager } from '../../didactManager';
 import { DidactUri } from '../../didactUri';
@@ -33,11 +33,29 @@ const TERMINAL_WAIT_RETRY = 2000;
 
 suite('stub out a tutorial', () => {
 
+	let disposables: Disposable[] = [];
+
+	teardown(() => {
+		disposables.forEach(d => d.dispose());
+		disposables.length = 0;
+	});
+
 	test('that we can send an echo command to the terminal and get the response', async () => {
 		const name = 'echoTerminal';
 		const text = `echo \"Hello World ${name}\"`;
 		const result = `Hello World echoTerminal`;
-		await validateTerminalResponse(name, text, result);
+		const winResult = [
+			`Hello`,
+			`World`,
+			`echoTerminal`
+		];
+		await validateTerminalResponseWin(name, text, result);
+
+		// if (process.platform === 'win32') {
+		// 	await validateTerminalResponseWin(name, text, winResult);
+		// } else {
+		// 	await validateTerminalResponse(name, text, result);
+		// }
 	});
 
 	test('that we can get a response from each command in the demo tutorial', async () => {
@@ -95,6 +113,53 @@ suite('stub out a tutorial', () => {
 		function getExpectedTextInTerminal() {
 			return terminalResponse ? terminalResponse : terminalText;
 		}
+	}
+
+	async function validateTerminalResponseWin(terminalName : string, terminalText : string, terminalResponse : string) {
+		let terminalData:string[] = [];
+		console.log(`validateTerminalResponse terminal ${terminalName} executing text ${terminalText}`);
+		const term = window.createTerminal(terminalName);
+		expect(term).to.not.be.null;
+		if (term) {
+			console.log(`-current terminal = ${term?.name}`);
+			await sendTerminalText(terminalName, terminalText);
+			await waitUntil(async () => {
+				await focusOnNamedTerminal(terminalName);
+				return terminalName === window.activeTerminal?.name;
+			}, 1000);
+			try {
+				const predicate = async () => {
+					const result: string = await getActiveTerminalOutput();
+					await commands.executeCommand('workbench.action.terminal.clear');
+					if (result.trim().length > 0) terminalData.push(result.trim());
+					return true;
+				};
+				var numberOfTimes = 5;
+				const delay = 1000;
+				for (let i = 0; i < numberOfTimes; i++) {
+					await predicate();
+					await new Promise((res) => { setTimeout(res, delay); });
+				}
+				console.log(`-terminal output = ${terminalData}`);
+
+				const foundIt = searchStringInArray(terminalResponse, terminalData);
+				if (foundIt > -1) {
+					return;
+				} else {
+					fail(`Searching for ${terminalResponse} but not found in current content of active terminal ${window.activeTerminal?.name} : ${terminalData}`);
+				};
+			} catch (error){
+				fail(error);
+			}
+			findAndDisposeTerminal(terminalName);
+		}	
+	}
+
+	function searchStringInArray (strToFind : string, strArray : string[]) : number {
+		for (var j=0; j<strArray.length; j++) {
+			if (strArray[j].match(strToFind)) return j;
+		}
+		return -1;
 	}
 
 	async function getActiveTerminalOutput() : Promise<string> {
