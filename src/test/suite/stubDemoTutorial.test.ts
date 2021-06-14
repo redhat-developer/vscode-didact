@@ -37,19 +37,17 @@ suite('stub out a tutorial', () => {
 	test('that we can send an echo command to the terminal and get the response', async () => {
 		const name = 'echoTerminal';
 		const text = `echo Hello World ${name}`;
+		
+		// PowerShell requires strings to be in double quotes
+		const win32text = `echo "Hello World ${name}"`;
+		
 		const result = `Hello World echoTerminal`;
 
-		// for some reason, PowerShell outputs our echo on three separate lines separated by linefeeds so we are looking for three strings
-		const winResult = [
-			`Hello`,
-			`World`,
-			`echoTerminal`
-		];
 		console.log(`> testing echo on ${process.platform}`);
 		if (process.platform === 'win32') {
-		 	await validateTerminalResponseWin(name, text, winResult);
+			await validateTerminalResponse(name, text, win32text);
 		} else {
-		 	await validateTerminalResponse(name, text, result);
+			await validateTerminalResponse(name, text, result);
 		}
 	});
 
@@ -109,82 +107,6 @@ suite('stub out a tutorial', () => {
 		function getExpectedTextInTerminal() {
 			return terminalResponse ? terminalResponse : terminalText;
 		}
-	}
-
-	async function validateTerminalResponseWin(terminalName : string, terminalText : string, terminalResponse : string[]) {
-		console.log(`validateTerminalResponse terminal ${terminalName} executing text ${terminalText} on a Windows machine`);
-		const term = window.createTerminal(terminalName);
-		expect(term).to.not.be.null;
-		if (term) {
-			console.log(`-current terminal = ${term?.name}`);
-			await sendTerminalText(terminalName, terminalText);
-			await waitUntil(async () => {
-				await focusOnNamedTerminal(terminalName);
-				return terminalName === window.activeTerminal?.name;
-			}, 1000);
-			try {
-				const terminalData = await collectTerminalStringsAsArray();
-				let foundExpectedString = false;
-				const responseArray = terminalResponse as string[];
-				console.log(`-terminal output =`);
-				responseArray.forEach(element => {
-					console.log(`---> ${element}`);
-				});
-				let foundIt = true;
-				for (let index = 0; index < responseArray.length; index++) {
-					const response = responseArray[index];
-					if (!response.startsWith(`PS`)) { // PowerShell lines begin with PS and we just want the others
-						const foundNum = searchStringInArray(response, terminalData);
-						foundIt = foundNum > -1;
-						if (!foundIt) {
-							break;
-						}
-					}
-				}
-				foundExpectedString = foundIt;
-
-				if (foundExpectedString) {
-					return;
-				} else {
-					fail(`Searching for ${terminalResponse} but not found in current content of active terminal ${window.activeTerminal?.name} : ${terminalData}`);
-				};
-			} catch (error){
-				fail(error);
-			} finally {
-				findAndDisposeTerminal(terminalName);
-			}
-		}	
-	}
-
-	async function collectTerminalStringsAsArray() : Promise<string[]> {
-		let terminalData:string[] = [];
-		const predicate = async () => {
-			const result: string = await getActiveTerminalOutput();
-			await commands.executeCommand('workbench.action.terminal.clear');
-			if (result.trim().length > 0) {
-				const split = splitLines(result.trim());
-				terminalData = terminalData.concat(split);
-			}
-			return true;
-		};
-		var numberOfTimes = TERMINAL_WAIT_RETRY_TIMES;
-		const delay = TERMINAL_WAIT_RETRY;
-		for (let i = 0; i < numberOfTimes; i++) {
-			await predicate();
-			await new Promise((res) => { setTimeout(res, delay); });
-		}
-		return terminalData;
-	}
-
-	function splitLines(incoming: string) : string[] { 
-		return incoming.split(/\r\n|\r|\n/);
-	}
-
-	function searchStringInArray (strToFind : string, strArray : string[]) : number {
-		for (var j=0; j<strArray.length; j++) {
-			if (strArray[j].match(strToFind)) return j;
-		}
-		return -1;
 	}
 
 	async function getActiveTerminalOutput() : Promise<string> {
