@@ -81,6 +81,8 @@ Sends text to a named terminal, which is then executed in the terminal. If the n
 
 Note: In order to send multiple commands spread out across multiple links in the same terminal window, ensure that the `name` passed is consistent.
 
+Note: On Windows, strings (such as for `echo` statements) must be enclosed in double quotes like `echo "my long string"` since the change with https://code.visualstudio.com/updates/v1_57#_native-line-wrapping-support-on-windows.
+
 ## vscode.didact.sendNamedTerminalAStringNoLF
 
 Same as sendNamedTerminalAString, but the command is not executed in the terminal by default.
