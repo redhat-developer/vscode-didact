@@ -29,26 +29,14 @@ const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown
 const delayTime = 2500;
 const COMMAND_WAIT_TIMEOUT = 15000;
 const COMMAND_WAIT_RETRY = 1500;
-const TERMINAL_WAIT_RETRY = 1000;
-const TERMINAL_WAIT_RETRY_TIMES = 10;
 
 suite('stub out a tutorial', () => {
 
 	test('that we can send an echo command to the terminal and get the response', async () => {
 		const name = 'echoTerminal';
-		const text = `echo Hello World ${name}`;
-		
-		// PowerShell requires strings to be in double quotes
-		const win32text = `echo "Hello World ${name}"`;
-		
+		const text = `echo \"Hello World ${name}\"`;
 		const result = `Hello World echoTerminal`;
-
-		console.log(`> testing echo on ${process.platform}`);
-		if (process.platform === 'win32') {
-			await validateTerminalResponse(name, text, win32text);
-		} else {
-			await validateTerminalResponse(name, text, result);
-		}
+		await validateTerminalResponse(name, text, result);
 	});
 
 	test('that we can get a response from each command in the demo tutorial', async () => {
