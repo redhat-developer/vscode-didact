@@ -34,8 +34,8 @@ suite('stub out a tutorial', () => {
 
 	test('that we can send an echo command to the terminal and get the response', async () => {
 		const name = 'echoTerminal';
-		const text = `echo Hello World ${name}`;
-		const result = `Hello World echoTerminal`;
+		const text = `echo HelloWorld${name}`;
+		const result = `HelloWorld${name}`;
 		await validateTerminalResponse(name, text, result);
 	});
 
