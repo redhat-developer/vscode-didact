@@ -17,9 +17,9 @@
 
 import * as extensionFunctions from './extensionFunctions';
 import * as fs from 'fs';
-import { ViewColumn, OutputChannel, workspace, Uri, window, commands, env } from 'vscode';
+import { ViewColumn, OutputChannel, workspace, Uri, window, commands, env, ExtensionContext } from 'vscode';
 import * as path from 'path';
-import { didactTutorialsProvider, refreshTreeview, revealTreeItem } from './extension';
+import { DEFAULT_TUTORIAL_CATEGORY, didactTutorialsProvider, refreshTreeview, revealTreeItem } from './extension';
 import { TutorialNode } from './nodeProvider';
 
 export const DIDACT_DEFAULT_URL = 'didact.defaultUrl';
@@ -181,6 +181,11 @@ export async function registerTutorialWithArgs(name : string, sourceUri : string
 
 export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string ): Promise<void> {
 	return registerTutorialWithArgs(name, sourceUri, category);
+}
+
+export async function registerEmbeddedTutorials(context: ExtensionContext, name: string, pathInExtension: string): Promise<void> {
+	const tutorialUri = Uri.file(context.asAbsolutePath(pathInExtension));
+	await registerTutorialWithCategory(name, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
 }
 
 export function getDidactCategories() : string[] {
