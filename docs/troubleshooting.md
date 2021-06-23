@@ -1,3 +1,12 @@
+# What do you do if the registered tutorials no longer work after updating to 0.4.0
+
+Check the version of the Didact extension by looking at the `Extensions` Activity and checking the `Installed` extensions. Look for `Didact` and verify that version 0.4.0 is installed.
+
+1. Go to the Settings (`File->Preferences->Settings`) and go to `Extensions->Didact`. 
+2. Make sure that `Didact: Auto Add Default Tutorials` is checked.
+3. Open the Command Palette (Ctrl+Shift+P) and type `Didact Clear` to select the `Didact: Clear Tutorial Registry` command. Say "yes" when prompted. 
+4. Restart the workspace. 
+
 # What do you do if Didact fails to load or fails to load your tutorial?
 
 Biggest Clue? Check the `Output` channels
