@@ -4,10 +4,11 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.4.1
 
-- Integrated with the built-in VS Code Markdown Preview (Ctrl+Shift+V). Note that Didact links do not work from the built-in preview.
-  - Also note that the built-in preview for the AsciiDoc extension (https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode) now works, though the stylesheets are not the same and Didact links do not work from the AsciiDoc preview.
-- Changed `Didact: Start Didact Tutorial from File` hotkeys from `Ctrl/Cmd+Shift+V` to `Ctrl/Cmd+Alt+D` to avoid conflicting with the Markdown and AsciiDoc preview functionality. This keybinding can be changed from the VS Code `Keyboard Shortcuts` window (`File->Preferences->Keyboard Shortcuts`).
+- Integrated with the built-in VS Code Markdown Preview (Ctrl+Shift+V). Note that Didact links do not work from the built-in preview
+  - Also note that the built-in preview for the AsciiDoc extension (https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode) now works, though the stylesheets are not the same and Didact links do not work from the AsciiDoc preview
+- Changed `Didact: Start Didact Tutorial from File` hotkeys from `Ctrl/Cmd+Shift+V` to `Ctrl/Cmd+Alt+D` to avoid conflicting with the Markdown and AsciiDoc preview functionality. This keybinding can be changed from the VS Code `Keyboard Shortcuts` window (`File->Preferences->Keyboard Shortcuts`)
 - Added new command `vscode.didact.openUriWithLineAndOrColumn` (see [Didact docs](https://redhat-developer.github.io/vscode-didact/available-commands) for details)
+- Note that if you run into issues migrating from an earlier version of Didact (0.3.x or earlier) to 0.4.x, you may need to refresh the tutorial registry. See [Troubleshooting](https://redhat-developer.github.io/vscode-didact/troubleshooting) in the docs for details
 
 ## 0.4.0
 
