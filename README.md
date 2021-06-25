@@ -52,6 +52,10 @@ Our documentation started in these [wiki pages](https://github.com/redhat-develo
 
 For a list of available commands, check out the [Command Reference](examples/commands.reference.md).
 
+## Current Issues
+
+If you run into issues migrating from an earlier version of Didact (0.3.x or earlier) to 0.4.x, you may need to refresh the tutorial registry. See [Troubleshooting](https://redhat-developer.github.io/vscode-didact/troubleshooting) in the docs for details. 
+
 ## Ideas or want to contribute?
 
 Check out [the project on Github](https://github.com/redhat-developer/vscode-didact)! 
