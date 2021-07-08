@@ -301,9 +301,6 @@
 		"vscode-test": "^1.5.2",
 		"y18n": ">=4.0.1"
 	},
-	"extensionDependencies": [
-		"redhat.vscode-commons"
-	],
 	"dependencies": {
 		"@redhat-developer/vscode-redhat-telemetry": "^0.2.0",
 		"@types/download": "^8.0.1",
