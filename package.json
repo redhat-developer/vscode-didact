@@ -280,7 +280,7 @@
 	"devDependencies": {
 		"@types/chai": "^4.2.20",
 		"@types/glob": "^7.1.4",
-		"@types/mocha": "^8.2.2",
+		"@types/mocha": "^8.2.3",
 		"@types/node": "^15.12.5",
 		"@types/sinon": "^10.0.2",
 		"@types/vscode": "^1.57.1",
