@@ -29,6 +29,7 @@ const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown
 const delayTime = 2500;
 const COMMAND_WAIT_TIMEOUT = 15000;
 const COMMAND_WAIT_RETRY = 1500;
+const TERMINAL_WAIT_RETRY = 2000;
 
 suite('stub out a tutorial', () => {
 
@@ -65,7 +66,6 @@ suite('stub out a tutorial', () => {
 		}
 	});
 
-
 	async function validateTerminalResponse(terminalName : string, terminalText : string, terminalResponse? : string) {
 		console.log(`validateTerminalResponse terminal ${terminalName} executing text ${terminalText}`);
 		const term = window.createTerminal(terminalName);
@@ -77,7 +77,7 @@ suite('stub out a tutorial', () => {
 			await waitUntil(async () => {
 				await focusOnNamedTerminal(terminalName);
 				return terminalName === window.activeTerminal?.name;
-			}, 1000);
+			}, TERMINAL_WAIT_RETRY);
 
 			try {
 				const predicate = async () => {
@@ -114,7 +114,7 @@ suite('stub out a tutorial', () => {
 
 	async function executeAndWait(command: string): Promise<void> {
 		await commands.executeCommand(command);
-		delay(100);
+		delay(200);
 	}
 
 	function getNamedTerminal(terminalName : string): Terminal | undefined {
