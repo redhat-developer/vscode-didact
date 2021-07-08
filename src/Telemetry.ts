@@ -15,34 +15,41 @@
  * limitations under the License.
  */
 
-import { TelemetryService, getTelemetryService, TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
+import { TelemetryEvent, TelemetryService } from "@redhat-developer/vscode-redhat-telemetry/lib";
 import {getFileExtension} from './utils';
 
-export const telemetryService: Promise<TelemetryService> = getTelemetryService('redhat.vscode-didact');
- 
-export async function getTelemetryServiceInstance(): Promise<TelemetryService> {
-    return telemetryService;
-}
+export class DidactTelemetry {
 
-export async function sendCommandTracking(commandId: string) {
-	const telemetryEvent: TelemetryEvent = {
-		type: 'track',
-		name: 'didact.didactCommand',
-		properties: {
-			identifier: commandId
-		}
-	};
-	(await telemetryService).send(telemetryEvent);
-}
+	private telemetryService: Promise<TelemetryService>;
 
-export async function sendDidactOpenTypeTracking(filePath: string) {
-    const fileExt = getFileExtension(filePath);
-	const telemetryEvent: TelemetryEvent = {
-		type: 'track',
-		name: 'didact.didactOpenFileExtension',
-		properties: {
-			didactFileExtension: fileExt
-		}
-	};
-	(await telemetryService).send(telemetryEvent);
+	public constructor(telemetryService: Promise<TelemetryService>) {
+		this.telemetryService = telemetryService;
+	}
+
+	public async getTelemetryServiceInstance(): Promise<TelemetryService> {
+		return this.telemetryService;
+	}
+
+	public async sendCommandTracking(commandId: string) {
+		const telemetryEvent: TelemetryEvent = {
+			type: 'track',
+			name: 'didact.didactCommand',
+			properties: {
+				identifier: commandId
+			}
+		};
+		(await this.telemetryService).send(telemetryEvent);
+	}
+
+	public async sendDidactOpenTypeTracking(filePath: string) {
+		const fileExt = getFileExtension(filePath);
+		const telemetryEvent: TelemetryEvent = {
+			type: 'track',
+			name: 'didact.didactOpenFileExtension',
+			properties: {
+				didactFileExtension: fileExt
+			}
+		};
+		(await this.telemetryService).send(telemetryEvent);
+	}
 }

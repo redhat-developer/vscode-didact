@@ -19,7 +19,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import {getValue, isDefaultNotificationDisabled} from './utils';
 import * as extensionFunctions from './extensionFunctions';
-import * as telemetry from './Telemetry';
+import * as didactExtension from './extension';
 
 const url = require('url-parse');
 
@@ -42,7 +42,7 @@ export async function processInputs(incoming : string, extensionPath? : string) 
 			throw new Error('No command Id provided');
 		} else {
 			// track command Id
-			await telemetry.sendCommandTracking(commandId);
+			await didactExtension.getTelemetry().sendCommandTracking(commandId);
 
 			// handle either a project-based or extension/src-based file path
 			if (query.projectFilePath) {
