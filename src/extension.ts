@@ -104,7 +104,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	// set up so we don't lose the webview contents each time it goes 'invisible' 
 	vscode.window.registerWebviewPanelSerializer(VIEW_TYPE, new DidactPanelSerializer(context));
 
-	// set up the telemetry
+	// send the startup event to telemetry tracking
 	(await didactTelemetry.getTelemetryServiceInstance()).sendStartupEvent();
 
 	// register the default tutorials if the setting is set to true
