@@ -26,6 +26,8 @@ import { clearRegisteredTutorials, getOpenAtStartupSetting,
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
+import { getRedHatService } from '@redhat-developer/vscode-redhat-telemetry/lib';
+import { DidactTelemetry } from './Telemetry';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
@@ -34,9 +36,12 @@ export const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
 export const didactTutorialsProvider = new DidactNodeProvider();
 let didactTreeView : vscode.TreeView<SimpleNode>;
+let didactTelemetry: DidactTelemetry;
 
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	
+	didactTelemetry = new DidactTelemetry((await getRedHatService(context)).getTelemetryService());
+
 	extensionFunctions.initialize(context);
 
 	// register all the various commands we provide
@@ -99,6 +104,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	// set up so we don't lose the webview contents each time it goes 'invisible' 
 	vscode.window.registerWebviewPanelSerializer(VIEW_TYPE, new DidactPanelSerializer(context));
 
+	// send the startup event to telemetry tracking
+	(await didactTelemetry.getTelemetryServiceInstance()).sendStartupEvent();
+
 	// register the default tutorials if the setting is set to true
 	const installTutorialsAtStartup : boolean = getAutoInstallDefaultTutorialsSetting();
 	if (installTutorialsAtStartup) {
@@ -159,4 +167,8 @@ export async function revealTreeItem(node: SimpleNode | null | undefined) : Prom
 	if (didactTreeView && didactTreeView.visible === true && node) {
 		await didactTreeView.reveal(node, {expand : true});
 	}
+}
+
+export function getTelemetry(): DidactTelemetry {
+	return didactTelemetry;
 }

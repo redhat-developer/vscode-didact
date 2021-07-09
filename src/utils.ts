@@ -493,3 +493,10 @@ export async function setInsertLFForCLILinkSetting(flag: boolean): Promise<void>
 export async function setLinkTextForCLILinkSetting(text: string | undefined): Promise<void> {
 	await workspace.getConfiguration().update(DIDACT_CLI_LINK_TEXT_SETTING, text);
 }
+
+export function getFileExtension(pathAsString: string) : string | undefined {
+	if (pathAsString && pathAsString.trim().length > 0) {
+		return pathAsString.split('.').pop();
+	}
+	return undefined;
+}
