@@ -22,7 +22,8 @@ import { clearRegisteredTutorials, getOpenAtStartupSetting,
 	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
 	addNewTutorialWithNameAndCategoryForDidactUri, 
 	removeTutorialByNameAndCategory, 
-	registerEmbeddedTutorials} from './utils';
+	registerEmbeddedTutorials,
+	appendAdditionalTutorials} from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
@@ -115,6 +116,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 		await registerEmbeddedTutorials(context, 'HelloWorld with JavaScript in Three Steps', './demos/markdown/helloJS/helloJS.didact.md');
 		await registerEmbeddedTutorials(context, 'Writing Your First Didact Tutorial', './demos/markdown/tutorial/tutorial.didact.md');
 	}
+
+	// append any additional tutorials if we have them
+	await appendAdditionalTutorials();
 
 	// create the view
 	createIntegrationsView();

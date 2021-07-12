@@ -30,6 +30,7 @@ export const DIDACT_OPEN_AT_STARTUP = 'didact.openDefaultTutorialAtStartup';
 export const DIDACT_AUTO_INSTALL_DEFAULT_TUTORIALS = 'didact.autoAddDefaultTutorials';
 export const DIDACT_CLI_LINK_LF_SETTING = 'didact.edit.cliLinkLF';
 export const DIDACT_CLI_LINK_TEXT_SETTING = 'didact.edit.cliLinkText';
+export const DIDACT_APPEND_REGISTERED_SETTING = 'didact.append.registry';
 
 const CACHED_OUTPUT_CHANNELS: OutputChannel[] = new Array<OutputChannel>();
 
@@ -500,3 +501,31 @@ export function getFileExtension(pathAsString: string) : string | undefined {
 	}
 	return undefined;
 }
+
+export function getAppendRegisteredSetting() : string | undefined {
+	return extensionFunctions.getContext().workspaceState.get(DIDACT_APPEND_REGISTERED_SETTING);
+}
+
+export async function setAppendRegisteredSetting(json: any): Promise<void> {
+	await extensionFunctions.getContext().workspaceState.update(DIDACT_APPEND_REGISTERED_SETTING, json);
+}
+
+export async function appendAdditionalTutorials() : Promise<void> {
+	try {
+		await extensionFunctions.sendTextToOutputChannel(`Starting Didact tutorials append process`);
+		const appendTutorialsAtStartup: string | undefined = getAppendRegisteredSetting();
+		if (appendTutorialsAtStartup) {
+			await extensionFunctions.sendTextToOutputChannel(`Didact tutorials appended at startup via ${DIDACT_APPEND_REGISTERED_SETTING} with ${appendTutorialsAtStartup}`);
+			const jsonTutorials = JSON.parse(appendTutorialsAtStartup);
+			for (var i = 0; i < jsonTutorials.length; i++) {
+				const jsonObj:any = jsonTutorials[i];
+				await extensionFunctions.sendTextToOutputChannel(`--Adding ${jsonObj.sourceUri} as ${jsonObj.name}/${jsonObj.category}`);
+				await registerTutorialWithCategory(jsonObj.name, jsonObj.sourceUri, jsonObj.category);
+			}
+		}
+	} catch (ex) {
+		await extensionFunctions.sendTextToOutputChannel(ex);
+		console.error(ex);
+		return Promise.reject(ex);
+	}	
+} 
