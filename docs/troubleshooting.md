@@ -1,3 +1,11 @@
+# What do you do if Didact tutorials don't run
+
+Check that the default terminal location is set to `view` to avoid an issue with tutorials appearing in `editor` views:
+
+1.  Go to the Settings (`File->Preferences->Settings`)
+2.  Navigate to `Features->Terminal`.
+3.  Check the setting for *Integrated: Default Location*. It should be set to `view`.
+
 # What do you do if the registered tutorials no longer work after updating to 0.4.0
 
 Check the version of the Didact extension by looking at the `Extensions` Activity and checking the `Installed` extensions. Look for `Didact` and verify that version 0.4.0 is installed.
