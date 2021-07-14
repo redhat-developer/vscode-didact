@@ -26,7 +26,7 @@ jobs:
           command: npm run vscode:prepublish
       - run:
           name: vsce-package
-          command: vsce package
+          command: vsce package --yarn
       - run:
           name: test
           command: npm test

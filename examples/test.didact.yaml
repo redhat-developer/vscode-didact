@@ -1,0 +1,127 @@
+metadata:
+  name: didact-quickstarts
+spec:
+  displayName: Using didact with quick starts
+  durationMinutes: 10
+  icon: ''
+  description: Let's use didact with quick starts
+  prerequisites: [You learned how to use didact commands]
+  introduction: |-
+    ### This quick start shows you how to use didact commands in quick starts
+    Learn more about didact here: [Didact](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact)
+  tasks:
+    - title: Clipboard Commands
+      description: |-
+        [Copy text to clipboard](didact://?commandId=vscode.didact.copyToClipboardCommand&text=The%20fox%20jumped%20over%20the%20lazy%20dog.)
+        [Copy text from file to clipboard](didact://?commandId=vscode.didact.copyFileTextToClipboardCommand&extFilePath=redhat.vscode-didact/examples/clipboardTextToTerminal.txt)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Output Channel Commands
+      description: |-
+        [Open Named Output Channel](didact://?commandId=vscode.didact.openNamedOutputChannel&text=newOutputChannel)
+        [Send Text to Named Output Channel](didact://?commandId=vscode.didact.sendTextToNamedOutputChannel&text=Hello%20Didact!$$newOutputChannel)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Project Scaffolding Commands
+      description: |-
+        [Create the tutorial project](didact://?commandId=vscode.didact.scaffoldProject&extFilePath=redhat.vscode-didact/create_extension/md-tutorial.project.didact.json)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Requirements Commands
+      description: |-
+        [Validate all Requirements](didact://?commandId=vscode.didact.validateAllRequirements)
+        | Requirement                                                                                                                                                                    | Status                                            |
+        |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|
+        | [Red Hat Camel Extension Pack is Installed](didact://?commandId=vscode.didact.extensionRequirementCheck&text=extension-requirement-status$$redhat.apache-camel-extension-pack) | *Status: unknown*{#extension-requirement-status} |
+        | [Workspace has at least one root folder](didact://?commandId=vscode.didact.workspaceFolderExistsCheck&text=workspace-folder-status) | *Status: unknown*{#workspace-folder-status} |
+        | [CLI command is successful](didact://?commandId=vscode.didact.cliCommandSuccessful&text=cli-requirement-status$$echo%20blah) | *Status: unknown*{#cli-requirement-status} |
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Terminal Commands
+      description: |-
+        [Open the Named Terminal](didact://?commandId=vscode.didact.startTerminalWithName&text=NamedTerminal)
+        [Send Named Terminal a String](didact://?commandId=vscode.didact.sendNamedTerminalAString&text=NamedTerminal$$echo%20And%20The%20Bunnymen)
+        [Send Named Terminal a Ctrl+C](didact://?commandId=vscode.didact.sendNamedTerminalCtrlC&text=NamedTerminal)
+        [Close the Named Terminal](didact://?commandId=vscode.didact.closeNamedTerminal&text=NamedTerminal)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Tutorial Commands
+      description: |-
+        [Open default Didact URL](didact://?commandId=vscode.didact.openTutorial)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Utility Commands
+      description: |-
+        [Create a workspace folder -- useful when in a workspace with no folder](didact://?commandId=vscode.didact.createWorkspaceFolder)
+        [Verify all Commands](didact://?commandId=vscode.didact.verifyCommands)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: View Commands
+      description: |-
+        [Reload the Tutorials view](didact://?commandId=vscode.didact.reload)
+        [Set focus to Tutorials view](didact://?commandId=didact.tutorials.focus)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+    - title: Useful VS Code Commands
+      description: |-
+        [Open file in folder](didact://?commandId=vscode.open&projectFilePath=first-tutorial.didact.md)
+        [Start the task named 'start.task'](didact://?commandId=workbench.action.tasks.runTask&text=start.task)
+      review:
+        instructions: |-
+          #### To verify that didact is working with quick starts:
+          Were you able to execute the commands?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: You have executed didact commands!
+        failed: Try the steps again.
+  conclusion: You have gone through a didact-powered quick start!
+  nextQuickStart: []
+  

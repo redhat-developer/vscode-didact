@@ -174,20 +174,20 @@
 				"command": "vscode.didact.startDidact",
 				"key": "ctrl+alt+d",
 				"mac": "cmd+alt+d",
-				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc|yaml)$/"
 			},
 			{
 				"command": "vscode.didact.copyTextToCLI",
 				"key": "ctrl+alt+t",
 				"mac": "cmd+alt+t",
-				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc)$/"
+				"when": "editorFocus && resourceFilename =~ /[.](didact)[.](md|adoc|yaml)$/"
 			}
 		],
 		"menus": {
 			"explorer/context": [
 				{
 					"command": "vscode.didact.startDidact",
-					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc|yaml)$/",
 					"group": "vscode.didact.group@1"
 				},
 				{
@@ -197,7 +197,7 @@
 				},
 				{
 					"command": "vscode.didact.registry.addUri",
-					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc|yaml)$/",
 					"group": "vscode.didact.group@1"
 				}
 			],
@@ -237,7 +237,7 @@
 			],
 			"editor/title": [
 				{
-					"when": "resourceFilename =~ /[.](didact)[.](md|adoc)$/",
+					"when": "resourceFilename =~ /[.](didact)[.](md|adoc|yaml)$/",
 					"command": "vscode.didact.verifyCommands",
 					"alt": "vscode.didact.verifyCommands",
 					"group": "didact.editor"
@@ -276,46 +276,63 @@
 		"*.didact.adoc": "asciidoctor"
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run clean && npm run compile",
-		"compile": "tsc -p ./",
-		"clean": "rm -rf out || rmdir out /s /q",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile",
-		"test": "npm run compile && node ./out/test/runTest.js"
+		"vscode:prepublish": "npm run clean && webpack --mode production",
+		"compile": "tsc -p ./ && webpack --mode development",
+		"clean": "rm -rf out || rmdir out /s /q && rm -rf quickstartsPreview",
+		"watch": "tsc -watch -p ./ && webpack --mode development --watch",
+		"pretest": "tsc -p ./",
+		"test": "tsc -p ./ && node ./out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.21",
 		"@types/glob": "^7.1.4",
 		"@types/mocha": "^8.2.3",
 		"@types/node": "^16.4.0",
+		"@types/react": "^16.14.4",
+		"@types/react-dom": "^16.9.11",
 		"@types/sinon": "^10.0.2",
 		"@types/vscode": "^1.57.1",
 		"@typescript-eslint/eslint-plugin": "^4.28.4",
 		"@typescript-eslint/parser": "^4.28.4",
 		"chai": "^4.3.4",
+		"css-loader": "^5.2.4",
 		"eslint": "^7.31.0",
 		"mocha": "^9.0.2",
 		"mocha-jenkins-reporter": "^0.4.4",
+		"null-loader": "^4.0.1",
 		"sinon": "11.1.1",
+		"style-loader": "^2.0.0",
+		"ts-loader": "^8.0.17",
 		"typescript": "^4.3.5",
-		"vscode-test": "^1.6.1",
+		"vscode-test": "^1.5.2",
+		"webpack": "^4.35.2",
+		"webpack-cli": "^3.3.5",
 		"y18n": ">=4.0.1"
 	},
 	"dependencies": {
+		"@cloudmosaic/quickstarts": "0.0.24",
+		"@patternfly/patternfly": "^4.102.2",
+		"@patternfly/react-catalog-view-extension": "^4.11.7",
 		"@redhat-developer/vscode-redhat-telemetry": "^0.2.0",
 		"@types/download": "^8.0.1",
 		"@types/markdown-it": "^12.0.3",
+		"@types/node-fetch": "^2.5.10",
 		"@types/request-promise": "^4.1.48",
+		"@types/js-yaml": "^4.0.1",
 		"asciidoctor": "^2.2.4",
 		"async-wait-until": "2.0.7",
 		"base-64": "^1.0.0",
 		"download": "^8.0.0",
 		"glob": "^7.1.7",
+		"js-base64": "^3.6.0",
+		"js-yaml": "^3.14.1",
 		"markdown-it": "^12.1.0",
 		"markdown-it-attrs": "^4.0.0",
 		"markdown-it-task-lists": "^2.1.1",
 		"node-fetch": "^2.6.1",
-		"node-html-parser": "^4.1.0",
+		"node-html-parser": "^3.3.0",
+		"react": "^16.14.0",
+		"react-dom": "^16.14.0",
 		"tmp": "^0.2.1",
 		"url-parse": "^1.5.1"
 	}

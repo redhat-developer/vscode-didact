@@ -57,6 +57,7 @@ export class DidactPanel {
 		const localIconPath = Uri.file(path.resolve(extPath, 'icon/logo.svg'));
 		const iconDirPath = path.dirname(localIconPath.fsPath);
 		localResourceRoots.push(Uri.file(iconDirPath));
+		localResourceRoots.push(Uri.file(path.join(extPath, "quickstartsPreview")));
 
 		const panel = window.createWebviewPanel(
 			VIEW_TYPE, this.defaultTitle, viewColumn,
@@ -207,7 +208,11 @@ export class DidactPanel {
 		if (flag) { // reset based on vscode link
 			const content = await extensionFunctions.getWebviewContent();
 			if (content) {
-				this.currentHtml = this.wrapDidactContent(content);
+				if (content.trim().startsWith(`<!DOCTYPE html>`)) {
+					this.currentHtml = content;
+				} else {
+					this.currentHtml = this.wrapDidactContent(content);
+				}
 			}
 		}
 		if (this.currentHtml) {
