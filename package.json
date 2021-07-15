@@ -298,7 +298,7 @@
 		"mocha-jenkins-reporter": "^0.4.4",
 		"sinon": "11.1.1",
 		"typescript": "^4.3.5",
-		"vscode-test": "^1.5.2",
+		"vscode-test": "^1.6.1",
 		"y18n": ">=4.0.1"
 	},
 	"dependencies": {
