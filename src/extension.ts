@@ -23,8 +23,7 @@ import { clearRegisteredTutorials, getOpenAtStartupSetting,
 	addNewTutorialWithNameAndCategoryForDidactUri, 
 	removeTutorialByNameAndCategory, 
 	registerEmbeddedTutorials,
-	appendAdditionalTutorialsFromEnv,
-	getAppendRegisteredSettingFromEnv} from './utils';
+	appendAdditionalTutorialsFromEnv} from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
