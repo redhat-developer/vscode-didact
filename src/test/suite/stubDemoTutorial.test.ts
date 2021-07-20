@@ -23,6 +23,7 @@ import { DidactUri } from '../../didactUri';
 import { handleText } from '../../commandHandler';
 import { waitUntil } from 'async-wait-until';
 import { fail } from 'assert';
+import { delay } from '../../utils';
 
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
@@ -135,10 +136,10 @@ suite('stub out a tutorial', () => {
 					return true;
 				};
 				var numberOfTimes = 5;
-				const delay = 1000;
+				const delayTime = 1000;
 				for (let i = 0; i < numberOfTimes; i++) {
 					await predicate();
-					await new Promise((res) => { setTimeout(res, delay); });
+					await delay(delayTime);
 				}
 				console.log(`-terminal output = ${terminalData}`);
 
@@ -171,10 +172,6 @@ suite('stub out a tutorial', () => {
 		await executeAndWait('workbench.action.terminal.clearSelection');	
 		const clipboard_content = await env.clipboard.readText();
 		return clipboard_content.trim();
-	}
-
-	function delay(ms: number) {
-		return new Promise( resolve => setTimeout(resolve, ms) );
 	}
 
 	async function executeAndWait(command: string): Promise<void> {
