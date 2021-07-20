@@ -291,7 +291,7 @@
 		"@types/sinon": "^10.0.2",
 		"@types/vscode": "^1.57.1",
 		"@typescript-eslint/eslint-plugin": "^4.28.4",
-		"@typescript-eslint/parser": "^4.28.3",
+		"@typescript-eslint/parser": "^4.28.4",
 		"chai": "^4.3.4",
 		"eslint": "^7.31.0",
 		"mocha": "^9.0.2",
