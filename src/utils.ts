@@ -503,7 +503,6 @@ export function getFileExtension(pathAsString: string) : string | undefined {
 }
 
 export function getAppendRegisteredSettingFromEnv() : string | undefined {
-	console.log(process.env);
 	const envVar = process.env[DIDACT_APPEND_REGISTERED_SETTING];
 	if (!envVar || (typeof envVar !== 'string')) {
 		return;
@@ -517,15 +516,13 @@ export async function appendAdditionalTutorialsFromEnv() : Promise<void> {
 		if (appendTutorialsAtStartup) {
 			await extensionFunctions.sendTextToOutputChannel(`Didact tutorials appended at startup via ${DIDACT_APPEND_REGISTERED_SETTING}`);
 			const jsonTutorials = JSON.parse(appendTutorialsAtStartup);
-			for (var i = 0; i < jsonTutorials.length; i++) {
-				const jsonObj:any = jsonTutorials[i];
-				await extensionFunctions.sendTextToOutputChannel(`--Adding tutorial ${jsonObj.sourceUri} as ${jsonObj.name}/${jsonObj.category}`);
-				await registerTutorialWithCategory(jsonObj.name, jsonObj.sourceUri, jsonObj.category);
+			for (const jsonTutorial of jsonTutorials) {
+				await extensionFunctions.sendTextToOutputChannel(`--Adding tutorial ${jsonTutorial.sourceUri} as ${jsonTutorial.name}/${jsonTutorial.category}`);
+				await registerTutorialWithCategory(jsonTutorial.name, jsonTutorial.sourceUri, jsonTutorial.category);
 			}
 		}
 	} catch (ex) {
 		await extensionFunctions.sendTextToOutputChannel(ex);
-		console.error(ex);
 		return Promise.reject(ex);
 	}	
 } 
