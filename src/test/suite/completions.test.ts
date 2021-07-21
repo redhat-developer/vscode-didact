@@ -19,7 +19,7 @@
 import { expect } from 'chai';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { removeFilesAndFolders } from '../../utils';
+import { removeFilesAndFolders, delay } from '../../utils';
 import { Position, Range, TextEditor } from "vscode";
 
 const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
@@ -71,10 +71,6 @@ async function testWeGetExpectedResult(textToInsert : string, expectedResult: st
 	await delay(DELAY_TIME);
 	await acceptFirstSuggestion(testDocumentUri, _disposables);
 	expect(editor.document.getText()).to.include(expectedResult);
-}
-
-function delay(ms: number) {
-	return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 async function initializeTextEditor(textEditor: TextEditor, initializeWith = "") {

@@ -23,6 +23,7 @@ import { DidactUri } from '../../didactUri';
 import { handleText } from '../../commandHandler';
 import { waitUntil } from 'async-wait-until';
 import { fail } from 'assert';
+import { delay } from '../../utils';
 
 const testMD = Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 
@@ -108,10 +109,6 @@ suite('stub out a tutorial', () => {
 		return clipboard_content.trim();
 	}
 
-	function delay(ms: number) {
-		return new Promise( resolve => setTimeout(resolve, ms) );
-	}
-
 	async function executeAndWait(command: string): Promise<void> {
 		await commands.executeCommand(command);
 		delay(200);
@@ -135,5 +132,4 @@ suite('stub out a tutorial', () => {
 			term = window.activeTerminal;
 		}
 	}
-
 });
