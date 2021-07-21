@@ -29,6 +29,7 @@ import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
 import { addNewTutorialWithNameAndCategoryForDidactUri, delay, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { getYamlContent } from './yamlUtils';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -268,7 +269,7 @@ export async function closeTerminal(name:string): Promise<void>{
 }
 
 // reset the didact window to use the default set in the settings
-export async function openDidactWithDefault(): Promise<void>{
+export async function openDidactWithDefault(this: any): Promise<void>{
 	sendTextToOutputChannel(`Starting Didact window with default`);
 
 	didactManager.setContext(extContext);
@@ -561,6 +562,8 @@ export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined
 			return parseADtoHTML(content, baseDir);
 		} else if (extname.localeCompare('.md') === 0) {
 			return parseMDtoHTML(content);
+		} else if (extname.localeCompare('.yaml') === 0) {
+			return getYamlContent(content, uri);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
@@ -580,10 +583,13 @@ export async function getDataFromUrl(inurl:string) : Promise<string> {
 			return parseADtoHTML(content);
 		} else if (extname.localeCompare('.md') === 0) {
 			return parseMDtoHTML(content);
+		} else if (extname.localeCompare('.yaml') === 0) {
+			return getYamlContent(content, tempVSUri);
 		} else {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
 	} catch (error) {
+		sendTextToOutputChannel(`--getDataFromUrl: error = ${error}`);
 		throw new Error(error);
 	}
 }

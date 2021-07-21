@@ -1,4 +1,5 @@
 out
+quickstartsPreview/
 node_modules
 .vscode-test/
 *.vsix
@@ -6,3 +7,4 @@ node_modules
 test Fixture with speci@l chars/*
 test Fixture with speci@l chars/readme.md
 !test Fixture with speci@l chars/.gitkeep 
+.DS_Store
