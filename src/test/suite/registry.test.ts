@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials, registerTutorialWithArgs} from '../../utils';
+import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, getUriForDidactNameAndCategory, registerTutorialWithCategory, clearRegisteredTutorials, registerTutorialWithArgs, DIDACT_APPEND_REGISTERED_SETTING, getAppendRegisteredSettingFromEnv, appendAdditionalTutorialsFromEnv} from '../../utils';
 import {before} from 'mocha';
 import * as vscode from 'vscode';
 import { ADD_TUTORIAL_TO_REGISTRY, getContext, REGISTER_TUTORIAL } from '../../extensionFunctions';
@@ -113,6 +113,24 @@ suite('Didact registry test suite', () => {
 
 		const foundTutorial = verifyTutorialInRegistry(name4);
 		assert.ok(foundTutorial, `Did not find new-tutorial-4 registered via JSON`);
+	});
+
+	test('append registry from environment variable', async() => {
+		const tutsToAppend : String = '[{"name":"AppendMe2","category":"AppendedCat2","sourceUri":"https%3A%2F%2Fraw.githubusercontent.com%2Fredhat-developer%2Fvscode-didact%2Fmaster%2Fexamples%2Fregistry.example.didact.md"}]';
+		process.env[DIDACT_APPEND_REGISTERED_SETTING] = tutsToAppend.toString();
+
+		const envVarJson = getAppendRegisteredSettingFromEnv();
+		console.log(`envVar = ` + envVarJson);
+		assert.ok(envVarJson, `Did not find envVarJson`);
+
+		const registry = getRegisteredTutorials();
+		assert.notStrictEqual(registry, undefined);
+
+		const tutName = `AppendMe2`;
+		await appendAdditionalTutorialsFromEnv();
+		const foundTutorial = verifyTutorialInRegistry(tutName);
+		delete process.env.DIDACT_APPEND_REGISTERED_SETTING;
+		assert.ok(foundTutorial, `Did not find ${tutName} registered after appending to tutorial list from settings`);
 	});
 
 	test('Clear all the tutorials', async() => {
