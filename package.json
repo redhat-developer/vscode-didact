@@ -286,7 +286,7 @@
 	"devDependencies": {
 		"@types/chai": "^4.2.21",
 		"@types/glob": "^7.1.4",
-		"@types/mocha": "^8.2.3",
+		"@types/mocha": "^9.0.0",
 		"@types/node": "^16.4.0",
 		"@types/sinon": "^10.0.2",
 		"@types/vscode": "^1.57.1",
