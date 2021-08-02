@@ -32,7 +32,7 @@
 
 	before('set up the registry tests', async () => {
 		// make sure that the HelloWorld tutorial is registered if it's been cleared
-		await registerTutorialWithCategory(tutorialName, tutorialUri.fsPath, tutorialCategory);
+		await registerTutorialWithCategory(tutorialName, tutorialUri.fsPath, tutorialCategory, true);
 	});
 
 	test('Verify that we get null as the parent of the category', async () => {

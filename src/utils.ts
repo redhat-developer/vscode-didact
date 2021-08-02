@@ -140,7 +140,7 @@ export async function registerTutorialWithJSON( jsonObject: any) {
 	return registerTutorialWithClass(newTutorial);
 }
 
-export async function registerTutorialWithClass(newDidact: Tutorial): Promise<void> {
+export async function registerTutorialWithClass(newDidact: Tutorial, setFocusInTreeView = false): Promise<void> {
 	const newDidactAsString = JSON.stringify(newDidact);
 	let existingRegistry : string[] | undefined = getRegisteredTutorials();
 	if(!existingRegistry) {
@@ -165,6 +165,12 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 			extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
 		}
 	}
+	if (setFocusInTreeView) {
+		await focusInTreeView(existingRegistry, newDidact);
+	}	
+}
+
+async function focusInTreeView(existingRegistry: string[], newDidact: Tutorial) {
 	await commands.executeCommand('didact.tutorials.focus'); // open the tutorials view
 	await extensionFunctions.getContext().workspaceState.update(DIDACT_REGISTERED_SETTING, existingRegistry);
 	refreshTreeview();
@@ -175,13 +181,13 @@ export async function registerTutorialWithClass(newDidact: Tutorial): Promise<vo
 	}
 }
 
-export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string ): Promise<void> {
+export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string, setFocusInTreeView = false ): Promise<void> {
 	const newTutorial = new Tutorial(name, sourceUri, category);
-	return registerTutorialWithClass(newTutorial);
+	return registerTutorialWithClass(newTutorial, setFocusInTreeView);
 }
 
-export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string ): Promise<void> {
-	return registerTutorialWithArgs(name, sourceUri, category);
+export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string, setFocusInTreeView = false ): Promise<void> {
+	return registerTutorialWithArgs(name, sourceUri, category, setFocusInTreeView);
 }
 
 export async function registerEmbeddedTutorials(context: ExtensionContext, name: string, pathInExtension: string): Promise<void> {
@@ -351,9 +357,9 @@ export async function addNewTutorialWithNameAndCategoryForDidactUri(uri: Uri, na
 	}
 	if (tutorialName && tutorialCategory) {
 		if (uri.scheme.toLowerCase() === 'file') {
-			await registerTutorialWithArgs(tutorialName, uri.fsPath, tutorialCategory);
+			await registerTutorialWithArgs(tutorialName, uri.fsPath, tutorialCategory, true);
 		} else {
-			await registerTutorialWithArgs(tutorialName, uri.toString(), tutorialCategory);
+			await registerTutorialWithArgs(tutorialName, uri.toString(), tutorialCategory, true);
 		}
 	}
 }
