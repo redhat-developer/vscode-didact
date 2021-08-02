@@ -112,7 +112,7 @@ export function getValue(input : string | string[]) : string | undefined {
 
 // utility method to do a simple delay of a few ms
 export function delay(ms: number): Promise<unknown> {
-	return new Promise( resolve => setTimeout(resolve, ms, null) );
+	return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 export function getDefaultUrl() : string | undefined {
