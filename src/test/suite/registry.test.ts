@@ -3,7 +3,8 @@ import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, ge
 import {before} from 'mocha';
 import * as vscode from 'vscode';
 import { ADD_TUTORIAL_TO_REGISTRY, getContext, REGISTER_TUTORIAL } from '../../extensionFunctions';
-import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME } from '../../extension';
+import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME, didactTreeView, didactTutorialsProvider } from '../../extension';
+import { waitUntil } from 'async-wait-until';
 
 const name = 'new-tutorial';
 const category = 'some-category';
@@ -11,33 +12,55 @@ const source = 'my-uri';
 const name2 = 'new-tutorial-2';
 const category2 = 'some-category-2';
 const source2 = 'my-uri-2';
+const name3 = 'new-tutorial-3';
+const category3 = 'some-category-3';
+const source3 = 'my-uri-3';
 
 suite('Didact registry test suite', () => {
 
-	before('set up the registry tests', async () => {
+	before('Clear the registry tests', async () => {
 		await clearRegisteredTutorials(false);
 	});
 
 	test('assert that clearing the registry made it empty', async () => {
 		const registry = getRegisteredTutorials();
-		assert.strictEqual(registry, undefined);
+		assert.strictEqual(registry, undefined, `Registry was expected undefined but got ${registry}`);
 
 		// clean up and add one demo tutorial back in
 		const tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/didact-demo.didact.md'));
-		await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+		await registerTutorialWithCategory(DEFAULT_TUTORIAL_NAME, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY, true);
 
 		const addRegistry = getRegisteredTutorials();
-		assert.notStrictEqual(addRegistry, undefined);
+		assert.notStrictEqual(addRegistry, undefined, `Registry was expected not to be undefined`);
 	});
 
+	test('Add to registry without setting focus', async() => {
+		await clearRegisteredTutorials(false);
+		const selectedTutorialsBeforeTest = didactTreeView.selection;
+		assert.strictEqual(selectedTutorialsBeforeTest.length, 0, `There are unexpected selected Tutorials before test: ${selectedTutorialsBeforeTest}`);
+		
+		try {
+			await registerTutorialWithArgs(name3, source3, category3);
+		} catch(error) {
+			assert.fail('We failed to create the new didact registry entry');
+		}
+		
+		const selectedTutorials = didactTreeView.selection;
+		assert.strictEqual(selectedTutorials.length, 0, `There are unexpected selected Tutorials: ${selectedTutorials}`);
+	});
+	
 	test('add to registry', async () => {
 		try {
-			await registerTutorialWithArgs(name, source, category).then( () => {
+			await registerTutorialWithArgs(name, source, category, true).then( () => {
 				assert.ok('No errors thrown while creating new didact registry entry');
 			});
 		} catch (error) {
 			assert.fail('We failed to create the new didact registry entry');
 		}
+		
+		const selectedTutorials = didactTreeView.selection;
+		assert.strictEqual(selectedTutorials.length, 1, `There are unexpected selected Tutorials: ${selectedTutorials}`);
+		assert.strictEqual(selectedTutorials[0].label, name);
 
 		try {
 			await registerTutorialWithCategory(name, source, category);

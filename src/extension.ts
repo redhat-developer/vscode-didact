@@ -36,7 +36,7 @@ export const DEFAULT_TUTORIAL_CATEGORY = "Didact";
 export const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
 export const didactTutorialsProvider = new DidactNodeProvider();
-let didactTreeView : vscode.TreeView<SimpleNode>;
+export let didactTreeView : vscode.TreeView<SimpleNode>;
 let didactTelemetry: DidactTelemetry;
 
 export async function activate(context: vscode.ExtensionContext): Promise<any> {

@@ -45,7 +45,7 @@ suite('Extension Test Suite', () => {
 					}
 				}
 			}
-			expect(match).to.be.true;
+			expect(match, `Tutorial ${tutorialName} not found in registry. It contains ${existingRegistry}`).to.be.true;
 		}
 	});
 
