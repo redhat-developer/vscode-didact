@@ -32,7 +32,7 @@
 		"Framework"
 	],
 	"engines": {
-		"vscode": "^1.57.1"
+		"vscode": "^1.59.0"
 	},
 	"categories": [
 		"Other"
