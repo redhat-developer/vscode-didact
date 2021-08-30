@@ -290,7 +290,7 @@
 		"@types/node": "^16.7.4",
 		"@types/sinon": "^10.0.2",
 		"@types/vscode": "^1.57.1",
-		"@typescript-eslint/eslint-plugin": "^4.29.3",
+		"@typescript-eslint/eslint-plugin": "^4.30.0",
 		"@typescript-eslint/parser": "^4.29.3",
 		"chai": "^4.3.4",
 		"eslint": "^7.32.0",
