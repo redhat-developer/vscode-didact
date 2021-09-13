@@ -295,7 +295,7 @@
 		"chai": "^4.3.4",
 		"eslint": "^7.32.0",
 		"mocha": "^9.1.1",
-		"mocha-jenkins-reporter": "^0.4.6",
+		"mocha-jenkins-reporter": "^0.4.7",
 		"sinon": "11.1.2",
 		"typescript": "^4.3.5",
 		"vscode-test": "^1.6.1",
