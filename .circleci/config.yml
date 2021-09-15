@@ -3,7 +3,7 @@ version: 2.1
 job_default: &job_defaults
   working_directory: ~/vscode-didact
   docker:
-    - image: circleci/node:lts-browsers
+    - image: cimg/node:lts-browsers
   
 jobs:
   build:
