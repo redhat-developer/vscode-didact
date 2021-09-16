@@ -302,7 +302,7 @@
 		"y18n": ">=4.0.1"
 	},
 	"dependencies": {
-		"@redhat-developer/vscode-redhat-telemetry": "^0.2.0",
+		"@redhat-developer/vscode-redhat-telemetry": "^0.3.0",
 		"@types/download": "^8.0.1",
 		"@types/markdown-it": "^12.2.1",
 		"@types/request-promise": "^4.1.48",
