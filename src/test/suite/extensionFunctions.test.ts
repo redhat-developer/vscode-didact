@@ -10,7 +10,7 @@ import { expect } from 'chai';
 
 suite('Extension Functions Test Suite', () => {
 
-	const uriToRemoteDidactAdoc = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/asciidoc/simple-example.didact.adoc';
+	const uriToRemoteDidactAdoc = 'https://raw.githubusercontent.com/redhat-developer/vscode-didact/0.4.0/demos/asciidoc/simple-example.didact.adoc';
 
 	async function cleanFiles() {
 		const testWorkspace = path.resolve(__dirname, '..', '..', '..', './test Fixture with speci@l chars');
@@ -177,10 +177,10 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('try parsing didact url with http link in url', async function() {
-		const pathToCheck = path.join('vscode-didact', 'master', 'demos', 'markdown', 'didact-demo.didact.md');
-		const pathToCheckOnJenkins = path.join('vscode-didact-release', 'master', 'demos', 'markdown', 'didact-demo.didact.md');
+		const pathToCheck = path.join('vscode-didact', '0.4.0', 'demos', 'markdown', 'didact-demo.didact.md');
+		const pathToCheckOnJenkins = path.join('vscode-didact-release', '0.4.0', 'demos', 'markdown', 'didact-demo.didact.md');
 		checkCanParseDidactUriForPath(
-			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md', 
+			'vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/0.4.0/demos/markdown/didact-demo.didact.md', 
 			pathToCheck, pathToCheckOnJenkins);
 	});
 
@@ -219,7 +219,7 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('try to copy a zip file and not unzip it with a change to location and filename change', async function() {
-		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz';
+		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/0.4.0/test-archive/testarchive.tar.gz';
 		const filepathUri = handleProjectFilePath('expanded'); // create a folder to unzip into
 		const newFilename = `giphy.tar.gz`;
 		if (filepathUri) {
@@ -228,7 +228,7 @@ suite('Extension Functions Test Suite', () => {
 	});
 
 	test('try to copy and unzip a file with a change to location and filename change', async function() {
-		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz';
+		const urlToTest = 'https://github.com/redhat-developer/vscode-didact/raw/0.4.0/test-archive/testarchive.tar.gz';
 		const filepathUri = handleProjectFilePath('expanded2'); // create a folder to unzip into
 		const newFilename = `testarchive.tar.gz`;
 		const fileToLookFor = `testfile/spongebob-expands.gif`;

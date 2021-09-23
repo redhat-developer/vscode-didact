@@ -139,7 +139,7 @@ suite('Didact registry test suite', () => {
 	});
 
 	test('append registry from environment variable', async() => {
-		const tutsToAppend : String = '[{"name":"AppendMe2","category":"AppendedCat2","sourceUri":"https%3A%2F%2Fraw.githubusercontent.com%2Fredhat-developer%2Fvscode-didact%2Fmaster%2Fexamples%2Fregistry.example.didact.md"}]';
+		const tutsToAppend : String = '[{"name":"AppendMe2","category":"AppendedCat2","sourceUri":"https%3A%2F%2Fraw.githubusercontent.com%2Fredhat-developer%2Fvscode-didact%2Fmain%2Fexamples%2Fregistry.example.didact.md"}]';
 		process.env[DIDACT_APPEND_REGISTERED_SETTING] = tutsToAppend.toString();
 
 		const envVarJson = getAppendRegisteredSettingFromEnv();

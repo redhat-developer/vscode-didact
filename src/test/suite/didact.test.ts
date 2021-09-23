@@ -37,8 +37,8 @@ const EDITOR_OPENED_TIMEOUT = 5000;
 
 const testMD = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/didact-demo.didact.md');
 const testMD3 = vscode.Uri.parse('vscode://redhat.vscode-didact?extension=demos/markdown/validation-test.didact.md');
-const testMD4 = vscode.Uri.parse('vscode://redhat.vscode-didact?commandId=vscode.didact.registry.addUri&&https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/requirements.example.didact.md&&name=Requirements%20Example&&category=Test%20From%20The%20Web');
-const testMD5 = vscode.Uri.parse('vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/terminal.example.didact.md');
+const testMD4 = vscode.Uri.parse('vscode://redhat.vscode-didact?commandId=vscode.didact.registry.addUri&&https=raw.githubusercontent.com/redhat-developer/vscode-didact/0.4.0/examples/requirements.example.didact.md&&name=Requirements%20Example&&category=Test%20From%20The%20Web');
+const testMD5 = vscode.Uri.parse('vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/0.4.0/examples/terminal.example.didact.md');
 const testExt = 'didact://?commandId=vscode.didact.extensionRequirementCheck&text=some-field-to-update$$redhat.vscode-didact';
 const testReq = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Linux';
 const testReqMac = 'didact://?commandId=vscode.didact.requirementCheck&text=uname-requirements-status$$uname$$Darwin';

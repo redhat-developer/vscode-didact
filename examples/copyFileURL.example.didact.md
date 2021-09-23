@@ -10,7 +10,7 @@ Let's say we have this image:
 
 We can find it at this URL: https://media.giphy.com/media/7DzlajZNY5D0I/giphy.gif
 
-And let's say we have this archive file: https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz 
+And let's say we have this archive file: https://github.com/redhat-developer/vscode-didact/raw/main/test-archive/testarchive.tar.gz 
 
 ## Copying a File into the Workspace root with no name change
 
@@ -43,7 +43,7 @@ Here's the Didact URL: `didact://?commandId=vscode.didact.copyFileURLtoWorkspace
 
 This is another issue (https://github.com/redhat-developer/vscode-didact/issues/135) that came up and now we can do that too! Let's take a sample image archive and unzip it into a new folder called `expandme`.
 
-* [Click here to download and unzip the test image archive into a new directory.](didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz$$testarchive.tar.gz$$expandme$$true)
+* [Click here to download and unzip the test image archive into a new directory.](didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/redhat-developer/vscode-didact/raw/main/test-archive/testarchive.tar.gz$$testarchive.tar.gz$$expandme$$true)
 * [Click here to open `expandme/testfile/spongebob-expands.gif`](didact://?commandId=vscode.open&projectFilePath=expandme/testfile/spongebob-expands.gif)
 
-Here's the Didact URL: `didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/redhat-developer/vscode-didact/raw/master/test-archive/testarchive.tar.gz$$testarchive.tar.gz$$expandme$$true`
+Here's the Didact URL: `didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://github.com/redhat-developer/vscode-didact/raw/main/test-archive/testarchive.tar.gz$$testarchive.tar.gz$$expandme$$true`

@@ -2,7 +2,7 @@
 
 Thanks for creating your first Didact tutorial in Markdown!
 
-Didact is an extension for VS Code that provides a simple Markdown-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the [VSCode Didact readme about link formatting for more information](https://github.com/redhat-developer/vscode-didact/blob/master/README.md)!
+Didact is an extension for VS Code that provides a simple Markdown-based way to create tutorials that launch VS Code commands and walk users through performing particular tasks. See the [VSCode Didact readme about link formatting for more information](https://github.com/redhat-developer/vscode-didact/blob/main/README.md)!
 
 Constructing a Didact tutorial is as easy as writing a [Markdown formatted document](https://www.markdownguide.org/) and embedding some links that call specific VS Code commands.
 
@@ -32,9 +32,9 @@ Other things that Didact can do:
 * Gather all requirements from tutorial
 * Gather all commands from tutorial
 
-For more about specific Didact commands, check out [the VSCode Didact Commands Reference](https://github.com/redhat-developer/vscode-didact/blob/master/examples/commands.reference.md)
+For more about specific Didact commands, check out [the VSCode Didact Commands Reference](https://github.com/redhat-developer/vscode-didact/blob/main/examples/commands.reference.md)
 
 ## Further Information
 
 * For more about Markdown formatting, check out the [Markdown Guide](https://www.markdownguide.org/)
-* For more about Didact, check out [the VSCode Didact readme](https://github.com/redhat-developer/vscode-didact/blob/master/README.md)
+* For more about Didact, check out [the VSCode Didact readme](https://github.com/redhat-developer/vscode-didact/blob/main/README.md)

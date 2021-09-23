@@ -308,7 +308,7 @@ export class DidactUriCompletionItemProvider implements vscode.CompletionItemPro
 	insertDidactBadge(isAdoc = false) : vscode.CompletionItem {
 		const altLabel = "Powered by Didact";
 		const linkUrl = "https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact";
-		const imageUrl = "https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/powered240x40.png";
+		const imageUrl = "https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/icon/powered240x40.png";
 
 		const adocSnippetText = `image:${imageUrl}[${altLabel},link="${linkUrl}"]`;
 		const mdSnippetText = `[![${altLabel}](${imageUrl})](${linkUrl})`;

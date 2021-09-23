@@ -9,7 +9,7 @@ Included completions:
 * `didact` - inserts text for a sample Didact file (`# Your First Didact Tutorial`)
 * `Insert Didact Badge` - adds a `Powered by Didact` image with a link back to the [github project](https://github.com/redhat-developer/vscode-didact)
 
-[![Powered by Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/powered240x40.png)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact)
+[![Powered by Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/icon/powered240x40.png)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact)
 
 * `Insert Didact Requirements label` - inserts a label that can be updated with Didact requirements testing commands (such as `*Status: unknown*{#requirement-name}`)
 * `Insert link to install required VS Code extension` - inserts a quick link to install a particular VSCode extension (`[Click here to install the ExtensionPackName.](vscode:extension/ExtensionPackID)`)

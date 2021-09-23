@@ -6,7 +6,7 @@ The `Didact Tutorials` view has been there since the beginning of Didact, offeri
 
 If you look at the Didact Tutorials view, you should be able to find the `Didact` category and beneath that find `Creating a New Didact Tutorial Extension`. That will step you through creating the new extension and your Didact tutorial file, then registering the new file with the view via extension code.
 
-*Note:* If the `Creating a New Didact Tutorial Extension` tutorial has been removed, you can find the tutorial directly at our GitHub repository and follow the steps described in [`Registering the New Tutorial`](https://github.com/redhat-developer/vscode-didact/blob/master/create_extension/create-new-tutorial-with-extension.didact.md#registering-the-new-tutorial).
+*Note:* If the `Creating a New Didact Tutorial Extension` tutorial has been removed, you can find the tutorial directly at our GitHub repository and follow the steps described in [`Registering the New Tutorial`](https://github.com/redhat-developer/vscode-didact/blob/main/create_extension/create-new-tutorial-with-extension.didact.md#registering-the-new-tutorial).
 
 ## Adding via right-click `Didact: Register Didact Tutorial` menu in Explorer
 

@@ -60,7 +60,7 @@ Opens a Didact window with the Markdown or AsciiDoc file passed in as a `vscode.
 
 Note: This can also be done by simply specifying a valid Uri to a Didact file in a `vscode://redhat.vscode-didact?` link. ([See Constructing Didact Links for details on specifying https/http, extension, and workspace paths.](https://github.com/redhat-developer/vscode-didact/wiki/Constructing-Didact-Links#didact-link-formatting-for-opening-didact-files-inside-vs-code)
 
-* Example 1: `vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/master/example/tutorial2.didact.md`
+* Example 1: `vscode://redhat.vscode-didact?https=raw.githubusercontent.com/redhat-developer/vscode-didact/main/example/tutorial2.didact.md`
 * Example 2: `vscode://redhat.vscode-didact?extension=example/tutorial.didact.md`
 
 The VS Code Link Handler that is registered uses the `startDidact` command to handle incoming links specified in this manner.

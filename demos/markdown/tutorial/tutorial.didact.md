@@ -123,13 +123,13 @@ As you saw in the example above, you can even add a button to validate ALL requi
 
 Here are a few ideas for you to explore what else Didact has to offer:
 
-* Use one of the other types of requirements checks. You can see an example [here](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/requirements.example.didact.md) that walks through all the current options.
+* Use one of the other types of requirements checks. You can see an example [here](https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/examples/requirements.example.didact.md) that walks through all the current options.
 
-* Put all your requirements in a table for easier parsing. You can see an example [here](https://github.com/redhat-developer/vscode-didact/blob/master/demos/markdown/dep-table.didact.md).
+* Put all your requirements in a table for easier parsing. You can see an example [here](https://github.com/redhat-developer/vscode-didact/blob/main/demos/markdown/dep-table.didact.md).
 
 >If you use Markdown, there’s a helpful utility that can help you create a table: [TablesGenerator.com](http://www.tablesgenerator.com/markdown_tables).
 
-* Leverage other VS Code commands! every `didact://` command starts with a command id. Commands serve as the backbone to everything in VS Code and there are a BAZILLION of them. Check out this [table](https://github.com/redhat-developer/vscode-didact/blob/master/examples/commands.reference.md) we pulled together of Didact and other commands as examples.
+* Leverage other VS Code commands! every `didact://` command starts with a command id. Commands serve as the backbone to everything in VS Code and there are a BAZILLION of them. Check out this [table](https://github.com/redhat-developer/vscode-didact/blob/main/examples/commands.reference.md) we pulled together of Didact and other commands as examples.
 
 ## Providing Feedback
 

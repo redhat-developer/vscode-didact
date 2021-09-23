@@ -49,7 +49,7 @@
 				"properties": {
 					"didact.defaultUrl": {
 						"type": "string",
-						"default": "https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/didact-demo.didact.md",
+						"default": "https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/demos/markdown/didact-demo.didact.md",
 						"description": "Default Didact File Shown - can be any valid URL to a Didact Markdown file",
 						"scope": "window"
 					},

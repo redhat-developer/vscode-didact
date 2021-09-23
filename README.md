@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="100" height="100" src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/logo.png">
+  <img width="100" height="100" src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/icon/logo.png">
 </p><br/>
 
 <h1 align="center">Didact</h1><br/>
@@ -7,11 +7,11 @@
 <p align="justify">The <b>Didact</b> framework is designed to instruct users in a useful way regarding how to complete tasks through a combination of text (Markdown- or AsciiDoc-formatted), images, and active links that show VS Code functionality in action. Those links are paired with VS Code’s simple command framework to interact with the IDE directly -- and that provides one-click access to nearly all the functionality VS Code and its extensions have to offer.</p><br/>
 
 <p align="center">
-<a href="https://github.com/redhat-developer/vscode-didact/tree/master"><img src="https://img.shields.io/github/tag/redhat-developer/vscode-didact.svg?style=plastic" alt="GitHub tag"/></a>
+<a href="https://github.com/redhat-developer/vscode-didact/tree/main"><img src="https://img.shields.io/github/tag/redhat-developer/vscode-didact.svg?style=plastic" alt="GitHub tag"/></a>
 <a href="https://circleci.com/gh/redhat-developer/vscode-didact"><img src="https://circleci.com/gh/redhat-developer/vscode-didact.svg?style=shield"></a>
 <img src="https://img.shields.io/badge/license-Apache%202-blue.svg" alt="License"/>
 <a href="https://gitter.im/redhat-developer/vscode-didact"><img src="https://img.shields.io/gitter/room/redhat-developer/home.js.sv" alt="Gitter"/></a>
-<a href="https://workspaces.openshift.com/f?url=https://github.com/redhat-developer/vscode-didact"><img src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/che-contribute.png" alt="Contribute"/></a>
+<a href="https://workspaces.openshift.com/f?url=https://github.com/redhat-developer/vscode-didact"><img src="https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/icon/che-contribute.png" alt="Contribute"/></a>
 
 </p><br/>
 
@@ -60,7 +60,7 @@ If you run into issues migrating from an earlier version of Didact (0.3.x or ear
 
 Check out [the project on Github](https://github.com/redhat-developer/vscode-didact)! 
 
-[The readme](https://github.com/redhat-developer/vscode-didact/blob/master/README.md) has a ton of information about some of the specifics for link formatting, project json format, etc. 
+[The readme](https://github.com/redhat-developer/vscode-didact/blob/main/README.md) has a ton of information about some of the specifics for link formatting, project json format, etc. 
 
 And feel free to [add issues, submit feature requests, log bugs, etc](https://github.com/redhat-developer/vscode-didact/issues)!
 

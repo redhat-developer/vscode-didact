@@ -45,5 +45,5 @@ Some Common Examples
 
 More specific example Didact files
 
-* [Terminal Command Examples](https://github.com/redhat-developer/vscode-didact/blob/master/examples/terminal.example.didact.md)
-* [Requirements Checking Command Examples](https://github.com/redhat-developer/vscode-didact/blob/master/examples/requirements.example.didact.md) 
+* [Terminal Command Examples](https://github.com/redhat-developer/vscode-didact/blob/main/examples/terminal.example.didact.md)
+* [Requirements Checking Command Examples](https://github.com/redhat-developer/vscode-didact/blob/main/examples/requirements.example.didact.md) 
