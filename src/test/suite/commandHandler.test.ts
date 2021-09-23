@@ -47,7 +47,7 @@ suite("Command Handler tests", function () {
 	test('try to open a didact file in a different column with startDidact', async function() {
 		// reset the column to 1
 		await setLastColumnUsedSetting(1);
-		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Two';
+		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/examples/copyFileURL.example.didact.md$$Two';
 		await processInputs(didactUri);
 		expect(didactManager.active()).to.not.equal(undefined);
 
@@ -67,7 +67,7 @@ suite("Command Handler tests", function () {
 	test.skip('try to open a didact file in the Active column (one) with startDidact', async function() {
 		// reset the column to 1
 		await setLastColumnUsedSetting(1);
-		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Active';
+		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/examples/copyFileURL.example.didact.md$$Active';
 		await processInputs(didactUri);
 		expect(didactManager.active()?._panel).to.not.equal(undefined);
 		const column : vscode.ViewColumn | undefined = didactManager.active()?.getColumn();
@@ -79,7 +79,7 @@ suite("Command Handler tests", function () {
 	test.skip('try to open a didact file in the Beside column (two) with startDidact', async function() {
 		// reset the column to 1
 		await setLastColumnUsedSetting(1);
-		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/examples/copyFileURL.example.didact.md$$Beside';
+		const didactUri = 'didact://?commandId=vscode.didact.startDidact&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/examples/copyFileURL.example.didact.md$$Beside';
 		await processInputs(didactUri);
 		expect(didactManager.active()?._panel).to.not.equal(undefined);
 		const column : vscode.ViewColumn | undefined = didactManager.active()?.getColumn();

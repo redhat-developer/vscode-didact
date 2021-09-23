@@ -6,7 +6,7 @@ Let's open an integrated terminal in VS Code and see what we can do!
 
 ## A Word about ▶️ and `^ execute` Links
 
-[![Powered by Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/icon/powered240x40.png)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact){.imageRight}
+[![Powered by Didact](https://raw.githubusercontent.com/redhat-developer/vscode-didact/main/icon/powered240x40.png)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-didact){.imageRight}
 
 This tutorial is Powered by Didact, which means that links have super powers! If you click a ▶️ link, it will type some text for you at the command line but not execute it. You will have to hit Enter to activate the command. If you click a `^ execute` link, the link will not only it will activate a command (like a menu item or toolbar button) or type some text at the command line, but execute it as well. We will use these links to automate some of the commands for you. Feel free to follow these steps yourself! But the links are there to help if you need them.
 

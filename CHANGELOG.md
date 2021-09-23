@@ -143,7 +143,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 
 ## 0.1.7
 
- - Uncluttering command palette and adding new doc for Didact-specific command Ids https://github.com/redhat-developer/vscode-didact/blob/master/examples/commands.reference.md
+ - Uncluttering command palette and adding new doc for Didact-specific command Ids https://github.com/redhat-developer/vscode-didact/blob/main/examples/commands.reference.md
  - Adding new command for simply checking if CLI command executes with return code zero
  - Moved tutorial registry to back end setting location instead of preferences
 

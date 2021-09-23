@@ -18,21 +18,21 @@ testCommand: string / required
 
 | Check Didact output channel
 
-| https://github.com/redhat-developer/vscode-didact/blob/master/examples/clipboard.example.didact.md[copyClipboardToActiveTextEditor]
+| https://github.com/redhat-developer/vscode-didact/blob/main/examples/clipboard.example.didact.md[copyClipboardToActiveTextEditor]
 | Copies contents of the system clipboard to the currently open (or previously used) editor.
 |
 
 
 | Check Didact output channel
 
-| https://github.com/redhat-developer/vscode-didact/blob/master/examples/clipboard.example.didact.md[copyClipboardToEditorForFile]
+| https://github.com/redhat-developer/vscode-didact/blob/main/examples/clipboard.example.didact.md[copyClipboardToEditorForFile]
 | Copies contents of the system clipboard to a file path for an existing file (opened if not already open).
 | filepath:vscode.Uri / required
 
 
 | Check Didact output channel
 
-| https://github.com/redhat-developer/vscode-didact/blob/master/examples/clipboard.example.didact.md[copyClipboardToNewFile]
+| https://github.com/redhat-developer/vscode-didact/blob/main/examples/clipboard.example.didact.md[copyClipboardToNewFile]
 | Copies contents of the system clipboard to a new file (opened after creation).
 |
 

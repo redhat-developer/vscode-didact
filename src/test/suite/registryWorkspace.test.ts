@@ -48,7 +48,7 @@ suite('Tutorial Registry Test Suite', () => {
 		const category = "New Category";
 		const tutorialName = "New Tutorial";
 		const fileName = "test.didact.md";
-		const didactUriToCopyFile = `didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/master/demos/markdown/simple-example.didact.md$$${fileName}`;
+		const didactUriToCopyFile = `didact://?commandId=vscode.didact.copyFileURLtoWorkspaceCommand&text=https://raw.githubusercontent.com/redhat-developer/vscode-didact/0.4.0/demos/markdown/simple-example.didact.md$$${fileName}`;
 		const didactUriToRegisterTutorial = `didact://?commandId=vscode.didact.registry.addUri&projectFilePath=${fileName}&&text=${encodeURI(tutorialName)}$$${encodeURI(category)}`;
 
 		try {
