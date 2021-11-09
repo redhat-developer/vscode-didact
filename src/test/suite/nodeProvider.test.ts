@@ -27,10 +27,11 @@
  suite('Node provider test suite', () => {
 	const tutorialName = 'HelloWorld with JavaScript in Three Steps';
 	const tutorialCategory = 'Didact';
-	const tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
+	let tutorialUri: vscode.Uri;
 	const headingName = 'Step 2: Create Our First JavaScript project';
-
-	before('set up the registry tests', async () => {
+	
+	before('set up the registry tests and initialize tutorialUri', async () => {
+		tutorialUri = vscode.Uri.file(getContext().asAbsolutePath('./demos/markdown/helloJS/helloJS.didact.md'));
 		// make sure that the HelloWorld tutorial is registered if it's been cleared
 		await registerTutorialWithCategory(tutorialName, tutorialUri.fsPath, tutorialCategory, true);
 	});

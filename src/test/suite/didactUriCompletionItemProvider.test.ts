@@ -40,8 +40,13 @@ const testFileUri = vscode.Uri.file(testFilename);
 
 suite("Didact URI completion provider tests", function () {
 
-	const ctx = getContext();
-	const provider = new DidactUriCompletionItemProvider(ctx);
+	let ctx : vscode.ExtensionContext;
+	let provider: DidactUriCompletionItemProvider;
+	
+	this.beforeAll(() => {
+		ctx = getContext();
+		provider = new DidactUriCompletionItemProvider(ctx);
+	});
 
 	test("that all commands in the didactCompletionCatalog.json are available", async () => {
 		const catalog : any = provider.getCompletionCatalog(ctx);
