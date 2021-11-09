@@ -38,7 +38,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*",
+		"onStartupFinished",
 		"onWebviewPanel:didact"
 	],
 	"main": "./out/extension.js",
