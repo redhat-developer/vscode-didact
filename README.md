@@ -50,7 +50,7 @@ Our documentation started in these [wiki pages](https://github.com/redhat-develo
 
 >Note: The [wiki pages](https://github.com/redhat-developer/vscode-didact/wiki/Welcome-to-Didact!) are deprecated and will be removed in a future release. Please use the [GitHub pages](https://redhat-developer.github.io/vscode-didact/) from release 0.4.0 forward.
 
-For a list of available commands, check out the [Command Reference](examples/commands.reference.md).
+For a list of available commands, check out the [Command Reference](examples/commands.reference.adoc).
 
 ## Current Issues
 
