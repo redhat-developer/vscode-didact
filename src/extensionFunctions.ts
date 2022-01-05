@@ -145,8 +145,14 @@ export async function createTemporaryFolderAsWorkspaceRoot(requirement: string |
 	}
 }
 
-// utility command to start a named terminal so we have a handle to it
-export async function startTerminal(...rest: any[]): Promise<void>{ //name:string, path: vscode.Uri) {
+/**
+ *  utility command to access a terminal:
+ *  - if terminal does not exist, it creates it and shows it
+ *  - if a name is provided and it exists, it shows it
+ * 
+ * It accpets a list of optional parameters, name (string) and path (vscode.Uri)
+*/
+export async function startTerminal(...rest: any[]): Promise<void>{
 	let name : string | undefined = undefined;
 	let uri : vscode.Uri | undefined = undefined;
 	if (rest) {
