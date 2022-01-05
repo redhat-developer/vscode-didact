@@ -140,29 +140,26 @@ export async function registerTutorialWithJSON( jsonObject: any) {
 	return registerTutorialWithClass(newTutorial);
 }
 
-export async function registerTutorialWithClass(newDidact: Tutorial, setFocusInTreeView = false): Promise<void> {
+export async function registerTutorialWithClass(newDidact: Tutorial, setFocusInTreeView = false, override = false): Promise<void> {
 	const newDidactAsString = JSON.stringify(newDidact);
 	let existingRegistry : string[] | undefined = getRegisteredTutorials();
 	if(!existingRegistry) {
 		existingRegistry = [newDidactAsString];
 	} else {
-		// check to see if a tutorial doesn't already exist with the name/category combination
-		let match = false;
-		for (const entry of existingRegistry) {
-			const jsonObj : any = JSON.parse(entry);
-			if (jsonObj && jsonObj.name && jsonObj.category) {
-				const testName = jsonObj.name === newDidact.name;
-				const testCategory = jsonObj.category === newDidact.category;
-				match = testName && testCategory;
-				if (match) {
-					break;
-				}
-			}
-		}
-		if (!match) {
+		const existingDidact = getTutorialForNameAndCategory(newDidact.name, newDidact.category);
+		if (!existingDidact) {
 			existingRegistry.push(newDidactAsString);
 		} else {
-			extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
+			if (override) {
+				const oldIndex = existingRegistry.indexOf(JSON.stringify(existingDidact), 0);
+				if(oldIndex > -1) {
+					existingRegistry.splice(oldIndex, 1);
+				}
+				existingRegistry.push(newDidactAsString);
+				extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists. The uri is updated from ${existingDidact.sourceUri} to ${newDidact.sourceUri}.`);
+			} else {
+				extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists.`);
+			}
 		}
 	}
 	if (setFocusInTreeView) {
@@ -181,25 +178,24 @@ async function focusInTreeView(existingRegistry: string[], newDidact: Tutorial) 
 	}
 }
 
-export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string, setFocusInTreeView = false ): Promise<void> {
+export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string, setFocusInTreeView = false, override = false ): Promise<void> {
 	const newTutorial = new Tutorial(name, sourceUri, category);
-	return registerTutorialWithClass(newTutorial, setFocusInTreeView);
+	return registerTutorialWithClass(newTutorial, setFocusInTreeView, override);
 }
 
-export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string, setFocusInTreeView = false ): Promise<void> {
-	return registerTutorialWithArgs(name, sourceUri, category, setFocusInTreeView);
+export async function registerTutorialWithCategory(name : string, sourceUri : string, category : string, setFocusInTreeView = false, override = false ): Promise<void> {
+	return registerTutorialWithArgs(name, sourceUri, category, setFocusInTreeView, override);
 }
 
 export async function registerEmbeddedTutorials(context: ExtensionContext, name: string, pathInExtension: string): Promise<void> {
 	const tutorialUri = Uri.file(context.asAbsolutePath(pathInExtension));
-	await registerTutorialWithCategory(name, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY);
+	await registerTutorialWithCategory(name, tutorialUri.fsPath, DEFAULT_TUTORIAL_CATEGORY, false, true);
 }
 
 export function getDidactCategories() : string[] {
 	const existingRegistry : string[] | undefined = getRegisteredTutorials();
 	const didactCategories : string[] = [];
 	if(existingRegistry) {
-		// check to see if a tutorial doesn't already exist with the name/category combination
 		for (const entry of existingRegistry) {
 			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.category) {
@@ -230,7 +226,6 @@ export function getTutorialsForCategory( category : string ) : string[] {
 	const existingRegistry : string[] | undefined = getRegisteredTutorials();
 	const didactTutorials : string[] = [];
 	if(existingRegistry) {
-		// check to see if a tutorial doesn't already exist with the name/category combination
 		for (const entry of existingRegistry) {
 			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name) {
@@ -247,7 +242,6 @@ export function getTutorialsForCategory( category : string ) : string[] {
 export function getUriForDidactNameAndCategory(name : string, category : string ) : string | undefined {
 	const existingRegistry : string[] | undefined = getRegisteredTutorials();
 	if(existingRegistry) {
-		// check to see if a tutorial doesn't already exist with the name/category combination
 		for (const entry of existingRegistry) {
 			const jsonObj : any = JSON.parse(entry);
 			if (jsonObj && jsonObj.category && jsonObj.name && jsonObj.sourceUri) {
@@ -255,6 +249,23 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 				const testCategory = jsonObj.category === category;
 				if (testName && testCategory) {
 					return jsonObj.sourceUri;
+				}
+			}
+		}
+	}
+	return undefined;
+}
+
+export function getTutorialForNameAndCategory(name : string, category : string ) : Tutorial | undefined {
+	const existingRegistry : string[] | undefined = getRegisteredTutorials();
+	if(existingRegistry) {
+		for (const entry of existingRegistry) {
+			const jsonObj : any = JSON.parse(entry);
+			if (jsonObj && jsonObj.category && jsonObj.name && jsonObj.sourceUri) {
+				const testName = jsonObj.name === name;
+				const testCategory = jsonObj.category === category;
+				if (testName && testCategory) {
+					return jsonObj;
 				}
 			}
 		}
