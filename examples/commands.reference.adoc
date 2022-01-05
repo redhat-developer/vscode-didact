@@ -138,7 +138,7 @@ text: string / required
 | Check Didact output channel
 
 | https://github.com/redhat-developer/vscode-didact/wiki/Available-Commands-in-Didact-and-Elsewhere#vscodedidactstartterminalwithname[startTerminalWithName]
-| Start a named terminal so we have a handle to it. If passed a string, use that as the name for the terminal that can be referenced later. If passed a file URI, pass that as the current working directory.
+| Show terminal. If no name, create an unamed terminal. If name provided and terminal doesn't exist, it creates it. If passed a file URI, pass that as the current working directory.
 | name : string / optional
 filePath : vscode.Uri / optional
 
