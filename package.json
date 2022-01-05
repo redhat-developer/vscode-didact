@@ -319,6 +319,6 @@
 		"node-fetch": "^2.6.1",
 		"node-html-parser": "^5.2.0",
 		"tmp": "^0.2.1",
-		"url-parse": "^1.5.3"
+		"url-parse": "^1.5.4"
 	}
 }
