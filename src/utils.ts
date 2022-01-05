@@ -19,8 +19,9 @@ import * as extensionFunctions from './extensionFunctions';
 import * as fs from 'fs';
 import { ViewColumn, OutputChannel, workspace, Uri, window, commands, env, ExtensionContext } from 'vscode';
 import * as path from 'path';
-import { DEFAULT_TUTORIAL_CATEGORY, didactTutorialsProvider, refreshTreeview, revealTreeItem } from './extension';
+import { defaultTutorialProvider, didactTutorialAPI, DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_PROVIDER_ID, didactTutorialsProvider, refreshTreeview, revealTreeItem } from './extension';
 import { TutorialNode } from './nodeProvider';
+import { TutorialProvider } from './extensionAPI';
 
 export const DIDACT_DEFAULT_URL = 'didact.defaultUrl';
 export const DIDACT_REGISTERED_SETTING = 'didact.registered';
@@ -37,20 +38,20 @@ const CACHED_OUTPUT_CHANNELS: OutputChannel[] = new Array<OutputChannel>();
 export const DEFAULT_EXECUTE_LINK_TEXT = '^ execute';
 
 export interface ITutorial {
+	providerId: string;
 	name: string;
 	category: string;
-	sourceUri: string;
 }
 
 export class Tutorial implements ITutorial {
+	providerId: string;
 	name: string;
 	category: string;
-	sourceUri: string;
 	
-	constructor(name : string, sourceUri : string, category : string) {
+	constructor(providerId: string, name : string, category : string) {
+		this.providerId = providerId;
 		this.name = name;
 		this.category = category;
-		this.sourceUri = sourceUri;
 	}
 }
 
@@ -135,7 +136,7 @@ export function getRegisteredTutorials() : string[] | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
-export async function registerTutorialWithJSON( jsonObject: any) {
+export async function registerTutorialWithJSON(jsonObject: any): Promise<void> {
 	const newTutorial : Tutorial = jsonObject as ITutorial;
 	return registerTutorialWithClass(newTutorial);
 }
@@ -150,10 +151,11 @@ export async function registerTutorialWithClass(newDidact: Tutorial, setFocusInT
 		let match = false;
 		for (const entry of existingRegistry) {
 			const jsonObj : any = JSON.parse(entry);
-			if (jsonObj && jsonObj.name && jsonObj.category) {
+			if (jsonObj && jsonObj.providerId && jsonObj.name && jsonObj.category) {
+				const testProviderId = jsonObj.providerId === newDidact.providerId;
 				const testName = jsonObj.name === newDidact.name;
 				const testCategory = jsonObj.category === newDidact.category;
-				match = testName && testCategory;
+				match = testProviderId && testName && testCategory;
 				if (match) {
 					break;
 				}
@@ -162,7 +164,7 @@ export async function registerTutorialWithClass(newDidact: Tutorial, setFocusInT
 		if (!match) {
 			existingRegistry.push(newDidactAsString);
 		} else {
-			extensionFunctions.sendTextToOutputChannel(`Didact tutorial with name ${newDidact.name} and category ${newDidact.category} already exists`);
+			extensionFunctions.sendTextToOutputChannel(`Didact tutorial with providerId ${newDidact.providerId}, name ${newDidact.name} and category ${newDidact.category} does already exist.`);
 		}
 	}
 	if (setFocusInTreeView) {
@@ -182,7 +184,8 @@ async function focusInTreeView(existingRegistry: string[], newDidact: Tutorial) 
 }
 
 export async function registerTutorialWithArgs(name : string, sourceUri : string, category : string, setFocusInTreeView = false ): Promise<void> {
-	const newTutorial = new Tutorial(name, sourceUri, category);
+	const newTutorial = new Tutorial(DEFAULT_TUTORIAL_PROVIDER_ID, name, category);
+	defaultTutorialProvider.registerTutorial(newTutorial, sourceUri);
 	return registerTutorialWithClass(newTutorial, setFocusInTreeView);
 }
 
@@ -254,7 +257,12 @@ export function getUriForDidactNameAndCategory(name : string, category : string 
 				const testName = jsonObj.name === name;
 				const testCategory = jsonObj.category === category;
 				if (testName && testCategory) {
-					return jsonObj.sourceUri;
+					const providerId = jsonObj.providerId;
+					if (providerId) {
+						// ask the provider for the up2date uri
+						const provider: TutorialProvider | undefined = didactTutorialAPI.getTutorialProviderById(providerId);
+						return provider?.getUriForTutorialByCategoryAndName(category, name);
+					}
 				}
 			}
 		}
@@ -290,7 +298,7 @@ export async function getCurrentFileSelectionPath(): Promise<Uri> {
 	await commands.executeCommand('copyFilePath');
 	const copyPath = await env.clipboard.readText();
 	if (fs.existsSync(`"${copyPath}"`) && fs.lstatSync(`"${copyPath}"`).isFile() ) {
-	  return Uri.file(`"${copyPath}"`);
+		return Uri.file(`"${copyPath}"`);
 	}
   }
   throw new Error("Can not determine current file selection");
@@ -395,17 +403,14 @@ function validateTutorialNameInput(value: string, tutorialsForValidation : strin
 		}
 		return null;
 	}
-  	return `${value} is invalid`;
+	return `${value} is invalid`;
 }
 
-async function quickPickCategory(
-	categories: string[],
-	canSelectMany: boolean = false,
-	acceptInput: boolean = true): Promise<string[]> {
-	let options = categories.map(tag => ({ label: tag }));
+async function quickPickCategory(categories: string[], canSelectMany = false, acceptInput = true): Promise<string[]> {
+	const options = categories.map(tag => ({ label: tag }));
 
-	return new Promise((resolve, _) => {
-		let quickPick = window.createQuickPick();
+	return new Promise((resolve) => {
+		const quickPick = window.createQuickPick();
 		let placeholder = "Select a Tutorial Category.";
 
 		if (acceptInput) {
@@ -528,7 +533,7 @@ export async function appendAdditionalTutorialsFromEnv() : Promise<void> {
 			}
 		}
 	} catch (ex) {
-		await extensionFunctions.sendTextToOutputChannel(ex);
+		await extensionFunctions.sendTextToOutputChannel("" + ex);
 		return Promise.reject(ex);
 	}	
 } 

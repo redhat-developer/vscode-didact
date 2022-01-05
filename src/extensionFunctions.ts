@@ -28,7 +28,9 @@ import { handleExtFilePath, handleProjectFilePath } from './commandHandler';
 import * as download from 'download';
 import { didactManager } from './didactManager';
 import { parse } from 'node-html-parser';
-import { addNewTutorialWithNameAndCategoryForDidactUri, delay, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel } from './utils';
+import { addNewTutorialWithNameAndCategoryForDidactUri, delay, getCachedOutputChannel, getCurrentFileSelectionPath, getDefaultUrl, getInsertLFForCLILinkSetting, getLinkTextForCLILinkSetting, getValue, getWorkspacePath, registerTutorialWithCategory, rememberOutputChannel, Tutorial } from './utils';
+import { didactTutorialAPI } from './extension';
+import { TutorialProvider } from './extensionAPI';
 
 const tmp = require('tmp');
 const fetch = require('node-fetch');
@@ -159,7 +161,7 @@ export async function startTerminal(...rest: any[]): Promise<void>{ //name:strin
 				}
 			}
 		} catch (error) {
-			throw new Error(error);
+			throw new Error("" + error);
 		}
 	}
 	if (name) {
@@ -428,7 +430,7 @@ export async function cliExecutionCheck(requirement: string, testCommand: string
 			return true;
 		}
 	} catch (error) {
-		sendTextToOutputChannel(`--CLI command ${testCommand} failed with error ${error.status}`);
+		sendTextToOutputChannel(`--CLI command ${testCommand} failed with error ${error}`);
 		postRequirementsResponseMessage(requirement, false);
 	}
 	return false;
@@ -565,7 +567,7 @@ export async function getDataFromFile(uri:vscode.Uri) : Promise<string|undefined
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
 	} catch (error) {
-		throw new Error(error);
+		throw new Error("" + error);
 	}
 }
 
@@ -584,7 +586,7 @@ export async function getDataFromUrl(inurl:string) : Promise<string> {
 			throw new Error(`Unknown file type encountered: ${extname}`);
 		}
 	} catch (error) {
-		throw new Error(error);
+		throw new Error("" + error);
 	}
 }
 
@@ -601,7 +603,7 @@ export function collectElements(tagname: string, html? : string | undefined) : a
 	if (html) {
 		const document = parse(html);
 		const links = document.querySelectorAll(tagname);
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			elements.push(element);
 		}
 	}
@@ -612,7 +614,7 @@ export function gatherAllRequirementsLinks() : any[] {
 	const requirements = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				for(const check of requirementCommandLinks) {
@@ -631,7 +633,7 @@ export function gatherAllCommandsLinks(): any[] {
 	const commandLinks = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				if (href.startsWith(commandPrefix)) {
@@ -644,11 +646,16 @@ export function gatherAllCommandsLinks(): any[] {
 }
 
 export async function openTutorialFromView(node: TreeNode) : Promise<void> {
-	if (node && node.uri) {
-		sendTextToOutputChannel(`Opening tutorial from Didact view (${node.uri})`);
-		const vsUri = getActualUri(node.uri);
-		if (vsUri) {
-			await startDidact(vsUri);
+	if (node) {
+		const tutorial: Tutorial | undefined = getTutorialFromRegisteredProviders(node.category, node.id);
+		if (tutorial && tutorial.providerId) {
+			const provider: TutorialProvider | undefined = didactTutorialAPI.getTutorialProviderById(tutorial.providerId);
+			const uri: string | undefined = provider?.getUriForTutorialByCategoryAndName(tutorial.category, tutorial.name);
+			sendTextToOutputChannel(`Opening tutorial from Didact view (${uri})`);
+			const vsUri = getActualUri(uri);
+			if (vsUri) {
+				await startDidact(vsUri);
+			}
 		}
 	}
 }
@@ -656,6 +663,22 @@ export async function openTutorialFromView(node: TreeNode) : Promise<void> {
 export async function registerTutorial(name : string, sourceUri : string, category : string) : Promise<void> {
 	sendTextToOutputChannel(`Registering Didact tutorial with name (${name}), category (${category}, and sourceUri (${sourceUri})`);
 	await registerTutorialWithCategory(name, sourceUri, category);
+}
+
+export function getTutorialFromRegisteredProviders(category: string | undefined, name: string | undefined): Tutorial | undefined {
+	if (category && name) {
+		const tutorialProviders: TutorialProvider[] = didactTutorialAPI.getAllTutorialProviders();
+		for (const provider of tutorialProviders) {
+			if (provider) {
+				for (const tutorial of provider.getTutorials()) {
+					if (tutorial && tutorial.category === category && tutorial.name === name) {
+						return tutorial;
+					}
+				}
+			}
+		}
+	}	
+	return undefined;
 }
 
 export async function sendTextToOutputChannel(msg: string, channel?: vscode.OutputChannel) : Promise<void> {
@@ -986,7 +1009,7 @@ export async function pasteClipboardToActiveEditorOrPreviouslyUsedOne() : Promis
 }
 
 export async function findOpenEditorForFileURI(uri: vscode.Uri) : Promise<vscode.TextEditor | undefined> {
-	for (let editor of vscode.window.visibleTextEditors.values()) {
+	for (const editor of vscode.window.visibleTextEditors.values()) {
 		if (editor.document.uri === uri) {
 			return editor;
 		}
@@ -1025,7 +1048,7 @@ function getTimeElementsForAdoc(content : string) : any[] {
 
 function processTimeTotalForMD(content : string) : number {
 	let total = 0;
-	let elements : any[] = getTimeElementsForMD(content);
+	const elements : any[] = getTimeElementsForMD(content);
 	if (elements && elements.length > 0) {
 		elements.forEach(element => {
 			const timeAttr = element.getAttribute("time");
@@ -1042,7 +1065,7 @@ function processTimeTotalForMD(content : string) : number {
 
 function processTimeTotalForAdoc(content : string) : number {
 	let total = 0;
-	let elements : any[] = getTimeElementsForAdoc(content);
+	const elements : any[] = getTimeElementsForAdoc(content);
 	if (elements && elements.length > 0) {
 		elements.forEach(element => {
 			const classAttr : string = element.getAttribute("class");

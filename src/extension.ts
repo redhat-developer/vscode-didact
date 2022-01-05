@@ -22,21 +22,25 @@ import { clearRegisteredTutorials, getOpenAtStartupSetting,
 	clearOutputChannels, registerTutorialWithJSON, getAutoInstallDefaultTutorialsSetting,
 	addNewTutorialWithNameAndCategoryForDidactUri, 
 	removeTutorialByNameAndCategory, 
-	registerEmbeddedTutorials,
 	appendAdditionalTutorialsFromEnv} from './utils';
 import { DidactUriCompletionItemProvider } from './didactUriCompletionItemProvider';
 import { DidactPanelSerializer } from './didactPanelSerializer';
 import { didactManager, VIEW_TYPE } from './didactManager';
 import { getRedHatService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 import { DidactTelemetry } from './Telemetry';
+import { DidactTutorialAPI, DidactTutorialProvider } from './extensionAPI';
 
 const DIDACT_VIEW = 'didact.tutorials';
 
+export const DEFAULT_TUTORIAL_PROVIDER_ID = "vscode-didact";
 export const DEFAULT_TUTORIAL_CATEGORY = "Didact";
 export const DEFAULT_TUTORIAL_NAME = "Didact Demo";
 
 export const didactTutorialsProvider = new DidactNodeProvider();
 export let didactTreeView : vscode.TreeView<SimpleNode>;
+export const didactTutorialAPI: DidactTutorialAPI = new DidactTutorialAPI();
+export const defaultTutorialProvider: DidactTutorialProvider = new DidactTutorialProvider();
+
 let didactTelemetry: DidactTelemetry;
 
 export async function activate(context: vscode.ExtensionContext): Promise<any> {
@@ -111,10 +115,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 	// register the default tutorials if the setting is set to true
 	const installTutorialsAtStartup : boolean = getAutoInstallDefaultTutorialsSetting();
 	if (installTutorialsAtStartup) {
-		await registerEmbeddedTutorials(context, DEFAULT_TUTORIAL_NAME, './demos/markdown/didact-demo.didact.md');
-		await registerEmbeddedTutorials(context, 'Create a New Didact Tutorial Extension', './create_extension/create-new-tutorial-with-extension.didact.md');
-		await registerEmbeddedTutorials(context, 'HelloWorld with JavaScript in Three Steps', './demos/markdown/helloJS/helloJS.didact.md');
-		await registerEmbeddedTutorials(context, 'Writing Your First Didact Tutorial', './demos/markdown/tutorial/tutorial.didact.md');
+		didactTutorialAPI.registerTutorialProvider(defaultTutorialProvider);
 	}
 
 	// append any additional tutorials if we have them
@@ -142,7 +143,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 				.use(taskLists, {enabled: true, label: true})
 				.use(markdownItAttrs, {});
 		}
-	  };
+	};
 }
 
 function createIntegrationsView(): void {
