@@ -369,7 +369,7 @@ export class DidactPanel {
 	}
 
 	public async postMessage(message: string): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || this._disposed) {
 			return;
 		}
 		console.log('will post message from postMessage '+message);
@@ -378,7 +378,7 @@ export class DidactPanel {
 	}
 
 	public async postRequirementsResponseMessage(requirementName: string, result: boolean): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || this._disposed) {
 			return;
 		}
 		console.log('will post message from postRequirementsResponseMessage ');
@@ -388,7 +388,7 @@ export class DidactPanel {
 	}
 
 	async postNamedSimpleMessage(msg: string): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || this._disposed) {
 			return;
 		}
 		const jsonMsg = `{ "command" : "${msg}"}`;
