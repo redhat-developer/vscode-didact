@@ -42,7 +42,7 @@ For instance, if we want to do something like `echo Didact is fantastic!`, we co
 
 > Also Note: Links in Markdown files appear in the format `[link text](url)`, so if you're unsure how to start your link, you might type `[Send some fantastic text to a Terminal window!]()`.
 
-In your editor where you want to put the link (between the parentheses, for example), hit Ctrl+Space, select `Start a new Didact link`, and choose `Send Named Terminal Some Text`. You are given some templated text you can quickly modify for your use.
+In your editor where you want to put the link (between the parentheses, for example), hit Ctrl+Space, select `Start new Didact command link`, hit `Ctrl+Space` again and choose `vscode.didact.sendNamedTerminalAString`. You are given some templated text you can quickly modify for your use.
 
 * The terminal name defaults to `TerminalName`.
 * And you see a field named `URLEncodedTextToSendTerminal`
