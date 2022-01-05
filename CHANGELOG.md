@@ -10,6 +10,7 @@ All notable changes to the "vscode-didact" extension will be documented in this 
 - Added new command `vscode.didact.openUriWithLineAndOrColumn` (see [Didact docs](https://redhat-developer.github.io/vscode-didact/available-commands) for details)
 - Provided opt-in telemetry to gather information on the file type (md/adoc) opened by Didact and command IDs sent via Didact links. See "Data and telemetry" in the [README.md](README.md) and [usage data](USAGE_DATA.md) files for additional details
 - Note that if you run into issues migrating from an earlier version of Didact (0.3.x or earlier) to 0.4.x, you may need to refresh the tutorial registry. See [Troubleshooting](https://redhat-developer.github.io/vscode-didact/troubleshooting) in the docs for details
+- Improve tutorial to create a VS Code extension providing Didact tutorials
 
 ## 0.4.0
 
