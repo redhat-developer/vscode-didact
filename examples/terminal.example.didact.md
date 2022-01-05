@@ -2,7 +2,7 @@
 
 Didact has several built-in commands to help with managing Terminal creation, use, and termination. 
 
-* `vscode.didact.startTerminalWithName` - Creates a new terminal with the given name or an unnamed terminal if no name is given.
+* `vscode.didact.startTerminalWithName` - Show terminal. If no name, create an unamed terminal. If name provided and terminal doesn't exist, it creates it.
 * `vscode.didact.sendNamedTerminalAString` - Looks for a terminal with the given name or creates one and then sends the text provided.
 * `vscode.didact.sendNamedTerminalCtrlC` - Looks for a terminal with the given name and sends an explicit `Ctrl+C` to try and halt whatever process is currently running.
 * `vscode.didact.closeNamedTerminal` - Looks for a terminal with the given name and sends a kill command. This works the same as if you select the terminal and use the `workbench.action.terminal.kill` command from the Command Palette.
