@@ -307,7 +307,7 @@
 		"@types/markdown-it": "^12.2.3",
 		"@types/request-promise": "^4.1.48",
 		"asciidoctor": "^2.2.5",
-		"async-wait-until": "2.0.9",
+		"async-wait-until": "2.0.12",
 		"base-64": "^1.0.0",
 		"download": "^8.0.0",
 		"glob": "^7.2.0",
