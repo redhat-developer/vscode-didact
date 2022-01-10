@@ -6,7 +6,8 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+		"plugin:import/typescript"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -17,9 +18,11 @@
         }
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+		"eslint-plugin-import"
     ],
     "rules": {
-        "@typescript-eslint/no-var-requires": "off" /** allows require statements outside of imports **/ 
+        "@typescript-eslint/no-var-requires": "off", /** allows require statements outside of imports **/
+		"import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/test/**"], "optionalDependencies": false, "peerDependencies": false}]
     }
 }
