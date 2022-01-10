@@ -36,7 +36,7 @@ suite('stub out a tutorial', () => {
 
 	test('that we can send an echo command to the terminal and get the response', async () => {
 		const name = 'echoTerminal';
-		const text = `echo \"Hello World ${name}\"`;
+		const text = `echo "Hello World ${name}"`;
 		const result = `Hello World echoTerminal`;
 		await validateTerminalResponse(name, text, result);
 	});
@@ -52,7 +52,7 @@ suite('stub out a tutorial', () => {
 					const testUri = new DidactUri(href, ctxt);
 					const textToParse = testUri.getText();
 					const userToParse = testUri.getUser();
-					let outputs : string[] = [];
+					const outputs : string[] = [];
 					if (textToParse) {
 						handleText(textToParse, outputs);
 					} else if (userToParse) {

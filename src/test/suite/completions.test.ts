@@ -76,10 +76,10 @@ async function testWeGetExpectedResult(textToInsert : string, expectedResult: st
 async function initializeTextEditor(textEditor: TextEditor, initializeWith = "") {
 	const doc = textEditor.document;
 	await textEditor.edit((editBuilder) => {
-	  editBuilder.delete(new Range(new Position(0, 0), doc.positionAt(doc.getText().length)));
+		editBuilder.delete(new Range(new Position(0, 0), doc.positionAt(doc.getText().length)));
 	});
 	await textEditor.edit((editBuilder) => {
-	  editBuilder.insert(new Position(0, 0), initializeWith);
+		editBuilder.insert(new Position(0, 0), initializeWith);
 	});
 	expect(doc.getText()).to.be.equal(initializeWith);
 }

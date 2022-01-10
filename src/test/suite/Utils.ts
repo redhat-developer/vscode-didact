@@ -67,8 +67,8 @@ export async function validateCommands(testUri : vscode.Uri) : Promise<boolean> 
 	return false;
 }
 
-export async function getFailedCommands(commands : any[]) : Promise<String[]> {
-	let failedCommandList : String[] = [];
+export async function getFailedCommands(commands : any[]) : Promise<string[]> {
+	const failedCommandList : string[] = [];
 	if (commands && commands.length > 0) {
 		const vsCommands : string[] = await vscode.commands.getCommands(true);
 		for(const command of commands) {

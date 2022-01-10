@@ -142,7 +142,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<any> {
 				.use(taskLists, {enabled: true, label: true})
 				.use(markdownItAttrs, {});
 		}
-	  };
+	};
 }
 
 function createIntegrationsView(): void {
