@@ -601,7 +601,7 @@ export function collectElements(tagname: string, html? : string | undefined) : a
 	if (html) {
 		const document = parse(html);
 		const links = document.querySelectorAll(tagname);
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			elements.push(element);
 		}
 	}
@@ -612,7 +612,7 @@ export function gatherAllRequirementsLinks() : any[] {
 	const requirements = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				for(const check of requirementCommandLinks) {
@@ -631,7 +631,7 @@ export function gatherAllCommandsLinks(): any[] {
 	const commandLinks = [];
 	if (didactManager.active()?.getCurrentHTML()) {
 		const links = collectElements("a", didactManager.active()?.getCurrentHTML());
-		for (let element of links.values()) {
+		for (const element of links.values()) {
 			if (element.getAttribute('href')) {
 				const href = element.getAttribute('href');
 				if (href.startsWith(commandPrefix)) {
@@ -986,7 +986,7 @@ export async function pasteClipboardToActiveEditorOrPreviouslyUsedOne() : Promis
 }
 
 export async function findOpenEditorForFileURI(uri: vscode.Uri) : Promise<vscode.TextEditor | undefined> {
-	for (let editor of vscode.window.visibleTextEditors.values()) {
+	for (const editor of vscode.window.visibleTextEditors.values()) {
 		if (editor.document.uri === uri) {
 			return editor;
 		}
@@ -1025,7 +1025,7 @@ function getTimeElementsForAdoc(content : string) : any[] {
 
 function processTimeTotalForMD(content : string) : number {
 	let total = 0;
-	let elements : any[] = getTimeElementsForMD(content);
+	const elements : any[] = getTimeElementsForMD(content);
 	if (elements && elements.length > 0) {
 		elements.forEach(element => {
 			const timeAttr = element.getAttribute("time");
@@ -1042,7 +1042,7 @@ function processTimeTotalForMD(content : string) : number {
 
 function processTimeTotalForAdoc(content : string) : number {
 	let total = 0;
-	let elements : any[] = getTimeElementsForAdoc(content);
+	const elements : any[] = getTimeElementsForAdoc(content);
 	if (elements && elements.length > 0) {
 		elements.forEach(element => {
 			const classAttr : string = element.getAttribute("class");

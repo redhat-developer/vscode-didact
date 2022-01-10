@@ -51,7 +51,6 @@ suite("Command Handler tests", function () {
 		await processInputs(didactUri);
 		expect(didactManager.active()).to.not.equal(undefined);
 
-		let changed = false;
 		const panel = didactManager.active();
 		expect(panel).to.not.equal(null);
 		expect(panel).to.not.equal(undefined);

@@ -173,13 +173,13 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 		const classAttr : string | undefined = divElement.getAttribute("class");
 		if (classAttr) {
 			const splitArray : string[] = classAttr.split(' ');
-			for (let chunk of splitArray) {
+			for (const chunk of splitArray) {
 				if (chunk.startsWith('time=')) {
 					const splitTime = chunk.split('=')[1];
 					const timeValue = Number(splitTime);
 					if (divElement.childNodes.length > 0) {
 						const children = divElement.childNodes;
-						for (let rawChild of children) {
+						for (const rawChild of children) {
 							if (rawChild instanceof HTMLElement) {
 								const child: HTMLElement = rawChild;
 								if (child.tagName.startsWith('H')) {
@@ -263,7 +263,7 @@ export class DidactNodeProvider implements vscode.TreeDataProvider<SimpleNode> {
 		if (catNode) {
 			const treeItems : SimpleNode[] = await this.getChildren(catNode);
 			let foundNode : SimpleNode | null = null;
-			for (let element of treeItems) {
+			for (const element of treeItems) {
 				if (element.uri === uri && element.category === category) {
 					foundNode = element;
 					break;

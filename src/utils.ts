@@ -290,7 +290,7 @@ export async function getCurrentFileSelectionPath(): Promise<Uri> {
 	await commands.executeCommand('copyFilePath');
 	const copyPath = await env.clipboard.readText();
 	if (fs.existsSync(`"${copyPath}"`) && fs.lstatSync(`"${copyPath}"`).isFile() ) {
-	  return Uri.file(`"${copyPath}"`);
+		return Uri.file(`"${copyPath}"`);
 	}
   }
   throw new Error("Can not determine current file selection");
@@ -395,17 +395,17 @@ function validateTutorialNameInput(value: string, tutorialsForValidation : strin
 		}
 		return null;
 	}
-  	return `${value} is invalid`;
+	return `${value} is invalid`;
 }
 
 async function quickPickCategory(
 	categories: string[],
-	canSelectMany: boolean = false,
-	acceptInput: boolean = true): Promise<string[]> {
-	let options = categories.map(tag => ({ label: tag }));
+	canSelectMany = false,
+	acceptInput = true): Promise<string[]> {
+	const options = categories.map(tag => ({ label: tag }));
 
 	return new Promise((resolve, _) => {
-		let quickPick = window.createQuickPick();
+		const quickPick = window.createQuickPick();
 		let placeholder = "Select a Tutorial Category.";
 
 		if (acceptInput) {
