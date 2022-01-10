@@ -30,7 +30,7 @@ export class DidactTelemetry {
 		return this.telemetryService;
 	}
 
-	public async sendCommandTracking(commandId: string) {
+	public async sendCommandTracking(commandId: string): Promise<void> {
 		const telemetryEvent: TelemetryEvent = {
 			type: 'track',
 			name: 'didact.didactCommand',
@@ -41,7 +41,7 @@ export class DidactTelemetry {
 		(await this.telemetryService).send(telemetryEvent);
 	}
 
-	public async sendDidactOpenTypeTracking(filePath: string) {
+	public async sendDidactOpenTypeTracking(filePath: string): Promise<void> {
 		const fileExt = getFileExtension(filePath);
 		const telemetryEvent: TelemetryEvent = {
 			type: 'track',

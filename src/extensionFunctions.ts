@@ -832,7 +832,7 @@ export async function downloadAndUnzipFile(httpFileUrl : string, installFolder :
 	}
 }
 
-export async function copyFileFromURLtoLocalURI(httpurl : any, fileName? : string, fileuri? : string, unzip = false): Promise<void>{
+export async function copyFileFromURLtoLocalURI(httpurl : string, fileName? : string, fileuri? : string, unzip = false): Promise<void>{
 	let projectFilePath = '';
 
 	if (fileuri && fileuri.length > 0) {

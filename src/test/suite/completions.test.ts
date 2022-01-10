@@ -105,7 +105,7 @@ async function acceptFirstSuggestion(uri: vscode.Uri, _disposables: vscode.Dispo
 }
 
 // https://github.com/microsoft/vscode/blob/94c9ea46838a9a619aeafb7e8afd1170c967bb55/extensions/typescript-language-features/src/test/testUtils.ts#L141
-export function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]) {
+export function onChangedDocument(documentUri: vscode.Uri, disposables: vscode.Disposable[]): Promise<vscode.TextDocument> {
 	return new Promise<vscode.TextDocument>(resolve => vscode.workspace.onDidChangeTextDocument(e => {
 		if (e.document.uri.toString() === documentUri.toString()) {
 			resolve(e.document);
@@ -118,7 +118,7 @@ export async function retryUntilDocumentChanges(
 	documentUri: vscode.Uri,
 	options: { retries: number, timeout: number },
 	disposables: vscode.Disposable[],
-	exec: () => Thenable<unknown>, ) {
+	exec: () => Thenable<unknown>, ): Promise<void | vscode.TextDocument> {
 	const didChangeDocument = onChangedDocument(documentUri, disposables);
 	let done = false;
 	const result = await Promise.race([
