@@ -1,10 +1,9 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { getAutoInstallDefaultTutorialsSetting, getOpenAtStartupSetting, getRegisteredTutorials, registerTutorialWithCategory } from '../../utils';
-import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME } from '../../extension';
+import { getAutoInstallDefaultTutorialsSetting, getOpenAtStartupSetting, getRegisteredTutorials } from '../../utils';
+import { DEFAULT_TUTORIAL_CATEGORY } from '../../extension';
 import { expect } from 'chai';
 import { ensureExtensionActivated } from './Utils';
-import { getContext } from '../../extensionFunctions';
 
 suite('Extension Test Suite', () => {
 	const extensionId = 'redhat.vscode-didact';

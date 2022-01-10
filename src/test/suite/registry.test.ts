@@ -3,8 +3,7 @@ import {getRegisteredTutorials, getDidactCategories, getTutorialsForCategory, ge
 import {before} from 'mocha';
 import * as vscode from 'vscode';
 import { ADD_TUTORIAL_TO_REGISTRY, getContext, REGISTER_TUTORIAL } from '../../extensionFunctions';
-import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME, didactTreeView, didactTutorialsProvider } from '../../extension';
-import { waitUntil } from 'async-wait-until';
+import { DEFAULT_TUTORIAL_CATEGORY, DEFAULT_TUTORIAL_NAME, didactTreeView } from '../../extension';
 
 const name = 'new-tutorial';
 const category = 'some-category';

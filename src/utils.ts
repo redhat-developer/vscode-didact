@@ -135,7 +135,7 @@ export function getRegisteredTutorials() : string[] | undefined {
 	return extensionFunctions.getContext().workspaceState.get(DIDACT_REGISTERED_SETTING);
 }
 
-export async function registerTutorialWithJSON( jsonObject: any) {
+export async function registerTutorialWithJSON( jsonObject: any): Promise<void> {
 	const newTutorial : Tutorial = jsonObject as ITutorial;
 	return registerTutorialWithClass(newTutorial);
 }
@@ -415,7 +415,7 @@ async function quickPickCategory(
 	acceptInput = true): Promise<string[]> {
 	const options = categories.map(tag => ({ label: tag }));
 
-	return new Promise((resolve, _) => {
+	return new Promise((resolve) => {
 		const quickPick = window.createQuickPick();
 		let placeholder = "Select a Tutorial Category.";
 
