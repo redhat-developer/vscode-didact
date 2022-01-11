@@ -2,6 +2,8 @@
 
 All notable changes to the "vscode-didact" extension will be documented in this file.
 
+## 0.4.2
+
 ## 0.4.1
 
 - Fix embedded tutorials after an upgrade. It requires having the setting `Auto-add default tutorials` kept to default value `true`
