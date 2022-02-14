@@ -111,7 +111,7 @@ suite('stub out a tutorial', () => {
 
 	async function executeAndWait(command: string): Promise<void> {
 		await commands.executeCommand(command);
-		delay(200);
+		await delay(200);
 	}
 
 	function getNamedTerminal(terminalName : string): Terminal | undefined {
