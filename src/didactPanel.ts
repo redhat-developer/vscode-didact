@@ -155,6 +155,7 @@ export class DidactPanel {
 		if (sendUri) {
 			jsonMsg = `{ ${sendCommand}, ${sendUri} }`;
 		}
+		console.log('will post message sendSetStateMessage');
 		this._panel.webview.postMessage(jsonMsg);
 	}	
 
@@ -326,6 +327,7 @@ export class DidactPanel {
 	}
 	
 	public async dispose(): Promise<void> {
+		console.log('dispoe called!');
 		if (this._disposed) {
 			return;
 		}
@@ -367,27 +369,30 @@ export class DidactPanel {
 	}
 
 	public async postMessage(message: string): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || this._disposed) {
 			return;
 		}
+		console.log('will post message from postMessage '+message);
 		const jsonMsg:string = "{ \"command\": \"sendMessage\", \"data\": \"" + message + "\"}";
 		this._panel.webview.postMessage(jsonMsg);
 	}
 
 	public async postRequirementsResponseMessage(requirementName: string, result: boolean): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || this._disposed) {
 			return;
 		}
+		console.log('will post message from postRequirementsResponseMessage ');
 		const jsonMsg:string = "{ \"command\": \"requirementCheck\", \"requirementName\": \"" + requirementName + "\", \"result\": \"" + result + "\"}";
 		this._panel.webview.postMessage(jsonMsg);
 		await this.sendSetStateMessage();
 	}
 
 	async postNamedSimpleMessage(msg: string): Promise<void> {
-		if (!this._panel) {
+		if (!this._panel || this._disposed) {
 			return;
 		}
 		const jsonMsg = `{ "command" : "${msg}"}`;
+		console.log('will post message from postNamedSimpleMessage '+msg);
 		this._panel.webview.postMessage(jsonMsg);
 	}
 
@@ -416,6 +421,7 @@ export class DidactPanel {
 		if (!this._panel || this._disposed) {
 			return;
 		}
+		console.log('will post mess age from sendScrollToHeadingMessage');
 		const jsonMsg = `{ "command": "scrollToHeading", "tag" : "${tag}", "headingText" : "${headingText}"  }`;
 		await this._panel.webview.postMessage(jsonMsg);
 	}	
